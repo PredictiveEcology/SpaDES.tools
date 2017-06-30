@@ -12,11 +12,6 @@ cache: packages
 
 cran: https://cran.rstudio.com/
 
-env:
-  global:
-    - secure: "VjmV4Tyjtmdk8QzPdWAI7WLksk0E4NzzTBf3yzABLW/MBoDthtLuuOcnm4RmNp6hUIaCgPWzcNAcwnKjjPiCSGq0w+0gklyvtQSXAJSG8zmm3Fyd1s2F02XhiRYaCBqqhcK1F5cNVG6XsutTT97A71SegQKvTfcO0K6MuRs1vL0="
-    - secure: "JTsEuU+Htu027oOMYXXqDc6adgN7jK6i1fcx5n1PKWUn30CsCmq5bLJcBm4a94BhSGBYEkI5HArWdiiw8U6GAOS3vcVg0coDjfRZcdQGbjiULS5Ep8SOQf+0tNcTlF0JjTK4Kw3OjstGJNhxKH9A8Ak9+acXAIsYqQQ2LeyjVQ4="
-
 matrix:
   include:
 
@@ -45,10 +40,8 @@ matrix:
     before_install:
       - export DISPLAY=:99.0
       - sh -e /etc/init.d/xvfb start
-      - chmod 755 ./_push_vignettes.sh
       - Rscript -e 'install.packages("dplyr", dependencies = TRUE)'
     after_success:
-      - ./_push_vignettes.sh
       - Rscript -e 'library(covr); coveralls(coverage = print(package_coverage(quiet = FALSE)))'
       - Rscript -e 'library(lintr); lint_package()'
 
@@ -89,4 +82,3 @@ branches:
     - master
     - development
     - testing
-
