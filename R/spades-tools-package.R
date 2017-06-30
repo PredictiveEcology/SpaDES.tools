@@ -8,8 +8,8 @@
 #'
 #' @description
 #'
-#' \if{html}{\figure{SpaDES.png}{options: width=100 alt="SpaDES logo" align="right"}}
-#' \if{latex}{\figure{SpaDES.png}{options: width=0.5in}}
+#' \if{html}{\figure{inst/figures/SpaDES.png}{options: width=100 alt="SpaDES logo" align="right"}}
+#' \if{latex}{\figure{inst/figures/SpaDES.png}{options: width=0.5in}}
 #'
 #' # TODO: DESCRIPTION NEEDED
 #'
