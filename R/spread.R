@@ -384,9 +384,10 @@ setMethod(
       id <- mapID
     }
     if (!quick) {
-      if (!any(stopRuleBehavior %fin% c("includePixel", "excludePixel", "includeRing", "excludeRing")))
-        stop("stopRuleBehaviour must be one of \"includePixel\", \"excludePixel\", ",
-             "\"includeRing\", or \"excludeRing\".")
+      allowedRules <- c("includePixel", "excludePixel", "includeRing", "excludeRing")
+      if (!any(stopRuleBehavior %fin% allowedRules))
+        stop("stopRuleBehaviour must be one of \"",
+             paste(allowedRules, collapse = "\", \""), "\".")
     }
     spreadStateExists <- is(spreadState, "data.table")
     spreadProbLaterExists <- TRUE

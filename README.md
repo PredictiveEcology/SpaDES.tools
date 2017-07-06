@@ -12,12 +12,6 @@ Additional modelling tools for Spatial Discrete Event Simulation (`SpaDES`) modu
 
 Building packages from source requires the appropriate development libraries for your operating system (*e.g.*, Windows users should install [Rtools](https://cran.r-project.org/bin/windows/Rtools/)).
 
-The suggested package `fastshp` can be installed with:
-
-```r
-install.packages("fastshp", repos = "http://rforge.net", type = "source")
-```
-
 ### Current stable release
 
 [![Build Status](https://travis-ci.org/PredictiveEcology/SpaDES.tools.svg?branch=master)](https://travis-ci.org/PredictiveEcology/SpaDES.tools)
