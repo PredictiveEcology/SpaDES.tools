@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // duplicatedInt
 LogicalVector duplicatedInt(IntegerVector x);
-RcppExport SEXP SpaDES_tools_duplicatedInt(SEXP xSEXP) {
+RcppExport SEXP _SpaDES_tools_duplicatedInt(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,7 +18,7 @@ END_RCPP
 }
 // pointDistance2
 NumericMatrix pointDistance2(NumericMatrix to, NumericMatrix from);
-RcppExport SEXP SpaDES_tools_pointDistance2(SEXP toSEXP, SEXP fromSEXP) {
+RcppExport SEXP _SpaDES_tools_pointDistance2(SEXP toSEXP, SEXP fromSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,7 +30,7 @@ END_RCPP
 }
 // pointDistance3
 NumericMatrix pointDistance3(NumericVector fromX, NumericVector toX, NumericVector fromY, NumericVector toY, double maxDistance);
-RcppExport SEXP SpaDES_tools_pointDistance3(SEXP fromXSEXP, SEXP toXSEXP, SEXP fromYSEXP, SEXP toYSEXP, SEXP maxDistanceSEXP) {
+RcppExport SEXP _SpaDES_tools_pointDistance3(SEXP fromXSEXP, SEXP toXSEXP, SEXP fromYSEXP, SEXP toYSEXP, SEXP maxDistanceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -45,7 +45,7 @@ END_RCPP
 }
 // runifC
 NumericVector runifC(const int N);
-RcppExport SEXP SpaDES_tools_runifC(SEXP NSEXP) {
+RcppExport SEXP _SpaDES_tools_runifC(SEXP NSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;

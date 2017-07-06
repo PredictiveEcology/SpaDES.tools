@@ -8,16 +8,16 @@ Check these declarations against the C/Fortran source code.
 */
 
 /* .Call calls */
-extern SEXP SpaDES_tools_duplicatedInt(SEXP);
-extern SEXP SpaDES_tools_pointDistance2(SEXP, SEXP);
-extern SEXP SpaDES_tools_pointDistance3(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP SpaDES_tools_runifC(SEXP);
+extern SEXP _SpaDES_tools_duplicatedInt(SEXP);
+extern SEXP _SpaDES_tools_pointDistance2(SEXP, SEXP);
+extern SEXP _SpaDES_tools_pointDistance3(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _SpaDES_tools_runifC(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-  {"SpaDES_tools_duplicatedInt",  (DL_FUNC) &SpaDES_tools_duplicatedInt,  1},
-  {"SpaDES_tools_pointDistance2", (DL_FUNC) &SpaDES_tools_pointDistance2, 2},
-  {"SpaDES_tools_pointDistance3", (DL_FUNC) &SpaDES_tools_pointDistance3, 5},
-  {"SpaDES_tools_runifC",         (DL_FUNC) &SpaDES_tools_runifC,         1},
+  {"_SpaDES_tools_duplicatedInt",  (DL_FUNC) &_SpaDES_tools_duplicatedInt,  1},
+  {"_SpaDES_tools_pointDistance2", (DL_FUNC) &_SpaDES_tools_pointDistance2, 2},
+  {"_SpaDES_tools_pointDistance3", (DL_FUNC) &_SpaDES_tools_pointDistance3, 5},
+  {"_SpaDES_tools_runifC",         (DL_FUNC) &_SpaDES_tools_runifC,         1},
   {NULL, NULL, 0}
 };
 
