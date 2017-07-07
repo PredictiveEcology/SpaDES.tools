@@ -15,8 +15,8 @@
 #'
 #' Bug reports: \url{https://github.com/PredictiveEcology/SpaDES.tools/issues}
 #'
-#' @name SpaDES_tools-package
-#' @aliases SpaDES.tools SpaDES.tools-package spades.tools-package
+#' @name SpaDES-tools-package
+#' @aliases SpaDES.tools SpaDES.tools-package spades.tools-package spades-tools-package
 #' @docType package
 #' @author Alex M. Chubaty \email{alexander.chubaty@@canada.ca}
 #' @author Eliot J. B. McIntire \email{eliot.mcintire@@canada.ca}

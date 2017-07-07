@@ -7,7 +7,7 @@
 #'     efficient (but slower) algorithms. Default \code{FALSE}.
 #' }
 #' @docType package
-#' @name SpaDES_tools-package
+#' @name SpaDES-tools-package
 #'
 NULL
 
