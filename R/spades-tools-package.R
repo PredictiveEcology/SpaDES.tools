@@ -11,16 +11,12 @@
 #' \if{html}{\figure{SpaDES.png}{options: width=100 alt="SpaDES logo" align="right"}}
 #' \if{latex}{\figure{SpaDES.png}{options: width=0.5in}}
 #'
-#' # TODO: DESCRIPTION NEEDED
+#' Additonal tools for developing Spatially Explicit Discrete Event Simulation
+#' (\code{SpaDES}) models.
 #'
 #' Bug reports: \url{https://github.com/PredictiveEcology/SpaDES.tools/issues}
 #'
-#' @name SpaDES-tools-package
-#' @aliases SpaDES.tools SpaDES.tools-package spades.tools-package spades-tools-package
-#' @docType package
-#' @author Alex M. Chubaty \email{alexander.chubaty@@canada.ca}
-#' @author Eliot J. B. McIntire \email{eliot.mcintire@@canada.ca}
-#' @keywords package
+#' @rdname SpaDES.tools-package
 #'
 #' @section 1 Spatial spreading/distances methods:
 #'
@@ -93,18 +89,14 @@
 #'   \code{\link{transitions}} \tab Transition probability\cr
 #' }
 #'
-NULL
+"_PACKAGE"
 
 ################################################################################
 # package imports
 # See \url{http://r-pkgs.had.co.nz/namespace.html#imports}
 
 #' @import methods
-NULL
-
 #' @import utils
-NULL
-
-#'@importFrom Rcpp evalCpp
-#'@useDynLib SpaDES.tools, .registration = TRUE
+#' @importFrom Rcpp evalCpp
+#' @useDynLib SpaDES.tools, .registration = TRUE
 NULL

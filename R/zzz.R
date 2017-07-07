@@ -1,4 +1,4 @@
-#' @section 6 Package options:
+#' @section 7 Package options:
 #'
 #' \code{SpaDES} packages use the following \code{\link{options}} to configure behaviour:
 #'
@@ -6,10 +6,10 @@
 #'   \item \code{spades.lowMemory}: If true, some functions will use more memory
 #'     efficient (but slower) algorithms. Default \code{FALSE}.
 #' }
-#' @docType package
-#' @name SpaDES-tools-package
 #'
-NULL
+#' @rdname SpaDES.tools-package
+#'
+"_PACKAGE"
 
 .onLoad <- function(libname, pkgname) {
   tmpdir <- file.path(tempdir(), "SpaDES")
