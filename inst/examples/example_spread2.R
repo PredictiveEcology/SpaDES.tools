@@ -98,7 +98,7 @@ if (interactive()) {
   library(DEoptim)
   cl <- makeCluster(pmin(10, detectCores() - 2)) # only need 10 cores for 10 populations in DEoptim
   parallel::clusterEvalQ(cl, {
-    library(SpaDES.tools) ## TODO: load SpaDES.core too?
+    library(SpaDES.tools)
     library(raster)
     library(fpCompare)
   })

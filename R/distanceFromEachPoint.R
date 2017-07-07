@@ -14,7 +14,7 @@
 #'
 #' This function is cluster aware. If there is a cluster running, it will use it.
 #' To start a cluster use \code{\link[raster]{beginCluster}}, with \code{N} being
-#' the number of cores to use. See examples in \code{\link[SpaDES.core]{experiment}}.
+#' the number of cores to use. See examples in \code{SpaDES.core::experiment}.
 #'
 #' @param from Numeric matrix with 2 or 3 or more columns. They must include x and y,
 #'             representing x and y coordinates of "from" cell. If there is a column

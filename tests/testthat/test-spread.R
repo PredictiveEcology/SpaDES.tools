@@ -1198,7 +1198,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
     ## using parallel package cluster
     system.time({
       cl1 <- makeCluster(1, rscript_args = "--vanilla --no-environ")
-      clusterEvalQ(cl1, {library(SpaDES.tools)}) ## TODO: load SpaDES.core too?
+      clusterEvalQ(cl1, {library(SpaDES.tools)})
     })
     system.time(
       dfepCluster <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],

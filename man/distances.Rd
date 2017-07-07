@@ -105,7 +105,7 @@ A slightly faster way to calculate distances.
 
 This function is cluster aware. If there is a cluster running, it will use it.
 To start a cluster use \code{\link[raster]{beginCluster}}, with \code{N} being
-the number of cores to use. See examples in \code{\link[SpaDES.core]{experiment}}.
+the number of cores to use. See examples in \code{SpaDES.core::experiment}.
 
 
 
