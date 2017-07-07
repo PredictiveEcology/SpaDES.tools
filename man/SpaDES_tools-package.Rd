@@ -9,8 +9,8 @@
 \alias{SpaDES_tools-package}
 \title{Categorized overview of the \code{SpaDES.tools} package}
 \description{
-\if{html}{\figure{inst/figures/SpaDES.png}{options: width=100 alt="SpaDES logo" align="right"}}
-\if{latex}{\figure{inst/figures/SpaDES.png}{options: width=0.5in}}
+\if{html}{\figure{figures/SpaDES.png}{options: width=100 alt="SpaDES logo" align="right"}}
+\if{latex}{\figure{figures/SpaDES.png}{options: width=0.5in}}
 
 # TODO: DESCRIPTION NEEDED
 
