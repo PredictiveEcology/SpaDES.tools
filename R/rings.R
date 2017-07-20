@@ -1,7 +1,3 @@
-if (getRversion() >= "3.1.0") {
-#  utils::globalVariables(c("indices", "id", "initialLocus", "dists", "dup", ".I"))
-}
-
 #' Identifies all cells within a ring around the focal cells
 #'
 #' Identifies the cell numbers of all cells within a ring defined by  minimum
@@ -96,9 +92,5 @@ setMethod(
       outRas <- raster(extent(landscape), res = res(landscape), vals = outRas)
       return(outRas)
     }
-    #if(!allowOverlap) {
-    #   setkey(out, indices)
-    #   out[,dup:=duplicated(indices),by=indices]
-    # }
     return(out)
 })

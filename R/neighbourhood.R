@@ -71,30 +71,31 @@ if (getRversion() >= "3.1.0") {
 #' @param numNeighs A numeric scalar, indicating how many neighbours to return. Must be
 #'                  less than or equal to \code{directions}; which neighbours are random
 #'                  with equal probabilities.
-#' @param returnDT A logical. If TRUE, then the function will return the result as a data.table,
-#'                 if the internals used \code{data.table}, i.e., if number of cells is greater than
-#'                 \code{cutoff.for.data.table}. User should be warned that this will therefore
-#'                 cause the output format to change depending \code{cutoff.for.data.table}.
-#'                 This will be faster for situations where \code{cutoff.for.data.table} is \code{TRUE}
+#' @param returnDT A logical. If TRUE, then the function will return the result
+#'                 as a \code{data.table}, if the internals used \code{data.table},
+#'                 i.e., if number of cells is greater than \code{cutoff.for.data.table}.
+#'                 User should be warned that this will therefore cause the output
+#'                 format to change depending \code{cutoff.for.data.table}.
+#'                 This will be faster for situations where \code{cutoff.for.data.table = TRUE}.
 #'
-#' @return Either a matrix (if more than 1 column, i.e., \code{pairs = TRUE}, and/or \code{id}
-#' is provided),  a vector (if only one column), or
-#' a data.table (if \code{cutoff.for.data.table} is less than \code{length(cells)} AND
-#' \code{returnDT} is \code{TRUE}. To get a consistent output, say a matrix, it would
-#' be wise to test the output for its class. The variable output is done
-#' to minimize coersion to maintain speed. The columns will be one or more of \code{id},
-#' \code{from}, \code{to}.
+#' @return Either a matrix (if more than 1 column, i.e., \code{pairs = TRUE},
+#' and/or \code{id} is provided), a vector (if only one column), or a \code{data.table}
+#' (if \code{cutoff.for.data.table} is less than \code{length(cells)} \emph{and}
+#' \code{returnDT} is \code{TRUE}.
+#' To get a consistent output, say a matrix, it would be wise to test the output
+#' for its class.
+#' The variable output is done to minimize coersion to maintain speed.
+#' The columns will be one or more of \code{id}, \code{from}, \code{to}.
 #'
 #' @seealso \code{\link[raster]{adjacent}}
 #'
+#' @author Eliot McIntire
+#' @docType methods
+#' @export
 #' @importFrom data.table := data.table key set setcolorder setkeyv
 #' @importFrom raster ncell ncol nrow
 #' @importFrom stats na.omit
-#' @export
-#' @docType methods
 #' @rdname adj
-#'
-#' @author Eliot McIntire
 #'
 #' @examples
 #' library(raster)
@@ -104,7 +105,7 @@ if (getRversion() >= "3.1.0") {
 #' numCell <- ncell(a)
 #' adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8)
 #' adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8,
-#'   include = TRUE)
+#'                include = TRUE)
 #'
 adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
                     include = FALSE, target = NULL, numCol = NULL, numCell = NULL,
@@ -226,13 +227,13 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     if (!torus) {
       if (pairs) {
         return(adj[
-          !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) |  #top or bottom of raster
-              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1))# | #right & left edge cells, with neighbours wrapped
+          !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
+              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
           , , drop = FALSE])
       } else {
         adj <- adj[
-          !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) |  #top or bottom of raster
-              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1))# | #right & left edge cells, with neighbours wrapped
+          !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
+              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
           , keepCols, drop = FALSE]
         if (match.adjacent) {
           adj <- unique(adj[, "to"])
@@ -241,9 +242,11 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
       }
     } else {
       whLefRig <- (adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1
-      adj[whLefRig, "to"] <- adj[whLefRig, "to"] + numCol*(adj[whLefRig, "from"] - adj[whLefRig, "to"])
+      adj[whLefRig, "to"] <- adj[whLefRig, "to"] +
+        numCol*(adj[whLefRig, "from"] - adj[whLefRig, "to"])
       whBotTop <- ((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]
-      adj[whBotTop, "to"] <- adj[whBotTop, "to"] + sign(adj[whBotTop, "from"] - adj[whBotTop, "to"]) * numCell
+      adj[whBotTop, "to"] <- adj[whBotTop, "to"] +
+        sign(adj[whBotTop, "from"] - adj[whBotTop, "to"]) * numCell
       if (pairs) {
         return(adj)
       } else {
@@ -292,18 +295,17 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
               ((from %% numCol + to %% numCol) == 1))# | #right & left edge cells, with neighbours wrapped
           ]
         if (match.adjacent) {
-          if(returnDT)
-            return(unique(adj[,list(to)]))
+          if (returnDT)
+            return(unique(adj[, list(to)]))
           else
             return(unique(adj$to))
-
         }
-        if(returnDT)
+        if (returnDT)
           return(adj)
         else
           return(as.matrix(adj))
       } else {
-        if(returnDT)
+        if (returnDT)
           return(adj[
             !((((to - 1) %% numCell + 1) != to) | #top or bottom of raster
                 ((from %% numCol + to %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
@@ -326,7 +328,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
               as.integer(sign(from[whBotTop] - toWhBotTop) * numCell))
 
         if (match.adjacent) {
-          if(returnDT)
+          if (returnDT)
             return(unique(adj[,list(to)]))
           else
             return(unique(adj$to))
@@ -340,7 +342,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
         set(adj, which(whBotTop), "to", toWhBotTop +
               as.integer(sign(adj$from[whBotTop] - toWhBotTop) * numCell))
       }
-      if(returnDT)
+      if (returnDT)
         return(adj)
       else
         return(as.matrix(adj))

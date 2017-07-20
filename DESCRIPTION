@@ -5,7 +5,7 @@ Description: TO DO.
 URL:
     http://spades.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2017-07-17
+Date: 2017-07-20
 Version: 0.1.0
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
@@ -36,7 +36,7 @@ Imports:
     methods,
     quickPlot,
     RandomFields (>= 3.1.24),
-    Rcpp (>= 0.12.11.3),
+    Rcpp (>= 0.12.12),
     reproducible,
     raster (>= 2.5-8),
     sp (>= 1.2-4),
@@ -47,13 +47,14 @@ Suggests:
     dplyr (>= 0.5.0),
     hunspell,
     knitr,
+    microbenchmark,
     parallel,
+    profvis,
     RColorBrewer (>= 1.1-2),
     rgdal,
     rgeos,
     rmarkdown,
     testthat (>= 1.0.2)
-Extends: SpaDES.core
 LinkingTo: Rcpp
 Remotes:
     PredictiveEcology/reproducible@development,

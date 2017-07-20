@@ -82,44 +82,50 @@ if (getRversion() >= "3.1.0") {
 #'                       is smaller than \code{maxSize}, but they will not be greater
 #'                       than \code{maxSize}\cr
 #'   \code{exactSize} \tab This is the number of cells that are "successfully" turned
-#'                       on during a spreading event. This will override an event that stops probabilistically
-#'                       via \code{spreadProb}, but forcing its last set of active cells to
-#'                       try again to find neighbours. It will try 10 times per event, before giving up.
-#'                       During those 10 times, it will try twice to "jump" up to 4 cells outwards
-#'                       from each of the active cells\cr
+#'                       on during a spreading event. This will override an event that
+#'                       stops probabilistically via \code{spreadProb}, but forcing
+#'                       its last set of active cells to try again to find neighbours.
+#'                       It will try 10 times per event, before giving up.
+#'                       During those 10 times, it will try twice to "jump" up to
+#'                       4 cells outwards from each of the active cells.\cr
 #'   \code{iterations} \tab This is a hard cap on the number of internal iterations to
 #'                          complete before returning the current state of the system
-#'                          as a data.table \cr
+#'                          as a \code{data.table}.\cr
 #' }
 #'
-#' @param landscape     Required. A \code{RasterLayer} object. This defines the possible locations
-#'                      for spreading events to start and spread2 into. Required.
+#' @param landscape Required. A \code{RasterLayer} object. This defines the possible
+#'                  locations for spreading events to start and spread2 into. Required.
 #'
-#' @param start     Required. Either a vector of pixel numbers to initiate spreading, or a
-#'                  data.table that is the output of a previous \code{spread2}.
-#'                  If a vector, they should be cell indices (pixels) on the \code{landscape}.
-#'                  If user has x and y coordinates, these can be converted with
-#'                  \code{\link[raster]{cellFromXY}}.
+#' @param start Required. Either a vector of pixel numbers to initiate spreading, or a
+#'              data.table that is the output of a previous \code{spread2}.
+#'              If a vector, they should be cell indices (pixels) on the \code{landscape}.
+#'              If user has x and y coordinates, these can be converted with
+#'              \code{\link[raster]{cellFromXY}}.
 #'
-#' @param spreadProb    Numeric of length 1 or \code{RasterLayer}. If numeric of length 1, then this is
-#'                      the global (absolute) probability of
-#'                      spreading into each cell from a neighbor. If a raster then this must
-#'                      be the cell-specific (absolute) probability of a "receiving" potential cell.
-#'                      Default is \code{0.23}. If relative probabilities are required,
-#'                      use \code{spreadProbRel}. If used together, then the relative
-#'                      probabilities will be re-scaled so that the mean relative probability of
-#'                      potential neighbours is
-#'                      equal to the mean of \code{spreadProb} of the potential neighbours.
+#' @param spreadProb  Numeric of length 1 or \code{RasterLayer}.
+#'                    If numeric of length 1, then this is the global (absolute)
+#'                    probability of spreading into each cell from a neighbor.
+#'                    If a raster then this must be the cell-specific (absolute)
+#'                    probability of a "receiving" potential cell.
+#'                    Default is \code{0.23}.
+#'                    If relative probabilities are required, use \code{spreadProbRel}.
+#'                    If used together, then the relative probabilities will be
+#'                    re-scaled so that the mean relative probability of potential
+#'                    neighbours is equal to the mean of \code{spreadProb} of
+#'                    the potential neighbours.
 #'
-#' @param spreadProbRel Optional \code{RasterLayer} indicating a surface of relative probabilities
-#'                      useful when using \code{neighProbs} (which provides a mechanism for selecting
-#'                      a specific number of cells at each iteration). This
-#'                      indicates the relative probabilities for the selection of successful neighbours.
-#'                      \code{spreadProb} will still be evaluated
-#'                      \emph{after} the relative probabilities and \code{neighProbs} has been
-#'                      evaluated, i.e., potential cells will be identified, then some could be
-#'                      rejected via \code{spreadProb}. If absolute \code{spreadProb} is not
-#'                      desired, \emph{be sure to set} \code{spreadProb=1}.
+#' @param spreadProbRel Optional \code{RasterLayer} indicating a surface of relative
+#'                      probabilities useful when using \code{neighProbs} (which
+#'                      provides a mechanism for selecting a specific number of
+#'                      cells at each iteration).
+#'                      This indicates the relative probabilities for the selection
+#'                      of successful neighbours.
+#'                      \code{spreadProb} will still be evaluated \emph{after}
+#'                      the relative probabilities and \code{neighProbs} has been
+#'                      evaluated, i.e., potential cells will be identified, then
+#'                      some could be rejected via \code{spreadProb}.
+#'                      If absolute \code{spreadProb} is not desired,
+#'                      \emph{be sure to set} \code{spreadProb = 1}.
 #'                      Ignored if \code{neighProbs} is not provided.
 #'
 #' @param asRaster Logical, length 1. If \code{TRUE}, the function will return a \code{Raster}
@@ -153,10 +159,11 @@ if (getRversion() >= "3.1.0") {
 #' @param returnFrom Logical. Should the function return a column with the
 #'                      source, i.e, the lag 1 "from" pixel, for each iteration.
 #'
-#' @param circle        Logical. If TRUE, then outward spread2 will be by equidistant rings,
-#'                      rather than solely by adjacent cells (via \code{directions} arg.). Default
-#'                      is FALSE. Using \code{circle = TRUE} can be dramatically slower for large
-#'                      problems. Note, this will likely create unexpected results if \code{spreadProb} < 1.
+#' @param circle  Logical. If TRUE, then outward spread2 will be by equidistant rings,
+#'                rather than solely by adjacent cells (via \code{directions} arg.).
+#'                Default is \code{FALSE}.
+#'                Using \code{circle = TRUE} can be dramatically slower for large problems.
+#'                Note, this will likely create unexpected results if \code{spreadProb < 1}.
 #'
 #' @param skipChecks Logical. If TRUE, the argument checking (i.e., assertions) will be
 #'              skipped. This should likely only be used once it is clear that the function
@@ -364,7 +371,7 @@ setMethod(
 
       if (!missing(maxSize)) {
         if (is.data.table(start)) {
-          N <- uniqueN(start,by = "initialPixels")
+          N <- uniqueN(start, by = "initialPixels")
           assert(
             checkNumeric(maxSize, min.len = 1, max.len = 1),
             checkNumeric(maxSize, min.len = N, max.len = N)
@@ -378,7 +385,7 @@ setMethod(
       }
       if (!missing(exactSize)) {
         if (is.data.table(start)) {
-          N <- uniqueN(start,by = "initialPixels")
+          N <- uniqueN(start, by = "initialPixels")
           assert(
             checkNumeric(exactSize, min.len = 1, max.len = 1),
             checkNumeric(exactSize, min.len = N, max.len = N)
@@ -393,7 +400,8 @@ setMethod(
     }
     ##### End assertions
 
-    # Step 0 - set up objects -- main ones: dt, clusterDT -- get them from attributes on start or initiate them
+    # Step 0 - set up objects -- main ones: dt, clusterDT -- get them from attributes
+    ## on start or initiate them
     smallRaster <- ncells < 4e7 # should use bit vector (RAM) or ff raster (Disk)
     canUseAvailable <- !allowOverlap
     if (missing(maxSize)) {
@@ -406,8 +414,11 @@ setMethod(
       maxSize <- exactSize
     }
 
-    needDistance <- returnDistances | circle # returnDistances = TRUE and circle = TRUE both require distance calculations
-    maxRetriesPerID <- 10 # This means that if an event can not spread any more, it will try 10 times, including 2 jumps
+    # returnDistances = TRUE and circle = TRUE both require distance calculations
+    needDistance <- returnDistances | circle
+
+    # This means that if an event can not spread any more, it will try 10 times, incl. 2 jumps
+    maxRetriesPerID <- 10
 
     if (!is.numeric(start) & !is.data.table(start)) {
       if (is(start, "Raster")) {
@@ -418,7 +429,8 @@ setMethod(
       }
     }
 
-    if (!is.data.table(start)) { # A "new" entry into spread2 -- need to set up stuff
+    if (!is.data.table(start)) {
+      # A "new" entry into spread2 -- need to set up stuff
       if (canUseAvailable) {
         if (smallRaster) {
           notAvailable <- bit(ncells)
@@ -444,7 +456,9 @@ setMethod(
 
       if (!anyNA(maxSize)) {
         set(clusterDT, , "maxSize", maxSize)
-        set(dt, which(clusterDT$maxSize == 1), "state", "inactive") # de-activate ones that are 1 cell
+
+        # de-activate ones that are 1 cell
+        set(dt, which(clusterDT$maxSize == 1), "state", "inactive")
       }
       if (!anyNA(exactSize)) {
         set(clusterDT, , "exactSize", TRUE)
@@ -458,8 +472,9 @@ setMethod(
       # a "return" entry into spread2
       dt <- start
       if (!is.null(attr(start, "spreadState"))) {
-        clusterDT <- attr(start, "spreadState")$clusterDT #data.table(id=unique(start$id), initialPixels=unique(start$initialPixels), key = "initialPixels")
-        if (!key(clusterDT) == "initialPixels") # should have key if it came directly from output of spread2
+        clusterDT <- attr(start, "spreadState")$clusterDT
+        if (!key(clusterDT) == "initialPixels")
+          # should have key if it came directly from output of spread2
           setkeyv(clusterDT, "initialPixels")
         if (!anyNA(maxSize)) {
           if (any(maxSize != clusterDT$maxSize)) {
@@ -512,12 +527,14 @@ setMethod(
 
       # Step 1
       # Get neighbours, either via adj (default) or cir (jumping if stuck)
-      if (length(whTooSmall) > 0) { # cir
+      if (length(whTooSmall) > 0) {
+        # cir
         ## get slightly further neighbours
         dtRetry <- dt[whTooSmall]
         set(dtRetry, , "state", NULL)
-        whNeedJump <- which( ((clusterDT$numRetries + 1) %% 10) == 0)
-        if (length(whNeedJump)) { # jump every 10, starting at 4
+        whNeedJump <- which(((clusterDT$numRetries + 1) %% 10) == 0)
+        if (length(whNeedJump)) {
+          # jump every 10, starting at 4
           resCur <- res(landscape)[1]
           dtRetryJump <- dtRetry[clusterDT[whNeedJump], nomatch = 0]
           fromPixels <- dtRetryJump$pixels
@@ -525,13 +542,13 @@ setMethod(
             cbind(id = fp, cir(landscape, loci = fromPixels[fp],
                                includeBehavior = "excludePixels",
                                minRadius = resCur,
-                               maxRadius = 4*resCur)[, "indices"])
+                               maxRadius = 4 * resCur)[, "indices"])
             }) %>%
             do.call(what = rbind)
 
           dtPotential <- matrix(as.integer(dtPotential), ncol = 2)
           colnames(dtPotential) <- c("id", "to")
-          dtPotentialJump <- cbind(from = fromPixels[dtPotential[,"id"]],
+          dtPotentialJump <- cbind(from = fromPixels[dtPotential[, "id"]],
                                to = dtPotential[, "to"],
                                id = dtRetryJump$initialPixels[dtPotential[, "id"]])
           dtRetry <- dtRetry[!clusterDT[whNeedJump]] # remove jumped neighbours
@@ -601,10 +618,11 @@ setMethod(
           }
 
           angleQualities <- angleQuality(dtPotential, landscape, actualAsymmetryAngle)
-          naAQ <- is.na(angleQualities[,"angleQuality"])
-          angleQualities[naAQ,"angleQuality"] <- 1
+          naAQ <- is.na(angleQualities[, "angleQuality"])
+          angleQualities[naAQ, "angleQuality"] <- 1
           # convert dists to effective distance
-          effDists <- dists * ((2 - angleQualities[,"angleQuality"])/2 * (actualAsymmetry - 1) + 1)
+          effDists <- dists * ((2 - angleQualities[, "angleQuality"]) / 2 *
+                                 (actualAsymmetry - 1) + 1)
         }
 
         if (circle) {
@@ -614,11 +632,11 @@ setMethod(
             dtPotentialAsymmetry <- dtPotential[!distKeepers]
             if (sum(distKeepers) == 0) {
               # all failed
-              set(dt, ,"state","successful")
+              set(dt, , "state", "successful")
             } else {
               unDTPotAssym <- unique(dtPotentialAsymmetry$from)
               if (length(unDTPotAssym) == length(unique(dt$pixel))) {
-                set(dt, ,"state","successful")
+                set(dt, , "state", "successful")
               } else {
                 dt[pixels %in% unDTPotAssym, state := "successful"]
               }
@@ -640,7 +658,8 @@ setMethod(
       set(dtPotential, , "state", "successful")
 
       # steb 5 -- optional -- Algorithm neighProbs - uses a specific number of neighbours
-      if (!anyNA(neighProbs)) { # numNeighs algorithm
+      if (!anyNA(neighProbs)) {
+        # numNeighs algorithm
         numNeighsByPixel <- unique(dtPotential, by = c("id", "from"))
         if (is.list(neighProbs)) {
           if (NROW(numNeighsByPixel) != length(neighProbs)) {
@@ -663,7 +682,8 @@ setMethod(
         dupsWithinDtPotential <- duplicatedInt(dtPotential$to)
         successCells <- dtPotential$to[!dupsWithinDtPotential] # remove the dupsWithinDtPotential
         potentialNotAvailable <- notAvailable[successCells]
-        whNoDupsCurItAndAll <- seq_along(dtPotential$to)[!dupsWithinDtPotential][!potentialNotAvailable]
+        whNoDupsCurItAndAll <- seq_along(dtPotential$to)[!dupsWithinDtPotential][
+          !potentialNotAvailable]
         dtPotential <- dtPotential[whNoDupsCurItAndAll]
         setkeyv(dtPotential, c("id", "from")) # sort so it is the same as numNeighsByPixel
 
@@ -684,18 +704,21 @@ setMethod(
           }
           # might be zero length because of spreadProb NAs
           if (NROW(dtPotential)) {
-            # If it is a corner or has had pixels removed bc of duplicates, it may not have enough neighbours
+            # If it is a corner or has had pixels removed bc of duplicates,
+            # it may not have enough neighbours
             numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
-            set(numNeighsByPixel, , "numNeighs", pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm=TRUE))
+            set(numNeighsByPixel, , "numNeighs",
+                pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
             dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
-              .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)], by="from"]$V1]
+              .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
+              by = "from"]$V1]
           }
-
           set(dtPotential, , "spreadProbRel", NULL)
         }
-      } # end of neighProbs -- should now have only dtPotentials that match number of neighbours required
+      } # end of neighProbs -- should now have only dtPotentials that match number neighbours req'd
 
-      # step 6 -- spreadProb implementation - uses an absolute probability for each potential neighbour
+      # step 6 -- spreadProb implementation - uses an absolute probability for
+      # each potential neighbour
       # Extract spreadProb for the current set of potentials
       actualSpreadProb <- if (length(spreadProb) == 1) {
         rep(spreadProb, NROW(dtPotential))
@@ -703,7 +726,8 @@ setMethod(
         spreadProb[dtPotential$to]
       }
 
-      # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle -- circle asymmetry happens elsewhere
+      # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle
+      #  -- circle asymmetry happens elsewhere
       # modify actualSpreadProb if there is asymmetry
       if (!is.na(asymmetry) & !circle) {
         actualAsymmetry <- if (length(asymmetry) == 1) {
@@ -719,8 +743,8 @@ setMethod(
 
         angleQualities <- angleQuality(dtPotential, landscape, actualAsymmetryAngle)
 
-        naAQ <- is.na(angleQualities[,"angleQuality"])
-        angleQualities[naAQ,"angleQuality"] <- actualSpreadProb[naAQ]
+        naAQ <- is.na(angleQualities[, "angleQuality"])
+        angleQualities[naAQ, "angleQuality"] <- actualSpreadProb[naAQ]
 
         actualSpreadProb <- asymmetryAdjust(angleQualities, actualSpreadProb, actualAsymmetry)
       }
@@ -729,7 +753,8 @@ setMethod(
 
       # Step 7 - Remove duplicates & bind dt and dtPotential
       if (anyNA(neighProbs)) {
-        if (allowOverlap | !canUseAvailable) { # overlapping allowed
+        if (allowOverlap | !canUseAvailable) {
+          # overlapping allowed
           dtPotential <- dtPotential[spreadProbSuccess]
           dtNROW <- NROW(dt)
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
@@ -744,7 +769,8 @@ setMethod(
         } else {
           # no overlapping allowed
 
-          # This block is instead of a dt[!duplicated(pixels)] which becomes very slow on large problems
+          # This block is instead of a dt[!duplicated(pixels)] which becomes very
+          # slow on large problems
           successCells <- dtPotential$to[spreadProbSuccess]
           dupsWithinDtPotential <- duplicatedInt(successCells)
 
@@ -752,7 +778,8 @@ setMethod(
           potentialNotAvailable <- notAvailable[successCells]
 
           # 3 reasons why potentials are not selected
-          whSuccNoDupsCurItAndAll <- seq_along(spreadProbSuccess)[spreadProbSuccess][!dupsWithinDtPotential][!potentialNotAvailable]
+          whSuccNoDupsCurItAndAll <- seq_along(spreadProbSuccess)[spreadProbSuccess][
+            !dupsWithinDtPotential][!potentialNotAvailable]
           notAvailable[successCells[!potentialNotAvailable]] <- TRUE
           dtPotential <- dtPotential[whSuccNoDupsCurItAndAll]
 
@@ -765,59 +792,65 @@ setMethod(
         if (NROW(dtPotential)) notAvailable[dtPotential$pixels] <- TRUE
       }
 
-      # Step 8 - Size issues -- i.e., if too big (remove extras) or too small (make sure keeps going)
+      # Step 8 - Size issues -- i.e., if too big (remove extras) or too small (make sure keeps going) # nolint
       if (!anyNA(maxSize) | !(anyNA(exactSize))) {
         # Too big first
-        setkeyv(dt,"initialPixels") # must sort because maxSize is sorted
+        setkeyv(dt, "initialPixels") # must sort because maxSize is sorted
         setkeyv(dtPotential, "initialPixels")
         dtPotClusterDT <- dtPotential[, list(size = as.integer(.N)), by = "initialPixels"]
         clusterDT[dtPotClusterDT, size := size + i.size]
         # This next line is a work around for a problem that doesn't make sense:
         # See: https://stackoverflow.com/q/29615181/1380598
         alloc.col(clusterDT, 7)
-        set(clusterDT, , "tooBigByNCells", clusterDT$size-as.integer(clusterDT$maxSize))
+        set(clusterDT, , "tooBigByNCells", clusterDT$size - as.integer(clusterDT$maxSize))
 
         currentSizetooBigByNCells <- clusterDT[tooBigByNCells > 0]
         if (NROW(currentSizetooBigByNCells) > 0) {
           # sort them so join works between dt1 and currentSizetooBigByNCells
           setkeyv(currentSizetooBigByNCells, "initialPixels")
-          set(dt, ,"origIndex", seq_len(NROW(dt)))
+          set(dt, , "origIndex", seq_len(NROW(dt)))
           dt1 <- dt[state == "successful"]
           dt1b <- dt1[currentSizetooBigByNCells] # attach tooBigByNCells
           dt1a <- tryCatch(dt1b[, list(omit = origIndex[sample.int(.N, tooBigByNCells)]),
                                 by = "initialPixels"],
                    error = function(x) TRUE)
-          #dt1a <- dt1b[,list(omit=resample(origIndex,tooBigByNCells)),by="initialPixels"]
-          dt <- dt[-dt1a$omit][,list(initialPixels, pixels, state)]
+
+          dt <- dt[-dt1a$omit][, list(initialPixels, pixels, state)]
           dt[dt1a, state := "inactive"]
           clusterDT[currentSizetooBigByNCells[, list(initialPixels)],
                     size := size - tooBigByNCells]
         }
 
         # Too small second
-        if (!(anyNA(exactSize))) { # push those that are too small into "tooSmall"
+        if (!(anyNA(exactSize))) {
+          # push those that are too small into "tooSmall"
           currentSizeTooSmall <- clusterDT[tooBigByNCells < 0]
           if (NROW(currentSizeTooSmall) > 0) {
             # successful means will become activeSource next iteration,
             # so they don't need any special treatment
-            currentSizeTooSmall <- currentSizeTooSmall[!dt[state %in% c("successful", "holding"), nomatch = 0]]
+            currentSizeTooSmall <- currentSizeTooSmall[
+              !dt[state %in% c("successful", "holding"), nomatch = 0]
+            ]
           }
           # if the ones that are too small are unsuccessful, make them "tooSmall"
           set(dt, , "ind", seq_len(NROW(dt)))
-          whTooSmall <- dt[!(state %in% c("successful", "inactive"))][currentSizeTooSmall, nomatch = 0]$ind
+          whTooSmall <- dt[!(state %in% c("successful", "inactive"))][
+            currentSizeTooSmall, nomatch = 0]$ind
           set(dt, , "ind", NULL)
 
           if (length(whTooSmall)) {
-            set(clusterDT, , "indClDT", seq_len(NROW(clusterDT))) # add index column -- like doing a 'which( )'
+            # add index column -- like doing a 'which( )'
+            set(clusterDT, , "indClDT", seq_len(NROW(clusterDT)))
             whNeedRetryClusterDT <- clusterDT[dt[whTooSmall]]$indClDT
             set(clusterDT, , "indClDT", NULL)
-            tooManyRetries <- clusterDT[whNeedRetryClusterDT,numRetries > maxRetriesPerID]
+            tooManyRetries <- clusterDT[whNeedRetryClusterDT, numRetries > maxRetriesPerID]
             if (sum(tooManyRetries) > 0) {
               whNeedRetryClusterDT <- whNeedRetryClusterDT[!tooManyRetries]
               whTooSmall <- whTooSmall[!tooManyRetries]
             }
             set(dt, whTooSmall, "state", "tooSmall")
-            set(clusterDT, whNeedRetryClusterDT, "numRetries", clusterDT$numRetries[whNeedRetryClusterDT] + 1L)
+            set(clusterDT, whNeedRetryClusterDT, "numRetries",
+                clusterDT$numRetries[whNeedRetryClusterDT] + 1L)
           }
         }
         set(clusterDT, , "tooBigByNCells", NULL)
@@ -827,14 +860,14 @@ setMethod(
       notInactive <- dt$state != "inactive" # currently activeSource, successful, or holding
       whNotInactive <- which(notInactive)
       activeStates <- dt$state[whNotInactive]
-      whActive <- whNotInactive[activeStates == "successful" | activeStates == "holding" ]
+      whActive <- whNotInactive[activeStates == "successful" | activeStates == "holding"]
       whInactive <- whNotInactive[activeStates == "activeSource"]
 
       # convert previous states to new states
-      #   activeSource -> inactive
-      #   holding -> activeSource
-      #   successful -> activeSource
-      #   tooSmall -> tooSmall
+      #   activeSource ==> inactive
+      #   holding ==> activeSource
+      #   successful ==> activeSource
+      #   tooSmall ==> tooSmall
       set(dt, whNotInactive, "state",
           c("inactive", "activeSource", "activeSource", "tooSmall")[
             fmatch(activeStates, c("activeSource", "holding", "successful", "tooSmall"))])
@@ -895,7 +928,8 @@ setMethod(
 #' @keywords internal
 #'
 rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames) {
-  # distance column is second last, but needs to be last: to merge with dt, need: from, to, state in that order
+  # distance column is second last, but needs to be last
+  # to merge with dt, need: from, to, state in that order
   reorderColsWDistance(needDistance, dtPotential, dtPotentialColNames)
 
   if (!returnFrom) {
@@ -905,10 +939,11 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
   } else {
     setnames(dtPotential, old = c("id", "to"), new = c("initialPixels", "pixels"))
   }
-  #setcolorder(dtPotential, neworder = dtPotentialColNames)
+
   # convert state of all those still left, move potentialPixels into pixels column
   if (NROW(dtPotential)) {
-    dt <- rbindlist(list(dt, dtPotential), fill = TRUE) # need fill = TRUE if user has passed extra columns
+    # need fill = TRUE if user has passed extra columns
+    dt <- rbindlist(list(dt, dtPotential), fill = TRUE)
   } else {
     dt
   }
@@ -922,18 +957,22 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
 #'
 reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames) {
   if (needDistance)
-    setcolorder(dtPotential, neworder = c(dtPotentialColNames[(dtPotentialColNames %in% colnames(dtPotential))],
-                                          colnames(dtPotential)[!(colnames(dtPotential) %in% dtPotentialColNames)]))
+    setcolorder(dtPotential,
+                neworder = c(
+                  dtPotentialColNames[(dtPotentialColNames %in% colnames(dtPotential))],
+                  colnames(dtPotential)[!(colnames(dtPotential) %in% dtPotentialColNames)]
+                )
+    )
 }
 
-#' @param dtPotential Data.table of potential spread locations.
-#' @param landscape RasterLayer passed from \code{spread2}
-#' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or vector NROW(dtPotential)
-#' @rdname spread2-internals
+#' @param dtPotential \code{data.table} of potential spread locations.
+#' @param landscape \code{RasterLayer} passed from \code{spread2}.
+#' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or
+#'                             vector \code{NROW(dtPotential)}.
 #' @keywords internal
+#' @rdname spread2-internals
 #'
 angleQuality <- function(dtPotential, landscape, actualAsymmetryAngle) {
-  #browser()
   from <- cbind(id = dtPotential$id, xyFromCell(landscape, dtPotential$id))
   to <- cbind(id = dtPotential$id, xyFromCell(landscape, dtPotential$to))
   d <- .pointDirection(from = from, to = to)
@@ -949,19 +988,20 @@ angleQuality <- function(dtPotential, landscape, actualAsymmetryAngle) {
 #' @rdname spread2-internals
 #'
 asymmetryAdjust <- function(angleQualities, quantity, actualAsymmetry) {
-  if (sum(angleQualities[,"angleQuality"]) %==% 0) { # the case where there is no difference in the angles, and they are all zero
+  if (sum(angleQualities[, "angleQuality"]) %==% 0) {
+    # the case where there is no difference in the angles, and they are all zero
     return(quantity)
   } else {
     dd <- data.table(angleQualities, quantity)
-    dd[, quantityAdj := quantity * angleQualities[,"angleQuality"]]
-    dd[, quantityAdj2 := quantityAdj/(mean(quantityAdj)/mean(quantity)), by = "id"]
+    dd[, quantityAdj := quantity * angleQualities[, "angleQuality"]]
+    dd[, quantityAdj2 := quantityAdj / (mean(quantityAdj) / mean(quantity)), by = "id"]
 
     dd[, newQuantity := {
-      minQuantity <- 0#min(2*quantity)
-      maxQuantity <- max(2*quantity)
-      aaMinus1 <- (actualAsymmetry - 1)
-      par2 <- aaMinus1 * sum(quantityAdj) / ((length(quantityAdj) * (maxQuantity - minQuantity) +
-                                                aaMinus1 * (sum(quantityAdj - minQuantity)) ))
+      minQuantity <- 0
+      maxQuantity <- max(2 * quantity)
+      aaMinus1 <- actualAsymmetry - 1
+      par2 <- aaMinus1 * sum(quantityAdj) / (length(quantityAdj) * (maxQuantity - minQuantity) +
+                                               aaMinus1 * sum(quantityAdj - minQuantity))
       par1 <- par2 / aaMinus1 * (maxQuantity - minQuantity)
       (quantityAdj2 - minQuantity) * par2 + par1
     }, by = "id"]

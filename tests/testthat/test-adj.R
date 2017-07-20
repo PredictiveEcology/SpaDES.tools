@@ -227,25 +227,30 @@ test_that("adj.R results not identical to adjacent", {
             for (dirs in list(4, 8, "bishop")) {
               for (prs in c(TRUE, FALSE)) {
                 for (tor in c(TRUE, FALSE)) {
-                  adjDT <- adj.raw(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
-                                   include = incl, target = targs,
-                                cutoff.for.data.table = 2, id = ids, pairs = prs, torus = tor)
-                  adjMat <- adj.raw(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
-                                    include = incl, target = targs,
-                                    id = ids, pairs = prs, torus = tor)
-                  #expect_true(isTRUE(all.equal(adjMat, adjDT)))
+                  adjDT <- adj.raw(a, sam, directions = dirs, sort = sortTF,
+                                   match.adjacent = ma, include = incl, target = targs,
+                                   cutoff.for.data.table = 2, id = ids, pairs = prs, torus = tor)
+                  adjMat <- adj.raw(a, sam, directions = dirs, sort = sortTF,
+                                    match.adjacent = ma, include = incl,
+                                    target = targs, id = ids, pairs = prs, torus = tor)
                   expect_equivalent(adjMat, adjDT)
-                  #numTests <<- numTests+1
                   if (!tor) {
-                    adj2 <- tryCatch(raster::adjacent(a, sam, directions = dirs, sorted = sortTF, include = incl,
-                                             id = !is.null(ids), pairs = prs, target = targs), error = function(x) FALSE)
+                    adj2 <- tryCatch(
+                      raster::adjacent(a, sam, directions = dirs, sorted = sortTF,
+                                       include = incl, id = !is.null(ids),
+                                       pairs = prs, target = targs),
+                      error = function(x) FALSE
+                    )
                     if (isTRUE(adj2)) {
                       if (!prs) {
                         if (ma) {
-
-                          expect_equivalent(adjDT, adj2, info = paste0("ma=", ma, ", dirs=", dirs, ", sortTF=", sortTF,
-                                                                  ", incl=", incl, ", is.null(ids)=", is.null(ids),
-                                                                  ", prs=", prs))
+                          expect_equivalent(adjDT, adj2,
+                                            info = paste0("ma=", ma,
+                                                          ", dirs=", dirs,
+                                                          ", sortTF=", sortTF,
+                                                          ", incl=", incl,
+                                                          ", is.null(ids)=", is.null(ids),
+                                                          ", prs=", prs))
                         } else {
                           expect_equivalent(unique(sort(adjDT[, "to"])), sort(adj2))
                         }
@@ -255,17 +260,18 @@ test_that("adj.R results not identical to adjacent", {
                           if (!sortTF) {
                             expect_equivalent(adjDT, adj2[, colOrd])
                           } else {
-                            expect_equivalent(adjDT, adj2[order(adj2[, "from"], adj2[, "to"]), colOrd])
+                            expect_equivalent(adjDT, adj2[order(adj2[, "from"],
+                                                                adj2[, "to"]), colOrd])
                           }
                         } else {
                           if (!sortTF) {
-                            # if match.adjacent is FALSE, and sort is FALSE, then they mostly don't match
+                            # if match.adjacent is FALSE, and sort is FALSE,
+                            # then they mostly don't match
                              if (sum((adjDT - adj2[, colOrd]) ^ 2) == 0) {
                                expect_equivalent(adjDT, adj2[, colOrd])
                              } else {
                                # sum of squared difference should be positive
                                expect_gt(sum((adjDT - adj2[, colOrd]) ^ 2), 0)
-                               #numTests <<- numTests+1
                              }
                           }
                         }
@@ -289,19 +295,19 @@ test_that("adj.R results not identical to adjacent", {
   #Unit: milliseconds
   #    min       lq     mean   median       uq      max neval
   #1.31649 1.399192 1.895637 1.455207 1.705074 6.158969  1000
-  microbenchmark(adjDT <- adj.raw(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
-                                  include = incl,
-                                  cutoff.for.data.table = 5, id = ids, pairs = prs, torus = tor), times = 1e3)
+  microbenchmark(adjDT <- adj.raw(a, sam, directions = dirs, sort = sortTF,
+                                  match.adjacent = ma, include = incl,
+                                  cutoff.for.data.table = 5, id = ids,
+                                  pairs = prs, torus = tor), times = 1e3)
   # Unit: microseconds
   #     min     lq     mean  median     uq      max neval
   #  65.986 69.212 111.4826 73.7575 87.981 15844.22  1000
 
 })
 
-
 test_that("errors in adj are not correct", {
   a <- raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1)
-  sam <- sample(1:length(a), 4 )
+  sam <- sample(1:length(a), 4)
   expect_error(adj.raw(a, sam, directions = 5), "directions must be 4 or 8 or \'bishop\'")
 })
 

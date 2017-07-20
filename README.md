@@ -2,6 +2,8 @@
 
 Additional modelling tools for Spatial Discrete Event Simulation (`SpaDES`) module development.
 
+DESCRIPTION (TO DO).
+
 **Website:** [http://SpaDES.PredictiveEcology.org](http://SpaDES.PredictiveEcology.org)
 
 **Wiki:** [https://github.com/PredictiveEcology/SpaDES/wiki](https://github.com/PredictiveEcology/SpaDES/wiki)

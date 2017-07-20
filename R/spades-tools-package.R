@@ -25,9 +25,12 @@
 #' Several functions assist with these:
 #'
 #' \tabular{ll}{
-#'   \code{\link{adj}} \tab An optimized (i.e., faster) version of \code{\link[raster]{adjacent}}\cr
-#'   \code{\link{cir}} \tab Identify pixels in a circle around a \code{\link[sp:SpatialPoints-class]{SpatialPoints*}} object\cr
-#'   \code{\link{directionFromEachPoint}} \tab Fast calculation of direction and distance surfaces\cr
+#'   \code{\link{adj}} \tab An optimized (i.e., faster) version of
+#'                          \code{\link[raster]{adjacent}}\cr
+#'   \code{\link{cir}} \tab Identify pixels in a circle around a
+#'                          \code{\link[sp:SpatialPoints-class]{SpatialPoints*}} object\cr
+#'   \code{\link{directionFromEachPoint}} \tab Fast calculation of direction and
+#'                                             distance surfaces\cr
 #'   \code{\link{distanceFromEachPoint}} \tab Fast calculation of distance surfaces\cr
 #'   \code{\link{rings}} \tab Identify rings around focal cells (e.g., buffers and donuts)\cr
 #'   \code{\link{spokes}} \tab TO DO: need description\cr
@@ -42,7 +45,8 @@
 #' \tabular{ll}{
 #'   \code{\link{crw}} \tab Simple correlated random walk function\cr
 #'   \code{\link{heading}} \tab Determines the heading between SpatialPoints*\cr
-#'   \code{\link[quickPlot]{makeLines}} \tab Makes \code{SpatialLines} object for, e.g., drawing arrows\cr
+#'   \code{\link[quickPlot]{makeLines}} \tab Makes \code{SpatialLines} object for,
+#'                                           e.g., drawing arrows\cr
 #'   \code{\link{move}} \tab A meta function that can currently only take "crw"\cr
 #'   \code{\link{specificNumPerPatch}} \tab Initiate a specific number of agents per patch\cr
 #' }
@@ -68,7 +72,8 @@
 #'
 #' @section 5 Random Map Generation:
 #'
-#' It is often useful to build dummy maps with which to build simulation models before all data are available.
+#' It is often useful to build dummy maps with which to build simulation models
+#' before all data are available.
 #' These dummy maps can later be replaced with actual data maps.
 #'
 #' \tabular{ll}{

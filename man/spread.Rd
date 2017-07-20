@@ -359,10 +359,8 @@ directions <- 8
 setColors(hab) <- paste(c("transparent", brewer.pal(8, "Greys")))
 
 # note speedup is equivalent to making pyramids, so, some details are lost
-if (interactive()) {
-  clearPlot()
-  Plot(hab, speedup = 3)
-}
+clearPlot()
+Plot(hab, speedup = 3)
 
 # initiate 10 fires
 startCells <- as.integer(sample(1:ncell(emptyRas), 100))
@@ -371,30 +369,30 @@ fires <- spread(hab, loci = startCells, 0.235, persistence = 0, numNeighs = 2,
 
 #set colors of raster, including a transparent layer for zeros
 setColors(fires, 10) <- c("transparent", brewer.pal(8, "Reds")[5:8])
-if (interactive()) {
-  Plot(fires)
-  Plot(fires, addTo = "hab")
+Plot(fires)
+Plot(fires, addTo = "hab")
 
-  #alternatively, set colors using cols= in the Plot function
-  clearPlot()
-  Plot(hab)
-  Plot(fires) # default color range makes zero transparent.
-  # Instead, to give a color to the zero values, use \\code{zero.color=}
-  Plot(fires, addTo = "hab",
-       cols = colorRampPalette(c("orange", "darkred"))(10), zero.color = "transparent")
-  hab2 <- hab
-  Plot(hab2)
-  Plot(fires, addTo = "hab2", zero.color = "transparent",
-     cols = colorRampPalette(c("orange", "darkred"))(10))
-  # or overplot the original (NOTE: legend stays at original values)
-  Plot(fires, cols = topo.colors(10), new = TRUE, zero.color = "white")
-}
+#alternatively, set colors using cols= in the Plot function
+clearPlot()
+Plot(hab)
+Plot(fires) # default color range makes zero transparent.
 
-####################
+# Instead, to give a color to the zero values, use \\code{zero.color=}
+Plot(fires, addTo = "hab",
+     cols = colorRampPalette(c("orange", "darkred"))(10), zero.color = "transparent")
+
+hab2 <- hab
+Plot(hab2)
+Plot(fires, addTo = "hab2", zero.color = "transparent",
+   cols = colorRampPalette(c("orange", "darkred"))(10))
+# or overplot the original (NOTE: legend stays at original values)
+Plot(fires, cols = topo.colors(10), new = TRUE, zero.color = "white")
+
+##------------------------------------------------------------------------------
 ## Continue event by passing interrupted object into spreadState
-####################
+##------------------------------------------------------------------------------
 
-## Interrupt a spread event using iterations - need `returnIndices = TRUE`` to use outputs
+## Interrupt a spread event using iterations - need `returnIndices = TRUE` to use outputs
 ##   as new inputs in next iteration
 fires <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)),
                 returnIndices = TRUE, 0.235, 0, NULL, 1e8, 8, iterations = 3, id = TRUE)
@@ -419,10 +417,9 @@ fullRas <- raster(hab)
 fullRas[] <- 1:ncell(hab)
 burned <- fires[active == FALSE]
 burnedMap <- rasterizeReduced(burned, fullRas, "id", "indices")
-if (interactive()) {
-  clearPlot()
-  Plot(burnedMap, new = TRUE)
-}
+
+clearPlot()
+Plot(burnedMap, new = TRUE)
 
 ####################
 ## stopRule examples
@@ -448,10 +445,8 @@ set.seed(1234)
 stopRuleB_NotExact <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)), 1, 0,
                              NULL, maxSize = 1e6, 8, 1e6, id = TRUE, circle = TRUE,
                              stopRule = stopRule2)
-if (interactive()) {
-  clearPlot()
-  Plot(stopRuleA, stopRuleB, stopRuleB_NotExact)
-}
+clearPlot()
+Plot(stopRuleA, stopRuleB, stopRuleB_NotExact)
 
 # Test that the stopRules work
 # stopRuleA was not exact, so each value will "overshoot" the stopRule, here it was hab>50
@@ -471,15 +466,14 @@ tapply(foo[, "vals"], foo[, "id"], sum) # Correct ... all are above 50
 # Diamonds - can make them with: a boolean raster, directions = 4,
 #    stopRule in place, spreadProb = 1
 diamonds <- spread(hab > 0, spreadProb = 1, directions = 4, id = TRUE, stopRule = stopRule2)
-if (interactive()) {
-  clearPlot()
-  Plot(diamonds)
-}
+
+clearPlot()
+Plot(diamonds)
 
 # Squares - can make them with: a boolean raster, directions = 8,
 #    stopRule in place, spreadProb = 1
 squares <- spread(hab > 0, spreadProb = 1, directions = 8, id = TRUE, stopRule = stopRule2)
-if (interactive()) Plot(squares)
+Plot(squares)
 
 # Interference shapes - can make them with: a boolean raster, directions = 8,
 #    stopRule in place, spreadProb = 1
@@ -487,10 +481,8 @@ stopRule2 <- function(landscape) sum(landscape) > 200
 squashedDiamonds <- spread(hab > 0, spreadProb = 1,
                            loci = (ncell(hab) - ncol(hab)) / 2 + c(4, -4),
                            directions = 4, id = TRUE, stopRule = stopRule2)
-if (interactive()) {
-  clearPlot()
-  Plot(squashedDiamonds)
-}
+clearPlot()
+Plot(squashedDiamonds)
 
 # Circles with spreadProb < 1 will give "more" circular shapes, but definitely not circles
 stopRule2 <- function(landscape) sum(landscape) > 200
@@ -503,10 +495,9 @@ set.seed(seed)
 regularCA <- spread(hab > 0, spreadProb = 0.23,
                     loci = (ncell(hab) - ncol(hab)) / 2 + c(4, -4),
                     directions = 8, id = TRUE)#, stopRule = stopRule2)
-if (interactive()) {
-  clearPlot()
-  Plot(circlish, regularCA)
-}
+
+clearPlot()
+Plot(circlish, regularCA)
 
 ####################
 # complex stopRule
@@ -519,21 +510,22 @@ endSizes <- seq_along(initialLoci) * 200
 #   variable passed into spread
 stopRule3 <- function(landscape, id, endSizes) sum(landscape) > endSizes[id]
 
-TwoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
+twoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
                              directions = 8, id = TRUE, stopRule = stopRule3,
                              endSizes = endSizes, stopRuleBehavior = "excludePixel")
 
 # or using named list of named elements:
-# TwoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
-#                              directions = 8, id = TRUE, stopRule = stopRule3,
-#                              vars = list(endSizes = endSizes), stopRuleBehavior = "excludePixel")
+twoCirclesDiffSize2 <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
+                             directions = 8, id = TRUE, stopRule = stopRule3,
+                             vars = list(endSizes = endSizes), stopRuleBehavior = "excludePixel")
 
-if (interactive()) {
-  clearPlot()
-  Plot(TwoCirclesDiffSize)
-}
-cirs <- getValues(TwoCirclesDiffSize)
-vals <- tapply(hab[TwoCirclesDiffSize], cirs[cirs > 0], sum)
+identical(twoCirclesDiffSize, twoCirclesDiffSize2) ## TRUE
+
+clearPlot()
+Plot(twoCirclesDiffSize)
+
+cirs <- getValues(twoCirclesDiffSize)
+vals <- tapply(hab[twoCirclesDiffSize], cirs[cirs > 0], sum)
 
 # Stop if sum of landscape is big or mean of quality is too small
 quality <- raster(hab)
@@ -542,7 +534,7 @@ stopRule4 <- function(landscape, quality, cells) {
   (sum(landscape) > 20) | (mean(quality[cells]) < 0.3)
 }
 
-TwoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
+twoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
                              directions = 8, id = TRUE, stopRule = stopRule4,
                              quality = quality, stopRuleBehavior = "excludePixel")
 
@@ -567,11 +559,8 @@ overlapEvents[] <- 0
 toMap <- circs[, sum(id), by = indices]
 overlapEvents[toMap$indices] <- toMap$V1
 
-if (interactive()) {
-  clearPlot()
-  Plot(overlapEvents)
-}
-
+clearPlot()
+Plot(overlapEvents)
 
 ## Using alternative algorithm, not probabilistic diffusion
 ## Will give exactly correct sizes, yet still with variability
@@ -586,20 +575,20 @@ fires <- spread(hab, loci = startCells, 1, persistence = 0,
                 iterations = 1e6, id = TRUE, plot.it = FALSE, exactSizes = TRUE);
 all(table(fires[fires > 0][]) == floor(maxSizes))
 
-if (interactive()) {
-  dev()
-  clearPlot()
-  Plot(fires, new = TRUE, cols = c("red", "yellow"), zero.color = "white")
-  Plot(hist(table(fires[][fires[] > 0])), title = "fire size distribution")
-}
+dev()
+clearPlot()
+Plot(fires, new = TRUE, cols = c("red", "yellow"), zero.color = "white")
+Plot(hist(table(fires[][fires[] > 0])), title = "fire size distribution")
 
 ## Example with relativeSpreadProb ... i.e., a relative probability spreadProb
 ##  (shown here because because spreadProb raster is not a probability).
 ##  Here, we force the events to grow, choosing always 2 neighbours,
-##  according to the relative probabilities
-##  contained on hab layer. Note, `neighProbs = c(0,1)`` forces each active pixel
-##  to move to 2 new pixels (`prob = 0`` for 1 neighbour, `prob = 1`` for 2 neighbours)
-##  Note: set hab3 to be very distinct probability differences, to detect spread
+##  according to the relative probabilities contained on hab layer.
+##
+## Note: `neighProbs = c(0,1)` forces each active pixel to move to 2 new pixels
+## (`prob = 0` for 1 neighbour, `prob = 1` for 2 neighbours)
+##
+## Note: set hab3 to be very distinct probability differences, to detect spread
 ##  differences
 hab3 <- (hab < 20) * 200 + 1
 seed <- 643503
@@ -608,17 +597,18 @@ sam <- sample(which(hab3[] == 1), 1)
 set.seed(seed)
 events1 <- spread(hab3, spreadProb = hab3, loci = sam, directions = 8,
              neighProbs = c(0, 1), maxSize = c(70), exactSizes = TRUE)
+
 # Compare to absolute probability version
 set.seed(seed)
 events2 <- spread(hab3, id = TRUE, loci = sam, directions = 8,
                  neighProbs = c(0, 1), maxSize = c(70), exactSizes = TRUE)
-if (interactive()) {
-  clearPlot()
-  Plot(events1, new = TRUE, cols = c("red", "yellow"), zero.color = "white")
-  Plot(events2, new = TRUE, cols = c("red", "yellow"), zero.color = "white")
-  Plot(hist(table(events1[][events1[] > 0]), breaks = 30), title = "Event size distribution")
+
+clearPlot()
+Plot(events1, new = TRUE, cols = c("red", "yellow"), zero.color = "white")
+Plot(events2, new = TRUE, cols = c("red", "yellow"), zero.color = "white")
+Plot(hist(table(events1[][events1[] > 0]), breaks = 30), title = "Event size distribution")
 # Check that events1 resulted in higher hab3 pixels overall
-}
+
 # Compare outputs -- should be more high value hab pixels spread to in event1
 #  (randomness may prevent this in all cases)
 hab3[events1[] > 0]

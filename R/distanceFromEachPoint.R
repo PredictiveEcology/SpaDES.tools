@@ -125,7 +125,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
     nrowFrom <- NROW(from)
     if (nrowFrom > 1) {
       if (is.null(cumulativeFn)) {
-        if ((any(otherFromCols) | isTRUE(angles))  ) {
+        if (any(otherFromCols) | isTRUE(angles)) {
           out <- lapply(seq_len(nrowFrom), function(k) {
             out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
                                   angles = angles, maxDistance = maxDistance,
@@ -207,7 +207,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
           if (fromC) fromCellList <- lapply(seqLen, function(ind) {
             fromCell[inds == ind]
           })
-          parFunArgs <- list(cl = cl, x = seqLen , fun = parFunFun)
+          parFunArgs <- list(cl = cl, x = seqLen, fun = parFunFun)
         } else {
           parFun <- "lapply"
           fromList <- list(from)
@@ -294,28 +294,35 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
 #' Calculate distances and directions between many points and many grid cells
 #'
-#' This is a modification of \code{\link[raster]{distanceFromPoints}} for the case of many points.
-#' This version can often be faster for a single point because it does not return a RasterLayer. This is
-#' different than \code{\link[raster]{distanceFromPoints}} because it does not take the minimum
-#' distance from the set of points to all cells. Rather this returns the every pair-wise point distance.
-#' As a result, this can be used for doing inverse distance weightings, seed rain, cumulative effects
-#' of distance-based processes etc. If memory limitation is an issue, maxDistance will keep memory
-#' use down, but with the consequences that there will be a maximum distance returned. This function
-#' has the potential to use a lot of memory if there are a lot of \code{from} and \code{to} points.
+#' This is a modification of \code{\link[raster]{distanceFromPoints}} for the case
+#' of many points.
+#' This version can often be faster for a single point because it does not return
+#' a \code{RasterLayer}.
+#' This is different than \code{\link[raster]{distanceFromPoints}} because it does
+#' not take the minimum distance from the set of points to all cells.
+#' Rather this returns the every pair-wise point distance.
+#' As a result, this can be used for doing inverse distance weightings, seed rain,
+#' cumulative effects of distance-based processes etc.
+#' If memory limitation is an issue, \code{maxDistance} will keep memory use down,
+#' but with the consequences that there will be a maximum distance returned.
+#' This function has the potential to use a lot of memory if there are a lot of
+#' \code{from} and \code{to} points.
 #'
-#' @param from matrix with 2 or 3 columns, x and y, representing x and y coordinates of "from" cell,
-#'             and optional "id" which will be returned, and if "id" column is in \code{to},
-#'             it will be matched with that.
+#' @param from matrix with 2 or 3 columns, x and y, representing x and y coordinates
+#'             of \code{from} cell, and optional \code{id}, which will be returned,
+#'             and if \code{id} column is in \code{to}, it will be matched with that.
 #' @param to matrix with 2  or 3 columns (or optionally more, all of which will be returned),
-#'           x and y, representing x and y coordinates of "to" cells, and
-#'           optional "id" which will be matched with "id" from \code{from}. It makes no sense to
-#'           have "id" column here with no "id" column in \code{from}
-#' @param landscape RasterLayer. optional. This is only used if \code{to} is NULL, in which case
-#'                  all cells are considered \code{to}
+#'           x and y, representing x and y coordinates of \code{to} cells, and
+#'           optional \code{id} which will be matched with \code{id} from \code{from}.
+#'           It makes no sense to have \code{id} column here with no \code{id} column
+#'           in \code{from}.
+#' @param landscape (opional) \code{RasterLayer}.
+#'                  This is only used if \code{to = NULL}, in which case all cells
+#'                  are considered \code{to}.
 #' @rdname directions
 #' @export
-#' @seealso \code{\link{distanceFromEachPoint}}, which will also return directions if \code{angles}
-#' is TRUE.
+#' @seealso \code{\link{distanceFromEachPoint}}, which will also return directions
+#' if \code{angles = TRUE}.
 #'
 #' @details \code{directionFromEachPoint} calls \code{.pointDirection}, which is
 #' not intended to be called directly by the user.

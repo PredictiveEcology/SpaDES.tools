@@ -53,7 +53,7 @@ transitions <- function(p, agent) {
 #' @rdname SELESnumAgents
 #'
 numAgents <- function(N, probInit) {
-  stopifnot((length(N) == 1), (is.numeric(N)))
+  stopifnot(length(N) == 1, is.numeric(N))
   return(N)
 }
 
@@ -247,17 +247,18 @@ agentLocation <- function(map) {
 #'
 #' @param absolute logical. Is \code{p} absolute probabilities or relative?
 #'
-#' @return An RasterLayer with probabilities of initialization. There are several combinations
-#' of inputs possible and they each result in different behaviors.
+#' @return A \code{RasterLayer} with probabilities of initialization.
+#'        There are several combinations of inputs possible and they each result
+#'        in different behaviours.
 #'
-#' If \code{p} is numeric or Raster and between 0 and 1, it is treated as an absolute probability, and a map
-#' will be produced with the p value(s) everywhere.
+#' If \code{p} is numeric or \code{Raster} and between 0 and 1, it is treated as an
+#' absolute probability, and a map will be produced with the p value(s) everywhere.
 #'
-#' If \code{p} is numeric or Raster and not between 0 and 1, it is treated as a relative probability, and a map
-#' will be produced with p/max(p) value(s) everywhere
+#' If \code{p} is numeric or \code{Raster} and not between 0 and 1, it is treated as a
+#' relative probability, and a map will be produced with \code{p/max(p)} value(s) everywhere.
 #'
-#' If \code{absolute} is provided, it will override the previous statements, unless \code{absolute}
-#' is TRUE and p is not between 0 and 1 (i.e., is not a probability)
+#' If \code{absolute} is provided, it will override the previous statements, unless
+#' \code{absolute = TRUE} and p is not between 0 and 1 (i.e., is not a probability).
 #'
 #' @author Eliot McIntire
 #' @docType methods
@@ -275,11 +276,9 @@ probInit <- function(map, p = NULL, absolute = NULL) {
     absolute <- FALSE
   }
   if (is.numeric(p)) {
-    probInit <- raster(extent(map), nrows = nrow(map), ncols = ncol(map),
-                       crs = crs(map))
+    probInit <- raster(extent(map), nrows = nrow(map), ncols = ncol(map), crs = crs(map))
     p <- rep(p, length.out = ncell(map))
     probInit <- setValues(probInit, p / (sum(p) * (1 - absolute) + 1 * (absolute)))
-
   } else if (is(p, "RasterLayer")) {
     probInit <- p / (cellStats(p, sum) * (1 - absolute) + 1 * (absolute))
   } else if (is(map, "SpatialPolygonsDataFrame")) {

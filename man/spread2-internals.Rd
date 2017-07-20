@@ -26,9 +26,10 @@ asymmetryAdjust(angleQualities, quantity, actualAsymmetry)
 
 \item{dtPotentialColNames}{Character Vector.}
 
-\item{landscape}{RasterLayer passed from \code{spread2}}
+\item{landscape}{\code{RasterLayer} passed from \code{spread2}.}
 
-\item{actualAsymmetryAngle}{Angle in degrees, either a vector length 1 or vector NROW(dtPotential)}
+\item{actualAsymmetryAngle}{Angle in degrees, either a vector length 1 or
+vector \code{NROW(dtPotential)}.}
 
 \item{angleQualities}{Matrix. The output from \code{angleQuality}}
 
@@ -36,7 +37,7 @@ asymmetryAdjust(angleQualities, quantity, actualAsymmetry)
 
 \item{actualAsymmetry}{Asymmetry intensity. Derived from \code{asymmetry} arg in \code{spread2}}
 
-\item{dtPotential}{Data.table of potential spread locations.}
+\item{dtPotential}{\code{data.table} of potential spread locations.}
 }
 \description{
 Not for users. A function to setnames and rbindlist that is used 3 places in spread2.

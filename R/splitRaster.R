@@ -48,7 +48,7 @@
 #'
 setGeneric(
   "splitRaster",
-  function(r, nx = 1, ny = 1, buffer = c(0,0), path = file.path(getwd(), names(r)), cl) {
+  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = file.path(getwd(), names(r)), cl) {
   standardGeneric("splitRaster")
 })
 
@@ -58,7 +58,9 @@ setMethod(
   "splitRaster",
   signature = signature(r = "RasterLayer"),
   definition = function(r, nx, ny, buffer, path, cl) {
-    if (!is.numeric(nx) | !is.numeric(ny) | !is.numeric(buffer)) stop("nx, ny, and buffer must be numeric")
+    if (!is.numeric(nx) | !is.numeric(ny) | !is.numeric(buffer)) {
+      stop("nx, ny, and buffer must be numeric")
+    }
     if (!is.integer(nx)) nx <- as.integer(nx)
     if (!is.integer(ny)) ny <- as.integer(ny)
     if (is.integer(buffer)) buffer <- as.numeric(buffer)
@@ -77,10 +79,10 @@ setMethod(
       buffer <- c(buffer, buffer)
     }
     if (buffer[1] < 1) {
-      buffer[1] <- ceiling((buffer[1] * (xmax(r) - xmin(r)) / nx) / xres(r))
+      buffer[1] <- ceiling((buffer[1] * (xmax(r) - xmin(r)) / nx) / xres(r)) # nolint
     }
     if (buffer[2] < 1) {
-      buffer[2] <- ceiling((buffer[2] * (ymax(r) - ymin(r)) / ny) / yres(r))
+      buffer[2] <- ceiling((buffer[2] * (ymax(r) - ymin(r)) / ny) / yres(r)) # nolint
     }
 
     ext <- extent(r)
@@ -88,23 +90,20 @@ setMethod(
     n <- 1L
     for (i in seq_len(nx) - 1L) {
       for (j in seq_len(ny) - 1L) {
-        x0 <- ext@xmin + i * ((ext@xmax - ext@xmin) / nx) - buffer[1] * xres(r)
-        x1 <- ext@xmin + (i + 1L) * ((ext@xmax - ext@xmin) / nx) + buffer[1] * xres(r)
-        y0 <- ext@ymin + j * ((ext@ymax - ext@ymin) / ny) - buffer[2] * yres(r)
-        y1 <- ext@ymin + (j + 1L) * ((ext@ymax - ext@ymin) / ny) + buffer[2] * yres(r)
+        x0 <- ext@xmin + i * ((ext@xmax - ext@xmin) / nx) - buffer[1] * xres(r) # nolint
+        x1 <- ext@xmin + (i + 1L) * ((ext@xmax - ext@xmin) / nx) + buffer[1] * xres(r) # nolint
+        y0 <- ext@ymin + j * ((ext@ymax - ext@ymin) / ny) - buffer[2] * yres(r) # nolint
+        y1 <- ext@ymin + (j + 1L) * ((ext@ymax - ext@ymin) / ny) + buffer[2] * yres(r) # nolint
         extents[[n]] <- extent(x0, x1, y0, y1)
         n <- n + 1L
       }
     }
 
-    #cl <- tryCatch(getCluster(), error = function(e) NULL)
-    #on.exit(if (!is.null(cl)) returnCluster(), add = TRUE)
-
     croppy <- function(i, e, r, path) {
       filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
-      r_i <- crop(r, e[[i]])
-      crs(r_i) <- crs(r)
-      writeRaster(r_i, filename, overwrite = TRUE)
+      ri <- crop(r, e[[i]])
+      crs(ri) <- crs(r)
+      writeRaster(ri, filename, overwrite = TRUE)
       return(raster(filename))
     }
 

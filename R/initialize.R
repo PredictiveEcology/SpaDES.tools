@@ -299,10 +299,11 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #       # are pixels in agentlocation
 #       if (!is.null(numagents)) {
 #         if (is(agentlocation,"Raster")) {
-#           xy = matrix(runif(numagents*2, c(xmin(ext), ymin(ext)), c(xmax(ext), ymax(ext))), ncol = 2, byrow = TRUE)
+#           xy = matrix(runif(numagents*2, c(xmin(ext), ymin(ext)),
+#                             c(xmax(ext), ymax(ext))), ncol = 2, byrow = TRUE)
 #           colnames(xy) = c("x", "y")
 #           position <- SpatialPoints(xy)
-#           #                    position <- SpatialPoints(sampleRandom(agentlocation, numagents, xy = TRUE, sp = TRUE))
+#           position <- SpatialPoints(sampleRandom(agentlocation, numagents, xy = TRUE, sp = TRUE))
 #         } else if (is(agentlocation,"SpatialPoints")) {
 #           sam <- sample(1:length(agentlocation),numagents)
 #           position <- SpatialPoints(agentlocation[sam,])
@@ -311,7 +312,8 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #         }
 #       } else { # for numagents also NULL
 #         if (length(grep(pattern = "Raster",class(agentlocation))) == 1) {
-#           position <- SpatialPoints(xyFromCell(agentlocation, Which(agentlocation, cells = TRUE)))
+#           position <- SpatialPoints(xyFromCell(agentlocation,
+#                                                Which(agentlocation, cells = TRUE)))
 #         } else if (length(grep(pattern = "SpatialPoints", class(agentlocation))) == 1) {
 #           position <- SpatialPoints(agentlocation)
 #         } else {
@@ -323,11 +325,13 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #   } else if (is(agentlocation,"SpatialPolygonsDataFrame")) {
 #     if (!is.null(numagents)) {
 #       if (!is.null(pri) ) {
-#         position <- SpatialPoints(dotsInPolys(agentlocation,as.integer(round(numagents*pri,0))))
+#         position <- SpatialPoints(dotsInPolys(agentlocation,
+#                                               as.integer(round(numagents*pri,0))))
 #         numagents <- length(position)
 #       } else {stop("with SpatialPolygonsDataFrame, probinit is required")}
 #     } else {stop("with SpatialPolygonsDataFrame, numagents is required")}
-#   } else if (is.null(agentlocation)) { stop("Need to provide agentlocation, which can be a map layer")
+#   } else if (is.null(agentlocation)) {
+#     stop("Need to provide agentlocation, which can be a map layer")
 #   }
 #   heading1 <- runif(numagents, 0, 360)
 #   distance <- runif(numagents, 0.1, 10)

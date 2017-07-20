@@ -16,17 +16,18 @@ a raster, then all the raster dimensions.}
 \item{absolute}{logical. Is \code{p} absolute probabilities or relative?}
 }
 \value{
-An RasterLayer with probabilities of initialization. There are several combinations
-of inputs possible and they each result in different behaviors.
+A \code{RasterLayer} with probabilities of initialization.
+       There are several combinations of inputs possible and they each result
+       in different behaviours.
 
-If \code{p} is numeric or Raster and between 0 and 1, it is treated as an absolute probability, and a map
-will be produced with the p value(s) everywhere.
+If \code{p} is numeric or \code{Raster} and between 0 and 1, it is treated as an
+absolute probability, and a map will be produced with the p value(s) everywhere.
 
-If \code{p} is numeric or Raster and not between 0 and 1, it is treated as a relative probability, and a map
-will be produced with p/max(p) value(s) everywhere
+If \code{p} is numeric or \code{Raster} and not between 0 and 1, it is treated as a
+relative probability, and a map will be produced with \code{p/max(p)} value(s) everywhere.
 
-If \code{absolute} is provided, it will override the previous statements, unless \code{absolute}
-is TRUE and p is not between 0 and 1 (i.e., is not a probability)
+If \code{absolute} is provided, it will override the previous statements, unless
+\code{absolute = TRUE} and p is not between 0 and 1 (i.e., is not a probability).
 }
 \description{
 Describes the probability of initiation of agents or events.

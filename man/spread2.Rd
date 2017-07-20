@@ -21,8 +21,8 @@ spread2(landscape, start = ncell(landscape)/2 - ncol(landscape)/2,
   allowOverlap = FALSE, neighProbs = NA_real_, skipChecks = FALSE)
 }
 \arguments{
-\item{landscape}{Required. A \code{RasterLayer} object. This defines the possible locations
-for spreading events to start and spread2 into. Required.}
+\item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
+locations for spreading events to start and spread2 into. Required.}
 
 \item{start}{Required. Either a vector of pixel numbers to initiate spreading, or a
 data.table that is the output of a previous \code{spread2}.
@@ -30,15 +30,17 @@ If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
 \code{\link[raster]{cellFromXY}}.}
 
-\item{spreadProb}{Numeric of length 1 or \code{RasterLayer}. If numeric of length 1, then this is
-the global (absolute) probability of
-spreading into each cell from a neighbor. If a raster then this must
-be the cell-specific (absolute) probability of a "receiving" potential cell.
-Default is \code{0.23}. If relative probabilities are required,
-use \code{spreadProbRel}. If used together, then the relative
-probabilities will be re-scaled so that the mean relative probability of
-potential neighbours is
-equal to the mean of \code{spreadProb} of the potential neighbours.}
+\item{spreadProb}{Numeric of length 1 or \code{RasterLayer}.
+If numeric of length 1, then this is the global (absolute)
+probability of spreading into each cell from a neighbor.
+If a raster then this must be the cell-specific (absolute)
+probability of a "receiving" potential cell.
+Default is \code{0.23}.
+If relative probabilities are required, use \code{spreadProbRel}.
+If used together, then the relative probabilities will be
+re-scaled so that the mean relative probability of potential
+neighbours is equal to the mean of \code{spreadProb} of
+the potential neighbours.}
 
 \item{asRaster}{Logical, length 1. If \code{TRUE}, the function will return a \code{Raster}
 where raster non NA values indicate the cells that were "active", and the
@@ -71,24 +73,28 @@ started. Default is FALSE. See Details.}
 \item{returnFrom}{Logical. Should the function return a column with the
 source, i.e, the lag 1 "from" pixel, for each iteration.}
 
-\item{spreadProbRel}{Optional \code{RasterLayer} indicating a surface of relative probabilities
-useful when using \code{neighProbs} (which provides a mechanism for selecting
-a specific number of cells at each iteration). This
-indicates the relative probabilities for the selection of successful neighbours.
-\code{spreadProb} will still be evaluated
-\emph{after} the relative probabilities and \code{neighProbs} has been
-evaluated, i.e., potential cells will be identified, then some could be
-rejected via \code{spreadProb}. If absolute \code{spreadProb} is not
-desired, \emph{be sure to set} \code{spreadProb=1}.
+\item{spreadProbRel}{Optional \code{RasterLayer} indicating a surface of relative
+probabilities useful when using \code{neighProbs} (which
+provides a mechanism for selecting a specific number of
+cells at each iteration).
+This indicates the relative probabilities for the selection
+of successful neighbours.
+\code{spreadProb} will still be evaluated \emph{after}
+the relative probabilities and \code{neighProbs} has been
+evaluated, i.e., potential cells will be identified, then
+some could be rejected via \code{spreadProb}.
+If absolute \code{spreadProb} is not desired,
+\emph{be sure to set} \code{spreadProb = 1}.
 Ignored if \code{neighProbs} is not provided.}
 
 \item{plot.it}{If TRUE, then plot the raster at every iteraction,
 so one can watch the spread2 event grow.}
 
 \item{circle}{Logical. If TRUE, then outward spread2 will be by equidistant rings,
-rather than solely by adjacent cells (via \code{directions} arg.). Default
-is FALSE. Using \code{circle = TRUE} can be dramatically slower for large
-problems. Note, this will likely create unexpected results if \code{spreadProb} < 1.}
+rather than solely by adjacent cells (via \code{directions} arg.).
+Default is \code{FALSE}.
+Using \code{circle = TRUE} can be dramatically slower for large problems.
+Note, this will likely create unexpected results if \code{spreadProb < 1}.}
 
 \item{asymmetry}{A numeric or \code{RasterLayer} indicating the ratio of the
 asymmetry to be used. i.e., 1 is no asymmetry; 2 means that the
@@ -270,14 +276,15 @@ are interacting with each other correctly.
                       is smaller than \code{maxSize}, but they will not be greater
                       than \code{maxSize}\cr
   \code{exactSize} \tab This is the number of cells that are "successfully" turned
-                      on during a spreading event. This will override an event that stops probabilistically
-                      via \code{spreadProb}, but forcing its last set of active cells to
-                      try again to find neighbours. It will try 10 times per event, before giving up.
-                      During those 10 times, it will try twice to "jump" up to 4 cells outwards
-                      from each of the active cells\cr
+                      on during a spreading event. This will override an event that
+                      stops probabilistically via \code{spreadProb}, but forcing
+                      its last set of active cells to try again to find neighbours.
+                      It will try 10 times per event, before giving up.
+                      During those 10 times, it will try twice to "jump" up to
+                      4 cells outwards from each of the active cells.\cr
   \code{iterations} \tab This is a hard cap on the number of internal iterations to
                          complete before returning the current state of the system
-                         as a data.table \cr
+                         as a \code{data.table}.\cr
 }
 }
 

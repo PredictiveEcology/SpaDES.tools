@@ -2,12 +2,12 @@ library(data.table)
 library(raster)
 library(quickPlot)
 
-Ras <- raster(extent(0, 15, 0, 15), res = 1)
-fullRas <- randomPolygons(Ras, numTypes = 2)
+ras <- raster(extent(0, 15, 0, 15), res = 1)
+fullRas <- randomPolygons(ras, numTypes = 2)
 names(fullRas) <- "mapcodeAll"
 uniqueComms <- unique(fullRas)
 reducedDT <- data.table(mapcodeAll = uniqueComms,
-                        communities = sample(1:1000,length(uniqueComms)),
+                        communities = sample(1:1000, length(uniqueComms)),
                         biomass = rnbinom(length(uniqueComms), mu = 4000, 0.4))
 biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
 

@@ -62,9 +62,14 @@ was presented in Turchin 1998, but it was also used with bias modifications
 in McIntire, Schultz, Crone 2007.
 }
 \references{
-Turchin, P. 1998. Quantitative analysis of movement: measuring and modeling population redistribution in animals and plants. Sinauer Associates, Sunderland, MA.
+Turchin, P. 1998. Quantitative analysis of movement: measuring and
+            modeling population redistribution in animals and plants.
+            Sinauer Associates, Sunderland, MA.
 
-McIntire, E. J. B., C. B. Schultz, and E. E. Crone. 2007. Designing a network for butterfly habitat restoration: where individuals, populations and landscapes interact. Journal of Applied Ecology 44:725-736.
+McIntire, E. J. B., C. B. Schultz, and E. E. Crone. 2007.
+            Designing a network for butterfly habitat restoration: where
+            individuals, populations and landscapes interact.
+            Journal of Applied Ecology 44:725-736.
 }
 \seealso{
 \code{\link{pointDistance}}
