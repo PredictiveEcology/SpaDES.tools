@@ -11,13 +11,6 @@
 #' \if{html}{\figure{SpaDES.png}{options: width=100 alt="SpaDES logo" align="right"}}
 #' \if{latex}{\figure{SpaDES.png}{options: width=0.5in}}
 #'
-#' Additonal tools for developing Spatially Explicit Discrete Event Simulation
-#' (\code{SpaDES}) models.
-#'
-#' Bug reports: \url{https://github.com/PredictiveEcology/SpaDES.tools/issues}
-#'
-#' @rdname SpaDES.tools-package
-#'
 #' @section 1 Spatial spreading/distances methods:
 #'
 #' Spatial contagion is a key phenomenon for spatially explicit simulation models.
@@ -92,6 +85,15 @@
 #'   \code{\link{numAgents}} \tab Number of agents\cr
 #'   \code{\link{probInit}} \tab Probability of intiating an agent or event\cr
 #'   \code{\link{transitions}} \tab Transition probability\cr
+#' }
+#'
+#' @section 7 Package options:
+#'
+#' \code{SpaDES} packages use the following \code{\link{options}} to configure behaviour:
+#'
+#' \itemize{
+#'   \item \code{spades.lowMemory}: If true, some functions will use more memory
+#'     efficient (but slower) algorithms. Default \code{FALSE}.
 #' }
 #'
 "_PACKAGE"

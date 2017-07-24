@@ -1,11 +1,12 @@
 Package: SpaDES.tools
 Type: Package
-Title: Additonal Tools for Developing Spatially Explicit Discrete Event Simulation (SpaDES) Models
-Description: TO DO.
+Title: Additional Tools for Developing Spatially Explicit Discrete Event Simulation (SpaDES) Models
+Description: Provides GIS/map utilites and additional modeling tools for
+    developing cellular automata and agent based models in 'SpaDES'.
 URL:
     http://spades.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2017-07-20
+Date: 2017-07-24
 Version: 0.1.0
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",

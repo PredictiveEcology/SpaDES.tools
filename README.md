@@ -2,7 +2,7 @@
 
 Additional modelling tools for Spatial Discrete Event Simulation (`SpaDES`) module development.
 
-DESCRIPTION (TO DO).
+Provides GIS/map utilites and additional modeling tools for developing cellular automata and agent based models in `SpaDES`.
 
 **Website:** [http://SpaDES.PredictiveEcology.org](http://SpaDES.PredictiveEcology.org)
 
@@ -47,4 +47,3 @@ install_github("PredictiveEcology/SpaDES.tools", dependencies = TRUE) # stable
 library("devtools")
 install_github("PredictiveEcology/SpaDES.tools", ref = "development", dependencies = TRUE) # unstable
 ```
-
