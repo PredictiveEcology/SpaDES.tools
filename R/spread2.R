@@ -288,7 +288,6 @@ if (getRversion() >= "3.1.0") {
 #' same order as \code{out}.
 #'
 #' @author Eliot McIntire and Steve Cumming
-#' @docType methods
 #' @export
 #' @importFrom raster ncell raster res ncol pointDistance
 #' @importFrom bit bit
@@ -304,7 +303,6 @@ if (getRversion() >= "3.1.0") {
 #' \code{spread} is less robust but it is often slightly faster.
 #'
 #' @aliases spread2
-#' @docType methods
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot

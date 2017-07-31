@@ -9,15 +9,13 @@
 #'
 #' @param ... arguments passed to the function in \code{hypothesis}
 #'
-#' @export
-#' @docType methods
-#' @rdname crw
-#'
 #' @author Eliot McIntire
+#' @export
+#' @rdname crw
 #'
 move <- function(hypothesis = "crw", ...) {
      if (hypothesis == "crw") move <- "crw"
-     if (is.null(hypothesis) ) stop("Must specify a movement hypothesis")
+     if (is.null(hypothesis)) stop("Must specify a movement hypothesis")
      get(move)(...)
  }
 
@@ -67,7 +65,6 @@ move <- function(hypothesis = "crw", ...) {
 #'             Journal of Applied Ecology 44:725-736.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @importFrom CircStats rad
 #' @importFrom stats rnorm

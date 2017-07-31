@@ -15,7 +15,6 @@
 #' @seealso \code{\link[raster]{merge}}, \code{\link[raster]{mosaic}}
 #'
 #' @author Yong Luo and Alex Chubaty
-#' @docType methods
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom raster crop extent merge
@@ -31,12 +30,12 @@ setMethod(
   "mergeRaster",
   signature = signature(x = "list"),
   definition = function(x) {
-    xminExtent <- sapply(x, xmin) %>% unique() %>% sort()
-    xmaxExtent <- sapply(x, xmax) %>% unique() %>% sort()
-    yminExtent <- sapply(x, ymin) %>% unique() %>% sort()
-    ymaxExtent <- sapply(x, ymax) %>% unique() %>% sort()
-    xBuffer <- unique((xmaxExtent[-length(xmaxExtent)] - xminExtent[-1]) / 2)
-    yBuffer <- unique((ymaxExtent[-length(ymaxExtent)] - yminExtent[-1]) / 2)
+    xminExtent <- sapply(x, xmin) %>% unique() %>% sort() # nolint
+    xmaxExtent <- sapply(x, xmax) %>% unique() %>% sort() # nolint
+    yminExtent <- sapply(x, ymin) %>% unique() %>% sort() # nolint
+    ymaxExtent <- sapply(x, ymax) %>% unique() %>% sort() # nolint
+    xBuffer <- unique((xmaxExtent[-length(xmaxExtent)] - xminExtent[-1]) / 2) # nolint
+    yBuffer <- unique((ymaxExtent[-length(ymaxExtent)] - yminExtent[-1]) / 2) # nolint
 
     for (i in seq_along(x)) {
       r <- x[[i]]

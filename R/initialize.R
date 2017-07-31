@@ -33,7 +33,6 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom RandomFields RFoptions RFsimulate RMexp round
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
-#' @docType methods
 #' @rdname gaussmap
 #'
 #' @examples
@@ -108,11 +107,9 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...)
 #'
 #' @seealso \code{\link{spread}} and \code{\link{raster}}
 #'
+#' @export
 #' @importFrom raster cellFromXY extent raster xmax xmin ymax ymin
 #' @importFrom sp SpatialPoints
-#'
-#' @export
-#' @docType methods
 #' @rdname randomPolygons
 #'
 #' @examples
@@ -172,12 +169,12 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' @return A raster with 0s and 1s, where the 1s indicate starting locations of
 #' agents following the numbers above.
 #'
+#' @export
 #' @importFrom data.table data.table setkey
 #' @importFrom raster getValues raster Which
 #' @importFrom stats na.omit
-#' @export
-#' @docType methods
 #' @rdname specnumperpatch-probs
+#'
 #' @examples
 #' library(data.table)
 #' library(raster)

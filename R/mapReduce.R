@@ -28,11 +28,9 @@ if (getRversion() >= "3.1.0") {
 #' @seealso \code{\link{raster}}
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @importFrom data.table := data.table key setkeyv setnames
 #' @importFrom raster extent getValues raster res
-# @include environment.R
 #' @rdname rasterizeReduce
 #'
 #' @example inst/examples/example_mapReduce.R

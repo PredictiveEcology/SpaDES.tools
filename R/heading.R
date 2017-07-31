@@ -10,7 +10,6 @@
 #' @return The heading between the points, in degrees.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @importFrom CircStats deg
 #' @importFrom sp SpatialPoints

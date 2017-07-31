@@ -165,10 +165,10 @@ cells <- sample(ncell(ras), N)
 coords <- xyFromCell(ras, cells)
 distFn <- function(landscape, fromCell, dist) landscape[fromCell] / (1 + dist)
 
-# beginCluster(3) # can do parallel
+#beginCluster(3) # can do parallel
 dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
                                 landscape = rp, distFn = distFn, cumulativeFn = `+`)
-# endCluster() # if beginCluster was run
+#endCluster() # if beginCluster was run
 
 idwRaster <- raster(ras)
 idwRaster[] <- dists1[, "val"]

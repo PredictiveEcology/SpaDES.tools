@@ -29,11 +29,11 @@ If \code{FALSE}, returns a raster of iteration numbers,
 i.e., the spread history of one or more events.
 NOTE: this is overridden if \code{returnIndices} is \code{TRUE}.}
 
-\item{minRadius}{Numeric. Minimum radius to be included in the ring. Note:
-this is inclusive, i.e., >=}
+\item{minRadius}{Numeric. Minimum radius to be included in the ring.
+Note: this is inclusive, i.e., \code{>=}.}
 
-\item{maxRadius}{Numeric. Maximum radius to be included in the ring. Note:
-this is inclusive, i.e., <=}
+\item{maxRadius}{Numeric. Maximum radius to be included in the ring.
+Note: this is inclusive, i.e., \code{<=}.}
 
 \item{allowOverlap}{Logical. If \code{TRUE}, then individual events can overlap
 with one another, i.e., they do not interact (this is slower

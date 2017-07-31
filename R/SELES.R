@@ -17,7 +17,6 @@
 #'
 #' @return Returns new \code{SpatialPoints*} object with potentially fewer agents.
 #'
-#' @docType methods
 #' @export
 #' @importFrom sp 'coordinates<-'
 #' @include heading.R
@@ -47,7 +46,6 @@ transitions <- function(p, agent) {
 #' @return A numeric, indicating number of agents to start
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @include heading.R
 #' @rdname SELESnumAgents
@@ -83,7 +81,6 @@ numAgents <- function(N, probInit) {
 #' @return A SpatialPointsDataFrame, with each row representing an individual agent
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @include heading.R
 #' @importFrom magrittr %>%
@@ -209,7 +206,6 @@ setMethod(
 #'          If a \code{Raster*}, then zeros are converted to \code{NA}.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @include heading.R
 #' @export
 #' @rdname SELESagentLocation
@@ -261,7 +257,6 @@ agentLocation <- function(map) {
 #' \code{absolute = TRUE} and p is not between 0 and 1 (i.e., is not a probability).
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @importFrom raster cellStats crs extent setValues raster
 #' @include heading.R

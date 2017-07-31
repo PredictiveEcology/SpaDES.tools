@@ -35,7 +35,6 @@
 #' @seealso \code{\link{do.call}}, \code{\link[raster]{merge}}.
 #'
 #' @author Alex Chubaty and Yong Luo
-#' @docType methods
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom parallel clusterApplyLB

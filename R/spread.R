@@ -318,7 +318,6 @@ if (getRversion() >= "3.1.0") {
 #' This will generally be more useful when \code{allowOverlap} is \code{TRUE}.
 #'
 #' @author Eliot McIntire and Steve Cumming
-#' @docType methods
 #' @export
 #' @importFrom data.table := data.table setcolorder
 #' @importFrom ff as.ram ff

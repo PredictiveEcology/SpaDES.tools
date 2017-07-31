@@ -7,22 +7,19 @@
 #' twice (once for smaller ring and once for larger ring, then removing the
 #' smaller ring cells).
 #'
-#' @export
-#' @docType methods
+#' @inheritParams spread
+#'
+#' @param minRadius Numeric. Minimum radius to be included in the ring.
+#'                  Note: this is inclusive, i.e., \code{>=}.
+#' @param maxRadius Numeric. Maximum radius to be included in the ring.
+#'                  Note: this is inclusive, i.e., \code{<=}.
+#' @param ... Any other argument passed to \code{spread}
+#'
 #' @return This will return  a \code{data.table} with columns as described in
 #'         \code{spread} when \code{returnIndices = TRUE}.
 #'
 #' @author Eliot McIntire
-#' @inheritParams spread
-#'
-#' @param minRadius Numeric. Minimum radius to be included in the ring. Note:
-#'             this is inclusive, i.e., >=
-#' @param maxRadius Numeric. Maximum radius to be included in the ring. Note:
-#'             this is inclusive, i.e., <=
-#' @param ... Any other argument passed to \code{spread}
-#'
-#' @name rings
-#' @aliases rings
+#' @export
 #' @rdname rings
 #' @seealso \code{\link{cir}} which uses a different algorithm.
 #' \code{cir} tends to be faster when there are few starting points, \code{rings}

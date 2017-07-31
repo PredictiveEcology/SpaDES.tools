@@ -11,7 +11,6 @@
 #' @return Logical vectors. \code{NA} values in \code{x} are retained.
 #'
 #' @author Alex Chubaty
-#' @docType methods
 #' @export
 #' @importFrom raster getValues
 #' @rdname inRange
