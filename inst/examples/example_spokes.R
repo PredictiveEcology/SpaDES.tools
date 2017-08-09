@@ -12,8 +12,8 @@ Plot(rp)
 
 angles <- seq(0, pi * 2, length.out = 17)
 angles <- angles[-length(angles)]
-N <- 2
-loci <- sample(ncell(rp), N)
+n <- 2
+loci <- sample(ncell(rp), n)
 coords <- SpatialPoints(xyFromCell(rp, loci))
 stopRule <- function(landscape) landscape < 3
 d2 <- spokes(rp, coords = coords, stopRule = stopRule,

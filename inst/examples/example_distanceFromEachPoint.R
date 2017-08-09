@@ -1,10 +1,10 @@
 library(raster)
 library(quickPlot)
 
-N <- 2
+n <- 2
 distRas <- raster(extent(0, 40, 0, 40), res = 1)
-coords <- cbind(x = round(runif(N, xmin(distRas), xmax(distRas))) + 0.5,
-                y = round(runif(N, xmin(distRas), xmax(distRas))) + 0.5)
+coords <- cbind(x = round(runif(n, xmin(distRas), xmax(distRas))) + 0.5,
+                y = round(runif(n, xmin(distRas), xmax(distRas))) + 0.5)
 
 # inverse distance weights
 dists1 <- distanceFromEachPoint(coords, landscape = distRas)
@@ -29,8 +29,8 @@ all(idwRaster[] == distRas[]) # TRUE
 #  of the origin cell
 ras <- raster(extent(0, 34, 0, 34), res = 1, val = 0)
 rp <- randomPolygons(ras, numTypes = 10) ^ 2
-N <- 15
-cells <- sample(ncell(ras), N)
+n <- 15
+cells <- sample(ncell(ras), n)
 coords <- xyFromCell(ras, cells)
 distFn <- function(landscape, fromCell, dist) landscape[fromCell] / (1 + dist)
 

@@ -18,9 +18,9 @@ if (interactive()) {
 
 # circles non centred
 ras <- randomPolygons(ras, numTypes = 4)
-N <- 2
-agent <- SpatialPoints(coords = cbind(x = stats::runif(N, xmin(ras), xmax(ras)),
-                                      y = stats::runif(N, xmin(ras), xmax(ras))))
+n <- 2
+agent <- SpatialPoints(coords = cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
+                                      y = stats::runif(n, xmin(ras), xmax(ras))))
 
 cirs <- cir(ras, agent, maxRadius = 15, simplify = TRUE)
 cirsSP <- SpatialPoints(coords = cirs[, c("x", "y")])
@@ -40,9 +40,9 @@ if (interactive()) {
 a <- raster(extent(0, 30, 0, 30), res = 1)
 hab <- gaussMap(a, speedup = 1) # if raster is large (>1e6 pixels) use speedup > 1
 radius <- 4
-N <- 2
-coords <- SpatialPoints(coords = cbind(x = stats::runif(N, xmin(hab), xmax(hab)),
-                                       y = stats::runif(N, xmin(hab), xmax(hab))))
+n <- 2
+coords <- SpatialPoints(coords = cbind(x = stats::runif(n, xmin(hab), xmax(hab)),
+                                       y = stats::runif(n, xmin(hab), xmax(hab))))
 
 # cirs
 cirs <- cir(hab, coords, maxRadius = rep(radius, length(coords)), simplify = TRUE)
@@ -79,9 +79,9 @@ if (interactive()) {
 # Provide a specific set of angles
 ras <- raster(extent(0, 330, 0, 330), res = 1)
 ras[] <- 0
-N <- 2
-coords <- cbind(x = stats::runif(N, xmin(ras), xmax(ras)),
-                y = stats::runif(N, xmin(ras), xmax(ras)))
+n <- 2
+coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
+                y = stats::runif(n, xmin(ras), xmax(ras)))
 circ <- cir(ras, coords, angles = seq(0, 2 * pi, length.out = 21),
             maxRadius = 200, minRadius = 0, returnIndices = FALSE,
             allowOverlap = TRUE, returnAngles = TRUE)

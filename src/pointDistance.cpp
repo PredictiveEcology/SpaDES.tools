@@ -16,14 +16,15 @@ using namespace Rcpp;
 //'
 //' @inheritParams distanceFromEachPoint
 //' @return
-//' \code{pointDistance2} - a matrix with all the \code{to} columns plus one extra \code{dists} column.
-//' \code{pointDistance3} - a matrix with x and y columns from \code{to} plus one extra \code{dists} column.
+//' \code{pointDistance2}: a matrix with all the \code{to} columns plus one extra
+//' \code{dists} column.
+//' \code{pointDistance3}: a matrix with \code{x} and \code{y} columns from
+//' \code{to} plus one extra \code{dists} column.
 //'
 //' @rdname distances
 // [[Rcpp::export]]
-NumericMatrix pointDistance2(NumericMatrix to, NumericMatrix from) { // from = x1 and y1; to = x0 and y0
-  // NumericVector pointDistance2(NumericMatrix to, NumericMatrix from) { // from = x1 and y1; to = x0 and y0
-
+NumericMatrix pointDistance2(NumericMatrix to, NumericMatrix from) {
+  // from = x1 and y1; to = x0 and y0
   int nr = to.nrow();
   int nc = to.ncol();
   NumericMatrix out (nr, nc + 1);
@@ -65,24 +66,10 @@ NumericMatrix pointDistance2(NumericMatrix to, NumericMatrix from) { // from = x
     out(_, i) = to(_,i);
   }
   toColNames.push_back("dists");
-  colnames(out) = toColNames; //CharacterVector::create(toColNames, "dists");
-  // return out;
+  colnames(out) = toColNames;
 
   return out;
 }
-
-
-//NumericMatrix pointDistance2(NumericVector x0, double x1, NumericVector y0, double y1) {
-//  int n = x0.size();
-//  NumericMatrix out (n, 3);
-//
-//  out(_,2) = sqrt( pow(x0 - x1, 2.0) + pow(y0 - y1, 2.0));
-//  out(_,0) = x0;
-//  out(_,1) = y0;
-//  colnames(out) = CharacterVector::create("x", "y", "dists");
-//  return out;
-//
-//}
 
 //' @param fromX Numeric vector of x coordinates for 'from' points
 //' @param fromY Numeric vector of y coordinates for 'from' points
@@ -101,7 +88,6 @@ NumericMatrix pointDistance3(NumericVector fromX, NumericVector toX,
   int nto = toX.size();
   int index = 0;
   NumericMatrix out (nfrom * nto, 3);
-
 
   for(int from=0; from < nfrom; ++from) {
     for(int to=0; to < nto; ++to) {
@@ -131,4 +117,3 @@ NumericMatrix pointDistance3(NumericVector fromX, NumericVector toX,
   colnames(out) = CharacterVector::create("x", "y", "dists");
   return out;
 }
-

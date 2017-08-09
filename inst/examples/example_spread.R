@@ -51,8 +51,8 @@ Plot(fires, cols = topo.colors(10), new = TRUE, zero.color = "white")
 ## Continue event by passing interrupted object into spreadState
 ##------------------------------------------------------------------------------
 
-## Interrupt a spread event using iterations - need `returnIndices = TRUE` to use outputs
-##   as new inputs in next iteration
+## Interrupt a spread event using iterations - need `returnIndices = TRUE` to
+##  use outputs as new inputs in next iteration
 fires <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)),
                 returnIndices = TRUE, 0.235, 0, NULL, 1e8, 8, iterations = 3, id = TRUE)
 fires[, list(size = length(initialLocus)), by = id]  # See sizes of fires
@@ -101,11 +101,11 @@ stopRuleB <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)), 1, 0, NULL
 # using stopRuleBehavior = "includeRing", means that end result is slightly larger patches, as a
 #  complete "iteration" of the spread algorithm is used.
 set.seed(1234)
-stopRuleB_NotExact <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)), 1, 0,
+stopRuleBNotExact <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)), 1, 0,
                              NULL, maxSize = 1e6, 8, 1e6, id = TRUE, circle = TRUE,
                              stopRule = stopRule2)
 clearPlot()
-Plot(stopRuleA, stopRuleB, stopRuleB_NotExact)
+Plot(stopRuleA, stopRuleB, stopRuleBNotExact)
 
 # Test that the stopRules work
 # stopRuleA was not exact, so each value will "overshoot" the stopRule, here it was hab>50
@@ -118,7 +118,7 @@ foo <- cbind(vals = hab[stopRuleB], id = stopRuleB[stopRuleB > 0]);
 tapply(foo[, "vals"], foo[, "id"], sum) # Correct ... all are above 50
 
 # stopRuleB_notExact will overshoot
-foo <- cbind(vals = hab[stopRuleB_NotExact], id = stopRuleB_NotExact[stopRuleB_NotExact > 0]);
+foo <- cbind(vals = hab[stopRuleBNotExact], id = stopRuleBNotExact[stopRuleBNotExact > 0]);
 tapply(foo[, "vals"], foo[, "id"], sum) # Correct ... all are above 50
 
 # Cellular automata shapes

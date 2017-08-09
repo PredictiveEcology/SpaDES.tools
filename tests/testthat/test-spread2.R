@@ -14,14 +14,7 @@ test_that("spread2 tests", {
   spRas <- gaussMap(b)
   spRas[] <- spRas[] / maxValue(spRas) * sp / 2 + sp / 2 * 1.5
   b[] <- 1
-  bb <-
-    focal(
-      b,
-      matrix(1 / 9, nrow = 3, ncol = 3),
-      fun = sum,
-      pad = TRUE,
-      padValue = 0
-    )
+  bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
   innerCells <- which(bb[] %==% 1)
   sams <- sample(innerCells, 2)
 
@@ -33,8 +26,7 @@ test_that("spread2 tests", {
     expect_true(all(out$active == 0))
   }
 
-  if (interactive())
-    print("testing maxSize")
+  if (interactive()) print("testing maxSize")
   maxSizes <- 2:3
   for (i in 1:20) {
     seed <- sample(1e6, 1)
@@ -49,8 +41,7 @@ test_that("spread2 tests", {
     expect_true(all(out[, .N, by = "initialPixels"]$n <= maxSizes[order(sams)]))
   }
 
-  if (interactive())
-    print("testing exactSize")
+  if (interactive()) print("testing exactSize")
   exactSizes <- c(5, 3.1)
   for (i in 1:20) {
     sams <- sample(innerCells, 2)
@@ -71,18 +62,11 @@ test_that("spread2 tests", {
     }
   }
 
-  if (interactive())
-    print("testing exactSize")
+  if (interactive()) print("testing exactSize")
   exactSizes <- c(5.01, 3.1, 4)
   for (i in 1:20) {
     sams <- sample(innerCells, length(exactSizes))
-    out <- spread2(
-      a,
-      start = sams,
-      0.225,
-      exactSize = exactSizes,
-      asRaster = FALSE
-    )
+    out <- spread2(a, start = sams, 0.225, exactSize = exactSizes, asRaster = FALSE)
     attrib <- attr(out, "spreadState")$clusterDT$numRetries > 10
     if (any(attrib)) {
       frequ <- out[, .N, by = "initialPixels"]$n
@@ -93,11 +77,9 @@ test_that("spread2 tests", {
     }
   }
 
-  if (interactive())
-    print("testing exact maxSize, can't be achieved, allow jumping")
-  exactSizes <-
-    c(154, 111, 134) # too big for landscape, can't achieve it --
-  #  will hit max numRetries, and will try jumping
+  if (interactive()) print("testing exact maxSize, can't be achieved, allow jumping")
+  exactSizes <- c(154, 111, 134) # too big for landscape, can't achieve it --
+                                 #  will hit max numRetries, and will try jumping
   for (i in 1:20) {
     seed <- sample(1e6, 1)
     set.seed(seed)
@@ -107,8 +89,7 @@ test_that("spread2 tests", {
     expect_true(all(out$numRetries == 11)) # current max
   }
 
-  if (interactive())
-    print("test circle = TRUE")
+  if (interactive()) print("test circle = TRUE")
   for (i in 1:20) {
     message(i)
     seed <- sample(1e6, 1)
@@ -151,20 +132,11 @@ test_that("spread2 tests", {
     }
   }
 
-  if (interactive())
-    print("compare spread2 circle with cir circle")
-  cirOut <-
-    data.table(
-      cir(
-        a,
-        allowOverlap = TRUE,
-        loci = sams,
-        minRadius = 0,
-        maxRadius = 15,
-        returnDistances = T,
-        simplify = TRUE
-      )
-    )
+  if (interactive()) print("compare spread2 circle with cir circle")
+  cirOut <- data.table(
+    cir(a, allowOverlap = TRUE, loci = sams, minRadius = 0, maxRadius = 15,
+        returnDistances = TRUE, simplify = TRUE)
+  )
   if (interactive()) {
     for (ids in unique(cirOut$id)) {
       dev(3 + ids)
@@ -182,8 +154,7 @@ test_that("spread2 tests", {
   compare <- out[cirOut, on = c(initialPixels = "initialPixels", pixels = "indices")]
   expect_true(sum(abs(compare$dists - compare$distance)) %==% 0)
 
-  if (interactive())
-    print("Scales with number of starts, not maxSize of raster")
+  if (interactive()) print("Scales with number of starts, not maxSize of raster")
   set.seed(21)
   b <- raster(extent(0, 33000, 0, 33000), res = 1)
   sams <- sample(ncell(b), 2)
@@ -192,8 +163,7 @@ test_that("spread2 tests", {
   })
   expect_lt(st1[1], 1)
 
-  if (interactive())
-    print("test neighProbs")
+  if (interactive()) print("test neighProbs")
   maxSizes <- 14
   sp <- raster(a)
   spreadProbOptions <- 1:5
@@ -201,21 +171,12 @@ test_that("spread2 tests", {
   set.seed(2123)
   sams <- sample(innerCells, 2)
   set.seed(321)
-  out <- spread2(
-    a,
-    spreadProb = 1,
-    spreadProbRel = sp,
-    start = sams,
-    neighProbs = c(0.7, 0.3),
-    maxSize = maxSizes,
-    asRaster = FALSE
-  )
+  out <- spread2(a, spreadProb = 1, spreadProbRel = sp, start = sams,
+                 neighProbs = c(0.7, 0.3), maxSize = maxSizes, asRaster = FALSE)
   expect_true(uniqueN(out) == maxSizes * length(sams))
   expect_true(NROW(out) == maxSizes * length(sams))
 
-
-  if (interactive())
-    print("check variable lengths of neighProbs")
+  if (interactive()) print("check variable lengths of neighProbs")
   set.seed(29937)
   sams <- sample(innerCells, 2)
   for (i in 1:8) {
@@ -233,15 +194,16 @@ test_that("spread2 tests", {
     expect_true(NROW(out) == (length(alwaysN) * 2 + length(sams)))
   }
 
-  if (interactive())
+  if (interactive()) {
     print(
       paste(
         "Test that when using neighProbs & a Raster of spreadProbs,",
-        "the spreadProb raster is followed probabilistically",
+        "the spreadProb raster is followed probabilistically.",
         "This test does only 1 iteration from 2 pixels that are",
         "not interacting with edges or each other"
       )
     )
+  }
   sams <- sort(c(0:2 * 3 + 12) + rep(c(0, 30, 60, 90), 3))
   sams <- sams[sams < 90]
   set.seed(654)
@@ -266,11 +228,8 @@ test_that("spread2 tests", {
 
   set.seed(1232)
   out <- spread2(spreadProb = 0.5, landscape = b, asRaster = FALSE,
-                 start = ncell(b) / 2 - ncol(b) / 2,
-                 spreadProbRel = bProb,
-                 returnFrom = TRUE,
-                 neighProbs = c(0.3, 0.7),
-                 exactSize = 30)
+                 start = ncell(b) / 2 - ncol(b) / 2, spreadProbRel = bProb,
+                 returnFrom = TRUE, neighProbs = c(0.3, 0.7), exactSize = 30)
 
   set(out, , "relProb", bProb[][out$pixels])
   out
@@ -640,7 +599,6 @@ test_that("spread2 tests", {
   sd(out$x)
   sd(outNew$x)
 
-
   n <- 5
   ras <- raster(extent(0, 1000, 0, 1000), res = 1)
   sp <- 0.295
@@ -649,9 +607,7 @@ test_that("spread2 tests", {
     times = 100,
     nonIterativeFun(ras, TRUE, n, sp)
   )
-
 })
-
 
 test_that("spread2 tests -- asymmetry", {
   library(raster)

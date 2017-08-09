@@ -82,7 +82,7 @@ if (interactive()) {
   clearPlot()
   Plot(hab, zero.color = "white", axes = "L")
 }
-for(i in 1:10) {
+for (i in 1:10) {
   agent <- crw(agent = agent, extent = extent(hab), stepLength = ln,
                stddev = sd, lonlat = FALSE, torus = TRUE)
   if (interactive()) Plot(agent, addTo = "hab", axes = TRUE)

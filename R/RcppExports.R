@@ -30,8 +30,10 @@ duplicatedInt <- function(x) {
 #'
 #' @inheritParams distanceFromEachPoint
 #' @return
-#' \code{pointDistance2} - a matrix with all the \code{to} columns plus one extra \code{dists} column.
-#' \code{pointDistance3} - a matrix with x and y columns from \code{to} plus one extra \code{dists} column.
+#' \code{pointDistance2}: a matrix with all the \code{to} columns plus one extra
+#' \code{dists} column.
+#' \code{pointDistance3}: a matrix with \code{x} and \code{y} columns from
+#' \code{to} plus one extra \code{dists} column.
 #'
 #' @rdname distances
 pointDistance2 <- function(to, from) {

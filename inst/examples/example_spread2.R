@@ -15,13 +15,13 @@ if (interactive()) {
 maxSizes <- sort(sample(1:10, size = length(sams)))
 out <- spread2(a, start = sams, 0.225, maxSize = maxSizes, asRaster = FALSE)
 # check TRUE using data.table .N
-out[, .N, by = "initialPixels"]$N <= maxSizes
+out[, .N, by = "initialPixels"]$n <= maxSizes
 
 # Use exactSize -- gives an exact size, if there is enough space on the Raster
 exactSizes <- maxSizes
 out <- spread2(a, start = sams, spreadProb = 0.225,
                exactSize = exactSizes, asRaster = FALSE)
-out[, .N, by = "initialPixels"]$N == maxSizes # should be TRUE TRUE TRUE
+out[, .N, by = "initialPixels"]$n == maxSizes # should be TRUE TRUE TRUE
 
 # Use exactSize -- but where it can't be achieved
 exactSizes <- sort(sample(100:110, size = length(sams)))
@@ -83,9 +83,9 @@ circs <- spread2(a, spreadProb = 0.213, start = sams,
 ras <- raster(a)
 ras[] <- 1
 if (interactive()) {
-  N <- 100
-  sizes <- integer(N)
-  for (i in 1:N) {
+  n <- 100
+  sizes <- integer(n)
+  for (i in 1:n) {
     circs <- spread2(ras, spreadProb = 0.225,
                      start = round(ncell(ras) / 4 - ncol(ras) / 4 * 3),
                      asRaster = FALSE)
@@ -103,9 +103,9 @@ if (interactive()) {
     library(fpCompare)
   })
 
-  objFn <- function(sp, N = 20, ras, goalSize) {
-    sizes <- integer(N)
-    for (i in 1:N) {
+  objFn <- function(sp, n = 20, ras, goalSize) {
+    sizes <- integer(n)
+    for (i in 1:n) {
       circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
                        asymmetry = 2, asymmetryAngle = 135,
                        asRaster = FALSE)

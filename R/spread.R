@@ -426,13 +426,13 @@ setMethod(
     # Check for probabilities
     if (!quick) {
       if (is(spreadProbLater, "RasterLayer") | is(spreadProb, "Rasterlayer")) {
-        if ( (minValue(spreadProb) > 1L) || (maxValue(spreadProb) < 0L) ||
-             (maxValue(spreadProb) > 1L) || (minValue(spreadProb) < 0L) ) {
+        if ((minValue(spreadProb) > 1L) || (maxValue(spreadProb) < 0L) ||
+            (maxValue(spreadProb) > 1L) || (minValue(spreadProb) < 0L)) {
           relativeSpreadProb <- TRUE
         }
         if (spreadProbLaterExists)
-          if ( ((minValue(spreadProbLater) > 1L) || (maxValue(spreadProbLater) < 0L) ||
-                (maxValue(spreadProbLater) > 1L) || (minValue(spreadProbLater) < 0L)) ) {
+          if (((minValue(spreadProbLater) > 1L) || (maxValue(spreadProbLater) < 0L) ||
+              (maxValue(spreadProbLater) > 1L) || (minValue(spreadProbLater) < 0L))) {
             relativeSpreadProb <- TRUE
           }
       } else {
@@ -717,7 +717,7 @@ setMethod(
         }
         d <- directionFromEachPoint(from = initialLociXY, to = a)
         newSpreadProbExtremes <- (spreadProb[] * 2) / (asymmetry + 1) * c(1, asymmetry)
-        angleQuality <- ((cos(d[, "angles"] - rad(asymmetryAngle)) + 1) / 2)
+        angleQuality <- (cos(d[, "angles"] - rad(asymmetryAngle)) + 1) / 2
         spreadProbs <- newSpreadProbExtremes[1] + (angleQuality * diff(newSpreadProbExtremes))
         spreadProbs <- spreadProbs - diff(c(spreadProb[], mean(spreadProbs)))
       }

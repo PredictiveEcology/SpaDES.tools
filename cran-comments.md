@@ -19,49 +19,32 @@ This is a spin off of an existing CRAN package (`SpaDES`), which we have split d
 * Windows 7            (local), R 3.4.1
 
 ### Development R version
-* Debian:testing  (rocker/drd), R 3.5.0 (2017-07-09 r72907)
-* Ubuntu 14.04     (travis-ci), R 3.5.0 (2017-07-19 r72929)
-* Ubuntu 16.04         (local), R 3.5.0 (2017-07-20 r72935)
-* Windows           (appveyor), R 3.5.0 (2017-07-18 r72928)
-* Windows        (win-builder), R 3.5.0 (2017-07-18 r72928)
+* Debian:testing (rocker/r-devel), R 3.5.0 (2017-07-26 r72972)
+* Ubuntu 14.04        (travis-ci), R 3.5.0 (2017-08-09 r73082)
+* Ubuntu 16.04            (local), R 3.5.0 (2017-08-08 r73067)
+* Windows              (appveyor), R 3.5.0 (2017-08-08 r73068)
+* Windows           (win-builder), R 3.5.0 (2017-08-08 r73068)
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs
 
-There were 2 NOTEs:
+There was 1 NOTE:
 
 1. There are multiple parts to this note:
 
     a. This is a new package submission:
     
-            Maintainer: 'Eliot McIntire <eliot.mcintire@canada.ca>'
+            Maintainer: 'Alex M Chubaty <alexander.chubaty@canada.ca>'
             
             New submission
-
+            
     b. Some words were flagged as possibly mispelled, but they are not. 
      
-            Possibly mis-spelled words in DESCRIPTION: 
-              Modularity (3:53)
-              modularity (5:29)
-
-    c. The `fastshp` package in Suggests is optionally installed from Rforge and not required to use the package. Instructions for installation are provided in the Description, README, and via a message to the user. We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
-
-            Suggests or Enhances not in mainstream repositories:
-              fastshp
-          
-            Availability using Additional_repositories specification:
-              fastshp   yes   http://rforge.net
-
-    d. The URL used to install the suggested package `fastshp` should not be in angle brackets because it's part of an R command:
-
-            The Description field contains
-              repos = "http://rforge.net", type = "source")'.
-              Please enclose URLs in angle brackets (<...>).
-
-2. As noted above, we provide instructions for the user to install the suggested `fastshp` package.
-
-        Package suggested but not available for checking: 'fastshp'
+            Possibly mis-spelled words in DESCRIPTION:
+              GIS (5:23)
+              SpaDES (4:27)
+              automata (6:25)
 
 ## Downstream dependencies
 

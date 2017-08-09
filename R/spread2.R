@@ -1,6 +1,6 @@
 if (getRversion() >= "3.1.0") {
   utils::globalVariables(c(
-    "distance", "i.size", "ind", "indClDT", "initialPixels", "N", "newQuantity",
+    "distance", "i.size", "ind", "indClDT", "initialPixels", "n", "newQuantity",
     "numNeighs", "numRetries", "origIndex", "pixels", "quantityAdj",
     "quantityAdj2", "state", "size", "tooBigByNCells"
   ))
@@ -369,10 +369,10 @@ setMethod(
 
       if (!missing(maxSize)) {
         if (is.data.table(start)) {
-          N <- uniqueN(start, by = "initialPixels")
+          n <- uniqueN(start, by = "initialPixels")
           assert(
             checkNumeric(maxSize, min.len = 1, max.len = 1),
-            checkNumeric(maxSize, min.len = N, max.len = N)
+            checkNumeric(maxSize, min.len = n, max.len = n)
           )
         } else {
           assert(
@@ -383,10 +383,10 @@ setMethod(
       }
       if (!missing(exactSize)) {
         if (is.data.table(start)) {
-          N <- uniqueN(start, by = "initialPixels")
+          n <- uniqueN(start, by = "initialPixels")
           assert(
             checkNumeric(exactSize, min.len = 1, max.len = 1),
-            checkNumeric(exactSize, min.len = N, max.len = N)
+            checkNumeric(exactSize, min.len = n, max.len = n)
           )
         } else {
           assert(
@@ -522,7 +522,6 @@ setMethod(
     # Main loop -- continue if active and still below iterations & none is too
     # small (and doesn't have any active cells)
     while (length(whTooSmall) | (length(whActive) &  its < iterations)) {
-
       # Step 1
       # Get neighbours, either via adj (default) or cir (jumping if stuck)
       if (length(whTooSmall) > 0) {
@@ -667,8 +666,10 @@ setMethod(
             neighProbs1 <- neighProbs
           }
           set(numNeighsByPixel, , "numNeighs", unlist(lapply(
-            neighProbs1, function(np) sample.int(size = 1, n = length(np),
-                                                replace = TRUE, prob = np))))
+            neighProbs1, function(np) {
+              sample.int(size = 1, n = length(np), replace = TRUE, prob = np)
+            }))
+          )
         } else {
           set(numNeighsByPixel, , "numNeighs",
               sample.int(size = NROW(numNeighsByPixel), n = length(neighProbs),
@@ -897,8 +898,9 @@ setMethod(
                      whActive = whActive,
                      whInactive = whInactive,
                      totalIterations = totalIterations)
-    if (canUseAvailable)
+    if (canUseAvailable) {
       attrList <- append(attrList, list(notAvailable = notAvailable))
+    }
     setattr(dt, "spreadState", attrList)
 
     # Step 12 -- return either raster or data.table

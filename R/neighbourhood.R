@@ -309,14 +309,14 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
       } else {
         if (returnDT)
           return(adj[
-            !((((to - 1) %% numCell + 1) != to) | #top or bottom of raster
-                ((from %% numCol + to %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
-            ])
+            # top or bottom of raster | right & left edge cells, with neighbours wrapped
+            !((((to - 1) %% numCell + 1) != to) | ((from %% numCol + to %% numCol) == 1))
+          ])
         else
           return(as.matrix(adj[
-            !((((to - 1) %% numCell + 1) != to) | #top or bottom of raster
-                ((from %% numCol + to %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
-            ]))
+            # top or bottom of raster | right & left edge cells, with neighbours wrapped
+            !((((to - 1) %% numCell + 1) != to) | ((from %% numCol + to %% numCol) == 1))
+          ]))
         return()
       }
     } else {
@@ -331,7 +331,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 
         if (match.adjacent) {
           if (returnDT)
-            return(unique(adj[,list(to)]))
+            return(unique(adj[, list(to)]))
           else
             return(unique(adj$to))
         }
@@ -846,7 +846,7 @@ setMethod(
 #'   clearPlot()
 #'   Plot(hab, zero.color = "white", axes = "L")
 #' }
-#' for(i in 1:10) {
+#' for (i in 1:10) {
 #'   agent <- crw(agent = agent, extent = extent(hab), stepLength = ln,
 #'                stddev = sd, lonlat = FALSE, torus = TRUE)
 #'   if (interactive()) Plot(agent, addTo = "hab", axes = TRUE)
@@ -1060,9 +1060,9 @@ setMethod(
         else
           a1[a1[, "dists"] %<=% b[as.numeric(names(b)) %==% x], , drop = FALSE]
       })
-      do.call(rbind,d1)
+      do.call(rbind, d1)
     })
-    d2xx <- do.call(rbind,dxx)
+    d2xx <- do.call(rbind, dxx)
     whDrop <- match(c("stopDist"), colnames(d2xx))
     d2xx[, -whDrop, drop = FALSE]
   }
