@@ -3,7 +3,6 @@
 ## -------------------------------------------------------------------------- ##
 
 .onLoad <- function(libname, pkgname) {
-  tmpdir <- file.path(tempdir(), "SpaDES")
   ## set options using the approach used by devtools
   opts <- options()
   opts.spades <- list( # nolint
