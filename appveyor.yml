@@ -31,7 +31,7 @@ environment:
   - R_VERSION: oldrel
     RTOOLS_VERSION: 33
 
-  - R_VERSION: 3.3.2
+  - R_VERSION: 3.3.3
     RTOOLS_VERSION: 33
 
 branches:
@@ -46,7 +46,6 @@ branches:
 clone_depth: 5
 
 build_script:
-  - travis-tool.sh r_github_packages PredictiveEcology/reproducible PredictiveEcology/quickPlot
   - travis-tool.sh install_deps
 
 test_script:
@@ -80,7 +79,7 @@ notifications:
    to:
      - alex.chubaty@gmail.com
    subject: 'SpaDES.tools: r-appveyor build {{status}}'
-   message: "https://ci.appveyor.com/project/achubaty/SpaDES.tools"
+   message: "https://ci.appveyor.com/project/achubaty/spades-tools"
    on_build_success: false
    on_build_failure: false
    on_build_status_changed: true
