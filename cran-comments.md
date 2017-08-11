@@ -20,10 +20,10 @@ This is a spin off of an existing CRAN package (`SpaDES`), which we have split d
 
 ### Development R version
 * Debian:testing (rocker/r-devel), R 3.5.0 (2017-07-26 r72972)
-* Ubuntu 14.04        (travis-ci), R 3.5.0 (2017-08-09 r73082)
-* Ubuntu 16.04            (local), R 3.5.0 (2017-08-08 r73067)
-* Windows              (appveyor), R 3.5.0 (2017-08-08 r73068)
-* Windows           (win-builder), R 3.5.0 (2017-08-08 r73068)
+* Ubuntu 14.04        (travis-ci), R 3.5.0 (2017-08-11 r73085)
+* Ubuntu 16.04            (local), R 3.5.0 (2017-08-10 r73083)
+* Windows              (appveyor), R 3.5.0 (2017-08-10 r73083)
+* Windows           (win-builder), R 3.5.0 (2017-08-10 r73083)
 
 ## R CMD check results
 
@@ -38,8 +38,8 @@ There was 1 NOTE:
             Maintainer: 'Alex M Chubaty <alexander.chubaty@canada.ca>'
             
             New submission
-            
-    b. Some words were flagged as possibly mispelled, but they are not. 
+    
+    b. Some words were flagged as possibly mispelled, but they are false positives.
      
             Possibly mis-spelled words in DESCRIPTION:
               GIS (5:23)
