@@ -4,9 +4,9 @@ Title: Additional Tools for Developing Spatially Explicit Discrete Event Simulat
 Description: Provides GIS/map utilities and additional modeling tools for
     developing cellular automata and agent based models in 'SpaDES'.
 URL:
-    http://spades.predictiveecology.org,
+    https://predictiveecology.github.io/SpaDES.tools/,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2017-08-21
+Date: 2017-08-23
 Version: 0.1.0.9000
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
