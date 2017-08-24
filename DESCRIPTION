@@ -6,7 +6,7 @@ Description: Provides GIS/map utilities and additional modeling tools for
 URL:
     http://spades.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2017-08-21
+Date: 2017-08-24
 Version: 0.1.0.9000
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
