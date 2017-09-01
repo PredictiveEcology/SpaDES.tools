@@ -6,9 +6,11 @@
 ^_ignore$
 ^\.lintr$
 ^\.travis\.yml$
+^_pkgdown\.yml$
 ^appveyor\.yml$
 CONTRIBUTING\.md
 cran-comments\.md
-LICENSE
+^docs$
+^LICENSE$
 vignettes/.*_cache$
 vignettes/.*\.log$
