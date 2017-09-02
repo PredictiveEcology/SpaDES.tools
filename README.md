@@ -43,3 +43,4 @@ install_github("PredictiveEcology/SpaDES.tools", dependencies = TRUE) # stable
 library("devtools")
 install_github("PredictiveEcology/SpaDES.tools", ref = "development", dependencies = TRUE) # unstable
 ```
+
