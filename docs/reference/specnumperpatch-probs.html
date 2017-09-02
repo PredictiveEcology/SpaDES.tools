@@ -131,14 +131,16 @@ agents following the numbers above.</p>
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>ras</span>)
-}</div><div class='img'><img src='specnumperpatch-probs-4.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='img'><img src='specnumperpatch-probs-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'># Use numPerPatchTable</span>
 <span class='no'>patchDT</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/data.table/topics/data.table'>data.table</a></span>(<span class='kw'>pops</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='no'>Ntypes</span>, <span class='kw'>num.in.pop</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>7</span>))
 <span class='no'>rasAgents</span> <span class='kw'>&lt;-</span> <span class='fu'>specificNumPerPatch</span>(<span class='no'>ras</span>, <span class='no'>patchDT</span>)
 <span class='no'>rasAgents</span>[<span class='fu'>is.na</span>(<span class='no'>rasAgents</span>)] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 
-<span class='fu'>library</span>(<span class='no'>testthat</span>)
-<span class='fu'><a href='http://www.rdocumentation.org/packages/testthat/topics/logical-expectations'>expect_true</a></span>(<span class='fu'>all</span>(<span class='fu'>unname</span>(<span class='fu'>table</span>(<span class='no'>ras</span>[<span class='no'>rasAgents</span>])) <span class='kw'>==</span> <span class='no'>patchDT</span>$<span class='no'>num.in.pop</span>))
+<span class='fu'>library</span>(<span class='no'>testthat</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘testthat’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:magrittr’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    equals, is_less_than, not</span></div><div class='input'><span class='fu'><a href='http://www.rdocumentation.org/packages/testthat/topics/logical-expectations'>expect_true</a></span>(<span class='fu'>all</span>(<span class='fu'>unname</span>(<span class='fu'>table</span>(<span class='no'>ras</span>[<span class='no'>rasAgents</span>])) <span class='kw'>==</span> <span class='no'>patchDT</span>$<span class='no'>num.in.pop</span>))
 
 <span class='co'># Use numPerPatchMap</span>
 <span class='no'>rasPatches</span> <span class='kw'>&lt;-</span> <span class='no'>ras</span>
@@ -148,12 +150,12 @@ agents following the numbers above.</p>
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>ras</span>, <span class='no'>rasPatches</span>)
-}</div><div class='img'><img src='specnumperpatch-probs-5.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='no'>rasAgents</span> <span class='kw'>&lt;-</span> <span class='fu'>specificNumPerPatch</span>(<span class='no'>ras</span>, <span class='kw'>numPerPatchMap</span> <span class='kw'>=</span> <span class='no'>rasPatches</span>)
+}</div><div class='img'><img src='specnumperpatch-probs-2.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='no'>rasAgents</span> <span class='kw'>&lt;-</span> <span class='fu'>specificNumPerPatch</span>(<span class='no'>ras</span>, <span class='kw'>numPerPatchMap</span> <span class='kw'>=</span> <span class='no'>rasPatches</span>)
 <span class='no'>rasAgents</span>[<span class='fu'>is.na</span>(<span class='no'>rasAgents</span>)] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>rasAgents</span>)
-}</div><div class='img'><img src='specnumperpatch-probs-6.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='img'><img src='specnumperpatch-probs-3.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
