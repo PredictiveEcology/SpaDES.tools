@@ -216,7 +216,7 @@ Using this will keep memory use down.</p></td>
     <p>A slightly faster way to calculate distances.</p>
 <p>This function is cluster aware. If there is a cluster running, it will use it.
 To start a cluster use <code><a href='http://www.rdocumentation.org/packages/raster/topics/cluster'>beginCluster</a></code>, with <code>N</code> being
-the number of cores to use. See examples in <code><a href='http://www.rdocumentation.org/packages/SpaDES.core/topics/experiment'>SpaDES.core::experiment</a></code>.</p>
+the number of cores to use. See examples in <code><a href='https://predictiveecology.github.io/SpaDES.core/reference/experiment.html'>SpaDES.core::experiment</a></code>.</p>
     <p>If the user requires an id (indicating the <code>from</code> cell for each <code>to</code> cell)
 to be returned with the fuction, the user must add an identifier to the
 <code>from</code> matrix, such as <code>"id"</code>.
@@ -263,13 +263,13 @@ many <code>to</code> points or all cells are used <code>to = NULL</code> (which 
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>distRas</span>)
-}</div><div class='img'><img src='distances-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='img'><img src='distances-4.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'># With iterative summing via cumulativeFn to keep memory use low, with same result</span>
 <span class='no'>dists1</span> <span class='kw'>&lt;-</span> <span class='fu'>distanceFromEachPoint</span>(<span class='no'>coords</span>[, <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='kw'>drop</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>],
                                 <span class='kw'>landscape</span> <span class='kw'>=</span> <span class='no'>distRas</span>, <span class='kw'>cumulativeFn</span> <span class='kw'>=</span> <span class='no'>`+`</span>)
 <span class='no'>idwRaster</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='no'>distRas</span>)
 <span class='no'>idwRaster</span>[] <span class='kw'>&lt;-</span> <span class='no'>dists1</span>[, <span class='st'>"val"</span>]
-<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>idwRaster</span>)</div><div class='img'><img src='distances-2.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>idwRaster</span>)</div><div class='img'><img src='distances-5.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='fu'>all</span>(<span class='no'>idwRaster</span>[] <span class='kw'>==</span> <span class='no'>distRas</span>[]) <span class='co'># TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'># A more complex example of cumulative inverse distance sums, weighted by the value</span>
 <span class='co'>#  of the origin cell</span>
@@ -293,7 +293,7 @@ many <code>to</code> points or all cells are used <code>to = NULL</code> (which 
   <span class='no'>sp1</span> <span class='kw'>&lt;-</span> <span class='fu'>SpatialPoints</span>(<span class='no'>coords</span>)
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>sp1</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>)
   <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>sp1</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"idwRaster"</span>)
-}</div><div class='img'><img src='distances-3.png' alt='' width='700' height='432.632880098887' /></div></pre>
+}</div><div class='img'><img src='distances-6.png' alt='' width='700' height='432.632880098887' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

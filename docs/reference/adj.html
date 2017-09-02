@@ -228,10 +228,8 @@ Efficiency gains come from:
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>raster</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: sp</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘raster’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:SpaDES.tools’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    resample</span></div><div class='input'><span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>1000</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>raster</span>)
+<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>1000</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>sam</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span>(<span class='fl'>1</span>:<span class='fu'>length</span>(<span class='no'>a</span>), <span class='fl'>1e4</span>)
 <span class='no'>numCol</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/ncell'>ncol</a></span>(<span class='no'>a</span>)
 <span class='no'>numCell</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/ncell'>ncell</a></span>(<span class='no'>a</span>)
