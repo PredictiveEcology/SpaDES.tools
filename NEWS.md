@@ -11,4 +11,3 @@ version 0.1.0
 * A new package, which takes all auxillary modelling functions out of the `SpaDES` package:
 
     - see `?SpaDES.tools::SpaDES.tools` for an overview of included functionality
-
