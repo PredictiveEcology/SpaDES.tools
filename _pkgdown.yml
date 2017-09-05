@@ -1,0 +1,6 @@
+url: http://spades-tools.predictiveecology.org
+
+template:
+  params:
+    bootswatch: flatly
+

@@ -1,5 +1,10 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
+version 0.1.0.9000
+==================
+
+* add more detailed information to package Description, per CRAN
+
 version 0.1.0
 =============
 
