@@ -10,7 +10,7 @@ URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
 Date: 2017-09-02
-Version: 0.1.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
     role = c("aut", "cre")),
