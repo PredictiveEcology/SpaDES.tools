@@ -4,6 +4,7 @@ version 0.1.0.9000
 ==================
 
 * add more detailed information to package Description, per CRAN
+* add `randomPolygon` function for single random polygon
 
 version 0.1.0
 =============
