@@ -414,6 +414,7 @@ setMethod(
 
     # returnDistances = TRUE and circle = TRUE both require distance calculations
     needDistance <- returnDistances | circle
+    usingAsymmetry <- !is.na(asymmetry)
 
     # This means that if an event can not spread any more, it will try 10 times, incl. 2 jumps
     maxRetriesPerID <- 10
@@ -464,6 +465,7 @@ setMethod(
 
       setkeyv(clusterDT, "initialPixels")
       if (needDistance) set(dt, , "distance", 0) # it is zero distance to self
+      if (usingAsymmetry) set(dt, , "effectiveDistance", 0) # it is zero distance to self
       totalIterations <- 0
 
     } else {
@@ -513,7 +515,7 @@ setMethod(
     }
 
     whTooSmall <- integer()
-    dtPotentialColNames <- c("id", "from", "to", "state", "distance"[needDistance])
+    dtPotentialColNames <- c("id", "from", "to", "state", "distance"[needDistance], "effectiveDistance"[usingAsymmetry])
 
     # start at iteration 0, note: totalIterations is also maintained,
     # which persists during iterative calls to spread2
@@ -602,7 +604,7 @@ setMethod(
         fromPts <- xyFromCell(landscape, dtPotential$id)
         toPts <- xyFromCell(landscape, dtPotential$to)
         dists <- pointDistance(p1 = fromPts, p2 = toPts, lonlat = FALSE)
-        if (!is.na(asymmetry)) {
+        if (usingAsymmetry) {
           actualAsymmetry <- if (length(asymmetry) == 1) {
             asymmetry
           } else {
@@ -623,7 +625,7 @@ setMethod(
         }
 
         if (circle) {
-          if (!is.na(asymmetry)) {
+          if (usingAsymmetry) {
             distKeepers <- effDists %<=% totalIterations & effDists %>>%
               (totalIterations - 1)
             dtPotentialAsymmetry <- dtPotential[!distKeepers]
@@ -642,11 +644,13 @@ setMethod(
             distKeepers <- dists %<=% totalIterations & dists %>>%
               (totalIterations - 1)
           }
+          dtPotentialAllNeighs <- copy(dtPotential)
+          setkeyv(dtPotentialAllNeighs, "from")
           dtPotential <- dtPotential[distKeepers]
           dists <- dists[distKeepers]
         }
         set(dtPotential, , "distance", dists)
-        if (!is.na(asymmetry)) {
+        if (usingAsymmetry) {
           set(dtPotential, , "effectiveDistance", effDists[distKeepers])
         }
       }
@@ -728,7 +732,7 @@ setMethod(
       # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle
       #  -- circle asymmetry happens elsewhere
       # modify actualSpreadProb if there is asymmetry
-      if (!is.na(asymmetry) & !circle) {
+      if (usingAsymmetry & !circle) {
         actualAsymmetry <- if (length(asymmetry) == 1) {
           asymmetry
         } else {
@@ -783,6 +787,9 @@ setMethod(
           dtPotential <- dtPotential[whSuccNoDupsCurItAndAll]
 
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
+
+          saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels)==directions, by = from][V1==TRUE]$from
+
         }
       } else {
         # neighProbs -- duplication checking already happened, but
@@ -856,6 +863,10 @@ setMethod(
       } # end size-based assessments
 
       # Step 9 # Change states of cells
+      if(usingAsymmetry & length(saturated)) {
+        set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
+      }
+
       notInactive <- dt$state != "inactive" # currently activeSource, successful, or holding
       whNotInactive <- which(notInactive)
       activeStates <- dt$state[whNotInactive]
@@ -870,7 +881,6 @@ setMethod(
       set(dt, whNotInactive, "state",
           c("inactive", "activeSource", "activeSource", "tooSmall")[
             fmatch(activeStates, c("activeSource", "holding", "successful", "tooSmall"))])
-
       # Step 10 - plot it if necessary
       if (plot.it) {
         newPlot <- FALSE
