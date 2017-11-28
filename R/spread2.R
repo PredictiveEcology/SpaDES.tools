@@ -515,7 +515,8 @@ setMethod(
     }
 
     whTooSmall <- integer()
-    dtPotentialColNames <- c("id", "from", "to", "state", "distance"[needDistance], "effectiveDistance"[usingAsymmetry])
+    dtPotentialColNames <- c("id", "from", "to", "state", "distance"[needDistance],
+                             "effectiveDistance"[usingAsymmetry])
 
     # start at iteration 0, note: totalIterations is also maintained,
     # which persists during iterative calls to spread2
@@ -788,8 +789,8 @@ setMethod(
 
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
-          saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels)==directions, by = from][V1==TRUE]$from
-
+          saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
+                                            by = from][V1 == TRUE]$from
         }
       } else {
         # neighProbs -- duplication checking already happened, but
@@ -863,7 +864,7 @@ setMethod(
       } # end size-based assessments
 
       # Step 9 # Change states of cells
-      if(usingAsymmetry & length(saturated)) {
+      if (usingAsymmetry & length(saturated)) {
         set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
       }
 
@@ -881,6 +882,7 @@ setMethod(
       set(dt, whNotInactive, "state",
           c("inactive", "activeSource", "activeSource", "tooSmall")[
             fmatch(activeStates, c("activeSource", "holding", "successful", "tooSmall"))])
+
       # Step 10 - plot it if necessary
       if (plot.it) {
         newPlot <- FALSE

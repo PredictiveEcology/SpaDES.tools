@@ -114,7 +114,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
                     match.adjacent = FALSE, cutoff.for.data.table = 2e3,
                     torus = FALSE, id = NULL, numNeighs = NULL, returnDT = FALSE) {
   to <- NULL
-  J <- NULL
+  J <- NULL # nolint
   cells <- as.integer(cells)
 
   if (is.null(numCol) | is.null(numCell)) {
@@ -245,7 +245,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     } else {
       whLefRig <- (adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1
       adj[whLefRig, "to"] <- adj[whLefRig, "to"] +
-        numCol*(adj[whLefRig, "from"] - adj[whLefRig, "to"])
+        numCol * (adj[whLefRig, "from"] - adj[whLefRig, "to"])
       whBotTop <- ((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]
       adj[whBotTop, "to"] <- adj[whBotTop, "to"] +
         sign(adj[whBotTop, "from"] - adj[whBotTop, "to"]) * numCell

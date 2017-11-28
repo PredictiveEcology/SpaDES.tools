@@ -47,7 +47,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
   }
   fullRasterVals <- data.table(getValues(fullRaster))
   setnames(fullRasterVals, 1, new = mapcode)
-  fullRasterVals <- fullRasterVals[, row_number := 1L:.N]
+  fullRasterVals <- fullRasterVals[, row_number := 1L:.N] # nolint
   setkeyv(fullRasterVals, mapcode)
 
   BsumVec <- reduced[fullRasterVals] # join
