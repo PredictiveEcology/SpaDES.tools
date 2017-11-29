@@ -11,7 +11,7 @@ rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
 reorderColsWDistance(needDistance, dtPotential, dtPotentialColNames)
 
-angleQuality(dtPotential, landscape, actualAsymmetryAngle)
+angleQuality(from, to, landscape, actualAsymmetryAngle)
 
 asymmetryAdjust(angleQualities, quantity, actualAsymmetry)
 }
@@ -26,6 +26,10 @@ asymmetryAdjust(angleQualities, quantity, actualAsymmetry)
 
 \item{dtPotentialColNames}{Character Vector.}
 
+\item{from}{vector of cell locations which are the "from" or starting cells}
+
+\item{to}{vector of same length as \code{from} which are the "to" or receiving cells}
+
 \item{landscape}{\code{RasterLayer} passed from \code{spread2}.}
 
 \item{actualAsymmetryAngle}{Angle in degrees, either a vector length 1 or
@@ -36,8 +40,6 @@ vector \code{NROW(dtPotential)}.}
 \item{quantity}{Variable of interest to adjust, e.g., \code{spreadProb}}
 
 \item{actualAsymmetry}{Asymmetry intensity. Derived from \code{asymmetry} arg in \code{spread2}}
-
-\item{dtPotential}{\code{data.table} of potential spread locations.}
 }
 \description{
 Not for users. A function to setnames and rbindlist that is used 3 places in spread2.
