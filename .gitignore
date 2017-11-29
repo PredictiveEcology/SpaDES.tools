@@ -39,3 +39,5 @@ src/*.so
 src/*.dll
 src-*/
 
+
+SpaDES\.tools\.Rproj
