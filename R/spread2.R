@@ -977,17 +977,18 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
     )
 }
 
-#' @param dtPotential \code{data.table} of potential spread locations.
+#' @param from vector of cell locations which are the "from" or starting cells
+#' @param to vector of same length as \code{from} which are the "to" or receiving cells
 #' @param landscape \code{RasterLayer} passed from \code{spread2}.
 #' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or
 #'                             vector \code{NROW(dtPotential)}.
 #' @keywords internal
 #' @rdname spread2-internals
 #'
-angleQuality <- function(dtPotential, landscape, actualAsymmetryAngle) {
-  from <- cbind(id = dtPotential$id, xyFromCell(landscape, dtPotential$id))
-  to <- cbind(id = dtPotential$id, xyFromCell(landscape, dtPotential$to))
-  d <- .pointDirection(from = from, to = to)
+angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
+  from1 <- cbind(id = from, xyFromCell(landscape, from))
+  to1 <- cbind(id = from, xyFromCell(landscape, to))
+  d <- .pointDirection(from = from1, to = to1)
 
   angleQuality <- cbind(angleQuality = (cos(d[, "angles"] - rad(actualAsymmetryAngle)) + 1), d)
   angleQuality
