@@ -489,6 +489,7 @@ setMethod(
                         angles, returnAngles, returnIndices,
                         closest, simplify) {
     coords <- xyFromCell(landscape, loci)
+    coords <- cbind(coords, id = loci)
     cir(landscape, coords = coords, maxRadius = maxRadius, minRadius = minRadius,
         allowOverlap = allowOverlap, allowDuplicates = allowDuplicates,
         includeBehavior = includeBehavior,
