@@ -1,8 +1,8 @@
 if (getRversion() >= "3.1.0") {
   utils::globalVariables(c(
-    "distance", "i.size", "ind", "indClDT", "initialPixels", "n", "newQuantity",
-    "numNeighs", "numRetries", "origIndex", "pixels", "quantityAdj",
-    "quantityAdj2", "state", "size", "tooBigByNCells"
+    "distance", "from", "i.size", "ind", "indClDT", "initialPixels",
+    "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
+    "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1"
   ))
 }
 
@@ -304,6 +304,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @aliases spread2
 #' @export
+#' @importFrom data.table copy
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot
 #' @name spread2
@@ -630,23 +631,30 @@ setMethod(
 
           # For asymmetry, we also may want to know what proportion of the outward spreading
           #  event will hit each pixel, not just the effectiveDistance
-          pureCircle <- cir(landscape, loci = attributes(dt)$spreadState$clusterDT$initialPixels, allowOverlap = TRUE,
-                            maxRadius = totalIterations, minRadius = totalIterations - 0.999999, returnIndices = TRUE,
-                            returnDistances = TRUE, includeBehavior = "excludePixels")
-          pureCircle <- cbind(pureCircle[, c("id", "indices", "dists")], distClass = ceiling(pureCircle[, "dists"]))
+          pureCircle <- cir(landscape,
+                            loci = attributes(dt)$spreadState$clusterDT$initialPixels,
+                            allowOverlap = TRUE,
+                            maxRadius = totalIterations,
+                            minRadius = totalIterations - 0.999999,
+                            returnIndices = TRUE,
+                            returnDistances = TRUE,
+                            includeBehavior = "excludePixels")
+          pureCircle <- cbind(pureCircle[, c("id", "indices", "dists")],
+                              distClass = ceiling(pureCircle[, "dists"]))
           colnames(pureCircle)[2] <- c("to")
 
           theoreticalAngleQualities <- angleQuality(pureCircle[, "id", drop = FALSE],
                                                     pureCircle[, "to", drop = FALSE],
-                                                    landscape, actualAsymmetryAngle = actualAsymmetryAngle)
+                                                    landscape,
+                                                    actualAsymmetryAngle = actualAsymmetryAngle)
           naAQ <- is.na(theoreticalAngleQualities[, "angleQuality"])
           theoreticalAngleQualities[naAQ, "angleQuality"] <- 1
           # convert dists to effective distance
-          effDists1 <- pureCircle[, "dists"] * ((2 - theoreticalAngleQualities[, "angleQuality"]) / 2 *
-                                 (actualAsymmetry - 1) + 1)
+          effDists1 <- pureCircle[, "dists"] *
+            ((2 - theoreticalAngleQualities[, "angleQuality"]) / 2 * (actualAsymmetry - 1) + 1)
 
           pc <- pureCircle[, "dists"] / effDists1
-          pureCircle <- cbind(pureCircle, proportion=pc/sum(pc))
+          pureCircle <- cbind(pureCircle, proportion = pc/sum(pc))
           pureCircle <- as.data.table(pureCircle)
           set(pureCircle, , "dists", NULL)
           setkeyv(pureCircle, c("id", "to"))
@@ -687,7 +695,7 @@ setMethod(
         if (usingAsymmetry) {
           set(dtPotential, , "effectiveDistance", effDists[distKeepers])
           if (circle) {
-            dtPotential <- dtPotential[pureCircle, nomatch=0, on=c("id", "to")]
+            dtPotential <- dtPotential[pureCircle, nomatch = 0, on = c("id", "to")]
           }
         }
       }
