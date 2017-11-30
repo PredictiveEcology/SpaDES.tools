@@ -24,7 +24,7 @@ Authors@R: c(
     role = "cph")
     )
 Depends:
-    R (>= 3.3.2)
+    R (>= 3.3.3)
 Imports:
     bit (>= 1.1-12),
     checkmate (>= 1.8.2),
