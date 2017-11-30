@@ -110,7 +110,7 @@ You must know how to use SELES for these to be useful:
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://spades.predictiveecology.org}
+  \item \url{http://spades-tools.predictiveecology.org}
   \item \url{https://github.com/PredictiveEcology/SpaDES.tools}
   \item Report bugs at \url{https://github.com/PredictiveEcology/SpaDES.tools/issues}
 }

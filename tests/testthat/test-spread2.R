@@ -486,8 +486,6 @@ test_that("spread2 tests", {
     nonIterativeFun()
   })
 
-
-
   library(raster)
   library(data.table)
   library(fpCompare)

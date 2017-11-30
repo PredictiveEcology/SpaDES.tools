@@ -414,6 +414,7 @@ setMethod(
 
     # returnDistances = TRUE and circle = TRUE both require distance calculations
     needDistance <- returnDistances | circle
+    usingAsymmetry <- !is.na(asymmetry)
 
     # This means that if an event can not spread any more, it will try 10 times, incl. 2 jumps
     maxRetriesPerID <- 10
@@ -464,6 +465,10 @@ setMethod(
 
       setkeyv(clusterDT, "initialPixels")
       if (needDistance) set(dt, , "distance", 0) # it is zero distance to self
+      if (usingAsymmetry) {
+        set(dt, , "effectiveDistance", 0) # it is zero distance to self
+        set(dt, , "distClass", 0) # it is zero distance to self
+      }
       totalIterations <- 0
 
     } else {
@@ -513,7 +518,8 @@ setMethod(
     }
 
     whTooSmall <- integer()
-    dtPotentialColNames <- c("id", "from", "to", "state", "distance"[needDistance])
+    dtPotentialColNames <- c("id", "from", "to", "state", "distance"[needDistance],
+                             "effectiveDistance"[usingAsymmetry])
 
     # start at iteration 0, note: totalIterations is also maintained,
     # which persists during iterative calls to spread2
@@ -602,7 +608,7 @@ setMethod(
         fromPts <- xyFromCell(landscape, dtPotential$id)
         toPts <- xyFromCell(landscape, dtPotential$to)
         dists <- pointDistance(p1 = fromPts, p2 = toPts, lonlat = FALSE)
-        if (!is.na(asymmetry)) {
+        if (usingAsymmetry) {
           actualAsymmetry <- if (length(asymmetry) == 1) {
             asymmetry
           } else {
@@ -614,16 +620,45 @@ setMethod(
             asymmetryAngle[dtPotential$to]
           }
 
-          angleQualities <- angleQuality(dtPotential, landscape, actualAsymmetryAngle)
+          angleQualities <- angleQuality(from = dtPotential$id, to = dtPotential$to,
+                                         landscape, actualAsymmetryAngle)
           naAQ <- is.na(angleQualities[, "angleQuality"])
           angleQualities[naAQ, "angleQuality"] <- 1
           # convert dists to effective distance
           effDists <- dists * ((2 - angleQualities[, "angleQuality"]) / 2 *
                                  (actualAsymmetry - 1) + 1)
+
+          # For asymmetry, we also may want to know what proportion of the outward spreading
+          #  event will hit each pixel, not just the effectiveDistance
+          pureCircle <- cir(landscape, loci = attributes(dt)$spreadState$clusterDT$initialPixels, allowOverlap = TRUE,
+                            maxRadius = totalIterations, minRadius = totalIterations - 0.999999, returnIndices = TRUE,
+                            returnDistances = TRUE, includeBehavior = "excludePixels")
+          pureCircle <- cbind(pureCircle[, c("id", "indices", "dists")], distClass = ceiling(pureCircle[, "dists"]))
+          colnames(pureCircle)[2] <- c("to")
+
+          theoreticalAngleQualities <- angleQuality(pureCircle[, "id", drop = FALSE],
+                                                    pureCircle[, "to", drop = FALSE],
+                                                    landscape, actualAsymmetryAngle = actualAsymmetryAngle)
+          naAQ <- is.na(theoreticalAngleQualities[, "angleQuality"])
+          theoreticalAngleQualities[naAQ, "angleQuality"] <- 1
+          # convert dists to effective distance
+          effDists1 <- pureCircle[, "dists"] * ((2 - theoreticalAngleQualities[, "angleQuality"]) / 2 *
+                                 (actualAsymmetry - 1) + 1)
+
+          pc <- pureCircle[, "dists"] / effDists1
+          pureCircle <- cbind(pureCircle, proportion=pc/sum(pc))
+          pureCircle <- as.data.table(pureCircle)
+          set(pureCircle, , "dists", NULL)
+          setkeyv(pureCircle, c("id", "to"))
+          pureCirclePrev <- attr(dt, "spreadState")$pureCircle
+          if(!is.null(pureCirclePrev)) {
+            pureCircle <- rbindlist(list(pureCircle, pureCirclePrev), use.names = FALSE, fill = FALSE)
+            #pureCircle <- unique(pureCircle)
+          }
         }
 
         if (circle) {
-          if (!is.na(asymmetry)) {
+          if (usingAsymmetry) {
             distKeepers <- effDists %<=% totalIterations & effDists %>>%
               (totalIterations - 1)
             dtPotentialAsymmetry <- dtPotential[!distKeepers]
@@ -642,12 +677,18 @@ setMethod(
             distKeepers <- dists %<=% totalIterations & dists %>>%
               (totalIterations - 1)
           }
+
+          dtPotentialAllNeighs <- copy(dtPotential)
+          setkeyv(dtPotentialAllNeighs, "from")
           dtPotential <- dtPotential[distKeepers]
           dists <- dists[distKeepers]
         }
         set(dtPotential, , "distance", dists)
-        if (!is.na(asymmetry)) {
+        if (usingAsymmetry) {
           set(dtPotential, , "effectiveDistance", effDists[distKeepers])
+          if (circle) {
+            dtPotential <- dtPotential[pureCircle, nomatch=0, on=c("id", "to")]
+          }
         }
       }
 
@@ -728,7 +769,7 @@ setMethod(
       # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle
       #  -- circle asymmetry happens elsewhere
       # modify actualSpreadProb if there is asymmetry
-      if (!is.na(asymmetry) & !circle) {
+      if (usingAsymmetry & !circle) {
         actualAsymmetry <- if (length(asymmetry) == 1) {
           asymmetry
         } else {
@@ -740,7 +781,8 @@ setMethod(
           asymmetryAngle[dtPotential$to]
         }
 
-        angleQualities <- angleQuality(dtPotential, landscape, actualAsymmetryAngle)
+        angleQualities <- angleQuality(from = dtPotential$id, to = dtPotential$to,
+                                       landscape, actualAsymmetryAngle)
 
         naAQ <- is.na(angleQualities[, "angleQuality"])
         angleQualities[naAQ, "angleQuality"] <- actualSpreadProb[naAQ]
@@ -783,6 +825,9 @@ setMethod(
           dtPotential <- dtPotential[whSuccNoDupsCurItAndAll]
 
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
+
+          saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
+                                            by = from][V1 == TRUE]$from
         }
       } else {
         # neighProbs -- duplication checking already happened, but
@@ -856,6 +901,12 @@ setMethod(
       } # end size-based assessments
 
       # Step 9 # Change states of cells
+      if (usingAsymmetry){
+        if(!allowOverlap) {
+          if(length(saturated)) {
+            set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
+      }}}
+
       notInactive <- dt$state != "inactive" # currently activeSource, successful, or holding
       whNotInactive <- which(notInactive)
       activeStates <- dt$state[whNotInactive]
@@ -900,6 +951,10 @@ setMethod(
                      totalIterations = totalIterations)
     if (canUseAvailable) {
       attrList <- append(attrList, list(notAvailable = notAvailable))
+    }
+    if (usingAsymmetry) {
+      if(exists("pureCircle", inherits = FALSE))
+        attrList <- append(attrList, list(pureCircle = pureCircle))
     }
     setattr(dt, "spreadState", attrList)
 
@@ -965,17 +1020,18 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
     )
 }
 
-#' @param dtPotential \code{data.table} of potential spread locations.
+#' @param from vector of cell locations which are the "from" or starting cells
+#' @param to vector of same length as \code{from} which are the "to" or receiving cells
 #' @param landscape \code{RasterLayer} passed from \code{spread2}.
 #' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or
 #'                             vector \code{NROW(dtPotential)}.
 #' @keywords internal
 #' @rdname spread2-internals
 #'
-angleQuality <- function(dtPotential, landscape, actualAsymmetryAngle) {
-  from <- cbind(id = dtPotential$id, xyFromCell(landscape, dtPotential$id))
-  to <- cbind(id = dtPotential$id, xyFromCell(landscape, dtPotential$to))
-  d <- .pointDirection(from = from, to = to)
+angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
+  from1 <- cbind(id = from, xyFromCell(landscape, from))
+  to1 <- cbind(id = from, xyFromCell(landscape, to))
+  d <- .pointDirection(from = from1, to = to1)
 
   angleQuality <- cbind(angleQuality = (cos(d[, "angles"] - rad(actualAsymmetryAngle)) + 1), d)
   angleQuality
