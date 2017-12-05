@@ -52,7 +52,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -126,8 +126,8 @@ These are built with the <code><a href='spread.html'>spread</a></code> function 
 <span class='fu'>set.seed</span>(<span class='fl'>1234</span>)
 <span class='no'>Ras</span> <span class='kw'>&lt;-</span> <span class='fu'>randomPolygons</span>(<span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>5</span>)
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>Ras</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"yellow"</span>, <span class='st'>"dark green"</span>, <span class='st'>"blue"</span>, <span class='st'>"dark red"</span>))
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>Ras</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"yellow"</span>, <span class='st'>"dark green"</span>, <span class='st'>"blue"</span>, <span class='st'>"dark red"</span>))
 }</div><div class='img'><img src='randomPolygons-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='fu'>library</span>(<span class='no'>raster</span>)
 <span class='co'># more complex patterning, with a range of patch sizes</span>
@@ -137,9 +137,9 @@ These are built with the <code><a href='spread.html'>spread</a></code> function 
 <span class='fu'>suppressWarnings</span>(<span class='no'>clumped</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/clump'>clump</a></span>(<span class='no'>a</span>)) <span class='co'># warning sometimes occurs, but not important</span>
 <span class='no'>aHist</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/hist'>hist</a></span>(<span class='fu'>table</span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/getValues'>getValues</a></span>(<span class='no'>clumped</span>)), <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>a</span>)
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>aHist</span>)
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>a</span>)
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>aHist</span>)
 }</div><div class='img'><img src='randomPolygons-2.png' alt='' width='700' height='432.632880098887' /></div><div class='img'><img src='randomPolygons-3.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 </div></pre>
   </div>

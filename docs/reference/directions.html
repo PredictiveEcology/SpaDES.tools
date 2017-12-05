@@ -52,7 +52,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -172,11 +172,11 @@ if <code>angles = TRUE</code>.</p>
 <span class='no'>minDir</span> <span class='kw'>&lt;-</span> <span class='fu'>tapply</span>(<span class='no'>dirs1</span>[, <span class='st'>"angles"</span>], <span class='no'>indices</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'>min</span>(<span class='no'>x</span>)) <span class='co'># minimum angle</span>
 <span class='no'>dirRas</span>[] <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/as.matrix'>as.vector</a></span>(<span class='no'>minDir</span>)
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>dirRas</span>)
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>dirRas</span>)
   <span class='fu'>library</span>(<span class='no'>sp</span>)
   <span class='no'>start</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='no'>coords</span>[, <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='kw'>drop</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>])
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>start</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"dirRas"</span>)
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>start</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"dirRas"</span>)
 }</div><div class='img'><img src='directions-1.png' alt='' width='700' height='432.632880098887' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

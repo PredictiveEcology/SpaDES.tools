@@ -52,7 +52,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -174,12 +174,12 @@ previous agent locations.</p>
 <span class='no'>sd</span> <span class='kw'>&lt;-</span> <span class='fl'>30</span> <span class='co'># could be specified globally in params</span>
 
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>hab</span>, <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>, <span class='kw'>axes</span> <span class='kw'>=</span> <span class='st'>"L"</span>)
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>hab</span>, <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>, <span class='kw'>axes</span> <span class='kw'>=</span> <span class='st'>"L"</span>)
 }</div><div class='input'><span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>10</span>) {
   <span class='no'>agent</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='crw.html'>crw</a></span>(<span class='kw'>agent</span> <span class='kw'>=</span> <span class='no'>agent</span>, <span class='kw'>extent</span> <span class='kw'>=</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='no'>hab</span>), <span class='kw'>stepLength</span> <span class='kw'>=</span> <span class='no'>ln</span>,
                <span class='kw'>stddev</span> <span class='kw'>=</span> <span class='no'>sd</span>, <span class='kw'>lonlat</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>torus</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-  <span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>agent</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"hab"</span>, <span class='kw'>axes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agent</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"hab"</span>, <span class='kw'>axes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 }</div><div class='img'><img src='wrap-1.png' alt='' width='700' height='432.632880098887' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

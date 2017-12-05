@@ -52,7 +52,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -95,7 +95,7 @@
 
 <span class='fu'>reorderColsWDistance</span>(<span class='no'>needDistance</span>, <span class='no'>dtPotential</span>, <span class='no'>dtPotentialColNames</span>)
 
-<span class='fu'>angleQuality</span>(<span class='no'>dtPotential</span>, <span class='no'>landscape</span>, <span class='no'>actualAsymmetryAngle</span>)
+<span class='fu'>angleQuality</span>(<span class='no'>from</span>, <span class='no'>to</span>, <span class='no'>landscape</span>, <span class='no'>actualAsymmetryAngle</span>)
 
 <span class='fu'>asymmetryAdjust</span>(<span class='no'>angleQualities</span>, <span class='no'>quantity</span>, <span class='no'>actualAsymmetry</span>)</pre>
     
@@ -123,6 +123,14 @@
       <td><p>Character Vector.</p></td>
     </tr>
     <tr>
+      <th>from</th>
+      <td><p>vector of cell locations which are the "from" or starting cells</p></td>
+    </tr>
+    <tr>
+      <th>to</th>
+      <td><p>vector of same length as <code>from</code> which are the "to" or receiving cells</p></td>
+    </tr>
+    <tr>
       <th>landscape</th>
       <td><p><code>RasterLayer</code> passed from <code>spread2</code>.</p></td>
     </tr>
@@ -142,10 +150,6 @@ vector <code>NROW(dtPotential)</code>.</p></td>
     <tr>
       <th>actualAsymmetry</th>
       <td><p>Asymmetry intensity. Derived from <code>asymmetry</code> arg in <code>spread2</code></p></td>
-    </tr>
-    <tr>
-      <th>dtPotential</th>
-      <td><p><code>data.table</code> of potential spread locations.</p></td>
     </tr>
     </table>
     
