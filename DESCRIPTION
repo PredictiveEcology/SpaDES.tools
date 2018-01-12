@@ -36,6 +36,7 @@ Imports:
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
     fpCompare (>= 0.2.1),
+    httr,
     magrittr,
     methods,
     quickPlot,
@@ -68,6 +69,7 @@ Collate:
     'heading.R'
     'SELES.R'
     'distanceFromEachPoint.R'
+    'downloadInputs.R'
     'environment.R'
     'initialize.R'
     'mapReduce.R'
