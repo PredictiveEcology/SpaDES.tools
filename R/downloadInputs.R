@@ -16,7 +16,7 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
           httr::authenticate(split[1L], split[2L])
         }
 
-      GET(
+      httr::GET(
         url = paste0(urls$url[[i]], filename),
         authenticate,
         write_disk(filepath, overwrite = TRUE)
