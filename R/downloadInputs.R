@@ -28,7 +28,6 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 
 extractFromArchive <- function(archivePath, dataPath = dirname(archivePath), needed, extractedArchives = NULL)
 {
-
   ext <- tolower(tools::file_ext(archivePath))
   args <- list(archivePath, exdir = dataPath)
 
@@ -54,17 +53,17 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath), nee
 
   if (any(isArchive))
   {
-    extractedArchives <- c(arch <- filesInArchive[isArchive], extractedArchives)
+    arch <- filesInArchive[isArchive]
     do.call(fun, c(list(files = arch), args))
     extractedArchives <- c(
       extractedArchives,
       unlist(
-        lapply(arch, extractFromArchive, needed = needed, extractedArchives = extractedArchives)
+        lapply(file.path(dataPath, arch), extractFromArchive, needed = needed, extractedArchives = extractedArchives)
       )
     )
   }
 
-  unique(extractedArchives)
+  c(extractedArchives, archivePath)
 }
 
 
@@ -166,12 +165,7 @@ prepInputs <- function(targetFile,
         }
       }
 
-      extractedArchives <- extractFromArchive(archive = archivePath, needed = targetFile)
-
-      for (arch in extractedArchives)
-      {
-        unlink(arch)
-      }
+      unlink(extractFromArchive(archive = archivePath, needed = targetFile))
     }
   }
 
