@@ -30,35 +30,32 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath), nee
 {
 
   ext <- tolower(tools::file_ext(archivePath))
+  args <- list(archivePath, exdir = dataPath)
 
   if (ext == "zip")
   {
-    fun <- unzip
+    fun <- "unzip"
+    filesInArchive <- unzip(archivePath, list = TRUE)$Name
+    args <- c(args, list(junkpaths = TRUE))
   }
   else if (ext == "tar")
   {
-    fun <- untar
+    fun <- "untar"
+    filesInArchive <- Cache(untar, archivePath, list = TRUE)
   }
-
-  browser()
-  filesInArchive <- fun(archivePath, list = TRUE)$Name
 
   if (any(needed %in% filesInArchive))
   {
     message(paste("  Extracting from archive:", basename(archivePath)))
-    fun(archivePath, exdir = dataPath, files = needed[needed %in% filesInArchive], junkpaths = TRUE)
+    do.call(fun, c(args, list(files = needed[needed %in% filesInArchive])))
   }
 
   isArchive <- grepl(tools::file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
 
   if (any(isArchive))
   {
-    arch <- filesInArchive[isArchive]
-    args <- list(archivePath, exdir = dataPath, files = arch,
-         if (identical(fun, unzip)) junkpaths = TRUE else NULL)
-    args <- args[!sapply(args, is.null)]
-
-    extractedArchives <- c(extractedArchives, do.call(fun, args))
+    extractedArchives <- c(arch <- filesInArchive[isArchive], extractedArchives)
+    do.call(fun, c(list(files = arch), args))
     extractedArchives <- c(
       extractedArchives,
       unlist(
