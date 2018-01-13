@@ -10,16 +10,16 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
     if (any(filename == urls$files[[i]]))
     {
       authenticate <-
-        if (!is.na(urls$password))
+        if (!is.na(urls$password[[i]]))
         {
-          split <- strsplit(urls$password, split = "[:]")[[1]]
+          split <- strsplit(urls$password[[i]], split = "[:]")[[1]]
           httr::authenticate(split[1L], split[2L])
         }
 
       GET(
         url = paste0(urls$url[[i]], filename),
         authenticate,
-        write_disk(filepath)
+        write_disk(filepath, overwrite = TRUE)
       )
       break
     }
