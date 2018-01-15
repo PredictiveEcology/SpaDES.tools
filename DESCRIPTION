@@ -9,8 +9,8 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2017-11-28
-Version: 0.1.0.9001
+Date: 2018-01-15
+Version: 0.1.0.9002
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
     role = c("aut", "cre")),
@@ -46,7 +46,8 @@ Imports:
     raster (>= 2.5-8),
     sp (>= 1.2-4),
     stats,
-    utils
+    utils,
+    webDatabases
 Suggests:
     DEoptim (>= 2.2-4),
     dplyr (>= 0.5.0),
@@ -60,6 +61,8 @@ Suggests:
     rgeos,
     rmarkdown,
     testthat (>= 1.0.2)
+Remotes: 
+    PredictiveEcology/webDatabases,
 LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
