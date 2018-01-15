@@ -9,10 +9,10 @@
 #' written.
 #'
 #' @param dataset Character string representing the dataset of interest for
-#' download.
+#' download. Allows for restricting the lookup for the url to a dataset, thus
+#' avoiding filename collision.
 #'
 #' @author Jean Marchal
-#' @export
 #' @importFrom webDatabases urls
 #' @rdname downloadFromWebDB
 #'
@@ -63,7 +63,6 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 #' @return A character vector listing the paths of the extracted archives.
 #'
 #' @author Jean Marchal
-#' @export
 #' @importFrom reproducible Cache
 #' @importFrom tools file_ext
 #' @rdname extractFromArchive
@@ -145,7 +144,8 @@ smallNamify <- function(name)
 #'
 #' @param writeCropped Write the output on disk ?
 #'
-#' @param addTagsByObject
+#' @param addTagsByObject Pass any object in there for which there is a
+#' .tagsByClass function
 #'
 #' @param cacheTags Character vector with Tags. These Tags will be added to the
 #' repository along with the artifact.
