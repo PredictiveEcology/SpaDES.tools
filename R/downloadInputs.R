@@ -313,7 +313,7 @@ prepInputs <- function(targetFile,
       }
 
       message("  Masking")
-      x <- Cache(amc::fastMask, x = x, mask = studyArea, userTags = cacheTags)
+      x <- Cache(amc::fastMask, x = x, polygon = studyArea, userTags = cacheTags)
 
       if (writeCropped)
       {
