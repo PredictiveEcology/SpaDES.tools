@@ -1,3 +1,22 @@
+#' Download file from web databases
+#'
+#' This function can be used to download a file from a web database listed in
+#'\link[webDatabases]{urls}.
+#'
+#' @param filename Character string naming the file to be downloaded.
+#'
+#' @param filepath Character string giving the path where the file will be
+#' written.
+#'
+#' @param dataset Character string representing the dataset of interest for
+#' download. Allows for restricting the lookup for the url to a dataset, thus
+#' avoiding filename collision.
+#'
+#' @author Jean Marchal
+#' @importFrom webDatabases urls
+#' @rdname downloadFromWebDB
+#'
+
 downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 {
   urls <- webDatabases::urls
@@ -10,43 +29,66 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
     if (any(filename == urls$files[[i]]))
     {
       authenticate <-
-        if (!is.na(urls$password))
+        if (!is.na(urls$password[[i]]))
         {
-          split <- strsplit(urls$password, split = "[:]")[[1]]
+          split <- strsplit(urls$password[[i]], split = "[:]")[[1]]
           httr::authenticate(split[1L], split[2L])
         }
 
-      GET(
+      httr::GET(
         url = paste0(urls$url[[i]], filename),
         authenticate,
-        write_disk(filepath)
+        httr::write_disk(filepath, overwrite = TRUE)
       )
       break
     }
   }
 }
 
+#' Extract files from archive.
+#'
+#' Extract zip or tar archive files, possibly nested in other zip or tar
+#' archives.
+#'
+#' @param archivePath Character string giving the path of the archive
+#' containing the \code{file} to be extracted.
+#'
+#' @param dataPath Character string giving the path where \code{needed} will be
+#' extracted. Defaults to the archive directory.
+#'
+#' @param needed Character string giving the name of the file(s) to be extracted.
+#'
+#' @param extractedArchives Used internally.
+#'
+#' @return A character vector listing the paths of the extracted archives.
+#'
+#' @author Jean Marchal
+#' @importFrom reproducible Cache
+#' @importFrom tools file_ext
+#' @rdname extractFromArchive
+#'
+
 extractFromArchive <- function(archivePath, dataPath = dirname(archivePath), needed, extractedArchives = NULL)
 {
-
   ext <- tolower(tools::file_ext(archivePath))
+  args <- list(archivePath, exdir = dataPath)
 
   if (ext == "zip")
   {
-    fun <- unzip
+    fun <- "unzip"
+    filesInArchive <- unzip(archivePath, list = TRUE)$Name
+    args <- c(args, list(junkpaths = TRUE))
   }
   else if (ext == "tar")
   {
-    fun <- untar
+    fun <- "untar"
+    filesInArchive <- Cache(untar, archivePath, list = TRUE)
   }
-
-  browser()
-  filesInArchive <- fun(archivePath, list = TRUE)$Name
 
   if (any(needed %in% filesInArchive))
   {
     message(paste("  Extracting from archive:", basename(archivePath)))
-    fun(archivePath, exdir = dataPath, files = needed[needed %in% filesInArchive], junkpaths = TRUE)
+    do.call(fun, c(args, list(files = needed[needed %in% filesInArchive])))
   }
 
   isArchive <- grepl(tools::file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
@@ -54,40 +96,81 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath), nee
   if (any(isArchive))
   {
     arch <- filesInArchive[isArchive]
-    args <- list(archivePath, exdir = dataPath, files = arch,
-         if (identical(fun, unzip)) junkpaths = TRUE else NULL)
-    args <- args[!sapply(args, is.null)]
-
-    extractedArchives <- c(extractedArchives, do.call(fun, args))
+    do.call(fun, c(list(files = arch), args))
     extractedArchives <- c(
       extractedArchives,
       unlist(
-        lapply(arch, extractFromArchive, needed = needed, extractedArchives = extractedArchives)
+        lapply(file.path(dataPath, arch), extractFromArchive, needed = needed, extractedArchives = extractedArchives)
       )
     )
   }
 
-  unique(extractedArchives)
+  c(extractedArchives, archivePath)
 }
-
 
 smallNamify <- function(name)
 {
   file.path(dirname(name), paste0("Small", basename(name)))
 }
 
+#' Download and optionally reproject, crop, mask raw data and output module
+#' inputs
+#'
+#' This function can be used to prepare module inputs from raw data.
+#'
+#' @param targetFile Character string giving the path of the raw data.
+#'
+#' @param archive Optional character string giving the path of an archive
+#' containing \code{targetFile}.
+#'
+#' @param moduleName Character string giving the name of the module.
+#'
+#' @param modulePath Character string giving the path to the module directory.
+#'
+#' @param fun Character string indicating the function to use to load
+#' \code{targetFile}.
+#'
+#' @param pkg Character string indicating the package in which to find \code{fun}.
+#'
+#' @param studyArea spatial* or sf object used for cropping and masking.
+#'
+#' @param rasterToMatch Template Raster* object used for reprojecting and
+#' cropping.
+#'
+#' @param rasterInterpMethod Method used to compute values for the new
+#' RasterLayer. See \link[raster]{?projectRaster}. Defaults to bilinear.
+#'
+#' @param rasterDataype Output data type. Passed to \link[raster]{writeRaster}.
+#'
+#' @param writeCropped Write the output on disk ?
+#'
+#' @param addTagsByObject Pass any object in there for which there is a
+#' .tagsByClass function
+#'
+#' @param cacheTags Character vector with Tags. These Tags will be added to the
+#' repository along with the artifact.
+#'
+#' @author Eliot McIntire
+#' @author Jean Marchal
+#' @export
+#' @importFrom data.table data.table
+#' @importFrom methods is
+#' @importFrom reproducible Cache
+#' @rdname prepInputs
+#'
+
 prepInputs <- function(targetFile,
                        archive = NULL,
                        modulePath,
                        moduleName,
-                       loadFun = "raster",
-                       loadPackage = "raster",
+                       fun = "raster",
+                       pkg = "raster",
                        studyArea = NULL,
-                       writeCropped = FALSE,
                        rasterToMatch = NULL,
                        rasterInterpMethod = "bilinear",
                        rasterDatatype = "INT2U",
-                       sim = NULL,
+                       writeCropped = TRUE,
+                       addTagsByObject = NULL,
                        cacheTags = "stable")
 {
   dataPath <- file.path(modulePath, moduleName, "data")
@@ -169,24 +252,19 @@ prepInputs <- function(targetFile,
         }
       }
 
-      extractedArchives <- extractFromArchive(archive = archivePath, needed = targetFile)
-
-      for (arch in extractedArchives)
-      {
-        unlink(arch)
-      }
+      unlink(extractFromArchive(archive = archivePath, needed = targetFile))
     }
   }
 
-  fun <- getFromNamespace(loadFun, loadPackage)
+  f <- getFromNamespace(fun, pkg)
 
-  if (loadFun == "raster" && loadPackage == "raster")
+  if (fun == "raster" && pkg == "raster")
   {
-    x <- fun(targetFilePath)
+    x <- f(targetFilePath)
   }
   else
   {
-    x <- Cache(fun(targetFilePath), userTags = cacheTags)
+    x <- Cache(f(targetFilePath), userTags = cacheTags)
   }
 
   objClass <- is(x)
