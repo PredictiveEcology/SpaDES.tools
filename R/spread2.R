@@ -633,13 +633,13 @@ setMethod(
           #  event will hit each pixel, not just the effectiveDistance
           pureCircle <- cir(landscape,
                             loci = attributes(dt)$spreadState$clusterDT$initialPixels,
-                            allowOverlap = TRUE,
+                            allowOverlap = TRUE, allowDuplicates = FALSE,
                             maxRadius = totalIterations,
                             minRadius = totalIterations - 0.999999,
                             returnIndices = TRUE,
                             returnDistances = TRUE,
                             includeBehavior = "excludePixels")
-          pureCircle <- cbind(pureCircle[, c("id", "indices", "dists")],
+          pureCircle <- cbind(pureCircle[, c("id", "indices", "dists"), drop = FALSE],
                               distClass = ceiling(pureCircle[, "dists"]))
           colnames(pureCircle)[2] <- c("to")
 
@@ -654,8 +654,9 @@ setMethod(
             ((2 - theoreticalAngleQualities[, "angleQuality"]) / 2 * (actualAsymmetry - 1) + 1)
 
           pc <- pureCircle[, "dists"] / effDists1
-          pureCircle <- cbind(pureCircle, proportion = pc/sum(pc))
+          pureCircle <- cbind(pureCircle, proportion = pc)
           pureCircle <- as.data.table(pureCircle)
+          pureCircle[, proportion:=proportion/sum(proportion), by = "id"]
           set(pureCircle, , "dists", NULL)
           setkeyv(pureCircle, c("id", "to"))
           pureCirclePrev <- attr(dt, "spreadState")$pureCircle
@@ -695,7 +696,8 @@ setMethod(
         if (usingAsymmetry) {
           set(dtPotential, , "effectiveDistance", effDists[distKeepers])
           if (circle) {
-            dtPotential <- dtPotential[pureCircle, nomatch = 0, on = c("id", "to")]
+            dtPotential <- dtPotential[pureCircle, nomatch = 0, on = c("id", "to")][
+              ,proportion:=proportion/.N,by=c("id", "to")]
           }
         }
       }
@@ -808,10 +810,12 @@ setMethod(
           dtNROW <- NROW(dt)
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
-          dt[, `:=`(dups = duplicatedInt(pixels)), by = initialPixels]
-          dupes <- dt$dups
-          set(dt, , "dups", NULL)
-          dt <- dt[!dupes]
+          if (!allowOverlap) {
+            dt[, `:=`(dups = duplicatedInt(pixels)), by = initialPixels]
+            dupes <- dt$dups
+            set(dt, , "dups", NULL)
+            dt <- dt[!dupes]
+          }
 
           # remove all the duplicated ones from dtPotential
           dtPotential <- dt[-seq_len(dtNROW)]
