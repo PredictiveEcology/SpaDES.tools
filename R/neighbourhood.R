@@ -666,7 +666,7 @@ setMethod(
         matDT[, minRad := rep(apply(maxRadius, 2, min, na.rm = TRUE), nAngles)]
       }
       if (!allowDuplicates) {
-        matDT <- unique(matDT)
+        matDT <- unique(matDT, by = c("id", "indices"))
       }
       matDT <- na.omit(matDT)
       matDT <- as.matrix(matDT)
