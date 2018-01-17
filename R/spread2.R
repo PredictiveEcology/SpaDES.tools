@@ -189,6 +189,9 @@ if (getRversion() >= "3.1.0") {
 #'                      (0 is "up", as in North on a map),
 #'                      that describes which way the \code{asymmetry} is.
 #'
+#' @param plot.it  If TRUE, then plot the raster at every iteraction,
+#'                   so one can watch the spread2 event grow.
+#'
 #' @inheritParams spread
 #'
 #' @details
@@ -310,31 +313,16 @@ if (getRversion() >= "3.1.0") {
 #' @name spread2
 #' @rdname spread2
 #'
-setGeneric(
-  "spread2",
+#' @example inst/examples/example_spread2.R
+#'
+spread2 <-
   function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 2,
            spreadProb = 0.23, asRaster = TRUE, maxSize, exactSize, directions = 8L,
            iterations = 1e6L, returnDistances = FALSE, returnFrom = FALSE,
            spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
            asymmetry = NA_real_, asymmetryAngle = NA_real_, allowOverlap = FALSE,
            neighProbs = NA_real_, skipChecks = FALSE) {
-  standardGeneric("spread2")
-})
 
-#' @param plot.it  If TRUE, then plot the raster at every iteraction,
-#'                   so one can watch the spread2 event grow.
-#'
-#' @rdname spread2
-#'
-#' @example inst/examples/example_spread2.R
-#'
-setMethod(
-  "spread2",
-  signature(landscape = "RasterLayer"),
-  definition = function(landscape, start, spreadProb, asRaster, maxSize, exactSize,
-                        directions, iterations, returnDistances, returnFrom,
-                        spreadProbRel, plot.it, circle, asymmetry, asymmetryAngle,
-                        allowOverlap, neighProbs, skipChecks) {
     #### assertions ###############
     assertClass(landscape, "Raster")
     ncells <- ncell(landscape)
@@ -990,7 +978,7 @@ setMethod(
     }
     return(dt)
   }
-)
+
 
 #' Internal helper
 #'
