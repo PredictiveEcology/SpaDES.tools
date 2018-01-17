@@ -13,7 +13,8 @@ downloadFromWebDB(filename, filepath, dataset = NULL)
 written.}
 
 \item{dataset}{Character string representing the dataset of interest for
-download.}
+download. Allows for restricting the lookup for the url to a dataset, thus
+avoiding filename collision.}
 }
 \description{
 This function can be used to download a file from a web database listed in

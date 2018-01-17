@@ -36,7 +36,8 @@ RasterLayer. See \link[raster]{?projectRaster}. Defaults to bilinear.}
 
 \item{writeCropped}{Write the output on disk ?}
 
-\item{addTagsByObject}{}
+\item{addTagsByObject}{Pass any object in there for which there is a
+.tagsByClass function}
 
 \item{cacheTags}{Character vector with Tags. These Tags will be added to the
 repository along with the artifact.}
