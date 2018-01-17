@@ -874,7 +874,7 @@ test_that("spread2 tests", {
   dev()
   expect_silent({
     out <- spread2(a, start = sams, 1, circle = TRUE, asymmetry = 4,
-                   asymmetryAngle = 120, iterations = 20, asRaster = FALSE,
+                   asymmetryAngle = 120, iterations = 10, asRaster = FALSE,
                    returnDistances = TRUE, allowOverlap = TRUE)
   })
   expect_true("effectiveDistance" %in% colnames(out))
