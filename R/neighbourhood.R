@@ -1044,6 +1044,8 @@ setMethod(
     round(ncell(landscape) / 2)
   }
   xy <- xyFromCell(landscape, middleCell)
+
+  # just run one, central locus with cir
   pureCircle2 <- cir(landscape,
                      #loci = attributes(dt)$spreadState$clusterDT$initialPixels,
                      allowOverlap = TRUE, allowDuplicates = FALSE,
