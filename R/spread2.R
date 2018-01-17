@@ -631,14 +631,24 @@ setMethod(
 
           # For asymmetry, we also may want to know what proportion of the outward spreading
           #  event will hit each pixel, not just the effectiveDistance
-          pureCircle <- cir(landscape,
+          # browser()
+          # pureCircle <- cir(landscape,
+          #                   loci = attributes(dt)$spreadState$clusterDT$initialPixels,
+          #                   allowOverlap = TRUE, allowDuplicates = FALSE,
+          #                   maxRadius = totalIterations,
+          #                   minRadius = totalIterations - 0.999999,
+          #                   returnIndices = TRUE,
+          #                   returnDistances = TRUE,
+          #                   includeBehavior = "excludePixels")
+
+
+          # This is a very fast version with allowOverlap = TRUE, allowDuplicates = FALSE,
+          #   returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels"
+          pureCircle <- .cirSpecialQuick(landscape,
                             loci = attributes(dt)$spreadState$clusterDT$initialPixels,
-                            allowOverlap = TRUE, allowDuplicates = FALSE,
                             maxRadius = totalIterations,
-                            minRadius = totalIterations - 0.999999,
-                            returnIndices = TRUE,
-                            returnDistances = TRUE,
-                            includeBehavior = "excludePixels")
+                            minRadius = totalIterations - 0.999999)
+          #browser(expr = !identical(pureCircle2, pureCircle))
           pureCircle <- cbind(pureCircle[, c("id", "indices", "dists"), drop = FALSE],
                               distClass = ceiling(pureCircle[, "dists"]))
           colnames(pureCircle)[2] <- c("to")

@@ -1068,3 +1068,39 @@ setMethod(
     d2xx[, -whDrop, drop = FALSE]
   }
 })
+
+#' This is a very fast version with allowOverlap = TRUE, allowDuplicates = FALSE,
+#' returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
+#' It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
+#' just once, then add to the xy coordinates of every locus
+.cirSpecialQuick <- function(landscape,
+                            loci,
+                            maxRadius,
+                            minRadius) {
+
+  bb <- xyFromCell(landscape, loci)
+  middleCell <- if (identical(ncell(landscape) / 2, floor(ncell(landscape) / 2))) {
+    ncell(landscape) / 2 - ncol(landscape) / 2
+  } else {
+    round(ncell(landscape) / 2)
+  }
+  xy <- xyFromCell(landscape, middleCell)
+  pureCircle2 <- cir(landscape,
+                     #loci = attributes(dt)$spreadState$clusterDT$initialPixels,
+                     allowOverlap = TRUE, allowDuplicates = FALSE,
+                     maxRadius = maxRadius,
+                     minRadius = minRadius,
+                     returnIndices = TRUE,
+                     returnDistances = TRUE,
+                     includeBehavior = "excludePixels")
+  pureCircle2 <- pureCircle2[order(pureCircle2[,"indices"]),]
+  cc <- cbind(pureCircle2[, "x"] - xy[,"x"], pureCircle2[, "y"] - xy[, "y"])
+  dd <- cbind(x = rep(bb[,"x"], each = NROW(pureCircle2)), y = rep(bb[,"y"], each = NROW(pureCircle2))) + matrix(rep(t(cc), NROW(bb)), ncol = 2, byrow = TRUE)
+  lociAll <- rep(loci, each = NROW(pureCircle2))
+  distsAll <- rep(pureCircle2[, "dists"], nrow(bb))
+  dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, c("x", "y")]), dists = distsAll)
+
+  dd[!as.logical(dd[, "x"] > xmax(landscape) | dd[, "x"] < xmin(landscape) |
+                       dd[, "y"] > ymax(landscape) | dd[, "y"] < ymin(landscape)),]
+
+}
