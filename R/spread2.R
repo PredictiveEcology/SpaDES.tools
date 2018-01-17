@@ -619,9 +619,10 @@ spread2 <-
 
           # For asymmetry, we also may want to know what proportion of the outward spreading
           #  event will hit each pixel, not just the effectiveDistance
-          # browser()
+          lociHere <- if (!is.null(start)) start else
+            attributes(dt)$spreadState$clusterDT$initialPixels
           # pureCircle <- cir(landscape,
-          #                   loci = attributes(dt)$spreadState$clusterDT$initialPixels,
+          #                   loci = lociHere,
           #                   allowOverlap = TRUE, allowDuplicates = FALSE,
           #                   maxRadius = totalIterations,
           #                   minRadius = totalIterations - 0.999999,
@@ -633,10 +634,9 @@ spread2 <-
           # This is a very fast version with allowOverlap = TRUE, allowDuplicates = FALSE,
           #   returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels"
           pureCircle <- .cirSpecialQuick(landscape,
-                            loci = attributes(dt)$spreadState$clusterDT$initialPixels,
+                            loci = lociHere,
                             maxRadius = totalIterations,
                             minRadius = totalIterations - 0.999999)
-          #browser(expr = !identical(pureCircle2, pureCircle))
           pureCircle <- cbind(pureCircle[, c("id", "indices", "dists"), drop = FALSE],
                               distClass = ceiling(pureCircle[, "dists"]))
           colnames(pureCircle)[2] <- c("to")
@@ -837,9 +837,9 @@ spread2 <-
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
           if (usingAsymmetry) {
-          saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
+            saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
                                             by = from][V1 == TRUE]$from
-        }
+          }
         }
       } else {
         # neighProbs -- duplication checking already happened, but
