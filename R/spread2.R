@@ -836,8 +836,10 @@ spread2 <-
 
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
+          if (usingAsymmetry) {
           saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
                                             by = from][V1 == TRUE]$from
+        }
         }
       } else {
         # neighProbs -- duplication checking already happened, but
