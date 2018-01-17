@@ -625,7 +625,7 @@ spread2 <-
 
           # For asymmetry, we also may want to know what proportion of the outward spreading
           #  event will hit each pixel, not just the effectiveDistance
-          lociHere <- if (!is.null(start)) start else
+          lociHere <- if (is.numeric(start)) start else
             attributes(dt)$spreadState$clusterDT$initialPixels
           # pureCircle <- cir(landscape,
           #                   loci = lociHere,
@@ -844,11 +844,11 @@ spread2 <-
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
           if (circle) {
-          if (usingAsymmetry) {
-            saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
-                                            by = from][V1 == TRUE]$from
+            if (usingAsymmetry) {
+              saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
+                                                by = from][V1 == TRUE]$from
+            }
           }
-        }
         }
       } else {
         # neighProbs -- duplication checking already happened, but
@@ -925,8 +925,8 @@ spread2 <-
       if (usingAsymmetry){
         if(!(isTRUE(allowOverlap) | is.na(allowOverlap))) {
           if (circle) {
-          if(length(saturated)) {
-            set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
+            if(length(saturated)) {
+              set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
             }
           }
         }
