@@ -836,10 +836,12 @@ spread2 <-
 
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
+          if (circle) {
           if (usingAsymmetry) {
             saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
                                             by = from][V1 == TRUE]$from
           }
+        }
         }
       } else {
         # neighProbs -- duplication checking already happened, but
@@ -915,9 +917,13 @@ spread2 <-
       # Step 9 # Change states of cells
       if (usingAsymmetry){
         if(!allowOverlap) {
+          if (circle) {
           if(length(saturated)) {
             set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
-      }}}
+            }
+          }
+        }
+      }
 
       notInactive <- dt$state != "inactive" # currently activeSource, successful, or holding
       whNotInactive <- which(notInactive)
