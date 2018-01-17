@@ -298,13 +298,14 @@ prepInputs <- function(targetFile,
       {
         if (!identical(raster::crs(studyArea), raster::crs(x)))
         {
-          x <- Cache(
-            raster::crop,
-            x = x,
-            y = Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags),
-            userTags = cacheTags
-          )
+          studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags)
         }
+        x <- Cache(
+          raster::crop,
+          x = x,
+          y = studyArea,
+          userTags = cacheTags
+        )
       }
 
       if (!identical(raster::crs(x), targetCRS))
@@ -317,7 +318,7 @@ prepInputs <- function(targetFile,
 
       if (writeCropped)
       {
-        Cache(
+        x <- Cache(
           raster::writeRaster,
           x = x,
           overwrite = TRUE,
