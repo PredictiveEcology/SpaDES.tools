@@ -188,6 +188,12 @@ if (getRversion() >= "3.1.0") {
 #' @param asymmetryAngle A numeric or \code{RasterLayer} indicating the angle in degrees
 #'                      (0 is "up", as in North on a map),
 #'                      that describes which way the \code{asymmetry} is.
+#' @param allowOverlap Logical. If TRUE, then individual events can overlap with one another,
+#'                     i.e., they do not interact (this is slower than if
+#'                     allowOverlap = FALSE). Default is FALSE. This can also be \code{NA},
+#'                     which means that the event can overlap with other events,
+#'                     and also itself. This would be, perhaps, useful for dispersal of,
+#'                     say, insect swarms.
 #'
 #' @param plot.it  If TRUE, then plot the raster at every iteraction,
 #'                   so one can watch the spread2 event grow.
@@ -390,7 +396,7 @@ spread2 <-
     # Step 0 - set up objects -- main ones: dt, clusterDT -- get them from attributes
     ## on start or initiate them
     smallRaster <- ncells < 4e7 # should use bit vector (RAM) or ff raster (Disk)
-    canUseAvailable <- !allowOverlap
+    canUseAvailable <- !(isTRUE(allowOverlap) | is.na(allowOverlap))
     if (missing(maxSize)) {
       maxSize <- NA
     }
@@ -802,13 +808,14 @@ spread2 <-
 
       # Step 7 - Remove duplicates & bind dt and dtPotential
       if (anyNA(neighProbs)) {
-        if (allowOverlap | !canUseAvailable) {
+        if (isTRUE(allowOverlap) | is.na(allowOverlap) | !canUseAvailable) {
           # overlapping allowed
           dtPotential <- dtPotential[spreadProbSuccess]
           dtNROW <- NROW(dt)
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
-          if (!allowOverlap) {
+          # this is to prevent overlap within an event... in some cases, overlap within event is desired, so skip this block
+          if (!is.na(allowOverlap)) {
             dt[, `:=`(dups = duplicatedInt(pixels)), by = initialPixels]
             dupes <- dt$dups
             set(dt, , "dups", NULL)
@@ -916,7 +923,7 @@ spread2 <-
 
       # Step 9 # Change states of cells
       if (usingAsymmetry){
-        if(!allowOverlap) {
+        if(!(isTRUE(allowOverlap) | is.na(allowOverlap))) {
           if (circle) {
           if(length(saturated)) {
             set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
