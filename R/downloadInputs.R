@@ -173,6 +173,7 @@ prepInputs <- function(targetFile,
                        addTagsByObject = NULL,
                        cacheTags = "stable")
 {
+  message("Preparing: ", targetFile)
   dataPath <- file.path(modulePath, moduleName, "data")
 
   targetFile <- basename(targetFile)
@@ -181,7 +182,7 @@ prepInputs <- function(targetFile,
   # Here we assume that if dataPath has not been updated checksums don't need to
   # be rerun. This is useful for WEB apps.
   capturedOutput <- capture.output(
-    Cache(file.info, asPath(dir(dataPath, full.names = TRUE)), userTags = cacheTags),
+    tmp <- Cache(file.info, asPath(dir(dataPath, full.names = TRUE)), userTags = cacheTags),
     type = "message"
   )
 
@@ -264,7 +265,7 @@ prepInputs <- function(targetFile,
   }
   else
   {
-    x <- Cache(f(targetFilePath), userTags = cacheTags)
+    x <- Cache(f, targetFilePath, userTags = cacheTags)
   }
 
   objClass <- is(x)
@@ -296,10 +297,10 @@ prepInputs <- function(targetFile,
     {
       if (!is.null(studyArea))
       {
-        if (!identical(raster::crs(studyArea), raster::crs(x)))
-        {
-          studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags)
-        }
+        # if (!identical(raster::crs(studyArea), raster::crs(x)))
+        # {
+        #   studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags)
+        # }
         x <- Cache(
           raster::crop,
           x = x,
