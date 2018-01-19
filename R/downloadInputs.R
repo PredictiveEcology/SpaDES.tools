@@ -16,7 +16,6 @@
 #' @importFrom webDatabases urls
 #' @rdname downloadFromWebDB
 #'
-
 downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 {
   urls <- webDatabases::urls
@@ -67,7 +66,6 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 #' @importFrom tools file_ext
 #' @rdname extractFromArchive
 #'
-
 extractFromArchive <- function(archivePath, dataPath = dirname(archivePath), needed, extractedArchives = NULL)
 {
   ext <- tolower(tools::file_ext(archivePath))
@@ -116,7 +114,9 @@ smallNamify <- function(name)
 #' Download and optionally reproject, crop, mask raw data and output module
 #' inputs
 #'
-#' This function can be used to prepare module inputs from raw data.
+#' This function can be used to prepare module inputs from raw data. It
+#' runs several other functions, conditionally and sequentially:
+#' \code{downloadFromWebDB}, \code{extractFromArchive}.
 #'
 #' @param targetFile Character string giving the path of the raw data.
 #'
@@ -158,7 +158,6 @@ smallNamify <- function(name)
 #' @importFrom reproducible Cache
 #' @rdname prepInputs
 #'
-
 prepInputs <- function(targetFile,
                        archive = NULL,
                        modulePath,
