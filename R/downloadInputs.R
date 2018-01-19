@@ -308,9 +308,19 @@ prepInputs <- function(targetFile,
         )
       }
 
-      if (!identical(raster::crs(x), targetCRS))
+      if (!is.null(rasterToMatch))
       {
-        x <- Cache(raster::projectRaster, from = x, to = rasterToMatch, method = rasterInterpMethod, userTags = cacheTags)
+        if (!identical(raster::crs(x), targetCRS) | !identical(raster::res(x), raster::res(rasterToMatch)) |
+            !identical(raster::extent(x), raster::extent(rasterToMatch)))
+        {
+          x <- Cache(raster::projectRaster, from = x, to = rasterToMatch, method = rasterInterpMethod, userTags = cacheTags)
+        }
+      }
+      else
+      {
+        if (!identical(raster::crs(x), targetCRS)) {
+          x <- Cache(raster::projectRaster, from = x, crs = targetCRS, method = rasterInterpMethod, userTags = cacheTags)
+        }
       }
 
       message("  Masking")
