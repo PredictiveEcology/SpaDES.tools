@@ -292,7 +292,7 @@ prepInputs <- function(targetFile,
 
     message("  Cropping, reprojecting")
 
-    if ("RasterLayer" %in% objClass || "RasterStack" %in% objClass)
+    if ("RasterLayer" %in% objClass || "RasterStack" %in% objClass || "RasterBrick" %in% objClass)
     {
       if (!is.null(studyArea))
       {
@@ -323,8 +323,11 @@ prepInputs <- function(targetFile,
         }
       }
 
-      message("  Masking")
-      x <- Cache(amc::fastMask, x = x, polygon = studyArea, userTags = cacheTags)
+      if (!is.null(studyArea))
+      {
+        message("  Masking")
+        x <- Cache(amc::fastMask, stack = x, polygon = studyArea, userTags = cacheTags)
+      }
 
       if (writeCropped)
       {
