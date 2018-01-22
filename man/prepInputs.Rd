@@ -45,7 +45,9 @@ repository along with the artifact.}
 \item{rasterDataype}{Output data type. Passed to \link[raster]{writeRaster}.}
 }
 \description{
-This function can be used to prepare module inputs from raw data.
+This function can be used to prepare module inputs from raw data. It
+runs several other functions, conditionally and sequentially:
+\code{downloadFromWebDB}, \code{extractFromArchive}.
 }
 \author{
 Eliot McIntire
