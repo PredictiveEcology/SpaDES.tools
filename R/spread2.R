@@ -188,6 +188,15 @@ if (getRversion() >= "3.1.0") {
 #' @param asymmetryAngle A numeric or \code{RasterLayer} indicating the angle in degrees
 #'                      (0 is "up", as in North on a map),
 #'                      that describes which way the \code{asymmetry} is.
+#' @param allowOverlap Logical. If TRUE, then individual events can overlap with one another,
+#'                     i.e., they do not interact (this is slower than if
+#'                     allowOverlap = FALSE). Default is FALSE. This can also be \code{NA},
+#'                     which means that the event can overlap with other events,
+#'                     and also itself. This would be, perhaps, useful for dispersal of,
+#'                     say, insect swarms.
+#'
+#' @param plot.it  If TRUE, then plot the raster at every iteraction,
+#'                   so one can watch the spread2 event grow.
 #'
 #' @inheritParams spread
 #'
@@ -310,31 +319,16 @@ if (getRversion() >= "3.1.0") {
 #' @name spread2
 #' @rdname spread2
 #'
-setGeneric(
-  "spread2",
+#' @example inst/examples/example_spread2.R
+#'
+spread2 <-
   function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 2,
            spreadProb = 0.23, asRaster = TRUE, maxSize, exactSize, directions = 8L,
            iterations = 1e6L, returnDistances = FALSE, returnFrom = FALSE,
            spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
            asymmetry = NA_real_, asymmetryAngle = NA_real_, allowOverlap = FALSE,
            neighProbs = NA_real_, skipChecks = FALSE) {
-  standardGeneric("spread2")
-})
 
-#' @param plot.it  If TRUE, then plot the raster at every iteraction,
-#'                   so one can watch the spread2 event grow.
-#'
-#' @rdname spread2
-#'
-#' @example inst/examples/example_spread2.R
-#'
-setMethod(
-  "spread2",
-  signature(landscape = "RasterLayer"),
-  definition = function(landscape, start, spreadProb, asRaster, maxSize, exactSize,
-                        directions, iterations, returnDistances, returnFrom,
-                        spreadProbRel, plot.it, circle, asymmetry, asymmetryAngle,
-                        allowOverlap, neighProbs, skipChecks) {
     #### assertions ###############
     assertClass(landscape, "Raster")
     ncells <- ncell(landscape)
@@ -402,7 +396,7 @@ setMethod(
     # Step 0 - set up objects -- main ones: dt, clusterDT -- get them from attributes
     ## on start or initiate them
     smallRaster <- ncells < 4e7 # should use bit vector (RAM) or ff raster (Disk)
-    canUseAvailable <- !allowOverlap
+    canUseAvailable <- !(isTRUE(allowOverlap) | is.na(allowOverlap))
     if (missing(maxSize)) {
       maxSize <- NA
     }
@@ -631,15 +625,25 @@ setMethod(
 
           # For asymmetry, we also may want to know what proportion of the outward spreading
           #  event will hit each pixel, not just the effectiveDistance
-          pureCircle <- cir(landscape,
-                            loci = attributes(dt)$spreadState$clusterDT$initialPixels,
-                            allowOverlap = TRUE,
+          lociHere <- if (is.numeric(start)) start else
+            attributes(dt)$spreadState$clusterDT$initialPixels
+          # pureCircle <- cir(landscape,
+          #                   loci = lociHere,
+          #                   allowOverlap = TRUE, allowDuplicates = FALSE,
+          #                   maxRadius = totalIterations,
+          #                   minRadius = totalIterations - 0.999999,
+          #                   returnIndices = TRUE,
+          #                   returnDistances = TRUE,
+          #                   includeBehavior = "excludePixels")
+
+
+          # This is a very fast version with allowOverlap = TRUE, allowDuplicates = FALSE,
+          #   returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels"
+          pureCircle <- .cirSpecialQuick(landscape,
+                            loci = lociHere,
                             maxRadius = totalIterations,
-                            minRadius = totalIterations - 0.999999,
-                            returnIndices = TRUE,
-                            returnDistances = TRUE,
-                            includeBehavior = "excludePixels")
-          pureCircle <- cbind(pureCircle[, c("id", "indices", "dists")],
+                            minRadius = totalIterations - 0.999999)
+          pureCircle <- cbind(pureCircle[, c("id", "indices", "dists"), drop = FALSE],
                               distClass = ceiling(pureCircle[, "dists"]))
           colnames(pureCircle)[2] <- c("to")
 
@@ -654,8 +658,9 @@ setMethod(
             ((2 - theoreticalAngleQualities[, "angleQuality"]) / 2 * (actualAsymmetry - 1) + 1)
 
           pc <- pureCircle[, "dists"] / effDists1
-          pureCircle <- cbind(pureCircle, proportion = pc/sum(pc))
+          pureCircle <- cbind(pureCircle, proportion = pc)
           pureCircle <- as.data.table(pureCircle)
+          pureCircle[, proportion:=proportion/sum(proportion), by = "id"]
           set(pureCircle, , "dists", NULL)
           setkeyv(pureCircle, c("id", "to"))
           pureCirclePrev <- attr(dt, "spreadState")$pureCircle
@@ -695,7 +700,8 @@ setMethod(
         if (usingAsymmetry) {
           set(dtPotential, , "effectiveDistance", effDists[distKeepers])
           if (circle) {
-            dtPotential <- dtPotential[pureCircle, nomatch = 0, on = c("id", "to")]
+            dtPotential <- dtPotential[pureCircle, nomatch = 0, on = c("id", "to")][
+              ,proportion:=proportion/.N,by=c("id", "to")]
           }
         }
       }
@@ -802,16 +808,19 @@ setMethod(
 
       # Step 7 - Remove duplicates & bind dt and dtPotential
       if (anyNA(neighProbs)) {
-        if (allowOverlap | !canUseAvailable) {
+        if (isTRUE(allowOverlap) | is.na(allowOverlap) | !canUseAvailable) {
           # overlapping allowed
           dtPotential <- dtPotential[spreadProbSuccess]
           dtNROW <- NROW(dt)
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
-          dt[, `:=`(dups = duplicatedInt(pixels)), by = initialPixels]
-          dupes <- dt$dups
-          set(dt, , "dups", NULL)
-          dt <- dt[!dupes]
+          # this is to prevent overlap within an event... in some cases, overlap within event is desired, so skip this block
+          if (!is.na(allowOverlap)) {
+            dt[, `:=`(dups = duplicatedInt(pixels)), by = initialPixels]
+            dupes <- dt$dups
+            set(dt, , "dups", NULL)
+            dt <- dt[!dupes]
+          }
 
           # remove all the duplicated ones from dtPotential
           dtPotential <- dt[-seq_len(dtNROW)]
@@ -834,8 +843,12 @@ setMethod(
 
           dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
-          saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
-                                            by = from][V1 == TRUE]$from
+          if (circle) {
+            if (usingAsymmetry) {
+              saturated <- dtPotentialAllNeighs[, sum(to %in% dt$pixels) == directions,
+                                                by = from][V1 == TRUE]$from
+            }
+          }
         }
       } else {
         # neighProbs -- duplication checking already happened, but
@@ -910,10 +923,14 @@ setMethod(
 
       # Step 9 # Change states of cells
       if (usingAsymmetry){
-        if(!allowOverlap) {
-          if(length(saturated)) {
-            set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
-      }}}
+        if(!(isTRUE(allowOverlap) | is.na(allowOverlap))) {
+          if (circle) {
+            if(length(saturated)) {
+              set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
+            }
+          }
+        }
+      }
 
       notInactive <- dt$state != "inactive" # currently activeSource, successful, or holding
       whNotInactive <- which(notInactive)
@@ -976,7 +993,7 @@ setMethod(
     }
     return(dt)
   }
-)
+
 
 #' Internal helper
 #'

@@ -138,7 +138,7 @@ test_that("spread2 tests", {
         returnDistances = TRUE, simplify = TRUE)
   )
   if (interactive()) {
-    for (ids in unique(cirOut$id)) {
+    for (ids in seq(unique(cirOut$id))) {
       dev(3 + ids)
       ras[cirOut[id == ids, indices]] <- cirOut[id == ids, dists]
       clearPlot()
@@ -148,9 +148,10 @@ test_that("spread2 tests", {
   cirOut$dists <- round(cirOut$dists, 4)
   out$distance <- round(out$distance, 4)
   setkey(cirOut, id, dists)
-  quickDT <- data.table(id = seq_along(sams), initialPixels = sams, key = "id")
+  #quickDT <- data.table(id = seq_along(sams), initialPixels = sams, key = "id")
   cirOut <- unique(cirOut)
-  cirOut <- quickDT[cirOut]
+  #cirOut <- quickDT[cirOut, on = ]
+  setnames(cirOut, "id", "initialPixels")
   compare <- out[cirOut, on = c(initialPixels = "initialPixels", pixels = "indices")]
   expect_true(sum(abs(compare$dists - compare$distance)) %==% 0)
 
@@ -874,7 +875,7 @@ test_that("spread2 tests", {
   dev()
   expect_silent({
     out <- spread2(a, start = sams, 1, circle = TRUE, asymmetry = 4,
-                   asymmetryAngle = 120, iterations = 20, asRaster = FALSE,
+                   asymmetryAngle = 120, iterations = 10, asRaster = FALSE,
                    returnDistances = TRUE, allowOverlap = TRUE)
   })
   expect_true("effectiveDistance" %in% colnames(out))
