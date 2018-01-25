@@ -8,9 +8,9 @@
 #' @param filepath Character string giving the path where the file will be
 #' written.
 #'
-#' @param dataset Character string representing the dataset of interest for
-#' download. Allows for restricting the lookup for the url to a dataset, thus
-#' avoiding filename collision.
+#' @param dataset Optional character string representing the dataset of interest
+#' for download. Allows for restricting the lookup for the url to a dataset,
+#' thus avoiding filename collision.
 #'
 #' @author Jean Marchal
 #' @importFrom webDatabases urls
@@ -20,8 +20,8 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 {
   urls <- webDatabases::urls
 
-  if (!is.null(dataset))
-    urls <- urls[dataset == dataset]
+  if (!is.null(set <- dataset))
+    urls <- urls[grepl(dataset, pattern = set, fixed = TRUE)]
 
   for (i in 1:nrow(urls))
   {

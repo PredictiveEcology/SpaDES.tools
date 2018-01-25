@@ -12,9 +12,9 @@ downloadFromWebDB(filename, filepath, dataset = NULL)
 \item{filepath}{Character string giving the path where the file will be
 written.}
 
-\item{dataset}{Character string representing the dataset of interest for
-download. Allows for restricting the lookup for the url to a dataset, thus
-avoiding filename collision.}
+\item{dataset}{Optional character string representing the dataset of interest
+for download. Allows for restricting the lookup for the url to a dataset,
+thus avoiding filename collision.}
 }
 \description{
 This function can be used to download a file from a web database listed in
