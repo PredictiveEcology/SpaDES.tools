@@ -8,9 +8,9 @@
 #' @param filepath Character string giving the path where the file will be
 #' written.
 #'
-#' @param dataset Character string representing the dataset of interest for
-#' download. Allows for restricting the lookup for the url to a dataset, thus
-#' avoiding filename collision.
+#' @param dataset Optional character string representing the dataset of interest
+#' for download. Allows for restricting the lookup for the url to a dataset,
+#' thus avoiding filename collision.
 #'
 #' @author Jean Marchal
 #' @importFrom webDatabases urls
@@ -20,8 +20,8 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 {
   urls <- webDatabases::urls
 
-  if (!is.null(dataset))
-    urls <- urls[dataset == dataset]
+  if (!is.null(set <- dataset))
+    urls <- urls[grepl(dataset, pattern = set, fixed = TRUE)]
 
   for (i in 1:nrow(urls))
   {
@@ -123,6 +123,10 @@ smallNamify <- function(name)
 #' @param archive Optional character string giving the path of an archive
 #' containing \code{targetFile}.
 #'
+#' @param dataset Optional character string representing the dataset of interest
+#' for download. Allows for restricting the lookup for the url to a dataset,
+#' thus avoiding filename collision.
+#'
 #' @param moduleName Character string giving the name of the module.
 #'
 #' @param modulePath Character string giving the path to the module directory.
@@ -160,6 +164,7 @@ smallNamify <- function(name)
 #'
 prepInputs <- function(targetFile,
                        archive = NULL,
+                       dataset = NULL,
                        modulePath,
                        moduleName,
                        fun = "raster",
@@ -207,7 +212,7 @@ prepInputs <- function(targetFile,
   {
     if (is.null(archive))
     {
-      downloadFromWebDB(targetFile, targetFilePath)
+      downloadFromWebDB(targetFile, targetFilePath, dataset)
 
       if (.quickCheck)
       {
@@ -234,7 +239,7 @@ prepInputs <- function(targetFile,
 
       if (mismatch)
       {
-        downloadFromWebDB(archive, archivePath)
+        downloadFromWebDB(archive, archivePath, dataset)
 
         if (.quickCheck)
         {
