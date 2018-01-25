@@ -5,8 +5,8 @@
 \title{Download and optionally reproject, crop, mask raw data and output module
 inputs}
 \usage{
-prepInputs(targetFile, archive = NULL, modulePath, moduleName,
-  fun = "raster", pkg = "raster", studyArea = NULL,
+prepInputs(targetFile, archive = NULL, dataset = NULL, modulePath,
+  moduleName, fun = "raster", pkg = "raster", studyArea = NULL,
   rasterToMatch = NULL, rasterInterpMethod = "bilinear",
   rasterDatatype = "INT2U", writeCropped = TRUE, addTagsByObject = NULL,
   cacheTags = "stable")
@@ -16,6 +16,10 @@ prepInputs(targetFile, archive = NULL, modulePath, moduleName,
 
 \item{archive}{Optional character string giving the path of an archive
 containing \code{targetFile}.}
+
+\item{dataset}{Optional character string representing the dataset of interest
+for download. Allows for restricting the lookup for the url to a dataset,
+thus avoiding filename collision.}
 
 \item{modulePath}{Character string giving the path to the module directory.}
 
@@ -45,7 +49,9 @@ repository along with the artifact.}
 \item{rasterDataype}{Output data type. Passed to \link[raster]{writeRaster}.}
 }
 \description{
-This function can be used to prepare module inputs from raw data.
+This function can be used to prepare module inputs from raw data. It
+runs several other functions, conditionally and sequentially:
+\code{downloadFromWebDB}, \code{extractFromArchive}.
 }
 \author{
 Eliot McIntire
