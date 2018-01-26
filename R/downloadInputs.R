@@ -8,9 +8,9 @@
 #' @param filepath Character string giving the path where the file will be
 #' written.
 #'
-#' @param dataset Character string representing the dataset of interest for
-#' download. Allows for restricting the lookup for the url to a dataset, thus
-#' avoiding filename collision.
+#' @param dataset Optional character string representing the dataset of interest
+#' for download. Allows for restricting the lookup for the url to a dataset,
+#' thus avoiding filename collision.
 #'
 #' @author Jean Marchal
 #' @importFrom webDatabases urls
@@ -20,8 +20,8 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 {
   urls <- webDatabases::urls
 
-  if (!is.null(dataset))
-    urls <- urls[dataset == dataset]
+  if (!is.null(set <- dataset))
+    urls <- urls[grepl(dataset, pattern = set, fixed = TRUE)]
 
   for (i in 1:nrow(urls))
   {
@@ -123,6 +123,10 @@ smallNamify <- function(name)
 #' @param archive Optional character string giving the path of an archive
 #' containing \code{targetFile}.
 #'
+#' @param dataset Optional character string representing the dataset of interest
+#' for download. Allows for restricting the lookup for the url to a dataset,
+#' thus avoiding filename collision.
+#'
 #' @param moduleName Character string giving the name of the module.
 #'
 #' @param modulePath Character string giving the path to the module directory.
@@ -138,9 +142,9 @@ smallNamify <- function(name)
 #' cropping.
 #'
 #' @param rasterInterpMethod Method used to compute values for the new
-#' RasterLayer. See \link[raster]{?projectRaster}. Defaults to bilinear.
+#' RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.
 #'
-#' @param rasterDataype Output data type. Passed to \link[raster]{writeRaster}.
+#' @param rasterDatatype Output data type. Passed to \code{\link[raster]{writeRaster}}.
 #'
 #' @param writeCropped Write the output on disk ?
 #'
@@ -156,10 +160,14 @@ smallNamify <- function(name)
 #' @importFrom data.table data.table
 #' @importFrom methods is
 #' @importFrom reproducible Cache
+#' @importFrom sf st_is_valid st_buffer st_transform st_write
+#' @importFrom amc fastMask
+#' @impoortFrom digest digest
 #' @rdname prepInputs
 #'
 prepInputs <- function(targetFile,
                        archive = NULL,
+                       dataset = NULL,
                        modulePath,
                        moduleName,
                        fun = "raster",
@@ -170,6 +178,7 @@ prepInputs <- function(targetFile,
                        rasterDatatype = "INT2U",
                        writeCropped = TRUE,
                        addTagsByObject = NULL,
+                       .quickCheck = FALSE,
                        cacheTags = "stable")
 {
   message("Preparing: ", targetFile)
@@ -207,7 +216,7 @@ prepInputs <- function(targetFile,
   {
     if (is.null(archive))
     {
-      downloadFromWebDB(targetFile, targetFilePath)
+      downloadFromWebDB(targetFile, targetFilePath, dataset)
 
       if (.quickCheck)
       {
@@ -234,7 +243,7 @@ prepInputs <- function(targetFile,
 
       if (mismatch)
       {
-        downloadFromWebDB(archive, archivePath)
+        downloadFromWebDB(archive, archivePath, dataset)
 
         if (.quickCheck)
         {
