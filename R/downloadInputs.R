@@ -138,9 +138,9 @@ smallNamify <- function(name)
 #' cropping.
 #'
 #' @param rasterInterpMethod Method used to compute values for the new
-#' RasterLayer. See \link[raster]{?projectRaster}. Defaults to bilinear.
+#' RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.
 #'
-#' @param rasterDataype Output data type. Passed to \link[raster]{writeRaster}.
+#' @param rasterDatatype Output data type. Passed to \code{\link[raster]{writeRaster}}.
 #'
 #' @param writeCropped Write the output on disk ?
 #'
@@ -156,6 +156,9 @@ smallNamify <- function(name)
 #' @importFrom data.table data.table
 #' @importFrom methods is
 #' @importFrom reproducible Cache
+#' @importFrom sf st_is_valid st_buffer st_transform st_write
+#' @importFrom amc fastMask
+#' @impoortFrom digest digest
 #' @rdname prepInputs
 #'
 prepInputs <- function(targetFile,
@@ -170,6 +173,7 @@ prepInputs <- function(targetFile,
                        rasterDatatype = "INT2U",
                        writeCropped = TRUE,
                        addTagsByObject = NULL,
+                       .quickCheck = FALSE,
                        cacheTags = "stable")
 {
   message("Preparing: ", targetFile)
