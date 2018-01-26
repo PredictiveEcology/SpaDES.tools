@@ -1032,6 +1032,7 @@ setMethod(
 #' It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
 #' just once, then add to the xy coordinates of every locus
 #' @name cirSpecialQuick
+#' @inheritParams cir
 .cirSpecialQuick <- function(landscape,
                             loci,
                             maxRadius,
