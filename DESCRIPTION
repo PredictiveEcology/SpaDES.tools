@@ -31,6 +31,7 @@ Imports:
     CircStats (>= 0.2-4),
     compiler,
     data.table (>= 1.10.4),
+    digest,
     fastdigest,
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
@@ -44,6 +45,7 @@ Imports:
     Rcpp (>= 0.12.12),
     reproducible,
     raster (>= 2.5-8),
+    sf,
     sp (>= 1.2-4),
     stats,
     utils,
@@ -63,6 +65,7 @@ Suggests:
     testthat (>= 1.0.2)
 Remotes: 
     PredictiveEcology/webDatabases,
+    achubaty/amc@development
 LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
