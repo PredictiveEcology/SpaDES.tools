@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Identify outward radiating spokes from initial points — spokes • SpaDES.tools</title>
+<title>Identify outward radiating spokes from initial points � spokes • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -52,7 +52,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -203,7 +203,8 @@ going outwards due to <code>stopRule</code>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>sp</span>)
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>library</span>(<span class='no'>sp</span>)
 <span class='fu'>library</span>(<span class='no'>raster</span>)
 <span class='fu'>library</span>(<span class='no'>quickPlot</span>)
 
@@ -212,7 +213,9 @@ going outwards due to <code>stopRule</code>.</p>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>10</span>, <span class='fl'>0</span>, <span class='fl'>10</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>val</span> <span class='kw'>=</span> <span class='fl'>0</span>)
 <span class='no'>rp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='randomPolygons.html'>randomPolygons</a></span>(<span class='no'>ras</span>, <span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>10</span>)
 
-<span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>rp</span>)</div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>rp</span>)
+
 <span class='no'>angles</span> <span class='kw'>&lt;-</span> <span class='fu'>seq</span>(<span class='fl'>0</span>, <span class='no'>pi</span> * <span class='fl'>2</span>, <span class='kw'>length.out</span> <span class='kw'>=</span> <span class='fl'>17</span>)
 <span class='no'>angles</span> <span class='kw'>&lt;-</span> <span class='no'>angles</span>[-<span class='fu'>length</span>(<span class='no'>angles</span>)]
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>
@@ -229,12 +232,16 @@ going outwards due to <code>stopRule</code>.</p>
 <span class='no'>rasB</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 <span class='no'>rasB</span>[<span class='no'>d2</span>[<span class='no'>d2</span>[, <span class='st'>"stop"</span>] <span class='kw'>==</span> <span class='fl'>1</span>, <span class='st'>"indices"</span>]] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
 
-<span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>rasB</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"transparent"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"red"</span>)</div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>rasB</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"transparent"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"red"</span>)
+
 <span class='kw'>if</span> (<span class='fu'>NROW</span>(<span class='no'>d2</span>) <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
   <span class='no'>sp1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='no'>d2</span>[, <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)])
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>sp1</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
-}</div><div class='input'><span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/Plot'>Plot</a></span>(<span class='no'>coords</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"blue"</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)</div><div class='img'><img src='spokes-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
-<span class='fu'><a href='http://www.rdocumentation.org/packages/quickPlot/topics/clearPlot'>clearPlot</a></span>()</div><div class='img'><img src='spokes-2.png' alt='' width='700' height='432.632880098887' /></div></pre>
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>sp1</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
+}
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>coords</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"blue"</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
+
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -259,7 +266,7 @@ Eliot McIntire
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
