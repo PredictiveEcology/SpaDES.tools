@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A faster '%in%' based on fastmatch package — %fin% â€¢ SpaDES.tools</title>
+<title>Download file from web databases — downloadFromWebDB â€¢ SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -83,26 +83,33 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A faster '%in%' based on fastmatch package</h1>
+    <h1>Download file from web databases</h1>
     </div>
 
     
-    <p>A faster '%in%', directly pulled from <code>fastmatch::match</code>, based on
-<a href='http://stackoverflow.com/questions/32934933/faster-in-operator'>http://stackoverflow.com/questions/32934933/faster-in-operator</a>.</p>
+    <p>This function can be used to download a file from a web database listed in
+<a href='http://www.rdocumentation.org/packages/webDatabases/topics/webdataset'>urls</a>.</p>
     
 
-    <pre class="usage"><span class='no'>x</span> <span class='kw'>%fin%</span> <span class='no'>table</span></pre>
+    <pre class="usage"><span class='fu'>downloadFromWebDB</span>(<span class='no'>filename</span>, <span class='no'>filepath</span>, <span class='kw'>dataset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>See <code><a href='http://www.rdocumentation.org/packages/fastmatch/topics/fmatch'>fmatch</a></code>.</p></td>
+      <th>filename</th>
+      <td><p>Character string naming the file to be downloaded.</p></td>
     </tr>
     <tr>
-      <th>table</th>
-      <td><p>See <code><a href='http://www.rdocumentation.org/packages/fastmatch/topics/fmatch'>fmatch</a></code>.</p></td>
+      <th>filepath</th>
+      <td><p>Character string giving the path where the file will be
+written.</p></td>
+    </tr>
+    <tr>
+      <th>dataset</th>
+      <td><p>Optional character string representing the dataset of interest
+for download. Allows for restricting the lookup for the url to a dataset,
+thus avoiding filename collision.</p></td>
     </tr>
     </table>
     
@@ -113,6 +120,10 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
                 </ul>
+
+    <h2>Author</h2>
+    
+Jean Marchal
 
   </div>
 </div>

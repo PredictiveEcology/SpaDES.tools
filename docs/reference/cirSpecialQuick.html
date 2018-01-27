@@ -6,7 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A faster '%in%' based on fastmatch package — %fin% â€¢ SpaDES.tools</title>
+<title>This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
+returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
+It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
+just once, then add to the xy coordinates of every locus — cirSpecialQuick â€¢ SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -83,35 +86,26 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A faster '%in%' based on fastmatch package</h1>
+    <h1>This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
+returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
+It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
+just once, then add to the xy coordinates of every locus</h1>
     </div>
 
     
-    <p>A faster '%in%', directly pulled from <code>fastmatch::match</code>, based on
-<a href='http://stackoverflow.com/questions/32934933/faster-in-operator'>http://stackoverflow.com/questions/32934933/faster-in-operator</a>.</p>
+    <p>This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
+returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
+It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
+just once, then add to the xy coordinates of every locus</p>
     
 
-    <pre class="usage"><span class='no'>x</span> <span class='kw'>%fin%</span> <span class='no'>table</span></pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>See <code><a href='http://www.rdocumentation.org/packages/fastmatch/topics/fmatch'>fmatch</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>table</th>
-      <td><p>See <code><a href='http://www.rdocumentation.org/packages/fastmatch/topics/fmatch'>fmatch</a></code>.</p></td>
-    </tr>
-    </table>
-    
+    <pre class="usage"><span class='fu'>.cirSpecialQuick</span>(<span class='no'>landscape</span>, <span class='no'>loci</span>, <span class='no'>maxRadius</span>, <span class='no'>minRadius</span>)</pre>
+        
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
                 </ul>
 
   </div>

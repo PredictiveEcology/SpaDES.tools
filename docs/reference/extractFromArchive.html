@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A faster '%in%' based on fastmatch package — %fin% â€¢ SpaDES.tools</title>
+<title>Extract files from archive. — extractFromArchive â€¢ SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -83,28 +83,43 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A faster '%in%' based on fastmatch package</h1>
+    <h1>Extract files from archive.</h1>
     </div>
 
     
-    <p>A faster '%in%', directly pulled from <code>fastmatch::match</code>, based on
-<a href='http://stackoverflow.com/questions/32934933/faster-in-operator'>http://stackoverflow.com/questions/32934933/faster-in-operator</a>.</p>
+    <p>Extract zip or tar archive files, possibly nested in other zip or tar
+archives.</p>
     
 
-    <pre class="usage"><span class='no'>x</span> <span class='kw'>%fin%</span> <span class='no'>table</span></pre>
+    <pre class="usage"><span class='fu'>extractFromArchive</span>(<span class='no'>archivePath</span>, <span class='kw'>dataPath</span> <span class='kw'>=</span> <span class='fu'>dirname</span>(<span class='no'>archivePath</span>), <span class='no'>needed</span>,
+  <span class='kw'>extractedArchives</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>See <code><a href='http://www.rdocumentation.org/packages/fastmatch/topics/fmatch'>fmatch</a></code>.</p></td>
+      <th>archivePath</th>
+      <td><p>Character string giving the path of the archive
+containing the <code>file</code> to be extracted.</p></td>
     </tr>
     <tr>
-      <th>table</th>
-      <td><p>See <code><a href='http://www.rdocumentation.org/packages/fastmatch/topics/fmatch'>fmatch</a></code>.</p></td>
+      <th>dataPath</th>
+      <td><p>Character string giving the path where <code>needed</code> will be
+extracted. Defaults to the archive directory.</p></td>
+    </tr>
+    <tr>
+      <th>needed</th>
+      <td><p>Character string giving the name of the file(s) to be extracted.</p></td>
+    </tr>
+    <tr>
+      <th>extractedArchives</th>
+      <td><p>Used internally.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A character vector listing the paths of the extracted archives.</p>
     
 
   </div>
@@ -112,7 +127,13 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
+
+    <h2>Author</h2>
+    
+Jean Marchal
 
   </div>
 </div>
