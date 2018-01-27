@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Internal helper — rbindlistDtDtpot â€¢ SpaDES.tools</title>
+<title>Download and optionally reproject, crop, mask raw data and output module
+inputs — prepInputs â€¢ SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -83,73 +84,88 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Internal helper</h1>
+    <h1>Download and optionally reproject, crop, mask raw data and output module
+inputs</h1>
     </div>
 
     
-    <p>Not for users. A function to setnames and rbindlist that is used 3 places in spread2.</p>
-<p>Internal helpers for <code>spread2</code></p>
+    <p>This function can be used to prepare module inputs from raw data. It
+runs several other functions, conditionally and sequentially:
+<code>downloadFromWebDB</code>, <code>extractFromArchive</code>.</p>
     
 
-    <pre class="usage"><span class='fu'>rbindlistDtDtpot</span>(<span class='no'>dt</span>, <span class='no'>dtPotential</span>, <span class='no'>returnFrom</span>, <span class='no'>needDistance</span>, <span class='no'>dtPotentialColNames</span>)
-
-<span class='fu'>reorderColsWDistance</span>(<span class='no'>needDistance</span>, <span class='no'>dtPotential</span>, <span class='no'>dtPotentialColNames</span>)
-
-<span class='fu'>angleQuality</span>(<span class='no'>from</span>, <span class='no'>to</span>, <span class='no'>landscape</span>, <span class='no'>actualAsymmetryAngle</span>)
-
-<span class='fu'>asymmetryAdjust</span>(<span class='no'>angleQualities</span>, <span class='no'>quantity</span>, <span class='no'>actualAsymmetry</span>)</pre>
+    <pre class="usage"><span class='fu'>prepInputs</span>(<span class='no'>targetFile</span>, <span class='kw'>archive</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dataset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>modulePath</span>,
+  <span class='no'>moduleName</span>, <span class='kw'>fun</span> <span class='kw'>=</span> <span class='st'>"raster"</span>, <span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"raster"</span>, <span class='kw'>studyArea</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>rasterToMatch</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>rasterInterpMethod</span> <span class='kw'>=</span> <span class='st'>"bilinear"</span>,
+  <span class='kw'>rasterDatatype</span> <span class='kw'>=</span> <span class='st'>"INT2U"</span>, <span class='kw'>writeCropped</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>addTagsByObject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cacheTags</span> <span class='kw'>=</span> <span class='st'>"stable"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>dt</th>
-      <td><p>Data.table</p></td>
+      <th>targetFile</th>
+      <td><p>Character string giving the path of the raw data.</p></td>
     </tr>
     <tr>
-      <th>dtPotential</th>
-      <td><p>Data.table</p></td>
+      <th>archive</th>
+      <td><p>Optional character string giving the path of an archive
+containing <code>targetFile</code>.</p></td>
     </tr>
     <tr>
-      <th>returnFrom</th>
-      <td><p>Logical</p></td>
+      <th>dataset</th>
+      <td><p>Optional character string representing the dataset of interest
+for download. Allows for restricting the lookup for the url to a dataset,
+thus avoiding filename collision.</p></td>
     </tr>
     <tr>
-      <th>needDistance</th>
-      <td><p>Logical</p></td>
+      <th>modulePath</th>
+      <td><p>Character string giving the path to the module directory.</p></td>
     </tr>
     <tr>
-      <th>dtPotentialColNames</th>
-      <td><p>Character Vector.</p></td>
+      <th>moduleName</th>
+      <td><p>Character string giving the name of the module.</p></td>
     </tr>
     <tr>
-      <th>from</th>
-      <td><p>vector of cell locations which are the "from" or starting cells</p></td>
+      <th>fun</th>
+      <td><p>Character string indicating the function to use to load
+<code>targetFile</code>.</p></td>
     </tr>
     <tr>
-      <th>to</th>
-      <td><p>vector of same length as <code>from</code> which are the "to" or receiving cells</p></td>
+      <th>pkg</th>
+      <td><p>Character string indicating the package in which to find <code>fun</code>.</p></td>
     </tr>
     <tr>
-      <th>landscape</th>
-      <td><p><code>RasterLayer</code> passed from <code>spread2</code>.</p></td>
+      <th>studyArea</th>
+      <td><p>spatial* or sf object used for cropping and masking.</p></td>
     </tr>
     <tr>
-      <th>actualAsymmetryAngle</th>
-      <td><p>Angle in degrees, either a vector length 1 or
-vector <code>NROW(dtPotential)</code>.</p></td>
+      <th>rasterToMatch</th>
+      <td><p>Template Raster* object used for reprojecting and
+cropping.</p></td>
     </tr>
     <tr>
-      <th>angleQualities</th>
-      <td><p>Matrix. The output from <code>angleQuality</code></p></td>
+      <th>rasterInterpMethod</th>
+      <td><p>Method used to compute values for the new
+RasterLayer. See ?projectRaster. Defaults to bilinear.</p></td>
     </tr>
     <tr>
-      <th>quantity</th>
-      <td><p>Variable of interest to adjust, e.g., <code>spreadProb</code></p></td>
+      <th>writeCropped</th>
+      <td><p>Write the output on disk ?</p></td>
     </tr>
     <tr>
-      <th>actualAsymmetry</th>
-      <td><p>Asymmetry intensity. Derived from <code>asymmetry</code> arg in <code>spread2</code></p></td>
+      <th>addTagsByObject</th>
+      <td><p>Pass any object in there for which there is a
+.tagsByClass function</p></td>
+    </tr>
+    <tr>
+      <th>cacheTags</th>
+      <td><p>Character vector with Tags. These Tags will be added to the
+repository along with the artifact.</p></td>
+    </tr>
+    <tr>
+      <th>rasterDataype</th>
+      <td><p>Output data type. Passed to <a href='http://www.rdocumentation.org/packages/raster/topics/writeRaster'>writeRaster</a>.</p></td>
     </tr>
     </table>
     
@@ -160,6 +176,12 @@ vector <code>NROW(dtPotential)</code>.</p></td>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
                 </ul>
+
+    <h2>Author</h2>
+    
+Eliot McIntire
+
+Jean Marchal
 
   </div>
 </div>

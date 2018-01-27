@@ -114,7 +114,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
                     match.adjacent = FALSE, cutoff.for.data.table = 2e3,
                     torus = FALSE, id = NULL, numNeighs = NULL, returnDT = FALSE) {
   to <- NULL
-  J <- NULL
+  J <- NULL # nolint
   cells <- as.integer(cells)
 
   if (is.null(numCol) | is.null(numCell)) {
@@ -245,7 +245,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     } else {
       whLefRig <- (adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1
       adj[whLefRig, "to"] <- adj[whLefRig, "to"] +
-        numCol*(adj[whLefRig, "from"] - adj[whLefRig, "to"])
+        numCol * (adj[whLefRig, "from"] - adj[whLefRig, "to"])
       whBotTop <- ((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]
       adj[whBotTop, "to"] <- adj[whBotTop, "to"] +
         sign(adj[whBotTop, "from"] - adj[whBotTop, "to"]) * numCell
@@ -451,83 +451,42 @@ adj <- compiler::cmpfun(adj.raw)
 #'
 #'@example inst/examples/example_cir.R
 #'
-setGeneric("cir", function(landscape, coords, loci,
-                           maxRadius = ncol(landscape) / 4, minRadius = maxRadius,
-                           allowOverlap = TRUE, allowDuplicates = FALSE,
-                           includeBehavior = "includePixels", returnDistances = FALSE,
-                           angles = NA_real_,
-                           returnAngles = FALSE, returnIndices = TRUE,
-                           closest = FALSE, simplify = TRUE) {
-  standardGeneric("cir")
-})
-
 #' @export
 #' @rdname cir
-setMethod(
-  "cir",
-  signature(landscape = "RasterLayer", coords = "SpatialPoints", loci = "missing"),
-  definition = function(landscape, coords, maxRadius, minRadius = maxRadius, allowOverlap,
-                        allowDuplicates, includeBehavior, returnDistances, angles,
-                        returnAngles, returnIndices, closest, simplify) {
-    coords <- coordinates(coords)
+# setMethod(
+#   "cir",
+#   signature(landscape = "RasterLayer", coords = "matrix", loci = "missing"),
+#   definition =
+cir <- function(landscape, coords, loci,
+                maxRadius = ncol(landscape) / 4, minRadius = maxRadius,
+                allowOverlap = TRUE, allowDuplicates = FALSE,
+                includeBehavior = "includePixels", returnDistances = FALSE,
+                angles = NA_real_,
+                returnAngles = FALSE, returnIndices = TRUE,
+                closest = FALSE, simplify = TRUE)  {
 
-    cir(landscape, coords, maxRadius = maxRadius, minRadius = minRadius,
-        allowOverlap = allowOverlap, allowDuplicates = allowDuplicates,
-        includeBehavior = includeBehavior,
-        returnDistances = returnDistances, angles = angles, returnAngles = returnAngles,
-        returnIndices = returnIndices,
-        closest = closest, simplify = simplify)
-  })
-
-#' @export
-#' @rdname cir
-setMethod(
-  "cir",
-  signature(landscape = "RasterLayer", coords = "missing", loci = "numeric"),
-  definition = function(landscape, loci, maxRadius, minRadius = maxRadius, allowOverlap,
-                        allowDuplicates, includeBehavior, returnDistances,
-                        angles, returnAngles, returnIndices,
-                        closest, simplify) {
-    coords <- xyFromCell(landscape, loci)
-    cir(landscape, coords = coords, maxRadius = maxRadius, minRadius = minRadius,
-        allowOverlap = allowOverlap, allowDuplicates = allowDuplicates,
-        includeBehavior = includeBehavior,
-        returnDistances = returnDistances, angles = angles, returnAngles = returnAngles,
-        returnIndices = returnIndices, closest = closest, simplify = simplify)
-  })
-
-#' @export
-#' @rdname cir
-setMethod(
-  "cir",
-  signature(landscape = "RasterLayer", coords = "missing", loci = "missing"),
-  definition = function(landscape, loci, maxRadius, minRadius = maxRadius, allowOverlap,
-                        allowDuplicates, includeBehavior, returnDistances, angles,
-                        returnAngles, returnIndices,
-                        closest, simplify) {
-    ncells <- ncell(landscape)
-    middleCell <- if (identical(ncells / 2, floor(ncells / 2))) {
-      ncells / 2 - ncol(landscape) / 2
+  if (missing(coords)) {
+    if (missing(loci)) {
+      ncells <- ncell(landscape)
+      middleCell <- if (identical(ncells / 2, floor(ncells / 2))) {
+        ncells / 2 - ncol(landscape) / 2
+      } else {
+        round(ncells / 2)
+      }
+      coords <- xyFromCell(landscape, middleCell)
+    } else if (is.numeric(loci)) {
+      coords <- xyFromCell(landscape, loci)
+      coords <- cbind(coords, id = loci)
     } else {
-      round(ncells / 2)
+      stop("Need either a numeric loci or coords")
     }
-    coords <- xyFromCell(landscape, middleCell)
-    cir(landscape, coords = coords, maxRadius = maxRadius, minRadius = minRadius,
-        allowOverlap = allowOverlap, allowDuplicates = allowDuplicates,
-        includeBehavior = includeBehavior,
-        returnDistances = returnDistances, angles = angles, returnAngles = returnAngles,
-        returnIndices = returnIndices,
-        closest = closest, simplify = simplify)
-})
+  } else if (inherits(coords, "Spatial")) {
+    coords <- coordinates(coords)
+  } else if (!is.numeric(coords)) {
+    stop("Need either a numeric loci or coords with matrix or SpatialPoints")
+  }
 
-#' @export
-#' @rdname cir
-setMethod(
-  "cir",
-  signature(landscape = "RasterLayer", coords = "matrix", loci = "missing"),
-  definition = function(landscape, coords, loci, maxRadius, minRadius = maxRadius, allowOverlap,
-                        allowDuplicates, includeBehavior, returnDistances, angles,
-                        returnAngles, returnIndices, closest, simplify) {
+
     ### adapted from createCircle of the package PlotRegionHighlighter
 
     if (!all(c("x", "y") %in% colnames(coords))) {
@@ -665,7 +624,7 @@ setMethod(
         matDT[, minRad := rep(apply(maxRadius, 2, min, na.rm = TRUE), nAngles)]
       }
       if (!allowDuplicates) {
-        matDT <- unique(matDT)
+        matDT <- unique(matDT, by = c("id", "indices"))
       }
       matDT <- na.omit(matDT)
       matDT <- as.matrix(matDT)
@@ -790,7 +749,7 @@ setMethod(
       return(ras)
     }
     return(matDT)
-})
+}
 
 ################################################################################
 #' Wrap coordinates or pixels in a torus-like fashion
@@ -1067,3 +1026,43 @@ setMethod(
     d2xx[, -whDrop, drop = FALSE]
   }
 })
+
+#' This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
+#' returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
+#' It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
+#' just once, then add to the xy coordinates of every locus
+#' @name cirSpecialQuick
+#' @inheritParams cir
+.cirSpecialQuick <- function(landscape,
+                            loci,
+                            maxRadius,
+                            minRadius) {
+
+  bb <- xyFromCell(landscape, loci)
+  middleCell <- if (identical(ncell(landscape) / 2, floor(ncell(landscape) / 2))) {
+    ncell(landscape) / 2 - ncol(landscape) / 2
+  } else {
+    round(ncell(landscape) / 2)
+  }
+  xy <- xyFromCell(landscape, middleCell)
+
+  # just run one, central locus with cir
+  pureCircle2 <- cir(landscape,
+                     #loci = attributes(dt)$spreadState$clusterDT$initialPixels,
+                     allowOverlap = TRUE, allowDuplicates = FALSE,
+                     maxRadius = maxRadius,
+                     minRadius = minRadius,
+                     returnIndices = TRUE,
+                     returnDistances = TRUE,
+                     includeBehavior = "excludePixels")
+  pureCircle2 <- pureCircle2[order(pureCircle2[,"indices"]),]
+  cc <- cbind(pureCircle2[, "x"] - xy[,"x"], pureCircle2[, "y"] - xy[, "y"])
+  dd <- cbind(x = rep(bb[,"x"], each = NROW(pureCircle2)), y = rep(bb[,"y"], each = NROW(pureCircle2))) + matrix(rep(t(cc), NROW(bb)), ncol = 2, byrow = TRUE)
+  lociAll <- rep(loci, each = NROW(pureCircle2))
+  distsAll <- rep(pureCircle2[, "dists"], nrow(bb))
+  dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, c("x", "y")]), dists = distsAll)
+
+  dd[!as.logical(dd[, "x"] > xmax(landscape) | dd[, "x"] < xmin(landscape) |
+                       dd[, "y"] > ymax(landscape) | dd[, "y"] < ymin(landscape)),]
+
+}

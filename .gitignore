@@ -38,4 +38,3 @@ src/*.o
 src/*.so
 src/*.dll
 src-*/
-

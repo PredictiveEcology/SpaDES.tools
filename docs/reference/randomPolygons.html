@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>randomPolygons � randomPolygons • SpaDES.tools</title>
+<title>randomPolygons � randomPolygons • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -89,10 +89,14 @@
     
     <p>Produces a raster of random polygons.
 These are built with the <code><a href='spread.html'>spread</a></code> function internally.</p>
+<p>Produces a <code>SpatialPolygons</code> object with 1 feature that will have approximately
+an area equal to <code>hectares</code>, and a centre at approximately <code>x</code></p>
     
 
     <pre class="usage"><span class='fu'>randomPolygons</span>(<span class='kw'>ras</span> <span class='kw'>=</span> <span class='fu'>raster</span>(<span class='fu'>extent</span>(<span class='fl'>0</span>, <span class='fl'>15</span>, <span class='fl'>0</span>, <span class='fl'>15</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>vals</span> <span class='kw'>=</span> <span class='fl'>0</span>),
-  <span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>...</span>)
+
+<span class='fu'>randomPolygon</span>(<span class='no'>x</span>, <span class='no'>hectares</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -109,15 +113,27 @@ These are built with the <code><a href='spread.html'>spread</a></code> function 
       <th>...</th>
       <td><p>Other arguments passed to spread. No known uses currently.</p></td>
     </tr>
+    <tr>
+      <th>x</th>
+      <td><p>Either a <code>SpatialPoints</code> or matrix with 2 dimensions, 1 row, with
+with the approximate centre of the new random polygon to create</p></td>
+    </tr>
+    <tr>
+      <th>hectares</th>
+      <td><p>A numeric, the approximate area in hectares of the random polygon</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A map of extent <code>ext</code> with random polygons.</p>
+<p>A <code>SpatialPolygons</code> object, with approximately the area request,
+        centred approximately at the coordinates requested</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='spread.html'>spread</a></code> and <code><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></code></p>
+    <p><code><a href='spread.html'>spread</a></code>, <code><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></code>, <code>randomPolygons</code>
+    <code><a href='gaussmap.html'>gaussMap</a></code> and <code>randomPolygons</code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -143,6 +159,12 @@ These are built with the <code><a href='spread.html'>spread</a></code> function 
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>a</span>)
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>aHist</span>)
 }
+
+<span class='fu'>library</span>(<span class='no'>sp</span>)
+<span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='fu'>cbind</span>(-<span class='fl'>110</span>, <span class='fl'>59</span>));
+<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>randomPolygon</span>(<span class='no'>b</span>, <span class='fl'>1e4</span>);
+<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/plot'>plot</a></span>(<span class='no'>a</span>);
+<span class='fu'>points</span>(<span class='no'>b</span>, <span class='kw'>pch</span><span class='kw'>=</span><span class='fl'>19</span>)
 
 <span class='co'># }</span></pre>
   </div>

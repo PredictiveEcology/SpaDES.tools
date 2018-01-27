@@ -359,7 +359,8 @@ test_that("asymmetry doesn't work properly", {
     }
     env <- where2(newName)
     if (interactive()) {
-      Plot(get(newName, envir = env))
+      obj <- get(newName, envir = env)
+      Plot(obj)
       Plot(ciCentre, cols = c("transparent", "black"), addTo = newName)
     }
     a <- cbind(id = circs$id, to = circs$indices, xyFromCell(hab, circs$indices))

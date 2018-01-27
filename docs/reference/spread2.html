@@ -101,15 +101,7 @@ robust, and more difficult to use iteratively.</p>
   <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1000000L</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnFrom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>spreadProbRel</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>skipChecks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
-<span class='co'># S4 method for RasterLayer</span>
-<span class='fu'>spread2</span>(<span class='no'>landscape</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>ncell</span>(<span class='no'>landscape</span>)/<span class='fl'>2</span> -
-  <span class='fu'>ncol</span>(<span class='no'>landscape</span>)/<span class='fl'>2</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.23</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>maxSize</span>, <span class='no'>exactSize</span>,
-  <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8L</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1000000L</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>returnFrom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>spreadProbRel</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>skipChecks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>skipChecks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -233,10 +225,12 @@ that describes which way the <code>asymmetry</code> is.</p></td>
     </tr>
     <tr>
       <th>allowOverlap</th>
-      <td><p>Logical. If <code>TRUE</code>, then individual events can overlap
-with one another, i.e., they do not interact (this is slower
-than if <code>allowOverlap = FALSE</code>).
-Default is <code>FALSE</code>.</p></td>
+      <td><p>Logical. If TRUE, then individual events can overlap with one another,
+i.e., they do not interact (this is slower than if
+allowOverlap = FALSE). Default is FALSE. This can also be <code>NA</code>,
+which means that the event can overlap with other events,
+and also itself. This would be, perhaps, useful for dispersal of,
+say, insect swarms.</p></td>
     </tr>
     <tr>
       <th>neighProbs</th>

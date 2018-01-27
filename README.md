@@ -5,7 +5,6 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SpaDES.tools)](https://cran.r-project.org/package=SpaDES.tools)
 [![Downloads](http://cranlogs.r-pkg.org/badges/grand-total/SpaDES.tools)](https://cran.r-project.org/package=SpaDES.tools)
 
-
 <img align="right" width="80" vspace="10" hspace="10" src="https://github.com/PredictiveEcology/SpaDES/raw/master/docs/images/SpaDES.png">
 
 # SpaDES.tools

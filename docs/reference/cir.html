@@ -99,29 +99,6 @@ This code is substantially adapted from <code>PlotRegionHighlighter::createCircl
   <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>allowDuplicates</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>includeBehavior</span> <span class='kw'>=</span> <span class='st'>"includePixels"</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>angles</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>returnAngles</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>closest</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='co'># S4 method for RasterLayer,SpatialPoints,missing</span>
-<span class='fu'>cir</span>(<span class='no'>landscape</span>, <span class='no'>coords</span>, <span class='no'>maxRadius</span>,
-  <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='no'>allowOverlap</span>, <span class='no'>allowDuplicates</span>, <span class='no'>includeBehavior</span>,
-  <span class='no'>returnDistances</span>, <span class='no'>angles</span>, <span class='no'>returnAngles</span>, <span class='no'>returnIndices</span>, <span class='no'>closest</span>, <span class='no'>simplify</span>)
-
-<span class='co'># S4 method for RasterLayer,missing,numeric</span>
-<span class='fu'>cir</span>(<span class='no'>landscape</span>, <span class='no'>loci</span>, <span class='no'>maxRadius</span>,
-  <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='no'>allowOverlap</span>, <span class='no'>allowDuplicates</span>, <span class='no'>includeBehavior</span>,
-  <span class='no'>returnDistances</span>, <span class='no'>angles</span>, <span class='no'>returnAngles</span>, <span class='no'>returnIndices</span>, <span class='no'>closest</span>, <span class='no'>simplify</span>)
-
-<span class='co'># S4 method for RasterLayer,missing,missing</span>
-<span class='fu'>cir</span>(<span class='no'>landscape</span>, <span class='no'>loci</span>, <span class='no'>maxRadius</span>,
-  <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='no'>allowOverlap</span>, <span class='no'>allowDuplicates</span>, <span class='no'>includeBehavior</span>,
-  <span class='no'>returnDistances</span>, <span class='no'>angles</span>, <span class='no'>returnAngles</span>, <span class='no'>returnIndices</span>, <span class='no'>closest</span>, <span class='no'>simplify</span>)
-
-<span class='co'># S4 method for RasterLayer,matrix,missing</span>
-<span class='fu'>cir</span>(<span class='no'>landscape</span>, <span class='no'>coords</span>, <span class='no'>loci</span>,
-  <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fu'>ncol</span>(<span class='no'>landscape</span>)/<span class='fl'>4</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>allowDuplicates</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>includeBehavior</span> <span class='kw'>=</span> <span class='st'>"includePixels"</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>angles</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>returnAngles</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>closest</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>

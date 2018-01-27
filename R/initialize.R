@@ -105,7 +105,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...)
 #'
 #' @return A map of extent \code{ext} with random polygons.
 #'
-#' @seealso \code{\link{spread}} and \code{\link{raster}}
+#' @seealso \code{\link{spread}}, \code{\link{raster}}, \code{\link{randomPolygons}}
 #'
 #' @export
 #' @importFrom raster cellFromXY extent raster xmax xmin ymax ymin
@@ -148,6 +148,85 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
   loci <- raster::cellFromXY(starts, object = ras)
   a <- spread(landscape = ras, spreadProb = 1, loci, allowOverlap = FALSE, id = TRUE, ...)
   return(a)
+}
+
+
+################################################################################
+#' Create a single random polygon object
+#'
+#' Produces a \code{SpatialPolygons} object with 1 feature that will have approximately
+#' an area equal to \code{hectares}, and a centre at approximately \code{x}
+#'
+#' @param x Either a \code{SpatialPoints} or matrix with 2 dimensions, 1 row, with
+#'          with the approximate centre of the new random polygon to create. If
+#'          matrix, then longitude and latitude are assumed (epsg:4326)
+#'
+#' @param hectares A numeric, the approximate area in hectares of the random polygon
+#'
+#' @return A \code{SpatialPolygons} object, with approximately the area request,
+#'         centred approximately at the coordinates requested
+#'
+#' @seealso \code{\link{gaussMap}} and \code{\link{randomPolygons}}
+#'
+#' @importFrom sp SpatialPoints spTransform Polygon Polygons SpatialPolygons CRS
+#' @importFrom stats rbeta
+#' @importFrom raster crs crs<-
+#' @export
+#' @docType methods
+#' @rdname randomPolygons
+#'
+#' @examples
+#' library(sp)
+#' b <- SpatialPoints(cbind(-110, 59));
+#' a <- randomPolygon(b, 1e4);
+#' plot(a);
+#' points(b, pch=19)
+#'
+randomPolygon <- function(x, hectares) {
+
+  latLong <-   sp::CRS("+init=epsg:4326")
+  if(is(x, "SpatialPoints")) {
+    if(is.na(crs(x))) { crs(x) <- latLong }
+  } else {
+    x <- SpatialPoints(coords = x)
+    crs(x) <- latLong
+  }
+
+  areaCRS <- CRS(paste0("+proj=lcc +lat_1=",ymin(x)," +lat_2=",ymax(x),
+                 #       paste0("+proj=lcc +lat_1=49 +lat_2=77
+                " +lat_0=0 +lon_0=",xmin(x)," +x_0=0 +y_0=0 +ellps=GRS80
+                +units=m +no_defs"))
+
+  areaM2 <- hectares * 1e4 * 1.304 # rescale so mean area is close to hectares
+  y <- spTransform(x, areaCRS)
+
+  radius <- sqrt(areaM2/pi)
+
+  meanX <- mean(coordinates(y)[,1]) - radius
+  meanY <- mean(coordinates(y)[,2]) - radius
+
+  minX <- meanX - radius
+  maxX <- meanX + radius
+  minY <- meanY - radius
+  maxY <- meanY + radius
+
+  # Add random noise to polygon
+  xAdd <- round(runif(1,radius*0.8, radius*1.2))
+  yAdd <- round(runif(1,radius*0.8, radius*1.2))
+  nPoints <- 20
+  betaPar=0.6
+  X = c(jitter(sort(rbeta(nPoints, betaPar, betaPar)*(maxX-minX)+minX)),
+        jitter(sort(rbeta(nPoints, betaPar, betaPar)*(maxX-minX)+minX, decreasing = TRUE)))
+  Y = c(jitter(sort(rbeta(nPoints/2, betaPar, betaPar)*(maxY-meanY)+meanY)),
+        jitter(sort(rbeta(nPoints, betaPar, betaPar)*(maxY-minY)+minY, decreasing = TRUE)),
+        jitter(sort(rbeta(nPoints/2, betaPar, betaPar)*(meanY-minY)+minY)))
+
+  Sr1 <- Polygon(cbind(X+xAdd,Y+yAdd))
+  Srs1 = Polygons(list(Sr1), "s1")
+  outPolygon <- SpatialPolygons(list(Srs1), 1L)
+  crs(outPolygon) <- areaCRS
+  outPolygon <- spTransform(outPolygon, crs(x))
+  outPolygon
 }
 
 ################################################################################
