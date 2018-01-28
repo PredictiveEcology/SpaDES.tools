@@ -18,6 +18,8 @@ matrix:
     before_install:
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
+    r_packages:
+    - udunits2
   - os: linux
     dist: trusty
     r: release
@@ -47,6 +49,7 @@ matrix:
     - sh -e /etc/init.d/xvfb start
     r_packages:
     - devtools
+    - udunits2
   - os: osx
     osx_image: xcode8
     latex: false
