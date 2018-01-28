@@ -162,7 +162,7 @@ smallNamify <- function(name)
 #' @importFrom reproducible Cache
 #' @importFrom sf st_is_valid st_buffer st_transform st_write
 #' @importFrom amc fastMask
-#' @impoortFrom digest digest
+#' @importFrom digest digest
 #' @rdname prepInputs
 #'
 prepInputs <- function(targetFile,

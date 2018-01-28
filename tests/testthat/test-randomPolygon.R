@@ -3,8 +3,8 @@ test_that("randomPolygon: does not work properly", {
   library(raster)
 
   on.exit({
-    detach("package:sp")
     detach("package:raster")
+    detach("package:sp")
   }, add = TRUE)
 
   poly1 <- randomPolygon(cbind(-110, 59), 1e5)

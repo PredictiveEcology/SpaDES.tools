@@ -19,7 +19,8 @@ randomPolygon(x, hectares)
 \item{...}{Other arguments passed to spread. No known uses currently.}
 
 \item{x}{Either a \code{SpatialPoints} or matrix with 2 dimensions, 1 row, with
-with the approximate centre of the new random polygon to create}
+with the approximate centre of the new random polygon to create. If
+matrix, then longitude and latitude are assumed (epsg:4326)}
 
 \item{hectares}{A numeric, the approximate area in hectares of the random polygon}
 }

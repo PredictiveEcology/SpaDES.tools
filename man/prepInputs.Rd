@@ -9,7 +9,7 @@ prepInputs(targetFile, archive = NULL, dataset = NULL, modulePath,
   moduleName, fun = "raster", pkg = "raster", studyArea = NULL,
   rasterToMatch = NULL, rasterInterpMethod = "bilinear",
   rasterDatatype = "INT2U", writeCropped = TRUE, addTagsByObject = NULL,
-  cacheTags = "stable")
+  .quickCheck = FALSE, cacheTags = "stable")
 }
 \arguments{
 \item{targetFile}{Character string giving the path of the raw data.}
@@ -36,7 +36,9 @@ thus avoiding filename collision.}
 cropping.}
 
 \item{rasterInterpMethod}{Method used to compute values for the new
-RasterLayer. See \link[raster]{?projectRaster}. Defaults to bilinear.}
+RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.}
+
+\item{rasterDatatype}{Output data type. Passed to \code{\link[raster]{writeRaster}}.}
 
 \item{writeCropped}{Write the output on disk ?}
 
@@ -45,8 +47,6 @@ RasterLayer. See \link[raster]{?projectRaster}. Defaults to bilinear.}
 
 \item{cacheTags}{Character vector with Tags. These Tags will be added to the
 repository along with the artifact.}
-
-\item{rasterDataype}{Output data type. Passed to \link[raster]{writeRaster}.}
 }
 \description{
 This function can be used to prepare module inputs from raw data. It
