@@ -14,7 +14,6 @@ matrix:
       apt:
         packages:
         - libgdal-dev
-        - libgdal1-dev
         - libgeos-dev
         - libproj-dev
         - libudunits2-dev
@@ -28,7 +27,6 @@ matrix:
       apt:
         packages:
         - libgdal-dev
-        - libgdal1-dev
         - libgeos-dev
         - libproj-dev
         - libudunits2-dev
@@ -47,7 +45,6 @@ matrix:
       apt:
         packages:
         - libgdal-dev
-        - libgdal1-dev
         - libgeos-dev
         - libproj-dev
         - libudunits2-dev
