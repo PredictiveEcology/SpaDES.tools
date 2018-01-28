@@ -26,6 +26,7 @@ Authors@R: c(
 Depends:
     R (>= 3.3.3)
 Imports:
+    amc (>= 0.1.3.9000),
     bit (>= 1.1-12),
     checkmate (>= 1.8.2),
     CircStats (>= 0.2-4),
