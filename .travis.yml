@@ -11,9 +11,9 @@ matrix:
     dist: trusty
     r: oldrel
     addons:
-      sources:
-        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
       apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
         - libgdal-dev
         - libgeos-dev
@@ -27,6 +27,8 @@ matrix:
     r: release
     addons:
       apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
         - libgdal-dev
         - libgeos-dev
@@ -45,6 +47,8 @@ matrix:
     r: devel
     addons:
       apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
         - libgdal-dev
         - libgeos-dev
