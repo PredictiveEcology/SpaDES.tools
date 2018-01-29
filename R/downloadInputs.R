@@ -1,3 +1,7 @@
+if (getRversion() >= "3.1.0") {
+  utils::globalVariables("expectedFile")
+}
+
 #' Download file from web databases
 #'
 #' This function can be used to download a file from a web database listed in

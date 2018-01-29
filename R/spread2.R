@@ -2,7 +2,7 @@ if (getRversion() >= "3.1.0") {
   utils::globalVariables(c(
     "distance", "from", "i.size", "ind", "indClDT", "initialPixels",
     "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
-    "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1"
+    "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
   ))
 }
 
