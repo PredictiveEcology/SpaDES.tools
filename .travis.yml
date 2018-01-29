@@ -75,9 +75,9 @@ matrix:
   - os: linux
     dist: trusty
     r: release
-      apt:
-        packages:
-        - libudunits2-dev
+    apt:
+      packages:
+      - libudunits2-dev
     r_github_packages:
     - jimhester/lintr
     before_install:
