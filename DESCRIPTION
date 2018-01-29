@@ -60,7 +60,6 @@ Suggests:
     parallel,
     profvis,
     RColorBrewer (>= 1.1-2),
-    rgdal,
     rgeos,
     rmarkdown,
     testthat (>= 1.0.2)
