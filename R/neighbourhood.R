@@ -1055,14 +1055,17 @@ setMethod(
                      returnIndices = TRUE,
                      returnDistances = TRUE,
                      includeBehavior = "excludePixels")
-  pureCircle2 <- pureCircle2[order(pureCircle2[,"indices"]),]
+  pureCircle2 <- pureCircle2[order(pureCircle2[, "indices"]), ]
   cc <- cbind(pureCircle2[, "x"] - xy[,"x"], pureCircle2[, "y"] - xy[, "y"])
-  dd <- cbind(x = rep(bb[,"x"], each = NROW(pureCircle2)), y = rep(bb[,"y"], each = NROW(pureCircle2))) + matrix(rep(t(cc), NROW(bb)), ncol = 2, byrow = TRUE)
+  dd <- cbind(x = rep(bb[, "x"], each = NROW(pureCircle2)),
+              y = rep(bb[, "y"], each = NROW(pureCircle2))) +
+    matrix(rep(t(cc), NROW(bb)), ncol = 2, byrow = TRUE)
   lociAll <- rep(loci, each = NROW(pureCircle2))
   distsAll <- rep(pureCircle2[, "dists"], nrow(bb))
-  dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, c("x", "y")]), dists = distsAll)
+  dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, c("x", "y")]),
+              dists = distsAll)
 
   dd[!as.logical(dd[, "x"] > xmax(landscape) | dd[, "x"] < xmin(landscape) |
-                       dd[, "y"] > ymax(landscape) | dd[, "y"] < ymin(landscape)),]
+                       dd[, "y"] > ymax(landscape) | dd[, "y"] < ymin(landscape)), ]
 
 }

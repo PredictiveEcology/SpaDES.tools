@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split and re-merge RasterLayer(s) � mergeRaster • SpaDES.tools</title>
+<title>Split and re-merge RasterLayer(s) — mergeRaster • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -176,8 +176,7 @@ idea to stop the cluster when finished, using <code><a href='http://www.rdocumen
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>library</span>(<span class='no'>raster</span>)
+    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>raster</span>)
 
 <span class='co'># an example with dimensions:</span>
 <span class='co'># nrow: 77</span>
@@ -208,35 +207,26 @@ idea to stop the cluster when finished, using <code><a href='http://www.rdocumen
 }
 
 <span class='co'># the original raster:</span>
-<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/plot'>plot</a></span>(<span class='no'>r</span>) <span class='co'># may require a call to `dev()` if using RStudio</span>
-
+<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/plot'>plot</a></span>(<span class='no'>r</span>) <span class='co'># may require a call to `dev()` if using RStudio</span></div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
 <span class='co'># the split raster:</span>
 <span class='fu'>layout</span>(<span class='kw'>mat</span> <span class='kw'>=</span> <span class='fu'>matrix</span>(<span class='fu'>seq_len</span>(<span class='no'>nx</span> * <span class='no'>ny</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='no'>nx</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='no'>ny</span>))
 <span class='no'>plotOrder</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>4</span>, <span class='fl'>8</span>, <span class='fl'>12</span>, <span class='fl'>3</span>, <span class='fl'>7</span>, <span class='fl'>11</span>, <span class='fl'>2</span>, <span class='fl'>6</span>, <span class='fl'>10</span>, <span class='fl'>1</span>, <span class='fl'>5</span>, <span class='fl'>9</span>)
-<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'>invisible</span>(<span class='fu'>lapply</span>(<span class='no'>y0</span>[<span class='no'>plotOrder</span>], <span class='no'>plot</span>))
-
+<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'>invisible</span>(<span class='fu'>lapply</span>(<span class='no'>y0</span>[<span class='no'>plotOrder</span>], <span class='no'>plot</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to min; returning Inf</span></div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to max; returning -Inf</span></div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to min; returning Inf</span></div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to max; returning -Inf</span></div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
 <span class='co'># can be recombined using `raster::merge`</span>
 <span class='no'>m0</span> <span class='kw'>&lt;-</span> <span class='fu'>do.call</span>(<span class='no'>merge</span>, <span class='no'>y0</span>)
-<span class='fu'>all.equal</span>(<span class='no'>m0</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span>
-
+<span class='fu'>all.equal</span>(<span class='no'>m0</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'>do.call</span>(<span class='no'>merge</span>, <span class='no'>y1</span>)
-<span class='fu'>all.equal</span>(<span class='no'>m1</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span>
-
+<span class='fu'>all.equal</span>(<span class='no'>m1</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='fu'>do.call</span>(<span class='no'>merge</span>, <span class='no'>y2</span>)
-<span class='fu'>all.equal</span>(<span class='no'>m2</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span>
-
+<span class='fu'>all.equal</span>(<span class='no'>m2</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'># or recombine using mergeRaster</span>
 <span class='no'>n0</span> <span class='kw'>&lt;-</span> <span class='fu'>mergeRaster</span>(<span class='no'>y0</span>)
-<span class='fu'>all.equal</span>(<span class='no'>n0</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span>
-
+<span class='fu'>all.equal</span>(<span class='no'>n0</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='no'>n1</span> <span class='kw'>&lt;-</span> <span class='fu'>mergeRaster</span>(<span class='no'>y1</span>)
-<span class='fu'>all.equal</span>(<span class='no'>n1</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span>
-
+<span class='fu'>all.equal</span>(<span class='no'>n1</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='no'>n2</span> <span class='kw'>&lt;-</span> <span class='fu'>mergeRaster</span>(<span class='no'>y2</span>)
-<span class='fu'>all.equal</span>(<span class='no'>n2</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span>
-
-<span class='fu'>unlink</span>(<span class='no'>tmpdir</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='co'># }</span></pre>
+<span class='fu'>all.equal</span>(<span class='no'>n2</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='fu'>unlink</span>(<span class='no'>tmpdir</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

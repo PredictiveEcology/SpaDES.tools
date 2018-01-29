@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simulate a contagious spread process on a landscape, with data.table internals � spread2 • SpaDES.tools</title>
+<title>Simulate a contagious spread process on a landscape, with data.table internals — spread2 • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -442,8 +442,7 @@ when passed back into <code>spread2</code>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>library</span>(<span class='no'>raster</span>)
+    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>raster</span>)
 <span class='fu'>library</span>(<span class='no'>quickPlot</span>)
 
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>10</span>, <span class='fl'>0</span>, <span class='fl'>10</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
@@ -454,20 +453,17 @@ when passed back into <code>spread2</code>.</p>
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>out</span>)
-}
-
+}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
 <span class='co'># Use maxSize -- this gives an upper limit</span>
 <span class='no'>maxSizes</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='fu'>sample</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fu'>length</span>(<span class='no'>sams</span>)))
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='fl'>0.225</span>, <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='no'>maxSizes</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 <span class='co'># check TRUE using data.table .N</span>
-<span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"initialPixels"</span>]$<span class='no'>n</span> <span class='kw'>&lt;=</span> <span class='no'>maxSizes</span>
-
+<span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"initialPixels"</span>]$<span class='no'>n</span> <span class='kw'>&lt;=</span> <span class='no'>maxSizes</span></div><div class='output co'>#&gt; logical(0)</div><div class='input'>
 <span class='co'># Use exactSize -- gives an exact size, if there is enough space on the Raster</span>
 <span class='no'>exactSizes</span> <span class='kw'>&lt;-</span> <span class='no'>maxSizes</span>
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.225</span>,
                <span class='kw'>exactSize</span> <span class='kw'>=</span> <span class='no'>exactSizes</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"initialPixels"</span>]$<span class='no'>n</span> <span class='kw'>==</span> <span class='no'>maxSizes</span> <span class='co'># should be TRUE TRUE TRUE</span>
-
+<span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"initialPixels"</span>]$<span class='no'>n</span> <span class='kw'>==</span> <span class='no'>maxSizes</span> <span class='co'># should be TRUE TRUE TRUE</span></div><div class='output co'>#&gt; logical(0)</div><div class='input'>
 <span class='co'># Use exactSize -- but where it can't be achieved</span>
 <span class='no'>exactSizes</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='fu'>sample</span>(<span class='fl'>100</span>:<span class='fl'>110</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fu'>length</span>(<span class='no'>sams</span>)))
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='fl'>1</span>, <span class='kw'>exactSize</span> <span class='kw'>=</span> <span class='no'>exactSizes</span>)
@@ -488,8 +484,7 @@ when passed back into <code>spread2</code>.</p>
 <span class='fu'>set.seed</span>(<span class='fl'>421</span>)
 <span class='no'>out2</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='no'>sams</span>, <span class='fl'>0.225</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 <span class='co'># The one with high escape probability is larger (most of the time)</span>
-<span class='fu'>NROW</span>(<span class='no'>out1</span>) <span class='kw'>&gt;</span> <span class='fu'>NROW</span>(<span class='no'>out2</span>)
-
+<span class='fu'>NROW</span>(<span class='no'>out1</span>) <span class='kw'>&gt;</span> <span class='fu'>NROW</span>(<span class='no'>out2</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'>## Use neighProbs, with a spreadProb that is a RasterLayer</span>
 <span class='co'># Create a raster of different values, which will be the relative probabilities</span>
 <span class='co'>#   i.e., they are rescaled to relative probabilities within the 8 neighbour choices.</span>
@@ -508,15 +503,21 @@ when passed back into <code>spread2</code>.</p>
                       <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>), <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 }
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/data.table/topics/rbindlist'>rbindlist</a></span>(<span class='no'>out</span>)[<span class='no'>pixels</span> <span class='kw'>!=</span> <span class='fl'>5</span>] <span class='co'># remove starting cell</span>
-<span class='fu'>table</span>(<span class='no'>sp</span>[<span class='no'>out</span>$<span class='no'>pixels</span>])
-<span class='co'># should be non-significant -- note no 5 because that was the starting cell</span>
+<span class='fu'>table</span>(<span class='no'>sp</span>[<span class='no'>out</span>$<span class='no'>pixels</span>])</div><div class='output co'>#&gt; 
+#&gt;  2  3  4  6  7  8  9 
+#&gt;  5 11 12 12 16 22 22 </div><div class='input'><span class='co'># should be non-significant -- note no 5 because that was the starting cell</span>
 <span class='co'>#  This tests whether the null model is true ... there should be proportions</span>
 <span class='co'>#  equivalent to 1:2:3:4:6:7:8:9 ... i.e,. cell 9 should have 9x as many events</span>
 <span class='co'>#  spread to it as cell 1. This comes from sp object above which is providing</span>
 <span class='co'>#  the relative spread probabilities</span>
 <span class='no'>keep</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>1</span>:<span class='fl'>4</span>, <span class='fl'>6</span>:<span class='fl'>9</span>)
-<span class='fu'>chisq.test</span>(<span class='no'>keep</span>, <span class='fu'>unname</span>(<span class='fu'>tabulate</span>(<span class='no'>sp</span>[<span class='no'>out</span>$<span class='no'>pixels</span>], <span class='fl'>9</span>)[<span class='no'>keep</span>]), <span class='kw'>simulate.p.value</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
+<span class='fu'>chisq.test</span>(<span class='no'>keep</span>, <span class='fu'>unname</span>(<span class='fu'>tabulate</span>(<span class='no'>sp</span>[<span class='no'>out</span>$<span class='no'>pixels</span>], <span class='fl'>9</span>)[<span class='no'>keep</span>]), <span class='kw'>simulate.p.value</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; 
+#&gt; 	Pearson's Chi-squared test with simulated p-value (based on 2000
+#&gt; 	replicates)
+#&gt; 
+#&gt; data:  keep and unname(tabulate(sp[out$pixels], 9)[keep])
+#&gt; X-squared = 40, df = NA, p-value = 1
+#&gt; </div><div class='input'>
 <span class='co'>## Example showing asymmetry</span>
 <span class='no'>sams</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/ncell'>ncell</a></span>(<span class='no'>a</span>) / <span class='fl'>4</span> - <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/ncell'>ncol</a></span>(<span class='no'>a</span>) / <span class='fl'>4</span> * <span class='fl'>3</span>
 <span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.213</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>,
@@ -569,8 +570,75 @@ when passed back into <code>spread2</code>.</p>
                     <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>135</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
   <span class='fu'><a href='http://www.rdocumentation.org/packages/parallel/topics/makeCluster'>stopCluster</a></span>(<span class='no'>cl</span>)
-}
-<span class='co'># }</span></pre>
+}</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>DEoptim package</span>
+#&gt; <span class='message'>Differential Evolution algorithm in R</span>
+#&gt; <span class='message'>Authors: D. Ardia, K. Mullen, B. Peterson and J. Ulrich</span></div><div class='output co'>#&gt; Iteration: 1 bestvalit: 3.500000 bestmemit:    0.213041
+#&gt; Iteration: 2 bestvalit: 3.500000 bestmemit:    0.213041
+#&gt; Iteration: 3 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 4 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 5 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 6 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 7 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 8 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 9 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 10 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 11 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 12 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 13 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 14 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 15 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 16 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 17 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 18 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 19 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 20 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 21 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 22 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 23 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 24 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 25 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 26 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 27 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 28 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 29 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 30 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 31 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 32 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 33 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 34 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 35 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 36 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 37 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 38 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 39 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 40 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 41 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 42 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 43 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 44 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 45 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 46 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 47 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 48 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 49 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 50 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 51 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 52 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 53 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 54 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 55 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 56 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 57 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 58 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 59 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 60 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 61 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 62 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 63 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 64 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 65 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 66 bestvalit: 0.000000 bestmemit:    0.209945</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
