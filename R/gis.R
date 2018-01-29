@@ -21,7 +21,6 @@
 #' @importFrom fasterize fasterize
 #' @importFrom raster crop extract nlayers raster stack
 #' @importFrom sf st_as_sf
-#' @rdname faster-rasters
 #'
 #' @examples
 #'\dontrun{
