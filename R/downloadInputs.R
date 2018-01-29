@@ -159,7 +159,6 @@ smallNamify <- function(name) {
 #' @importFrom methods is
 #' @importFrom reproducible Cache compareNA asPath
 #' @importFrom sf st_is_valid st_buffer st_transform st_write
-#' @importFrom amc fastMask
 #' @importFrom digest digest
 #' @rdname prepInputs
 #'
@@ -312,7 +311,7 @@ prepInputs <- function(targetFile,
 
       if (!is.null(studyArea)) {
         message("  Masking")
-        x <- Cache(amc::fastMask, stack = x, polygon = studyArea, userTags = cacheTags)
+        x <- Cache(fastMask, stack = x, polygon = studyArea, userTags = cacheTags)
       }
 
       if (writeCropped) {
