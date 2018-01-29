@@ -9,7 +9,7 @@ prepInputs(targetFile, archive = NULL, dataset = NULL, modulePath,
   moduleName, fun = "raster", pkg = "raster", studyArea = NULL,
   rasterToMatch = NULL, rasterInterpMethod = "bilinear",
   rasterDatatype = "INT2U", writeCropped = TRUE, addTagsByObject = NULL,
-  .quickCheck = FALSE, cacheTags = "stable")
+  quick = FALSE, cacheTags = "stable")
 }
 \arguments{
 \item{targetFile}{Character string giving the path of the raw data.}
@@ -44,6 +44,12 @@ RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.}
 
 \item{addTagsByObject}{Pass any object in there for which there is a
 .tagsByClass function}
+
+\item{quick}{Logical. If \code{sideEffect = TRUE}, setting this to \code{TRUE},
+will hash the file's metadata (i.e., filename and file size) instead of
+hashing the contents of the file(s). If set to \code{FALSE} (default),
+the contents of the file(s) are hashed.
+\emph{NOTE: this argument is experimental and may change in future releases.}}
 
 \item{cacheTags}{Character vector with Tags. These Tags will be added to the
 repository along with the artifact.}

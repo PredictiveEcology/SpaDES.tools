@@ -155,6 +155,8 @@ smallNamify <- function(name)
 #' @param addTagsByObject Pass any object in there for which there is a
 #' .tagsByClass function
 #'
+#' @inheritParams reproducible::Cache
+#'
 #' @param cacheTags Character vector with Tags. These Tags will be added to the
 #' repository along with the artifact.
 #'
@@ -163,7 +165,7 @@ smallNamify <- function(name)
 #' @export
 #' @importFrom data.table data.table
 #' @importFrom methods is
-#' @importFrom reproducible Cache
+#' @importFrom reproducible Cache compareNA asPath
 #' @importFrom sf st_is_valid st_buffer st_transform st_write
 #' @importFrom amc fastMask
 #' @importFrom digest digest
@@ -182,7 +184,7 @@ prepInputs <- function(targetFile,
                        rasterDatatype = "INT2U",
                        writeCropped = TRUE,
                        addTagsByObject = NULL,
-                       .quickCheck = FALSE,
+                       quick = FALSE,
                        cacheTags = "stable")
 {
   message("Preparing: ", targetFile)
@@ -222,7 +224,7 @@ prepInputs <- function(targetFile,
     {
       downloadFromWebDB(targetFile, targetFilePath, dataset)
 
-      if (.quickCheck)
+      if (quick)
       {
         fileSize <- file.size(asPath(targetFilePath))
 
@@ -249,7 +251,7 @@ prepInputs <- function(targetFile,
       {
         downloadFromWebDB(archive, archivePath, dataset)
 
-        if (.quickCheck)
+        if (quick)
         {
           fileSize <- file.size(asPath(archivePath))
 
@@ -265,7 +267,7 @@ prepInputs <- function(targetFile,
         }
       }
 
-      unlink(extractFromArchive(archive = archivePath, needed = targetFile))
+      unlink(extractFromArchive(archivePath = archivePath, needed = targetFile))
     }
   }
 
