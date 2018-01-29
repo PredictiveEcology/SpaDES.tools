@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Download and optionally reproject, crop, mask raw data and output module
-inputs — prepInputs • SpaDES.tools</title>
+inputs � prepInputs • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -90,12 +90,12 @@ inputs</h1>
 
     
     <p>This function can be used to prepare module inputs from raw data. It
-runs several other functions, conditionally and sequentially:
-<code>downloadFromWebDB</code>, <code>extractFromArchive</code>.</p>
+runs several other functions, conditionally:
+<code>extractFromArchive</code>.</p>
     
 
-    <pre class="usage"><span class='fu'>prepInputs</span>(<span class='no'>targetFile</span>, <span class='kw'>archive</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dataset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>modulePath</span>,
-  <span class='no'>moduleName</span>, <span class='kw'>fun</span> <span class='kw'>=</span> <span class='st'>"raster"</span>, <span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"raster"</span>, <span class='kw'>studyArea</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <pre class="usage"><span class='fu'>prepInputs</span>(<span class='no'>targetFile</span>, <span class='kw'>archive</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>modulePath</span>, <span class='no'>moduleName</span>,
+  <span class='kw'>fun</span> <span class='kw'>=</span> <span class='st'>"raster"</span>, <span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"raster"</span>, <span class='kw'>studyArea</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>rasterToMatch</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>rasterInterpMethod</span> <span class='kw'>=</span> <span class='st'>"bilinear"</span>,
   <span class='kw'>rasterDatatype</span> <span class='kw'>=</span> <span class='st'>"INT2U"</span>, <span class='kw'>writeCropped</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>addTagsByObject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>quick</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>cacheTags</span> <span class='kw'>=</span> <span class='st'>"stable"</span>)</pre>
@@ -111,12 +111,6 @@ runs several other functions, conditionally and sequentially:
       <th>archive</th>
       <td><p>Optional character string giving the path of an archive
 containing <code>targetFile</code>.</p></td>
-    </tr>
-    <tr>
-      <th>dataset</th>
-      <td><p>Optional character string representing the dataset of interest
-for download. Allows for restricting the lookup for the url to a dataset,
-thus avoiding filename collision.</p></td>
     </tr>
     <tr>
       <th>modulePath</th>
