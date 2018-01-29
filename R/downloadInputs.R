@@ -93,7 +93,8 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
     extractedArchives <- c(
       extractedArchives,
       unlist(
-        lapply(file.path(dataPath, arch), extractFromArchive, needed = needed, extractedArchives = extractedArchives)
+        lapply(file.path(dataPath, arch), extractFromArchive, needed = needed,
+               extractedArchives = extractedArchives)
       )
     )
   }
@@ -205,7 +206,7 @@ prepInputs <- function(targetFile,
   )
 
   # Check if the checkSums match, otherwise download or extract the file
-  checksums <- checkSums[expectedFile == targetFile,]
+  checksums <- checkSums[expectedFile == targetFile, ]
   mismatch <- !compareNA(checksums[["result"]], "OK")
 
   if (mismatch) {
@@ -227,7 +228,7 @@ prepInputs <- function(targetFile,
       archive <- basename(archive)
       archivePath <- file.path(dataPath, archive)
 
-      checksums <- checkSums[expectedFile == archive,]
+      checksums <- checkSums[expectedFile == archive, ]
       mismatch <- !compareNA(checksums[["result"]], "OK")
 
       if (mismatch) {
@@ -279,11 +280,13 @@ prepInputs <- function(targetFile,
 
     message("  Cropping, reprojecting")
 
-    if ("RasterLayer" %in% objClass || "RasterStack" %in% objClass || "RasterBrick" %in% objClass) {
+    if ("RasterLayer" %in% objClass ||
+        "RasterStack" %in% objClass ||
+        "RasterBrick" %in% objClass) {
       if (!is.null(studyArea)) {
-        # if (!identical(raster::crs(studyArea), raster::crs(x)))
-        # {
-        #   studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags)
+        # if (!identical(raster::crs(studyArea), raster::crs(x))) {
+        #   studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x),
+        #                      userTags = cacheTags)
         # }
         x <- Cache(
           raster::crop,
@@ -384,4 +387,3 @@ prepInputs <- function(targetFile,
 
   x
 }
-
