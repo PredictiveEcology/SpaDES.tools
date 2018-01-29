@@ -1,3 +1,7 @@
+if (getRversion() >= "3.1.0") {
+  utils::globalVariables("expectedFile")
+}
+
 #' Download file from web databases
 #'
 #' This function can be used to download a file from a web database listed in
@@ -16,20 +20,16 @@
 #' @importFrom webDatabases urls
 #' @rdname downloadFromWebDB
 #'
-downloadFromWebDB <- function(filename, filepath, dataset = NULL)
-{
+downloadFromWebDB <- function(filename, filepath, dataset = NULL) {
   urls <- webDatabases::urls
 
   if (!is.null(set <- dataset))
     urls <- urls[grepl(dataset, pattern = set, fixed = TRUE)]
 
-  for (i in 1:nrow(urls))
-  {
-    if (any(filename == urls$files[[i]]))
-    {
+  for (i in 1:nrow(urls)) {
+    if (any(filename == urls$files[[i]])) {
       authenticate <-
-        if (!is.na(urls$password[[i]]))
-        {
+        if (!is.na(urls$password[[i]])) {
           split <- strsplit(urls$password[[i]], split = "[:]")[[1]]
           httr::authenticate(split[1L], split[2L])
         }
@@ -66,39 +66,35 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL)
 #' @importFrom tools file_ext
 #' @rdname extractFromArchive
 #'
-extractFromArchive <- function(archivePath, dataPath = dirname(archivePath), needed, extractedArchives = NULL)
-{
+extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
+                               needed, extractedArchives = NULL) {
   ext <- tolower(tools::file_ext(archivePath))
   args <- list(archivePath, exdir = dataPath)
 
-  if (ext == "zip")
-  {
+  if (ext == "zip") {
     fun <- "unzip"
     filesInArchive <- unzip(archivePath, list = TRUE)$Name
     args <- c(args, list(junkpaths = TRUE))
-  }
-  else if (ext == "tar")
-  {
+  } else if (ext == "tar") {
     fun <- "untar"
     filesInArchive <- Cache(untar, archivePath, list = TRUE)
   }
 
-  if (any(needed %in% filesInArchive))
-  {
+  if (any(needed %in% filesInArchive)) {
     message(paste("  Extracting from archive:", basename(archivePath)))
     do.call(fun, c(args, list(files = needed[needed %in% filesInArchive])))
   }
 
   isArchive <- grepl(tools::file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
 
-  if (any(isArchive))
-  {
+  if (any(isArchive)) {
     arch <- filesInArchive[isArchive]
     do.call(fun, c(list(files = arch), args))
     extractedArchives <- c(
       extractedArchives,
       unlist(
-        lapply(file.path(dataPath, arch), extractFromArchive, needed = needed, extractedArchives = extractedArchives)
+        lapply(file.path(dataPath, arch), extractFromArchive, needed = needed,
+               extractedArchives = extractedArchives)
       )
     )
   }
@@ -106,8 +102,8 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath), nee
   c(extractedArchives, archivePath)
 }
 
-smallNamify <- function(name)
-{
+#' @keywords internal
+smallNamify <- function(name) {
   file.path(dirname(name), paste0("Small", basename(name)))
 }
 
@@ -151,6 +147,8 @@ smallNamify <- function(name)
 #' @param addTagsByObject Pass any object in there for which there is a
 #' .tagsByClass function
 #'
+#' @inheritParams reproducible::Cache
+#'
 #' @param cacheTags Character vector with Tags. These Tags will be added to the
 #' repository along with the artifact.
 #'
@@ -159,10 +157,9 @@ smallNamify <- function(name)
 #' @export
 #' @importFrom data.table data.table
 #' @importFrom methods is
-#' @importFrom reproducible Cache
+#' @importFrom reproducible Cache compareNA asPath
 #' @importFrom sf st_is_valid st_buffer st_transform st_write
-#' @importFrom amc fastMask
-#' @impoortFrom digest digest
+#' @importFrom digest digest
 #' @rdname prepInputs
 #'
 prepInputs <- function(targetFile,
@@ -178,9 +175,8 @@ prepInputs <- function(targetFile,
                        rasterDatatype = "INT2U",
                        writeCropped = TRUE,
                        addTagsByObject = NULL,
-                       .quickCheck = FALSE,
-                       cacheTags = "stable")
-{
+                       quick = FALSE,
+                       cacheTags = "stable") {
   message("Preparing: ", targetFile)
   dataPath <- file.path(modulePath, moduleName, "data")
 
@@ -209,51 +205,40 @@ prepInputs <- function(targetFile,
   )
 
   # Check if the checkSums match, otherwise download or extract the file
-  checksums <- checkSums[expectedFile == targetFile,]
+  checksums <- checkSums[expectedFile == targetFile, ]
   mismatch <- !compareNA(checksums[["result"]], "OK")
 
-  if (mismatch)
-  {
-    if (is.null(archive))
-    {
+  if (mismatch) {
+    if (is.null(archive)) {
       downloadFromWebDB(targetFile, targetFilePath, dataset)
 
-      if (.quickCheck)
-      {
+      if (quick) {
         fileSize <- file.size(asPath(targetFilePath))
 
         if (checksums[["filesize"]] != fileSize)
           warning("The version downloaded of ", targetFile, " does not match the checksums")
-      }
-      else
-      {
+      } else {
         checkSum <- digest::digest(file = asPath(targetFilePath), algo = checksums[["algorithm"]])
 
         if (checksums[["checksum"]] != checkSum)
           warning("The version downloaded of ", targetFile, " does not match the checksums")
       }
-    }
-    else
-    {
+    } else {
       archive <- basename(archive)
       archivePath <- file.path(dataPath, archive)
 
-      checksums <- checkSums[expectedFile == archive,]
+      checksums <- checkSums[expectedFile == archive, ]
       mismatch <- !compareNA(checksums[["result"]], "OK")
 
-      if (mismatch)
-      {
+      if (mismatch) {
         downloadFromWebDB(archive, archivePath, dataset)
 
-        if (.quickCheck)
-        {
+        if (quick) {
           fileSize <- file.size(asPath(archivePath))
 
           if (checksums[["filesize"]] != fileSize)
             warning("The version downloaded of ", archive, " does not match the checksums")
-        }
-        else
-        {
+        } else {
           checkSum <- digest::digest(file = asPath(archivePath), algo = checksums[["algorithm"]])
 
           if (checksums[["checksum"]] != checkSum)
@@ -261,53 +246,46 @@ prepInputs <- function(targetFile,
         }
       }
 
-      unlink(extractFromArchive(archive = archivePath, needed = targetFile))
+      unlink(extractFromArchive(archivePath = archivePath, needed = targetFile))
     }
   }
 
   f <- getFromNamespace(fun, pkg)
 
-  if (fun == "raster" && pkg == "raster")
-  {
+  if (fun == "raster" && pkg == "raster") {
     x <- f(targetFilePath)
-  }
-  else
-  {
+  } else {
     x <- Cache(f, targetFilePath, userTags = cacheTags)
   }
 
   objClass <- is(x)
 
-  if (!is.null(studyArea) || !is.null(rasterToMatch))
-  {
+  if (!is.null(studyArea) || !is.null(rasterToMatch)) {
     targetCRS <-
-      if (!is.null(rasterToMatch))
-      {
+      if (!is.null(rasterToMatch)) {
         raster::crs(rasterToMatch)
-      }
-      else if (!is.null(studyArea))
-      {
+      } else if (!is.null(studyArea)) {
         raster::crs(studyArea)
+      } else {
+        raster::crs(targetFile)
       }
-      else raster::crs(targetFile)
 
     smallFN <- smallNamify(targetFilePath)
 
-    if (!is.null(studyArea))
-    {
+    if (!is.null(studyArea)) {
       if (!identical(targetCRS, raster::crs(studyArea)))
         studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = targetCRS, userTags = cacheTags)
     }
 
     message("  Cropping, reprojecting")
 
-    if ("RasterLayer" %in% objClass || "RasterStack" %in% objClass || "RasterBrick" %in% objClass)
-    {
-      if (!is.null(studyArea))
-      {
-        # if (!identical(raster::crs(studyArea), raster::crs(x)))
-        # {
-        #   studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags)
+    if ("RasterLayer" %in% objClass ||
+        "RasterStack" %in% objClass ||
+        "RasterBrick" %in% objClass) {
+      if (!is.null(studyArea)) {
+        # if (!identical(raster::crs(studyArea), raster::crs(x))) {
+        #   studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x),
+        #                      userTags = cacheTags)
         # }
         x <- Cache(
           raster::crop,
@@ -317,29 +295,26 @@ prepInputs <- function(targetFile,
         )
       }
 
-      if (!is.null(rasterToMatch))
-      {
-        if (!identical(raster::crs(x), targetCRS) | !identical(raster::res(x), raster::res(rasterToMatch)) |
-            !identical(raster::extent(x), raster::extent(rasterToMatch)))
-        {
-          x <- Cache(raster::projectRaster, from = x, to = rasterToMatch, method = rasterInterpMethod, userTags = cacheTags)
+      if (!is.null(rasterToMatch)) {
+        if (!identical(raster::crs(x), targetCRS) |
+            !identical(raster::res(x), raster::res(rasterToMatch)) |
+            !identical(raster::extent(x), raster::extent(rasterToMatch))) {
+          x <- Cache(raster::projectRaster, from = x, to = rasterToMatch,
+                     method = rasterInterpMethod, userTags = cacheTags)
         }
-      }
-      else
-      {
+      } else {
         if (!identical(raster::crs(x), targetCRS)) {
-          x <- Cache(raster::projectRaster, from = x, crs = targetCRS, method = rasterInterpMethod, userTags = cacheTags)
+          x <- Cache(raster::projectRaster, from = x, crs = targetCRS,
+                     method = rasterInterpMethod, userTags = cacheTags)
         }
       }
 
-      if (!is.null(studyArea))
-      {
+      if (!is.null(studyArea)) {
         message("  Masking")
-        x <- Cache(amc::fastMask, stack = x, polygon = studyArea, userTags = cacheTags)
+        x <- Cache(fastMask, stack = x, polygon = studyArea, userTags = cacheTags)
       }
 
-      if (writeCropped)
-      {
+      if (writeCropped) {
         x <- Cache(
           raster::writeRaster,
           x = x,
@@ -351,30 +326,25 @@ prepInputs <- function(targetFile,
           notOlderThan = if (!file.exists(asPath(smallFN))) Sys.time()
         )
       }
-    }
-    else if ("spatialObjects" %in% objClass)
-    {
-      if (!suppressWarnings(rgeos::gIsValid(x)))
-      {
+    } else if ("spatialObjects" %in% objClass) {
+      if (!suppressWarnings(rgeos::gIsValid(x))) {
         xValid <- Cache(raster::buffer, x, dissolve = FALSE, width = 0, userTags = cacheTags)
-        x <- Cache(sp::SpatialPolygonsDataFrame, Sr = xValid, data = as.data.frame(x), userTags = cacheTags)
+        x <- Cache(sp::SpatialPolygonsDataFrame, Sr = xValid, data = as.data.frame(x),
+                   userTags = cacheTags)
       }
 
       if (!identical(targetCRS, raster::crs(x)))
         x <- Cache(sp::spTransform, x = x, CRSobj = targetCRS, userTags = cacheTags)
 
-      if (!is.null(studyArea))
-      {
+      if (!is.null(studyArea)) {
         x <- Cache(raster::crop, x, studyArea, userTags = cacheTags)
       }
 
-      if (!is.null(rasterToMatch))
-      {
+      if (!is.null(rasterToMatch)) {
         x <- Cache(raster::crop, x, rasterToMatch, userTags = cacheTags)
       }
 
-      if (writeCropped)
-      {
+      if (writeCropped) {
         Cache(
           raster::shapefile,
           x = x,
@@ -384,30 +354,24 @@ prepInputs <- function(targetFile,
           notOlderThan = if (!file.exists(asPath(smallFN))) Sys.time()
         )
       }
-    }
-    else if ("sf" %in% objClass)
-    {
-      if (!suppressWarnings(sf::st_is_valid(x)))
-      {
+    } else if ("sf" %in% objClass) {
+      if (!suppressWarnings(sf::st_is_valid(x))) {
         x <- Cache(sf::st_buffer, x, dist = 0, userTags = cacheTags)
       }
 
       if (!identical(targetCRS, raster::crs(x)))
         x <- Cache(sf::st_transform, x = x, crs = targetCRS, userTags = cacheTags)
 
-      if (!is.null(studyArea))
-      {
+      if (!is.null(studyArea)) {
         x <- Cache(raster::crop, x, studyArea, userTags = cacheTags)
       }
 
-      if (!is.null(rasterToMatch))
-      {
+      if (!is.null(rasterToMatch)) {
         x <- Cache(raster::crop, x, rasterToMatch, userTags = cacheTags)
       }
       # x <- Cache(sf::st_collection_extract, x = x, type = "POLYGON")
 
-      if (writeCropped)
-      {
+      if (writeCropped) {
         Cache(
           sf::st_write,
           obj = x,
@@ -422,4 +386,3 @@ prepInputs <- function(targetFile,
 
   x
 }
-

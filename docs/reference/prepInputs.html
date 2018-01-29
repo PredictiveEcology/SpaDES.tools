@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Download and optionally reproject, crop, mask raw data and output module
-inputs � prepInputs • SpaDES.tools</title>
+inputs — prepInputs • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -98,7 +98,7 @@ runs several other functions, conditionally and sequentially:
   <span class='no'>moduleName</span>, <span class='kw'>fun</span> <span class='kw'>=</span> <span class='st'>"raster"</span>, <span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"raster"</span>, <span class='kw'>studyArea</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>rasterToMatch</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>rasterInterpMethod</span> <span class='kw'>=</span> <span class='st'>"bilinear"</span>,
   <span class='kw'>rasterDatatype</span> <span class='kw'>=</span> <span class='st'>"INT2U"</span>, <span class='kw'>writeCropped</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>addTagsByObject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cacheTags</span> <span class='kw'>=</span> <span class='st'>"stable"</span>)</pre>
+  <span class='kw'>quick</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>cacheTags</span> <span class='kw'>=</span> <span class='st'>"stable"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -147,7 +147,11 @@ cropping.</p></td>
     <tr>
       <th>rasterInterpMethod</th>
       <td><p>Method used to compute values for the new
-RasterLayer. See ?projectRaster. Defaults to bilinear.</p></td>
+RasterLayer. See <code><a href='http://www.rdocumentation.org/packages/raster/topics/projectRaster'>projectRaster</a></code>. Defaults to bilinear.</p></td>
+    </tr>
+    <tr>
+      <th>rasterDatatype</th>
+      <td><p>Output data type. Passed to <code><a href='http://www.rdocumentation.org/packages/raster/topics/writeRaster'>writeRaster</a></code>.</p></td>
     </tr>
     <tr>
       <th>writeCropped</th>
@@ -159,13 +163,17 @@ RasterLayer. See ?projectRaster. Defaults to bilinear.</p></td>
 .tagsByClass function</p></td>
     </tr>
     <tr>
+      <th>quick</th>
+      <td><p>Logical. If <code>sideEffect = TRUE</code>, setting this to <code>TRUE</code>,
+will hash the file's metadata (i.e., filename and file size) instead of
+hashing the contents of the file(s). If set to <code>FALSE</code> (default),
+the contents of the file(s) are hashed.
+<em>NOTE: this argument is experimental and may change in future releases.</em></p></td>
+    </tr>
+    <tr>
       <th>cacheTags</th>
       <td><p>Character vector with Tags. These Tags will be added to the
 repository along with the artifact.</p></td>
-    </tr>
-    <tr>
-      <th>rasterDataype</th>
-      <td><p>Output data type. Passed to <a href='http://www.rdocumentation.org/packages/raster/topics/writeRaster'>writeRaster</a>.</p></td>
     </tr>
     </table>
     
