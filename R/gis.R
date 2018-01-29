@@ -18,7 +18,7 @@
 #'
 #' @author Eliot Mcintire
 #' @export
-#' @importFrom raster crop extract nlayers raster stack
+#' @importFrom raster crop extract mask nlayers raster stack
 #'
 #' @examples
 #'\dontrun{
@@ -81,17 +81,15 @@ fastMask <- function(x, polygon) {
 
 #' fastCrop
 #'
-#' This function is a wrapper around \code{\link[velox]{VeloxRaster_crop}}.
+#' This function is a wrapper around \code{velox::VeloxRaster_crop}.
 #'
 #' @param x Raster to crop
 #'
 #' @inheritParams raster::crop
 #'
 #' @export
-#' @importFrom raster extent
-#' @importClassesFrom velox VeloxRaster
-#' @importFrom velox velox
-#' @seealso \code{\link[velox]{VeloxRaster_crop}}
+#' @importFrom raster crop extent
+#' @seealso \code{velox::VeloxRaster_crop}
 #'
 fastCrop <- function(x, y, ...) {
   if (!requireNamespace("velox")) {
@@ -99,7 +97,7 @@ fastCrop <- function(x, y, ...) {
             " To install please try devtools::install.packages('velox')")
     a <- crop(x, y)
   } else {
-    v1 <- velox(x) # velox package is much faster than raster package for rasterize function,
+    v1 <- velox::velox(x) # velox package is much faster than raster package for rasterize function,
     # but not as fast as gdal_rasterize for large polygons
     if (is(y, "Raster")) y <- extent(y)
     v1$crop(y)
