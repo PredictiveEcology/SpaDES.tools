@@ -18,7 +18,6 @@
 #'
 #' @author Eliot Mcintire
 #' @export
-#' @importFrom fasterize fasterize
 #' @importFrom raster crop extract nlayers raster stack
 #' @importFrom sf st_as_sf
 #'
@@ -60,12 +59,19 @@
 #' }
 #'
 fastMask <- function(x, polygon) {
-  numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
-    is.numeric(polygon[[x]])
-  })))[1]]
-  a <- fasterize(st_as_sf(polygon), raster = x[[1]], field = numericfield)
-  m <- is.na(a[])
-  x[m] <- NA
+  if (!requireNamespace("fasterize", quietly = TRUE)) {
+    message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
+            " To install please try devtools::install_github('ecohealthalliance/fasterize')")
+    x <- mask(x, polygon)
+  } else {
+    numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
+      is.numeric(polygon[[x]])
+    })))[1]]
+    a <- fasterize::fasterize(st_as_sf(polygon), raster = x[[1]], field = numericfield)
+    m <- is.na(a[])
+    x[m] <- NA
+  }
+
   if (nlayers(x) > 1) {
     stack(x)
   } else {

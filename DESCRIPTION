@@ -33,7 +33,6 @@ Imports:
     data.table (>= 1.10.4),
     digest,
     fastdigest,
-    fasterize (>= 0.1.0),
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
@@ -55,6 +54,7 @@ Suggests:
     DEoptim (>= 2.2-4),
     dplyr (>= 0.5.0),
     hunspell,
+    fasterize (>= 0.1.0),
     knitr,
     microbenchmark,
     parallel,
@@ -69,6 +69,8 @@ LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 ByteCompile: yes
+Additional_repositories:
+    https://github.com/ecohealthalliance/fasterize
 Collate: 
     'RcppExports.R'
     'heading.R'
