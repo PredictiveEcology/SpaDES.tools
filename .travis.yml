@@ -50,6 +50,8 @@ matrix:
   - os: linux
     dist: trusty
     r: release
+    env:
+      - GDAL2=true
     addons:
       apt:
         sources:
@@ -78,6 +80,8 @@ matrix:
     apt:
       packages:
       - libudunits2-dev
+    env:
+      - GDAL2=false
     r_github_packages:
     - jimhester/lintr
     before_install:
