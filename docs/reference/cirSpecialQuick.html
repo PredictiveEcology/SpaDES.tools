@@ -9,7 +9,7 @@
 <title>This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
 returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
 It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
-just once, then add to the xy coordinates of every locus � cirSpecialQuick • SpaDES.tools</title>
+just once, then add to the xy coordinates of every locus — cirSpecialQuick • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -100,12 +100,39 @@ just once, then add to the xy coordinates of every locus</p>
     
 
     <pre class="usage"><span class='fu'>.cirSpecialQuick</span>(<span class='no'>landscape</span>, <span class='no'>loci</span>, <span class='no'>maxRadius</span>, <span class='no'>minRadius</span>)</pre>
-        
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>landscape</th>
+      <td><p>Raster on which the circles are built.</p></td>
+    </tr>
+    <tr>
+      <th>loci</th>
+      <td><p>Numeric. An alternative to <code>coords</code>. These are the indices on
+<code>landscape</code> to initiate this function. See <code>coords</code>. Default is one
+point in centre of <code>landscape</code>..</p></td>
+    </tr>
+    <tr>
+      <th>maxRadius</th>
+      <td><p>Numeric vector of length 1 or same length as coords</p></td>
+    </tr>
+    <tr>
+      <th>minRadius</th>
+      <td><p>Numeric vector of length 1 or same length as <code>coords</code>. Default is
+<code>maxRadius</code>, meaning return all cells that are touched
+by the narrow ring at that exact radius. If smaller than <code>maxRadius</code>,
+then this will create a buffer or donut or ring.</p></td>
+    </tr>
+    </table>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
                 </ul>
 
   </div>
