@@ -73,3 +73,30 @@ fastMask <- function(x, polygon) {
     x
   }
 }
+
+#' fastCrop
+#'
+#' This function is a wrapper around \code{velox}'s \link[velox]{\code{crop}}.
+#'
+#' @param x Raster to crop
+#'
+#' @inheritParams raster::crop
+#'
+#' @export
+#' @importFrom raster extent
+#' @importClassesFrom velox VeloxRaster
+#' @importFrom velox velox
+#' @seealso \code{\link[velox]{VeloxRaster_crop}}
+#'
+fastCrop <- function(x, y, ...) {
+  v1 <- velox(x) # velox package is much faster than raster package for rasterize function,
+  # but not as fast as gdal_rasterize for large polygons
+  if (is(y, "Raster")) y <- extent(y)
+  v1$crop(y)
+  if (length(names(x)) > 1) {
+    a <- v1$as.RasterStack()
+  } else {
+    a <- v1$as.RasterLayer(band = 1)
+  }
+  a
+}
