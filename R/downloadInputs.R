@@ -2,47 +2,6 @@ if (getRversion() >= "3.1.0") {
   utils::globalVariables("expectedFile")
 }
 
-#' Download file from web databases
-#'
-#' This function can be used to download a file from a web database listed in
-#'\link[webDatabases]{urls}.
-#'
-#' @param filename Character string naming the file to be downloaded.
-#'
-#' @param filepath Character string giving the path where the file will be
-#' written.
-#'
-#' @param dataset Optional character string representing the dataset of interest
-#' for download. Allows for restricting the lookup for the url to a dataset,
-#' thus avoiding filename collision.
-#'
-#' @author Jean Marchal
-#' @importFrom webDatabases urls
-#' @rdname downloadFromWebDB
-#'
-downloadFromWebDB <- function(filename, filepath, dataset = NULL) {
-  urls <- webDatabases::urls
-
-  if (!is.null(set <- dataset))
-    urls <- urls[grepl(dataset, pattern = set, fixed = TRUE)]
-
-  for (i in 1:nrow(urls)) {
-    if (any(filename == urls$files[[i]])) {
-      authenticate <-
-        if (!is.na(urls$password[[i]])) {
-          split <- strsplit(urls$password[[i]], split = "[:]")[[1]]
-          httr::authenticate(split[1L], split[2L])
-        }
-
-      httr::GET(
-        url = paste0(urls$url[[i]], filename),
-        authenticate,
-        httr::write_disk(filepath, overwrite = TRUE)
-      )
-      break
-    }
-  }
-}
 
 #' Extract files from archive.
 #'
@@ -111,17 +70,13 @@ smallNamify <- function(name) {
 #' inputs
 #'
 #' This function can be used to prepare module inputs from raw data. It
-#' runs several other functions, conditionally and sequentially:
-#' \code{downloadFromWebDB}, \code{extractFromArchive}.
+#' runs several other functions, conditionally:
+#' \code{extractFromArchive}.
 #'
 #' @param targetFile Character string giving the path of the raw data.
 #'
 #' @param archive Optional character string giving the path of an archive
 #' containing \code{targetFile}.
-#'
-#' @param dataset Optional character string representing the dataset of interest
-#' for download. Allows for restricting the lookup for the url to a dataset,
-#' thus avoiding filename collision.
 #'
 #' @param moduleName Character string giving the name of the module.
 #'
@@ -164,7 +119,6 @@ smallNamify <- function(name) {
 #'
 prepInputs <- function(targetFile,
                        archive = NULL,
-                       dataset = NULL,
                        modulePath,
                        moduleName,
                        fun = "raster",
@@ -210,19 +164,7 @@ prepInputs <- function(targetFile,
 
   if (mismatch) {
     if (is.null(archive)) {
-      downloadFromWebDB(targetFile, targetFilePath, dataset)
-
-      if (quick) {
-        fileSize <- file.size(asPath(targetFilePath))
-
-        if (checksums[["filesize"]] != fileSize)
-          warning("The version downloaded of ", targetFile, " does not match the checksums")
-      } else {
-        checkSum <- digest::digest(file = asPath(targetFilePath), algo = checksums[["algorithm"]])
-
-        if (checksums[["checksum"]] != checkSum)
-          warning("The version downloaded of ", targetFile, " does not match the checksums")
-      }
+      stop("archive is required")
     } else {
       archive <- basename(archive)
       archivePath <- file.path(dataPath, archive)
@@ -231,19 +173,7 @@ prepInputs <- function(targetFile,
       mismatch <- !compareNA(checksums[["result"]], "OK")
 
       if (mismatch) {
-        downloadFromWebDB(archive, archivePath, dataset)
-
-        if (quick) {
-          fileSize <- file.size(asPath(archivePath))
-
-          if (checksums[["filesize"]] != fileSize)
-            warning("The version downloaded of ", archive, " does not match the checksums")
-        } else {
-          checkSum <- digest::digest(file = asPath(archivePath), algo = checksums[["algorithm"]])
-
-          if (checksums[["checksum"]] != checkSum)
-            warning("The version downloaded of ", archive, " does not match the checksums")
-        }
+        stop("the local version of the archive does not match the expected version in the CHECKSUMS.txt")
       }
 
       unlink(extractFromArchive(archivePath = archivePath, needed = targetFile))
