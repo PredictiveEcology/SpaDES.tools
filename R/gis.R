@@ -88,7 +88,7 @@ fastMask <- function(x, polygon) {
 #' @inheritParams raster::crop
 #'
 #' @export
-#' @importFrom raster crop extent
+#' @importFrom raster extent
 #' @seealso \code{velox::VeloxRaster_crop}
 #'
 fastCrop <- function(x, y, ...) {
