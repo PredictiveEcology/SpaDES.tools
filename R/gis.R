@@ -19,7 +19,6 @@
 #' @author Eliot Mcintire
 #' @export
 #' @importFrom raster crop extract nlayers raster stack
-#' @importFrom sf st_as_sf
 #'
 #' @examples
 #'\dontrun{
@@ -59,7 +58,8 @@
 #' }
 #'
 fastMask <- function(x, polygon) {
-  if (!requireNamespace("fasterize", quietly = TRUE)) {
+  if (!requireNamespace("fasterize", quietly = TRUE) &
+      !requireNamespace("sf", quietly = TRUE)) {
     message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
             " To install please try devtools::install_github('ecohealthalliance/fasterize')")
     x <- mask(x, polygon)
@@ -67,7 +67,7 @@ fastMask <- function(x, polygon) {
     numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
       is.numeric(polygon[[x]])
     })))[1]]
-    a <- fasterize::fasterize(st_as_sf(polygon), raster = x[[1]], field = numericfield)
+    a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
     m <- is.na(a[])
     x[m] <- NA
   }
@@ -94,14 +94,20 @@ fastMask <- function(x, polygon) {
 #' @seealso \code{\link[velox]{VeloxRaster_crop}}
 #'
 fastCrop <- function(x, y, ...) {
-  v1 <- velox(x) # velox package is much faster than raster package for rasterize function,
-  # but not as fast as gdal_rasterize for large polygons
-  if (is(y, "Raster")) y <- extent(y)
-  v1$crop(y)
-  if (length(names(x)) > 1) {
-    a <- v1$as.RasterStack()
+  if (!requireNamespace("velox")) {
+    message("Using raster::crop, which may be very slow, because 'velox' not installed. ",
+            " To install please try devtools::install.packages('velox')")
+    a <- crop(x, y)
   } else {
-    a <- v1$as.RasterLayer(band = 1)
+    v1 <- velox(x) # velox package is much faster than raster package for rasterize function,
+    # but not as fast as gdal_rasterize for large polygons
+    if (is(y, "Raster")) y <- extent(y)
+    v1$crop(y)
+    if (length(names(x)) > 1) {
+      a <- v1$as.RasterStack()
+    } else {
+      a <- v1$as.RasterLayer(band = 1)
+    }
   }
   a
 }

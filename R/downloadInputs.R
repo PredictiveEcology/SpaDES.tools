@@ -113,7 +113,6 @@ smallNamify <- function(name) {
 #' @importFrom data.table data.table
 #' @importFrom methods is
 #' @importFrom reproducible Cache compareNA asPath
-#' @importFrom sf st_is_valid st_buffer st_transform st_write
 #' @importFrom digest digest
 #' @rdname prepInputs
 #'
@@ -285,6 +284,11 @@ prepInputs <- function(targetFile,
         )
       }
     } else if ("sf" %in% objClass) {
+      if (!requireNamespace("sf", quietly = TRUE)) {
+        stop("package sf is not installed. Cannot prepare an sf object. Please",
+             " install it with install.packages('sf')")
+
+      }
       if (!suppressWarnings(sf::st_is_valid(x))) {
         x <- Cache(sf::st_buffer, x, dist = 0, userTags = cacheTags)
       }

@@ -25,11 +25,8 @@ test_that("fastMask produces correct results", {
   expect_equal(newStack1, newStack2)
 
   newStack1 <- raster::mask(origStack[[2]], mask = shp)
-  if (requireNamespace("fasterize")) {
-    newStack2 <- fastMask(x = origStack[[2]], polygon = shp)
-    expect_equal(newStack1, newStack2)
-    message("Please install fasterize")
-  }
+  newStack2 <- fastMask(x = origStack[[2]], polygon = shp)
+  expect_equal(newStack1, newStack2)
 })
 
 test_that("fastCrop works", {
