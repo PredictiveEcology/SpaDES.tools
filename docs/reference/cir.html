@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Identify pixels in a circle or ring (donut) around an object. — cir • SpaDES.tools</title>
+<title>Identify pixels in a circle or ring (donut) around an object. � cir • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -219,10 +219,9 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>data.table</span>)</div><div class='output co'>#&gt; <span class='message'>data.table 1.10.4.3</span></div><div class='output co'>#&gt; <span class='message'>  The fastest way to learn (by data.table authors): https://www.datacamp.com/courses/data-analysis-the-data-table-way</span></div><div class='output co'>#&gt; <span class='message'>  Documentation: ?data.table, example(data.table) and browseVignettes("data.table")</span></div><div class='output co'>#&gt; <span class='message'>  Release notes, videos and slides: http://r-datatable.com</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘data.table’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:raster’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    shift</span></div><div class='input'><span class='fu'>library</span>(<span class='no'>sp</span>)
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>library</span>(<span class='no'>data.table</span>)
+<span class='fu'>library</span>(<span class='no'>sp</span>)
 <span class='fu'>library</span>(<span class='no'>raster</span>)
 <span class='fu'>library</span>(<span class='no'>quickPlot</span>)
 
@@ -237,7 +236,8 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>ras</span>)
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>circlePoints</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"ras"</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
+}
+
 <span class='co'># circles non centred</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='randomPolygons.html'>randomPolygons</a></span>(<span class='no'>ras</span>, <span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>4</span>)
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>
@@ -256,7 +256,8 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>cirsRas</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"ras"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"transparent"</span>, <span class='st'>"#00000055"</span>))
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agent</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"ras"</span>)
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>cirsSP</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"ras"</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
+}
+
 <span class='co'># Example comparing rings and cir</span>
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>30</span>, <span class='fl'>0</span>, <span class='fl'>30</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>hab</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussmap.html'>gaussMap</a></span>(<span class='no'>a</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>1</span>) <span class='co'># if raster is large (&gt;1e6 pixels) use speedup &gt; 1</span>
@@ -283,7 +284,8 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>ras1</span>, <span class='no'>ras2</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
+}
+
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>100</span>, <span class='fl'>0</span>, <span class='fl'>100</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>hab</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussmap.html'>gaussMap</a></span>(<span class='no'>a</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>cirs</span> <span class='kw'>&lt;-</span> <span class='fu'>cir</span>(<span class='no'>hab</span>, <span class='no'>coords</span>, <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>44</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>0</span>)
@@ -294,7 +296,8 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>ras1</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
+}
+
 <span class='co'># Provide a specific set of angles</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>330</span>, <span class='fl'>0</span>, <span class='fl'>330</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>ras</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
@@ -303,7 +306,8 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
                 <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='no'>n</span>, <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/coordinates'>xmin</a></span>(<span class='no'>ras</span>), <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/coordinates'>xmax</a></span>(<span class='no'>ras</span>)))
 <span class='no'>circ</span> <span class='kw'>&lt;-</span> <span class='fu'>cir</span>(<span class='no'>ras</span>, <span class='no'>coords</span>, <span class='kw'>angles</span> <span class='kw'>=</span> <span class='fu'>seq</span>(<span class='fl'>0</span>, <span class='fl'>2</span> * <span class='no'>pi</span>, <span class='kw'>length.out</span> <span class='kw'>=</span> <span class='fl'>21</span>),
             <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>200</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-            <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>returnAngles</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div></pre>
+            <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>returnAngles</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
