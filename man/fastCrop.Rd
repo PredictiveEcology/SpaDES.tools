@@ -14,7 +14,7 @@ fastCrop(x, y, ...)
 \item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }
 \description{
-This function is a wrapper around \code{velox}'s \link[velox]{\code{crop}}.
+This function is a wrapper around \code{\link[velox]{VeloxRaster_crop}}.
 }
 \seealso{
 \code{\link[velox]{VeloxRaster_crop}}

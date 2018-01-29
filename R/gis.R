@@ -75,7 +75,7 @@ fastMask <- function(x, polygon) {
 
 #' fastCrop
 #'
-#' This function is a wrapper around \code{velox}'s \link[velox]{\code{crop}}.
+#' This function is a wrapper around \code{\link[velox]{VeloxRaster_crop}}.
 #'
 #' @param x Raster to crop
 #'
