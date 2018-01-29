@@ -203,7 +203,8 @@ prepInputs <- function(targetFile,
           checksumFile = asPath(file.path(modulePath, moduleName, "data", "CHECKSUMS.txt")),
           write = FALSE,
           notOlderThan = notOlderThan,
-          userTags = cacheTags
+          userTags = cacheTags,
+          quickCheck = quick
     )
   )
 
@@ -218,17 +219,17 @@ prepInputs <- function(targetFile,
       downloadFromWebDB(targetFile, targetFilePath, dataset)
 
       checkSum <- digest::digest(file = asPath(targetFilePath), algo = checksums[["algorithm.x"]])
+
       if (quick)
       {
         fileSize <- file.size(asPath(targetFilePath))
 
-        if (checksums[["filesize"]] != fileSize)
+        if (checksums[["filesize.x"]] != fileSize)
           warning("The version downloaded of ", targetFile, " does not match the checksums")
       }
       else
       {
-
-      if (checksums[["checksum.x"]] != checkSum)
+        if (checksums[["checksum.x"]] != checkSum)
           warning("The version downloaded of ", targetFile, " does not match the checksums")
       }
     }
@@ -245,11 +246,12 @@ prepInputs <- function(targetFile,
         downloadFromWebDB(archive, archivePath, dataset)
 
         checkSum <- digest::digest(file = asPath(archivePath), algo = checksums[["algorithm.x"]])
+
         if (quick)
         {
           fileSize <- file.size(asPath(archivePath))
 
-          if (checksums[["filesize"]] != fileSize)
+          if (checksums[["filesize.x"]] != fileSize)
             warning("The version downloaded of ", archive, " does not match the checksums")
         }
         else
@@ -259,7 +261,7 @@ prepInputs <- function(targetFile,
           warning("The version downloaded of ", archive, " does not match the checksums")
       }
 
-      unlink(extractFromArchive(archive = archivePath, needed = targetFile))
+      unlink(extractFromArchive(archivePath = archivePath, needed = targetFile))
     }
   }
 
