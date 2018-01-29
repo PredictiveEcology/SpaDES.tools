@@ -99,29 +99,6 @@ This code is substantially adapted from <code>PlotRegionHighlighter::createCircl
   <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>allowDuplicates</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>includeBehavior</span> <span class='kw'>=</span> <span class='st'>"includePixels"</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>angles</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>returnAngles</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>closest</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='co'># S4 method for RasterLayer,SpatialPoints,missing</span>
-<span class='fu'>cir</span>(<span class='no'>landscape</span>, <span class='no'>coords</span>, <span class='no'>maxRadius</span>,
-  <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='no'>allowOverlap</span>, <span class='no'>allowDuplicates</span>, <span class='no'>includeBehavior</span>,
-  <span class='no'>returnDistances</span>, <span class='no'>angles</span>, <span class='no'>returnAngles</span>, <span class='no'>returnIndices</span>, <span class='no'>closest</span>, <span class='no'>simplify</span>)
-
-<span class='co'># S4 method for RasterLayer,missing,numeric</span>
-<span class='fu'>cir</span>(<span class='no'>landscape</span>, <span class='no'>loci</span>, <span class='no'>maxRadius</span>,
-  <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='no'>allowOverlap</span>, <span class='no'>allowDuplicates</span>, <span class='no'>includeBehavior</span>,
-  <span class='no'>returnDistances</span>, <span class='no'>angles</span>, <span class='no'>returnAngles</span>, <span class='no'>returnIndices</span>, <span class='no'>closest</span>, <span class='no'>simplify</span>)
-
-<span class='co'># S4 method for RasterLayer,missing,missing</span>
-<span class='fu'>cir</span>(<span class='no'>landscape</span>, <span class='no'>loci</span>, <span class='no'>maxRadius</span>,
-  <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='no'>allowOverlap</span>, <span class='no'>allowDuplicates</span>, <span class='no'>includeBehavior</span>,
-  <span class='no'>returnDistances</span>, <span class='no'>angles</span>, <span class='no'>returnAngles</span>, <span class='no'>returnIndices</span>, <span class='no'>closest</span>, <span class='no'>simplify</span>)
-
-<span class='co'># S4 method for RasterLayer,matrix,missing</span>
-<span class='fu'>cir</span>(<span class='no'>landscape</span>, <span class='no'>coords</span>, <span class='no'>loci</span>,
-  <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fu'>ncol</span>(<span class='no'>landscape</span>)/<span class='fl'>4</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>allowDuplicates</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>includeBehavior</span> <span class='kw'>=</span> <span class='st'>"includePixels"</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>angles</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>returnAngles</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>closest</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -260,7 +237,7 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>ras</span>)
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>circlePoints</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"ras"</span>)
-}</div><div class='img'><img src='cir-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
 <span class='co'># circles non centred</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='randomPolygons.html'>randomPolygons</a></span>(<span class='no'>ras</span>, <span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>4</span>)
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>
@@ -279,7 +256,7 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>cirsRas</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"ras"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"transparent"</span>, <span class='st'>"#00000055"</span>))
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agent</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"ras"</span>)
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>cirsSP</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"ras"</span>)
-}</div><div class='img'><img src='cir-2.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
 <span class='co'># Example comparing rings and cir</span>
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>30</span>, <span class='fl'>0</span>, <span class='fl'>30</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>hab</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussmap.html'>gaussMap</a></span>(<span class='no'>a</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>1</span>) <span class='co'># if raster is large (&gt;1e6 pixels) use speedup &gt; 1</span>
@@ -306,7 +283,7 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>ras1</span>, <span class='no'>ras2</span>)
-}</div><div class='img'><img src='cir-3.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>100</span>, <span class='fl'>0</span>, <span class='fl'>100</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>hab</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussmap.html'>gaussMap</a></span>(<span class='no'>a</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>cirs</span> <span class='kw'>&lt;-</span> <span class='fu'>cir</span>(<span class='no'>hab</span>, <span class='no'>coords</span>, <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>44</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>0</span>)
@@ -317,7 +294,7 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>ras1</span>)
-}</div><div class='img'><img src='cir-4.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
 <span class='co'># Provide a specific set of angles</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>330</span>, <span class='fl'>0</span>, <span class='fl'>330</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>ras</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
@@ -351,7 +328,7 @@ For the more general GIS buffering, see <code><a href='http://www.rdocumentation
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>

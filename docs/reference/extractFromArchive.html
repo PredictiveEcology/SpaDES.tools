@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Resample — sampleV • SpaDES.tools</title>
+<title>Extract files from archive. — extractFromArchive • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -83,46 +83,43 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Resample</h1>
+    <h1>Extract files from archive.</h1>
     </div>
 
     
-    <p>A version of sample that doesn't have awkward behaviour when <code>length(x) == 1</code>.
-Vectorized version of <code>sample</code> using <code>Vectorize</code></p>
+    <p>Extract zip or tar archive files, possibly nested in other zip or tar
+archives.</p>
     
 
-    <pre class="usage"><span class='fu'>sampleV</span>(<span class='no'>x</span>, <span class='no'>size</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>extractFromArchive</span>(<span class='no'>archivePath</span>, <span class='kw'>dataPath</span> <span class='kw'>=</span> <span class='fu'>dirname</span>(<span class='no'>archivePath</span>), <span class='no'>needed</span>,
+  <span class='kw'>extractedArchives</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>either a vector of one or more elements from which to choose,
-    or a positive integer.  See &#8216;Details.&#8217;</p></td>
+      <th>archivePath</th>
+      <td><p>Character string giving the path of the archive
+containing the <code>file</code> to be extracted.</p></td>
     </tr>
     <tr>
-      <th>size</th>
-      <td><p>a non-negative integer giving the number of items to choose.</p></td>
+      <th>dataPath</th>
+      <td><p>Character string giving the path where <code>needed</code> will be
+extracted. Defaults to the archive directory.</p></td>
     </tr>
     <tr>
-      <th>replace</th>
-      <td><p>should sampling be with replacement?</p></td>
+      <th>needed</th>
+      <td><p>Character string giving the name of the file(s) to be extracted.</p></td>
     </tr>
     <tr>
-      <th>prob</th>
-      <td><p>a vector of probability weights for obtaining the elements
-    of the vector being sampled.</p></td>
+      <th>extractedArchives</th>
+      <td><p>Used internally.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A random perumtation, as in <code>sample</code>, but with <code>size</code> vectorized.</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Intended for internal use only. <code>size</code> is vectorized.</p>
+    <p>A character vector listing the paths of the extracted archives.</p>
     
 
   </div>
@@ -132,9 +129,11 @@ Vectorized version of <code>sample</code> using <code>Vectorize</code></p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
           </ul>
+
+    <h2>Author</h2>
+    
+Jean Marchal
 
   </div>
 </div>

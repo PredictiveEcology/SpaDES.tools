@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Resample — sampleV • SpaDES.tools</title>
+<title>Download file from web databases — downloadFromWebDB • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -83,46 +83,35 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Resample</h1>
+    <h1>Download file from web databases</h1>
     </div>
 
     
-    <p>A version of sample that doesn't have awkward behaviour when <code>length(x) == 1</code>.
-Vectorized version of <code>sample</code> using <code>Vectorize</code></p>
+    <p>This function can be used to download a file from a web database listed in
+<a href='http://www.rdocumentation.org/packages/webDatabases/topics/webdataset'>urls</a>.</p>
     
 
-    <pre class="usage"><span class='fu'>sampleV</span>(<span class='no'>x</span>, <span class='no'>size</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>downloadFromWebDB</span>(<span class='no'>filename</span>, <span class='no'>filepath</span>, <span class='kw'>dataset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>either a vector of one or more elements from which to choose,
-    or a positive integer.  See &#8216;Details.&#8217;</p></td>
+      <th>filename</th>
+      <td><p>Character string naming the file to be downloaded.</p></td>
     </tr>
     <tr>
-      <th>size</th>
-      <td><p>a non-negative integer giving the number of items to choose.</p></td>
+      <th>filepath</th>
+      <td><p>Character string giving the path where the file will be
+written.</p></td>
     </tr>
     <tr>
-      <th>replace</th>
-      <td><p>should sampling be with replacement?</p></td>
-    </tr>
-    <tr>
-      <th>prob</th>
-      <td><p>a vector of probability weights for obtaining the elements
-    of the vector being sampled.</p></td>
+      <th>dataset</th>
+      <td><p>Optional character string representing the dataset of interest
+for download. Allows for restricting the lookup for the url to a dataset,
+thus avoiding filename collision.</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A random perumtation, as in <code>sample</code>, but with <code>size</code> vectorized.</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Intended for internal use only. <code>size</code> is vectorized.</p>
     
 
   </div>
@@ -130,11 +119,11 @@ Vectorized version of <code>sample</code> using <code>Vectorize</code></p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
+                </ul>
 
-      <li><a href="#details">Details</a></li>
-          </ul>
+    <h2>Author</h2>
+    
+Jean Marchal
 
   </div>
 </div>
