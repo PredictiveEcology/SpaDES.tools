@@ -142,14 +142,16 @@ smallNamify <- function(name)
 #' cropping.
 #'
 #' @param rasterInterpMethod Method used to compute values for the new
-#' RasterLayer. See \link[raster]{?projectRaster}. Defaults to bilinear.
+#' RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.
 #'
-#' @param rasterDataype Output data type. Passed to \link[raster]{writeRaster}.
+#' @param rasterDatatype Output data type. Passed to \code{\link[raster]{writeRaster}}.
 #'
 #' @param writeCropped Write the output on disk ?
 #'
 #' @param addTagsByObject Pass any object in there for which there is a
 #' .tagsByClass function
+#'
+#' @inheritParams reproducible::Cache
 #'
 #' @param cacheTags Character vector with Tags. These Tags will be added to the
 #' repository along with the artifact.
@@ -175,6 +177,7 @@ prepInputs <- function(targetFile,
                        rasterDatatype = "INT2U",
                        writeCropped = TRUE,
                        addTagsByObject = NULL,
+                       quick = FALSE,
                        cacheTags = "stable")
 {
   message("Preparing: ", targetFile)
@@ -215,9 +218,19 @@ prepInputs <- function(targetFile,
       downloadFromWebDB(targetFile, targetFilePath, dataset)
 
       checkSum <- digest::digest(file = asPath(targetFilePath), algo = checksums[["algorithm.x"]])
+      if (quick)
+      {
+        fileSize <- file.size(asPath(targetFilePath))
+
+        if (checksums[["filesize"]] != fileSize)
+          warning("The version downloaded of ", targetFile, " does not match the checksums")
+      }
+      else
+      {
 
       if (checksums[["checksum.x"]] != checkSum)
           warning("The version downloaded of ", targetFile, " does not match the checksums")
+      }
     }
     else
     {
@@ -232,6 +245,15 @@ prepInputs <- function(targetFile,
         downloadFromWebDB(archive, archivePath, dataset)
 
         checkSum <- digest::digest(file = asPath(archivePath), algo = checksums[["algorithm.x"]])
+        if (quick)
+        {
+          fileSize <- file.size(asPath(archivePath))
+
+          if (checksums[["filesize"]] != fileSize)
+            warning("The version downloaded of ", archive, " does not match the checksums")
+        }
+        else
+        {
 
         if (checksums[["checksum.x"]] != checkSum)
           warning("The version downloaded of ", archive, " does not match the checksums")
