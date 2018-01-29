@@ -10,6 +10,20 @@ just once, then add to the xy coordinates of every locus}
 \usage{
 .cirSpecialQuick(landscape, loci, maxRadius, minRadius)
 }
+\arguments{
+\item{landscape}{Raster on which the circles are built.}
+
+\item{loci}{Numeric. An alternative to \code{coords}. These are the indices on
+\code{landscape} to initiate this function. See \code{coords}. Default is one
+point in centre of \code{landscape}..}
+
+\item{maxRadius}{Numeric vector of length 1 or same length as coords}
+
+\item{minRadius}{Numeric vector of length 1 or same length as \code{coords}. Default is
+\code{maxRadius}, meaning return all cells that are touched
+by the narrow ring at that exact radius. If smaller than \code{maxRadius},
+then this will create a buffer or donut or ring.}
+}
 \description{
 This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
 returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".

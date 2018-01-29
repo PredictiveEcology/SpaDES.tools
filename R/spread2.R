@@ -2,7 +2,7 @@ if (getRversion() >= "3.1.0") {
   utils::globalVariables(c(
     "distance", "from", "i.size", "ind", "indClDT", "initialPixels",
     "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
-    "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1"
+    "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
   ))
 }
 
@@ -660,12 +660,13 @@ spread2 <-
           pc <- pureCircle[, "dists"] / effDists1
           pureCircle <- cbind(pureCircle, proportion = pc)
           pureCircle <- as.data.table(pureCircle)
-          pureCircle[, proportion:=proportion/sum(proportion), by = "id"]
+          pureCircle[, proportion := proportion / sum(proportion), by = "id"]
           set(pureCircle, , "dists", NULL)
           setkeyv(pureCircle, c("id", "to"))
           pureCirclePrev <- attr(dt, "spreadState")$pureCircle
-          if(!is.null(pureCirclePrev)) {
-            pureCircle <- rbindlist(list(pureCircle, pureCirclePrev), use.names = FALSE, fill = FALSE)
+          if (!is.null(pureCirclePrev)) {
+            pureCircle <- rbindlist(list(pureCircle, pureCirclePrev),
+                                    use.names = FALSE, fill = FALSE)
             #pureCircle <- unique(pureCircle)
           }
         }
@@ -701,7 +702,7 @@ spread2 <-
           set(dtPotential, , "effectiveDistance", effDists[distKeepers])
           if (circle) {
             dtPotential <- dtPotential[pureCircle, nomatch = 0, on = c("id", "to")][
-              ,proportion:=proportion/.N,by=c("id", "to")]
+              , proportion := proportion / .N, by = c("id", "to")]
           }
         }
       }

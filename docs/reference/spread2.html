@@ -101,15 +101,7 @@ robust, and more difficult to use iteratively.</p>
   <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1000000L</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnFrom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>spreadProbRel</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>skipChecks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
-<span class='co'># S4 method for RasterLayer</span>
-<span class='fu'>spread2</span>(<span class='no'>landscape</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>ncell</span>(<span class='no'>landscape</span>)/<span class='fl'>2</span> -
-  <span class='fu'>ncol</span>(<span class='no'>landscape</span>)/<span class='fl'>2</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.23</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>maxSize</span>, <span class='no'>exactSize</span>,
-  <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8L</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1000000L</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>returnFrom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>spreadProbRel</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>skipChecks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>skipChecks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -233,10 +225,12 @@ that describes which way the <code>asymmetry</code> is.</p></td>
     </tr>
     <tr>
       <th>allowOverlap</th>
-      <td><p>Logical. If <code>TRUE</code>, then individual events can overlap
-with one another, i.e., they do not interact (this is slower
-than if <code>allowOverlap = FALSE</code>).
-Default is <code>FALSE</code>.</p></td>
+      <td><p>Logical. If TRUE, then individual events can overlap with one another,
+i.e., they do not interact (this is slower than if
+allowOverlap = FALSE). Default is FALSE. This can also be <code>NA</code>,
+which means that the event can overlap with other events,
+and also itself. This would be, perhaps, useful for dispersal of,
+say, insect swarms.</p></td>
     </tr>
     <tr>
       <th>neighProbs</th>
@@ -455,21 +449,25 @@ when passed back into <code>spread2</code>.</p>
 <span class='no'>sams</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='fu'>sample</span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/ncell'>ncell</a></span>(<span class='no'>a</span>), <span class='fl'>3</span>))
 
 <span class='co'># Simple use -- similar to spread(...)</span>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='fl'>0.225</span>)</div><div class='output co'>#&gt; <span class='error'>Error: object 'dtPotentialAllNeighs' not found</span></div><div class='input'><span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='fl'>0.225</span>)
+<span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>out</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in eval(quote(list(...)), env): object 'out' not found</span></div><div class='img'><img src='spread2-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
 <span class='co'># Use maxSize -- this gives an upper limit</span>
 <span class='no'>maxSizes</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='fu'>sample</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fu'>length</span>(<span class='no'>sams</span>)))
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='fl'>0.225</span>, <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='no'>maxSizes</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread2(a, start = sams, 0.225, maxSize = maxSizes, asRaster = FALSE): object 'dtPotentialAllNeighs' not found</span></div><div class='input'><span class='co'># check TRUE using data.table .N</span>
-<span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"initialPixels"</span>]$<span class='no'>n</span> <span class='kw'>&lt;=</span> <span class='no'>maxSizes</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'out' not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='fl'>0.225</span>, <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='no'>maxSizes</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='co'># check TRUE using data.table .N</span>
+<span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"initialPixels"</span>]$<span class='no'>n</span> <span class='kw'>&lt;=</span> <span class='no'>maxSizes</span></div><div class='output co'>#&gt; logical(0)</div><div class='input'>
 <span class='co'># Use exactSize -- gives an exact size, if there is enough space on the Raster</span>
 <span class='no'>exactSizes</span> <span class='kw'>&lt;-</span> <span class='no'>maxSizes</span>
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.225</span>,
-               <span class='kw'>exactSize</span> <span class='kw'>=</span> <span class='no'>exactSizes</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes,     asRaster = FALSE): object 'dtPotentialAllNeighs' not found</span></div><div class='input'><span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"initialPixels"</span>]$<span class='no'>n</span> <span class='kw'>==</span> <span class='no'>maxSizes</span> <span class='co'># should be TRUE TRUE TRUE</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'out' not found</span></div><div class='input'>
+               <span class='kw'>exactSize</span> <span class='kw'>=</span> <span class='no'>exactSizes</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"initialPixels"</span>]$<span class='no'>n</span> <span class='kw'>==</span> <span class='no'>maxSizes</span> <span class='co'># should be TRUE TRUE TRUE</span></div><div class='output co'>#&gt; logical(0)</div><div class='input'>
 <span class='co'># Use exactSize -- but where it can't be achieved</span>
 <span class='no'>exactSizes</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='fu'>sample</span>(<span class='fl'>100</span>:<span class='fl'>110</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fu'>length</span>(<span class='no'>sams</span>)))
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='fl'>1</span>, <span class='kw'>exactSize</span> <span class='kw'>=</span> <span class='no'>exactSizes</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread2(a, start = sams, 1, exactSize = exactSizes): object 'dtPotentialAllNeighs' not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='fl'>1</span>, <span class='kw'>exactSize</span> <span class='kw'>=</span> <span class='no'>exactSizes</span>)
+
 <span class='co'># Iterative calling -- create a function with a high escape probability</span>
 <span class='no'>spreadWithEscape</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>ras</span>, <span class='no'>start</span>, <span class='no'>escapeProb</span>, <span class='no'>spreadProb</span>) {
   <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>ras</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='no'>escapeProb</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
@@ -482,9 +480,11 @@ when passed back into <code>spread2</code>.</p>
 }
 
 <span class='fu'>set.seed</span>(<span class='fl'>421</span>)
-<span class='no'>out1</span> <span class='kw'>&lt;-</span> <span class='fu'>spreadWithEscape</span>(<span class='no'>a</span>, <span class='no'>sams</span>, <span class='kw'>escapeProb</span> <span class='kw'>=</span> <span class='fl'>0.25</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.225</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread2(ras, start = sams, spreadProb = escapeProb, asRaster = FALSE): object 'dtPotentialAllNeighs' not found</span></div><div class='input'><span class='fu'>set.seed</span>(<span class='fl'>421</span>)
-<span class='no'>out2</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='no'>sams</span>, <span class='fl'>0.225</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread2(a, sams, 0.225, asRaster = FALSE): object 'dtPotentialAllNeighs' not found</span></div><div class='input'><span class='co'># The one with high escape probability is larger (most of the time)</span>
-<span class='fu'>NROW</span>(<span class='no'>out1</span>) <span class='kw'>&gt;</span> <span class='fu'>NROW</span>(<span class='no'>out2</span>)</div><div class='output co'>#&gt; <span class='error'>Error in NROW(out1): object 'out1' not found</span></div><div class='input'>
+<span class='no'>out1</span> <span class='kw'>&lt;-</span> <span class='fu'>spreadWithEscape</span>(<span class='no'>a</span>, <span class='no'>sams</span>, <span class='kw'>escapeProb</span> <span class='kw'>=</span> <span class='fl'>0.25</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.225</span>)
+<span class='fu'>set.seed</span>(<span class='fl'>421</span>)
+<span class='no'>out2</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='no'>sams</span>, <span class='fl'>0.225</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='co'># The one with high escape probability is larger (most of the time)</span>
+<span class='fu'>NROW</span>(<span class='no'>out1</span>) <span class='kw'>&gt;</span> <span class='fu'>NROW</span>(<span class='no'>out2</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'>## Use neighProbs, with a spreadProb that is a RasterLayer</span>
 <span class='co'># Create a raster of different values, which will be the relative probabilities</span>
 <span class='co'>#   i.e., they are rescaled to relative probabilities within the 8 neighbour choices.</span>
@@ -504,8 +504,8 @@ when passed back into <code>spread2</code>.</p>
 }
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/data.table/topics/rbindlist'>rbindlist</a></span>(<span class='no'>out</span>)[<span class='no'>pixels</span> <span class='kw'>!=</span> <span class='fl'>5</span>] <span class='co'># remove starting cell</span>
 <span class='fu'>table</span>(<span class='no'>sp</span>[<span class='no'>out</span>$<span class='no'>pixels</span>])</div><div class='output co'>#&gt; 
-#&gt;  1  2  3  4  6  7  8  9 
-#&gt;  2  6  9  9 17 24 17 16 </div><div class='input'><span class='co'># should be non-significant -- note no 5 because that was the starting cell</span>
+#&gt;  2  3  4  6  7  8  9 
+#&gt;  5 11 12 12 16 22 22 </div><div class='input'><span class='co'># should be non-significant -- note no 5 because that was the starting cell</span>
 <span class='co'>#  This tests whether the null model is true ... there should be proportions</span>
 <span class='co'>#  equivalent to 1:2:3:4:6:7:8:9 ... i.e,. cell 9 should have 9x as many events</span>
 <span class='co'>#  spread to it as cell 1. This comes from sp object above which is providing</span>
@@ -522,7 +522,8 @@ when passed back into <code>spread2</code>.</p>
 <span class='no'>sams</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/ncell'>ncell</a></span>(<span class='no'>a</span>) / <span class='fl'>4</span> - <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/ncell'>ncol</a></span>(<span class='no'>a</span>) / <span class='fl'>4</span> * <span class='fl'>3</span>
 <span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>a</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.213</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='no'>sams</span>,
                  <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>135</span>,
-                 <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread2(a, spreadProb = 0.213, start = sams, asymmetry = 2, asymmetryAngle = 135,     asRaster = TRUE): object 'dtPotentialAllNeighs' not found</span></div><div class='input'>
+                 <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+
 <span class='co'># ADVANCED: Estimate spreadProb when using asymmetry, such that the expected</span>
 <span class='co'>#   event size is the same as without using asymmetry</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='no'>a</span>)
@@ -569,7 +570,75 @@ when passed back into <code>spread2</code>.</p>
                     <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>135</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
   <span class='fu'><a href='http://www.rdocumentation.org/packages/parallel/topics/makeCluster'>stopCluster</a></span>(<span class='no'>cl</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in spread2(ras, spreadProb = 0.225, start = round(ncell(ras)/4 -     ncol(ras)/4 * 3), asRaster = FALSE): object 'dtPotentialAllNeighs' not found</span></div></pre>
+}</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>DEoptim package</span>
+#&gt; <span class='message'>Differential Evolution algorithm in R</span>
+#&gt; <span class='message'>Authors: D. Ardia, K. Mullen, B. Peterson and J. Ulrich</span></div><div class='output co'>#&gt; Iteration: 1 bestvalit: 3.500000 bestmemit:    0.213041
+#&gt; Iteration: 2 bestvalit: 3.500000 bestmemit:    0.213041
+#&gt; Iteration: 3 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 4 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 5 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 6 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 7 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 8 bestvalit: 1.800000 bestmemit:    0.212021
+#&gt; Iteration: 9 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 10 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 11 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 12 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 13 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 14 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 15 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 16 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 17 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 18 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 19 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 20 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 21 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 22 bestvalit: 1.400000 bestmemit:    0.212760
+#&gt; Iteration: 23 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 24 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 25 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 26 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 27 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 28 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 29 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 30 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 31 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 32 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 33 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 34 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 35 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 36 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 37 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 38 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 39 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 40 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 41 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 42 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 43 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 44 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 45 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 46 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 47 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 48 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 49 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 50 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 51 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 52 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 53 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 54 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 55 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 56 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 57 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 58 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 59 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 60 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 61 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 62 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 63 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 64 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 65 bestvalit: 0.150000 bestmemit:    0.209346
+#&gt; Iteration: 66 bestvalit: 0.000000 bestmemit:    0.209945</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -604,7 +673,7 @@ Eliot McIntire and Steve Cumming
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
