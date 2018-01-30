@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>randomPolygons — randomPolygons • SpaDES.tools</title>
+<title>randomPolygons � randomPolygons • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -138,14 +138,16 @@ matrix, then longitude and latitude are assumed (epsg:4326)</p></td>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>quickPlot</span>)
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>library</span>(<span class='no'>quickPlot</span>)
 
 <span class='fu'>set.seed</span>(<span class='fl'>1234</span>)
 <span class='no'>Ras</span> <span class='kw'>&lt;-</span> <span class='fu'>randomPolygons</span>(<span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>5</span>)
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>Ras</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"yellow"</span>, <span class='st'>"dark green"</span>, <span class='st'>"blue"</span>, <span class='st'>"dark red"</span>))
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
+}
+
 <span class='fu'>library</span>(<span class='no'>raster</span>)
 <span class='co'># more complex patterning, with a range of patch sizes</span>
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>randomPolygons</span>(<span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>400</span>, <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>50</span>, <span class='fl'>0</span>, <span class='fl'>50</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>vals</span> <span class='kw'>=</span> <span class='fl'>0</span>))
@@ -157,12 +159,15 @@ matrix, then longitude and latitude are assumed (epsg:4326)</p></td>
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>a</span>)
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>aHist</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
+}
+
 <span class='fu'>library</span>(<span class='no'>sp</span>)
 <span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='fu'>cbind</span>(-<span class='fl'>110</span>, <span class='fl'>59</span>));
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>randomPolygon</span>(<span class='no'>b</span>, <span class='fl'>1e4</span>);
-<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/plot'>plot</a></span>(<span class='no'>a</span>);</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'><span class='fu'>points</span>(<span class='no'>b</span>, <span class='kw'>pch</span><span class='kw'>=</span><span class='fl'>19</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet</span></div><div class='input'>
-</div></pre>
+<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/plot'>plot</a></span>(<span class='no'>a</span>);
+<span class='fu'>points</span>(<span class='no'>b</span>, <span class='kw'>pch</span><span class='kw'>=</span><span class='fl'>19</span>)
+
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

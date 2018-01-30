@@ -1,55 +1,33 @@
-## New submission
+## Resubmission
 
-This is a spin off of an existing CRAN package (`SpaDES`), which we have split due to growing package size.
+This is an update to an existing package. We introduce several new functions, and update previous functions.
+
 
 ## Test environments
 
 ### Previous R versions
+* Ubuntu 14.04        (travis-ci), R 3.3.0
 * Ubuntu 14.04        (travis-ci), R 3.3.3
-* Windows              (appveyor), R 3.3.3
-* Windows 7               (local), R 3.3.3
+* Windows 7               (local), R 3.3.2
 
 ### Current R versions
-* macOS Sierra         (local), R 3.4.1
-* OS X El Capitan  (travis-ci), R 3.4.1
-* Ubuntu 14.04     (travis-ci), R 3.4.1
-* Ubuntu 16.04         (local), R 3.4.1
-* Windows           (appveyor), R 3.4.1
-* Windows        (win-builder), R 3.4.1
-* Windows 7            (local), R 3.4.1
+* OS X El Capitan  (travis-ci), R 3.4.3
+* Ubuntu 14.04     (travis-ci), R 3.4.3
+* Ubuntu 16.04         (local), R 3.4.3
+* Windows 7            (local), R 3.4.3
 
 ### Development R version
-* Debian:testing (rocker/r-devel), R 3.5.0 (2017-07-26 r72972)
-* Ubuntu 14.04        (travis-ci), R 3.5.0 (2017-08-11 r73085)
-* Ubuntu 16.04            (local), R 3.5.0 (2017-08-10 r73083)
-* Windows              (appveyor), R 3.5.0 (2017-08-10 r73083)
-* Windows           (win-builder), R 3.5.0 (2017-08-11 r73085)
+* Ubuntu 14.04        (travis-ci), R 3.5.0 (2018-01-30 r74185)
+* Windows                 (local), R 3.5.0 (2018-01-28 r74175) 
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs
+There were no ERRORs or WARNINGs or NOTES
 
-There was 1 NOTE:
-
-1. There are multiple parts to this note:
-
-    a. This is a new package submission:
-    
-            Maintainer: 'Alex M Chubaty <alexander.chubaty@canada.ca>'
-            
-            New submission
-    
-    b. Some words were flagged as possibly mispelled, but they are false positives.
-     
-            Possibly mis-spelled words in DESCRIPTION:
-              GIS (5:23)
-              SpaDES (4:27)
-              automata (6:25)
 
 ## Downstream dependencies
 
-There are currently no downstream dependencies of this package.
-However, as we submit further `SpaDES` spinoff packages, this package will become a dependency for the following packages:
+There are currently 3 downstream dependencies of this package. None of these has any error, warnings or notes that are created with the current changes.
 
 - `SpaDES` (Imports)
 - `SpaDES.addins` (Imports)
