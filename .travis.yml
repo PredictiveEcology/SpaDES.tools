@@ -50,8 +50,6 @@ matrix:
   - os: linux
     dist: trusty
     r: release
-    env:
-      - GDAL2=true
     addons:
       apt:
         sources:
@@ -71,22 +69,6 @@ matrix:
     - sh -e /etc/init.d/xvfb start
     r_packages:
     - rgdal
-    after_success:
-    - Rscript -e 'covr::coveralls(package_coverage(type = "all", quiet = FALSE)))'
-    - Rscript -e 'lintr::lint_package()'
-  - os: linux
-    dist: trusty
-    r: release
-    apt:
-      packages:
-      - libudunits2-dev
-    env:
-      - GDAL2=false
-    r_github_packages:
-    - jimhester/lintr
-    before_install:
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
     after_success:
     - Rscript -e 'covr::coveralls(package_coverage(type = "all", quiet = FALSE)))'
     - Rscript -e 'lintr::lint_package()'

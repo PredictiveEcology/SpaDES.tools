@@ -58,7 +58,7 @@
 #' }
 #'
 fastMask <- function(x, polygon) {
-  if (!requireNamespace("fasterize", quietly = TRUE) &
+  if (!requireNamespace("fasterize", quietly = TRUE) |
       !requireNamespace("sf", quietly = TRUE)) {
     message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
             " To install please try devtools::install_github('ecohealthalliance/fasterize')")
