@@ -18,10 +18,7 @@
 #'
 #' @author Eliot Mcintire
 #' @export
-#' @importFrom fasterize fasterize
-#' @importFrom raster crop extract nlayers raster stack
-#' @importFrom sf st_as_sf
-#' @rdname faster-rasters
+#' @importFrom raster crop extract mask nlayers raster stack
 #'
 #' @examples
 #'\dontrun{
@@ -61,15 +58,54 @@
 #' }
 #'
 fastMask <- function(x, polygon) {
-  numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
-    is.numeric(polygon[[x]])
-  })))[1]]
-  a <- fasterize(st_as_sf(polygon), raster = x[[1]], field = numericfield)
-  m <- is.na(a[])
-  x[m] <- NA
+  if (!requireNamespace("fasterize", quietly = TRUE) |
+      !requireNamespace("sf", quietly = TRUE)) {
+    message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
+            " To install please try devtools::install_github('ecohealthalliance/fasterize')")
+    x <- mask(x, polygon)
+  } else {
+    numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
+      is.numeric(polygon[[x]])
+    })))[1]]
+    a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
+    m <- is.na(a[])
+    x[m] <- NA
+  }
+
   if (nlayers(x) > 1) {
     stack(x)
   } else {
     x
   }
+}
+
+#' fastCrop
+#'
+#' This function is a wrapper around \code{velox::VeloxRaster_crop}.
+#'
+#' @param x Raster to crop
+#'
+#' @inheritParams raster::crop
+#'
+#' @export
+#' @importFrom raster crop extent
+#' @seealso \code{velox::VeloxRaster_crop}
+#'
+fastCrop <- function(x, y, ...) {
+  if (!requireNamespace("velox")) {
+    message("Using raster::crop, which may be very slow, because 'velox' not installed. ",
+            " To install please try devtools::install.packages('velox')")
+    a <- crop(x, y)
+  } else {
+    v1 <- velox::velox(x) # velox package is much faster than raster package for rasterize function,
+    # but not as fast as gdal_rasterize for large polygons
+    if (is(y, "Raster")) y <- extent(y)
+    v1$crop(y)
+    if (length(names(x)) > 1) {
+      a <- v1$as.RasterStack()
+    } else {
+      a <- v1$as.RasterLayer(band = 1)
+    }
+  }
+  a
 }

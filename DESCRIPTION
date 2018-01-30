@@ -2,7 +2,8 @@ Package: SpaDES.tools
 Type: Package
 Title: Additional Tools for Developing Spatially Explicit Discrete Event Simulation (SpaDES) Models
 Description: Provides GIS and map utilities, plus additional modeling tools for
-    developing cellular automata and agent based models in 'SpaDES'.
+    developing cellular automata, dynamic raster models, 
+    and agent based models in 'SpaDES'.
     Included are various methods for spatial spreading, spatial agents, GIS
     operations, random map generation, and others.
     See '?SpaDES.tools' for an categorized overview of these additional tools.
@@ -10,7 +11,7 @@ URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
 Date: 2018-01-29
-Version: 0.1.0.9004
+Version: 0.1.1
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
     role = c("aut", "cre")),
@@ -19,6 +20,8 @@ Authors@R: c(
     person("Yong", "Luo", email = "yluo1@lakeheadu.ca",
     role = c("ctb")),
     person("Steve", "Cumming", email = "Steve.Cumming@sbf.ulaval.ca",
+    role = c("ctb")),
+    person("Jean", "Marchal", email = "jean.d.marchal@gmail.com",
     role = c("ctb")),
     person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada",
     role = "cph")
@@ -33,7 +36,6 @@ Imports:
     data.table (>= 1.10.4),
     digest,
     fastdigest,
-    fasterize (>= 0.1.0),
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
@@ -46,15 +48,14 @@ Imports:
     Rcpp (>= 0.12.12),
     reproducible,
     raster (>= 2.5-8),
-    sf,
     sp (>= 1.2-4),
     stats,
-    utils,
-    webDatabases
+    utils
 Suggests:
     DEoptim (>= 2.2-4),
     dplyr (>= 0.5.0),
     hunspell,
+    fasterize (>= 0.1.0),
     knitr,
     microbenchmark,
     parallel,
@@ -62,14 +63,15 @@ Suggests:
     RColorBrewer (>= 1.1-2),
     rgeos,
     rmarkdown,
-    testthat (>= 1.0.2)
-Remotes: 
-    ecohealthalliance/fasterize
-    PredictiveEcology/webDatabases
+    sf,
+    testthat (>= 1.0.2),
+    velox
 LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 ByteCompile: yes
+Additional_repositories:
+    https://github.com/ecohealthalliance/fasterize
 Collate: 
     'RcppExports.R'
     'heading.R'
