@@ -7,9 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
-returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
-It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
-just once, then add to the xy coordinates of every locus — cirSpecialQuick â€¢ SpaDES.tools</title>
+ — cirSpecialQuick â€¢ SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -26,17 +24,14 @@ just once, then add to the xy coordinates of every locus — cirSpecialQuick â€¢ S
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
 <!-- mathjax -->
-<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
-
-
   </head>
 
   <body>
@@ -55,12 +50,6 @@ just once, then add to the xy coordinates of every locus — cirSpecialQuick â€¢ S
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li>
@@ -87,9 +76,7 @@ just once, then add to the xy coordinates of every locus — cirSpecialQuick â€¢ S
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
-returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
-It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
-just once, then add to the xy coordinates of every locus</h1>
+</h1>
     </div>
 
     
@@ -99,33 +86,24 @@ It is used inside spread2, when asymmetry is active. The basic algorithm is to r
 just once, then add to the xy coordinates of every locus</p>
     
 
-    <pre class="usage"><span class='fu'>.cirSpecialQuick</span>(<span class='no'>landscape</span>, <span class='no'>loci</span>, <span class='no'>maxRadius</span>, <span class='no'>minRadius</span>)</pre>
+    <pre><span class='fu'>.cirSpecialQuick</span>(<span class='no'>landscape</span>, <span class='no'>loci</span>, <span class='no'>maxRadius</span>, <span class='no'>minRadius</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>landscape</th>
-      <td><p>Raster on which the circles are built.</p></td>
-    </tr>
-    <tr>
-      <th>loci</th>
-      <td><p>Numeric. An alternative to <code>coords</code>. These are the indices on
+    <dl class="dl-horizontal">
+      <dt>landscape</dt>
+      <dd><p>Raster on which the circles are built.</p></dd>
+      <dt>loci</dt>
+      <dd><p>Numeric. An alternative to <code>coords</code>. These are the indices on
 <code>landscape</code> to initiate this function. See <code>coords</code>. Default is one
-point in centre of <code>landscape</code>..</p></td>
-    </tr>
-    <tr>
-      <th>maxRadius</th>
-      <td><p>Numeric vector of length 1 or same length as coords</p></td>
-    </tr>
-    <tr>
-      <th>minRadius</th>
-      <td><p>Numeric vector of length 1 or same length as <code>coords</code>. Default is
+point in centre of <code>landscape</code>..</p></dd>
+      <dt>maxRadius</dt>
+      <dd><p>Numeric vector of length 1 or same length as coords</p></dd>
+      <dt>minRadius</dt>
+      <dd><p>Numeric vector of length 1 or same length as <code>coords</code>. Default is
 <code>maxRadius</code>, meaning return all cells that are touched
 by the narrow ring at that exact radius. If smaller than <code>maxRadius</code>,
-then this will create a buffer or donut or ring.</p></td>
-    </tr>
-    </table>
+then this will create a buffer or donut or ring.</p></dd>
+    </dl>
     
 
   </div>
@@ -144,7 +122,7 @@ then this will create a buffer or donut or ring.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
 </div>
 
       </footer>

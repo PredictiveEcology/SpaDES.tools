@@ -23,17 +23,14 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
 <!-- mathjax -->
-<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
-
-
   </head>
 
   <body>
@@ -52,12 +49,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li>
@@ -91,31 +82,22 @@
 archives.</p>
     
 
-    <pre class="usage"><span class='fu'>extractFromArchive</span>(<span class='no'>archivePath</span>, <span class='kw'>dataPath</span> <span class='kw'>=</span> <span class='fu'>dirname</span>(<span class='no'>archivePath</span>), <span class='no'>needed</span>,
+    <pre><span class='fu'>extractFromArchive</span>(<span class='no'>archivePath</span>, <span class='kw'>dataPath</span> <span class='kw'>=</span> <span class='fu'>dirname</span>(<span class='no'>archivePath</span>), <span class='no'>needed</span>,
   <span class='kw'>extractedArchives</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>archivePath</th>
-      <td><p>Character string giving the path of the archive
-containing the <code>file</code> to be extracted.</p></td>
-    </tr>
-    <tr>
-      <th>dataPath</th>
-      <td><p>Character string giving the path where <code>needed</code> will be
-extracted. Defaults to the archive directory.</p></td>
-    </tr>
-    <tr>
-      <th>needed</th>
-      <td><p>Character string giving the name of the file(s) to be extracted.</p></td>
-    </tr>
-    <tr>
-      <th>extractedArchives</th>
-      <td><p>Used internally.</p></td>
-    </tr>
-    </table>
+    <dl class="dl-horizontal">
+      <dt>archivePath</dt>
+      <dd><p>Character string giving the path of the archive
+containing the <code>file</code> to be extracted.</p></dd>
+      <dt>dataPath</dt>
+      <dd><p>Character string giving the path where <code>needed</code> will be
+extracted. Defaults to the archive directory.</p></dd>
+      <dt>needed</dt>
+      <dd><p>Character string giving the name of the file(s) to be extracted.</p></dd>
+      <dt>extractedArchives</dt>
+      <dd><p>Used internally.</p></dd>
+    </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -144,7 +126,7 @@ Jean Marchal
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
 </div>
 
       </footer>
