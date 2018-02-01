@@ -1,10 +1,8 @@
 #' Faster operations on rasters
 #'
-#' These alternatives to \code{mask} and \code{rasterize} are not as general as
-#' the originals, and have not been thoroughly tested.
-#'
-#' @note This is experimental and not all combinations of parameters or object
-#' types will work.
+#' This alternative to \code{mask} is included here, but it is
+#' simply passing the arguments to raster::mask for now. We are
+#' waiting for the fasterize pacakge to be submitted to CRAN.
 #'
 #' @param x        A \code{Raster*} object.
 #'
@@ -60,7 +58,7 @@ fastMask <- function(x, polygon) {
   #     !requireNamespace("sf", quietly = TRUE)) {
     # message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
     #         " To install please try devtools::install_github('ecohealthalliance/fasterize')")
-    x <- mask(x, polygon)
+  x <- mask(x, polygon)
   # } else {
   #   numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
   #     is.numeric(polygon[[x]])
@@ -69,11 +67,11 @@ fastMask <- function(x, polygon) {
   #   m <- is.na(a[])
   #   x[m] <- NA
   # }
-  # if (nlayers(x) > 1) {
-  #   stack(x)
-  # } else {
-  #   x
-  # }
+  if (nlayers(x) > 1) {
+    stack(x)
+  } else {
+    x
+  }
 }
 
 #' fastCrop
