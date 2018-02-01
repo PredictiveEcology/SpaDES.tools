@@ -3,9 +3,6 @@
 #' These alternatives to \code{mask} and \code{rasterize} are not as general as
 #' the originals, and have not been thoroughly tested.
 #'
-#' For \code{fastMask}, it is using \code{fasterize::fasterize} from
-#' "ecohealthalliance/fasterize" on GitHub.com.
-#'
 #' @note This is experimental and not all combinations of parameters or object
 #' types will work.
 #'
@@ -58,25 +55,25 @@
 #' }
 #'
 fastMask <- function(x, polygon) {
-  if (!requireNamespace("fasterize", quietly = TRUE) |
-      !requireNamespace("sf", quietly = TRUE)) {
-    message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
-            " To install please try devtools::install_github('ecohealthalliance/fasterize')")
+  message("This function will eventually use the fasterize package")
+  # if (!requireNamespace("fasterize", quietly = TRUE) |
+  #     !requireNamespace("sf", quietly = TRUE)) {
+    # message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
+    #         " To install please try devtools::install_github('ecohealthalliance/fasterize')")
     x <- mask(x, polygon)
-  } else {
-    numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
-      is.numeric(polygon[[x]])
-    })))[1]]
-    a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
-    m <- is.na(a[])
-    x[m] <- NA
-  }
-
-  if (nlayers(x) > 1) {
-    stack(x)
-  } else {
-    x
-  }
+  # } else {
+  #   numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
+  #     is.numeric(polygon[[x]])
+  #   })))[1]]
+  #   a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
+  #   m <- is.na(a[])
+  #   x[m] <- NA
+  # }
+  # if (nlayers(x) > 1) {
+  #   stack(x)
+  # } else {
+  #   x
+  # }
 }
 
 #' fastCrop

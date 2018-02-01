@@ -19,10 +19,6 @@ A \code{Raster*} object, masked (i.e., smaller extent and/or
 These alternatives to \code{mask} and \code{rasterize} are not as general as
 the originals, and have not been thoroughly tested.
 }
-\details{
-For \code{fastMask}, it is using \code{fasterize::fasterize} from
-"ecohealthalliance/fasterize" on GitHub.com.
-}
 \note{
 This is experimental and not all combinations of parameters or object
 types will work.
