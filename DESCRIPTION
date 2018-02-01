@@ -67,11 +67,11 @@ Suggests:
     testthat (>= 1.0.2),
     velox
 LinkingTo: Rcpp
+Remotes:
+    ecohealthalliance/fasterize
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 ByteCompile: yes
-Additional_repositories:
-    https://github.com/ecohealthalliance/fasterize
 Collate: 
     'RcppExports.R'
     'heading.R'
