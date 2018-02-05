@@ -83,9 +83,9 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
     filesInArchive <- Cache(untar, archivePath, list = TRUE)
   }
 
-  if (any(needed %in% filesInArchive)) {
+  if (any(needed %in% basename(filesInArchive))) {
     message(paste("  Extracting from archive:", basename(archivePath)))
-    do.call(fun, c(args, list(files = needed[needed %in% filesInArchive])))
+    do.call(fun, c(args, list(files = filesInArchive[basename(filesInArchive) %in% needed])))
   }
 
   isArchive <- grepl(tools::file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
