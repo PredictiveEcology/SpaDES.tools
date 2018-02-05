@@ -35,10 +35,12 @@ Imports:
     compiler,
     data.table (>= 1.10.4),
     digest,
+    fastdigest,
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
     fpCompare (>= 0.2.1),
+    httr,
     magrittr,
     methods,
     quickPlot,
@@ -46,8 +48,6 @@ Imports:
     Rcpp (>= 0.12.12),
     reproducible,
     raster (>= 2.5-8),
-    rgeos,
-    sf,
     sp (>= 1.2-4),
     stats,
     utils
@@ -61,15 +61,17 @@ Suggests:
     parallel,
     profvis,
     RColorBrewer (>= 1.1-2),
+    rgeos,
+    sf,
     rmarkdown,
     testthat (>= 1.0.2),
     velox
 LinkingTo: Rcpp
-Remotes:
-    ecohealthalliance/fasterize
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 ByteCompile: yes
+Additional_repositories:
+    https://github.com/ecohealthalliance/fasterize
 Collate: 
     'RcppExports.R'
     'heading.R'
