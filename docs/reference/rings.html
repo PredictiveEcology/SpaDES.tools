@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Identifies all cells within a ring around the focal cells — rings • SpaDES.tools</title>
+<title>Identifies all cells within a ring around the focal cells � rings • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -179,7 +179,8 @@ See example.
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>raster</span>)
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>library</span>(<span class='no'>raster</span>)
 <span class='fu'>library</span>(<span class='no'>quickPlot</span>)
 
 <span class='co'># Make random forest cover map</span>
@@ -197,7 +198,8 @@ See example.
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>emptyRas</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
+}
+
 <span class='co'># No overlap is default, occurs randomly</span>
 <span class='no'>emptyRas</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 <span class='no'>rngs</span> <span class='kw'>&lt;-</span> <span class='fu'>rings</span>(<span class='no'>emptyRas</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>loci</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>7</span>, <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>9</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
@@ -205,7 +207,8 @@ See example.
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>emptyRas</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div><div class='input'>
+}
+
 <span class='co'># Variable ring widths, including centre cell for smaller one</span>
 <span class='no'>emptyRas</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 <span class='no'>rngs</span> <span class='kw'>&lt;-</span> <span class='fu'>rings</span>(<span class='no'>emptyRas</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>loci</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0</span>, <span class='fl'>7</span>), <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>8</span>, <span class='fl'>18</span>),
@@ -214,7 +217,8 @@ See example.
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>emptyRas</span>)
-}</div><div class='output co'>#&gt; <span class='error'>Error in plot.new(): figure margins too large</span></div></pre>
+}
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

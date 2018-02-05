@@ -74,17 +74,6 @@ matrix:
     - Rscript -e 'lintr::lint_package()'
   - os: linux
     dist: trusty
-    r: release
-    r_github_packages:
-    - jimhester/lintr
-    before_install:
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
-    after_success:
-    - Rscript -e 'covr::coveralls(package_coverage(type = "all", quiet = FALSE)))'
-    - Rscript -e 'lintr::lint_package()'
-  - os: linux
-    dist: trusty
     r: devel
     addons:
       apt:
@@ -110,8 +99,8 @@ matrix:
     latex: false
     r_build_args: "--no-build-vignettes"
     r_check_args: "--as-cran --ignore-vignettes --no-examples"
-    before_script:
-    - Rscript -e "install.packages('rgdal', type = 'source')"
+    before_install:
+    - Rscript -e "install.packages('digest', type = 'source')"
 r_build_args: " "
 r_check_args: "--as-cran"
 warnings_are_errors: true
