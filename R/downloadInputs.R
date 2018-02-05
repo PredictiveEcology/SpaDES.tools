@@ -321,13 +321,17 @@ prepInputs <- function(targetFile,
     )
 
     if (!is.null(studyArea)) {
-      x <- Cache(
-        maskInputs,
-        x = x,
-        studyArea = studyArea,
-        userTags = cacheTags,
-        quick = quick
-      )
+      if (is(x, "RasterLayer") ||
+          is(x, "RasterStack") ||
+          is(x, "RasterBrick")) {
+        x <- Cache(
+          maskInputs,
+          x = x,
+          studyArea = studyArea,
+          userTags = cacheTags,
+          quick = quick
+        )
+      }
     }
 
     if (writeCropped) {
