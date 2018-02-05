@@ -242,7 +242,7 @@ prepInputs <- function(targetFile,
       } else {
 
         if (file.exists(asPath(targetFilePath)))
-          checkSum <- digest(file = asPath(targetFilePath), algo = checksums[["algorithm"]], file = TRUE)
+          checkSum <- digest(asPath(targetFilePath), algo = checksums[["algorithm"]], file = TRUE)
         else
           NA
 
