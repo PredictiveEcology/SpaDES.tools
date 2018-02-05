@@ -5,9 +5,9 @@
 \title{Download and optionally reproject, crop, mask raw data and output module
 inputs}
 \usage{
-prepInputs(targetFile, archive = NULL, dataset = NULL, modulePath,
-  moduleName, fun = "raster", pkg = "raster", studyArea = NULL,
-  rasterToMatch = NULL, rasterInterpMethod = "bilinear",
+prepInputs(targetFile, archive = NULL, alsoExtract = NULL, dataset = NULL,
+  modulePath, moduleName, fun = "raster", pkg = "raster",
+  studyArea = NULL, rasterToMatch = NULL, rasterInterpMethod = "bilinear",
   rasterDatatype = "INT2U", writeCropped = TRUE, addTagsByObject = NULL,
   quick = FALSE, cacheTags = "stable")
 }
@@ -16,6 +16,9 @@ prepInputs(targetFile, archive = NULL, dataset = NULL, modulePath,
 
 \item{archive}{Optional character string giving the path of an archive
 containing \code{targetFile}.}
+
+\item{alsoExtract}{Optional character string naming files other than
+\code{targetFile} that must be extracted from the \code{archive}.}
 
 \item{dataset}{Optional character string representing the dataset of interest
 for download. Allows for restricting the lookup for the url to a dataset,
@@ -30,7 +33,7 @@ thus avoiding filename collision.}
 
 \item{pkg}{Character string indicating the package in which to find \code{fun}.}
 
-\item{studyArea}{spatial* or sf object used for cropping and masking.}
+\item{studyArea}{SpatialPolygonsDataFrame or sf object used for cropping and masking.}
 
 \item{rasterToMatch}{Template Raster* object used for reprojecting and
 cropping.}
@@ -38,7 +41,7 @@ cropping.}
 \item{rasterInterpMethod}{Method used to compute values for the new
 RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.}
 
-\item{rasterDatatype}{Output data type. Passed to \code{\link[raster]{writeRaster}}.}
+\item{rasterDatatype}{Output data type. Passed to \code{\link[raster]{writeRaster}}}
 
 \item{writeCropped}{Write the output on disk ?}
 
