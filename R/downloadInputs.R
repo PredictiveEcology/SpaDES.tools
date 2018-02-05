@@ -223,7 +223,7 @@ prepInputs <- function(targetFile,
     if (quick) {
       file.size(asPath(targetFilePath))
     } else {
-      digest(asPath(targetFilePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+      Cache(digest, asPath(targetFilePath), checksums[["algorithm"]], file = TRUE, notOlderThan = notOlderThan) == checksums[["checksum"]]
     }
   } else NA
 
@@ -256,7 +256,7 @@ prepInputs <- function(targetFile,
         if (quick) {
           file.size(asPath(archivePath))
         } else {
-          digest(asPath(archivePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+          Cache(digest, asPath(archivePath), checksums[["algorithm"]], file = TRUE, notOlderThan = notOlderThan) == checksums[["checksum"]]
         }
       } else NA
 
