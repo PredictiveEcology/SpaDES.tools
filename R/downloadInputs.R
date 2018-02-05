@@ -335,6 +335,7 @@ prepInputs <- function(targetFile,
 
       Cache(
         writeInputsOnDisk,
+        x = x,
         filename = smallFN,
         rasterDatatype = rasterDatatype,
         quick = quick,
