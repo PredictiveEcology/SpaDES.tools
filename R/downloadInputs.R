@@ -241,10 +241,7 @@ prepInputs <- function(targetFile,
 
       } else {
 
-        if (file.exists(asPath(targetFilePath)))
-          checkSum <- digest(asPath(targetFilePath), algo = checksums[["algorithm"]], file = TRUE)
-        else
-          NA
+        checkSum <- digest(asPath(targetFilePath), algo = checksums[["algorithm"]], file = TRUE)
 
         if (checksums[["checksum"]] != checkSum)
           warning("The version downloaded of ", targetFile, " does not match the checksums.")
@@ -277,7 +274,7 @@ prepInputs <- function(targetFile,
 
         } else {
 
-          checkSum <- digest(file = asPath(archivePath), algo = checksums[["algorithm"]], file = TRUE)
+          checkSum <- digest(asPath(archivePath), algo = checksums[["algorithm"]], file = TRUE)
 
           if (checksums[["checksum"]] != checkSum)
             warning("The version downloaded of ", archive, " does not match the checksums.")
