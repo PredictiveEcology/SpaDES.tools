@@ -62,8 +62,8 @@ Suggests:
     profvis,
     RColorBrewer (>= 1.1-2),
     rgeos,
-    sf,
     rmarkdown,
+    sf,
     testthat (>= 1.0.2),
     velox
 LinkingTo: Rcpp
