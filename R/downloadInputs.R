@@ -219,13 +219,13 @@ prepInputs <- function(targetFile,
   # Check if the checkSums match, otherwise download or extract the file
   checksums <- checkSums[file == targetFile, ]
 
-  result <- if (quick) {
-    file.size(asPath(targetFilePath)) == checksums[["filesize"]]
-  } else {
-    if (file.exists(asPath(targetFilePath)))
-     digest(asPath(targetFilePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
-    else NA
-  }
+  result <- if (file.exists(asPath(targetFilePath))) {
+    if (quick) {
+      file.size(asPath(targetFilePath))
+    } else {
+      digest(asPath(targetFilePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+    }
+  } else NA
 
   mismatch <- !isTRUE(result)
 
@@ -252,14 +252,13 @@ prepInputs <- function(targetFile,
 
       checksums <- checkSums[file == archive, ]
 
-      result <- if (quick) {
-        file.size(asPath(archivePath)) == checksums[["filesize"]]
-      } else {
-        if (file.exists(asPath(archivePath)))
+      result <- if (file.exists(asPath(archivePath))) {
+        if (quick) {
+          file.size(asPath(archivePath))
+        } else {
           digest(asPath(archivePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
-        else
-          NA
-      }
+        }
+      } else NA
 
       mismatch <- !isTRUE(result)
 
