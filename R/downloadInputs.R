@@ -71,7 +71,7 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL) {
 #'
 extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
                                needed, extractedArchives = NULL) {
-  ext <- tolower(tools::file_ext(archivePath))
+  ext <- tolower(file_ext(archivePath))
   args <- list(archivePath, exdir = dataPath)
 
   if (ext == "zip") {
@@ -88,7 +88,7 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
     do.call(fun, c(args, list(files = filesInArchive[basename(filesInArchive) %in% needed])))
   }
 
-  isArchive <- grepl(tools::file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
+  isArchive <- grepl(file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
 
   if (any(isArchive)) {
     arch <- filesInArchive[isArchive]
@@ -122,6 +122,9 @@ smallNamify <- function(name) {
 #' @param archive Optional character string giving the path of an archive
 #' containing \code{targetFile}.
 #'
+#' @param alsoExtract Optional character string naming files other than
+#' \code{targetFile} that must be extracted from the \code{archive}.
+#'
 #' @param dataset Optional character string representing the dataset of interest
 #' for download. Allows for restricting the lookup for the url to a dataset,
 #' thus avoiding filename collision.
@@ -135,20 +138,11 @@ smallNamify <- function(name) {
 #'
 #' @param pkg Character string indicating the package in which to find \code{fun}.
 #'
-#' @param studyArea spatial* or sf object used for cropping and masking.
+#' @inheritParams cropReprojInputs
 #'
-#' @param rasterToMatch Template Raster* object used for reprojecting and
-#' cropping.
-#'
-#' @param rasterInterpMethod Method used to compute values for the new
-#' RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.
-#'
-#' @param rasterDatatype Output data type. Passed to \code{\link[raster]{writeRaster}}.
+#' @inheritParams writeInputsOnDisk
 #'
 #' @param writeCropped Write the output on disk ?
-#'
-#' @param addTagsByObject Pass any object in there for which there is a
-#' .tagsByClass function
 #'
 #' @inheritParams reproducible::Cache
 #'
@@ -167,6 +161,7 @@ smallNamify <- function(name) {
 #'
 prepInputs <- function(targetFile,
                        archive = NULL,
+                       alsoExtract = NULL,
                        dataset = NULL,
                        modulePath,
                        moduleName,
@@ -196,21 +191,41 @@ prepInputs <- function(targetFile,
   notOlderThan <- if (length(capturedOutput) == 0) Sys.time()
 
   checkSums <- data.table(
-    Cache(checksums,
-          module = moduleName,
-          path = modulePath,
-          digestPathContent = TRUE,
-          checksumFile = asPath(file.path(modulePath, moduleName, "data", "CHECKSUMS.txt")),
-          write = FALSE,
-          notOlderThan = notOlderThan,
-          userTags = cacheTags,
-          quickCheck = quick
+    Cache(
+      read.table,
+      asPath(file.path(modulePath, moduleName, "data", "CHECKSUMS.txt")),
+      header = TRUE,
+      stringsAsFactors = FALSE,
+      digestPathContent = TRUE,
+      notOlderThan = notOlderThan,
+      userTags = cacheTags,
+      quick = quick
     )
   )
 
+  # checkSums <- data.table(
+  #   Cache(checksums,
+  #         module = moduleName,
+  #         path = modulePath,
+  #         digestPathContent = TRUE,
+  #         checksumFile = asPath(file.path(modulePath, moduleName, "data", "CHECKSUMS.txt")),
+  #         write = FALSE,
+  #         notOlderThan = notOlderThan,
+  #         userTags = cacheTags,
+  #         quickCheck = quick
+  #   )
+  # )
+
   # Check if the checkSums match, otherwise download or extract the file
-  checksums <- checkSums[expectedFile == targetFile, ]
-  mismatch <- !compareNA(checksums[["result"]], "OK")
+  checksums <- checkSums[file == targetFile, ]
+
+  result <- if (quick) {
+    file.size(asPath(targetFilePath)) == checksums[["filesize"]]
+  } else {
+    digest(asPath(targetFilePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+  }
+
+  mismatch <- !isTRUE(result)
 
   if (mismatch) {
     if (is.null(archive)) {
@@ -219,22 +234,29 @@ prepInputs <- function(targetFile,
       if (quick) {
         fileSize <- file.size(asPath(targetFilePath))
 
-        if (checksums[["filesize.x"]] != fileSize)
-          warning("The version downloaded of ", targetFile, " does not match the checksums")
+        if (checksums[["filesize"]] != fileSize)
+          warning("The version downloaded of ", targetFile, " does not match the checksums.")
 
       } else {
 
-        checkSum <- digest::digest(file = asPath(targetFilePath), algo = checksums[["algorithm.x"]])
+        checkSum <- digest(file = asPath(targetFilePath), algo = checksums[["algorithm"]], file = TRUE)
 
-        if (checksums[["checksum.x"]] != checkSum)
-          warning("The version downloaded of ", targetFile, " does not match the checksums")
+        if (checksums[["checksum"]] != checkSum)
+          warning("The version downloaded of ", targetFile, " does not match the checksums.")
       }
     } else {
       archive <- basename(archive)
       archivePath <- file.path(dataPath, archive)
 
-      checksums <- checkSums[expectedFile == archive, ]
-      mismatch <- !compareNA(checksums[["result"]], "OK")
+      checksums <- checkSums[file == targetFile, ]
+
+      result <- if (quick) {
+        file.size(asPath(archivePath)) == checksums[["filesize"]]
+      } else {
+        digest(asPath(archivePath), checksums[["algorithm"]]) == checksums[["checksum"]]
+      }
+
+      mismatch <- !compareNA(result, "OK")
 
       if (mismatch) {
         downloadFromWebDB(archive, archivePath, dataset)
@@ -242,19 +264,19 @@ prepInputs <- function(targetFile,
         if (quick) {
           fileSize <- file.size(asPath(archivePath))
 
-          if (checksums[["filesize.x"]] != fileSize)
-            warning("The version downloaded of ", archive, " does not match the checksums")
+          if (checksums[["filesize"]] != fileSize)
+            warning("The version downloaded of ", archive, " does not match the checksums.")
 
         } else {
 
-          checkSum <- digest::digest(file = asPath(archivePath), algo = checksums[["algorithm.x"]])
+          checkSum <- digest(file = asPath(archivePath), algo = checksums[["algorithm"]])
 
-          if (checksums[["checksum.x"]] != checkSum)
-            warning("The version downloaded of ", archive, " does not match the checksums")
+          if (checksums[["checksum"]] != checkSum)
+            warning("The version downloaded of ", archive, " does not match the checksums.")
         }
       }
 
-      unlink(extractFromArchive(archivePath = archivePath, needed = targetFile))
+      unlink(extractFromArchive(archivePath = archivePath, needed = c(targetFile, alsoExtract)))
     }
   }
 
@@ -266,37 +288,125 @@ prepInputs <- function(targetFile,
     x <- Cache(f, targetFilePath, userTags = cacheTags)
   }
 
-  objClass <- is(x)
+  # objClass <- is(x)
 
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
     targetCRS <-
       if (!is.null(rasterToMatch)) {
-        raster::crs(rasterToMatch)
+        crs(rasterToMatch)
       } else if (!is.null(studyArea)) {
-        raster::crs(studyArea)
+        crs(studyArea)
       } else {
-        raster::crs(targetFile)
+        crs(targetFile)
       }
 
-    smallFN <- smallNamify(targetFilePath)
-
     if (!is.null(studyArea)) {
-      if (!identical(targetCRS, raster::crs(studyArea)))
-        studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = targetCRS, userTags = cacheTags)
+      if (!identical(targetCRS, crs(studyArea))) {
+        if (is(studyArea, "sf"))
+          studyArea <- Cache(st_transform, x = studyArea, crs = targetCRS, quick = quick, userTags = cacheTags)
+        else
+          studyArea <- Cache(spTransform, x = studyArea, CRSobj = targetCRS, quick = quick, userTags = cacheTags)
+      }
     }
 
-    message("  Cropping, reprojecting")
+    x <- Cache(
+      cropReprojInputs,
+      x = x,
+      studyArea = studyArea,
+      rasterToMatch = rasterToMatch,
+      rasterInterpMethod = rasterInterpMethod,
+      quick = quick,
+      cacheTags = cacheTags,
+      userTags = cacheTags
+    )
 
-    if ("RasterLayer" %in% objClass ||
-        "RasterStack" %in% objClass ||
-        "RasterBrick" %in% objClass) {
+    if (!is.null(studyArea)) {
+      x <- Cache(
+        maskInputs,
+        x = x,
+        studyArea = studyArea,
+        userTags = cacheTags,
+        quick = quick
+      )
+    }
+
+    if (writeCropped) {
+      smallFN <- smallNamify(targetFilePath)
+
+      Cache(
+        writeInputsOnDisk,
+        filename = smallFN,
+        rasterDatatype = rasterDatatype,
+        quick = quick,
+        userTags = cacheTags,
+        notOlderThan = if (!file.exists(asPath(smallFN))) Sys.time()
+      )
+    }
+  }
+  x
+}
+
+#' Reproject, crop module inputs
+#'
+#' This function can be used to crop or reproject module inputs from raw data.
+#'
+#' @param x a Spatial*, sf or Raster* object
+#'
+#' @param studyArea SpatialPolygonsDataFrame or sf object used for cropping and masking.
+#'
+#' @param rasterToMatch Template Raster* object used for reprojecting and
+#' cropping.
+#'
+#' @param rasterInterpMethod Method used to compute values for the new
+#' RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.
+#'
+#' @param addTagsByObject Pass any object in there for which there is a
+#' .tagsByClass function
+#'
+#' @param cacheTags Character vector with Tags. These Tags will be added to the
+#' repository along with the artifact.
+#'
+#' @author Eliot McIntire
+#' @author Jean Marchal
+#' @export
+#' @importFrom methods is
+#' @importFrom raster buffer crop crs extent projectRaster res
+#' @importFrom rgeos gIsValid
+#' @importFrom reproducible Cache
+#' @importFrom sp SpatialPolygonsDataFrame spTransform
+#' @importFrom sf st_is_valid st_buffer st_transform
+#' @rdname cropReprojInputs
+
+cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
+                             rasterInterpMethod = "bilinear",
+                             addTagsByObject = NULL, cacheTags = NULL) {
+  message("  Cropping, reprojecting")
+
+  if (!is.null(studyArea) || !is.null(rasterToMatch)) {
+    targetCRS <-
+      if (!is.null(rasterToMatch)) {
+        crs(rasterToMatch)
+      } else if (!is.null(studyArea)) {
+        crs(studyArea)
+      } else {
+        crs(x)
+      }
+
+    if (!is.null(studyArea)) {
+      if (!identical(targetCRS, crs(studyArea))) {
+        if (is(studyArea, "sf"))
+          studyArea <- Cache(st_transform, x = studyArea, crs = targetCRS, userTags = cacheTags)
+        else
+          studyArea <- Cache(spTransform, x = studyArea, CRSobj = targetCRS, userTags = cacheTags)
+      }
+    }
+
+    if (is(x, "RasterLayer") ||
+        is(x, "RasterStack") ||
+        is(x, "RasterBrick")) {
       if (!is.null(studyArea)) {
-        # if (!identical(raster::crs(studyArea), raster::crs(x))) {
-        #   studyArea <- Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x),
-        #                      userTags = cacheTags)
-        # }
         x <- Cache(
-          raster::crop,
+          crop,
           x = x,
           y = studyArea,
           userTags = cacheTags
@@ -304,93 +414,109 @@ prepInputs <- function(targetFile,
       }
 
       if (!is.null(rasterToMatch)) {
-        if (!identical(raster::crs(x), targetCRS) |
-            !identical(raster::res(x), raster::res(rasterToMatch)) |
-            !identical(raster::extent(x), raster::extent(rasterToMatch))) {
-          x <- Cache(raster::projectRaster, from = x, to = rasterToMatch,
+        if (!identical(crs(x), targetCRS) |
+            !identical(res(x), res(rasterToMatch)) |
+            !identical(extent(x), extent(rasterToMatch))) {
+          x <- Cache(projectRaster, from = x, to = rasterToMatch,
                      method = rasterInterpMethod, userTags = cacheTags)
         }
       } else {
-        if (!identical(raster::crs(x), targetCRS)) {
-          x <- Cache(raster::projectRaster, from = x, crs = targetCRS,
+        if (!identical(crs(x), targetCRS)) {
+          x <- Cache(projectRaster, from = x, crs = targetCRS,
                      method = rasterInterpMethod, userTags = cacheTags)
         }
       }
-
-      if (!is.null(studyArea)) {
-        message("  Masking")
-        x <- Cache(fastMask, stack = x, polygon = studyArea, userTags = cacheTags)
-      }
-
-      if (writeCropped) {
-        x <- Cache(
-          raster::writeRaster,
-          x = x,
-          overwrite = TRUE,
-          format = "GTiff",
-          datatype = rasterDatatype,
-          filename = smallFN,
-          userTags = cacheTags,
-          notOlderThan = if (!file.exists(asPath(smallFN))) Sys.time()
-        )
-      }
-    } else if ("spatialObjects" %in% objClass) {
-      if (!suppressWarnings(rgeos::gIsValid(x))) {
-        xValid <- Cache(raster::buffer, x, dissolve = FALSE, width = 0, userTags = cacheTags)
-        x <- Cache(sp::SpatialPolygonsDataFrame, Sr = xValid, data = as.data.frame(x),
+    } else if (is(x, "SpatialPolygonsDataFrame")) {
+      if (!suppressWarnings(gIsValid(x))) {
+        xValid <- Cache(buffer, x, dissolve = FALSE, width = 0, userTags = cacheTags)
+        x <- Cache(SpatialPolygonsDataFrame, Sr = xValid, data = as.data.frame(x),
                    userTags = cacheTags)
       }
 
-      if (!identical(targetCRS, raster::crs(x)))
-        x <- Cache(sp::spTransform, x = x, CRSobj = targetCRS, userTags = cacheTags)
+      if (!identical(targetCRS, crs(x)))
+        x <- Cache(spTransform, x = x, CRSobj = targetCRS, userTags = cacheTags)
 
       if (!is.null(studyArea)) {
-        x <- Cache(raster::crop, x, studyArea, userTags = cacheTags)
+        x <- Cache(crop, x, studyArea, userTags = cacheTags)
       }
 
       if (!is.null(rasterToMatch)) {
-        x <- Cache(raster::crop, x, rasterToMatch, userTags = cacheTags)
+        x <- Cache(crop, x, rasterToMatch, userTags = cacheTags)
+      }
+    } else if (is(x, "sf")) {
+      if (!suppressWarnings(st_is_valid(x))) {
+        x <- Cache(st_buffer, x, dist = 0, userTags = cacheTags)
       }
 
-      if (writeCropped) {
-        Cache(
-          raster::shapefile,
-          x = x,
-          overwrite = TRUE,
-          filename = smallFN,
-          userTags = cacheTags,
-          notOlderThan = if (!file.exists(asPath(smallFN))) Sys.time()
-        )
-      }
-    } else if ("sf" %in% objClass) {
-      if (!suppressWarnings(sf::st_is_valid(x))) {
-        x <- Cache(sf::st_buffer, x, dist = 0, userTags = cacheTags)
-      }
-
-      if (!identical(targetCRS, raster::crs(x)))
-        x <- Cache(sf::st_transform, x = x, crs = targetCRS, userTags = cacheTags)
+      if (!identical(targetCRS, crs(x)))
+        x <- Cache(st_transform, x = x, crs = targetCRS, userTags = cacheTags)
 
       if (!is.null(studyArea)) {
-        x <- Cache(raster::crop, x, studyArea, userTags = cacheTags)
+        x <- Cache(crop, x, studyArea, userTags = cacheTags)
       }
 
       if (!is.null(rasterToMatch)) {
-        x <- Cache(raster::crop, x, rasterToMatch, userTags = cacheTags)
+        x <- Cache(crop, x, rasterToMatch, userTags = cacheTags)
       }
-      # x <- Cache(sf::st_collection_extract, x = x, type = "POLYGON")
-
-      if (writeCropped) {
-        Cache(
-          sf::st_write,
-          obj = x,
-          delete_dsn = TRUE,
-          dsn = smallFN,
-          userTags = cacheTags,
-          notOlderThan = if (!file.exists(asPath(smallFN))) Sys.time()
-        )
-      }
+    } else {
+      stop("Class ", class(x), " is not supported.")
     }
   }
-
   x
+}
+
+#' Mask module inputs
+#'
+#' This function can be used to mask module inputs from raw data.
+#'
+#' @param x a Raster* object
+#'
+#' @param studyArea SpatialPolygons* object
+#'
+#' @author Eliot McIntire
+#' @author Jean Marchal
+#' @export
+#' @importFrom reproducible Cache
+#' @rdname maskInputs
+#'
+maskInputs <- function(x, studyArea) {
+  message("  Masking")
+  fastMask(x = x, polygon = studyArea)
+}
+
+#' Write module inputs on disk
+#'
+#' This function can be used to write prepared inputs on disk
+#'
+#' @param x a Spatial*, sf or Raster* object
+#'
+#' @inheritParams raster::writeRaster
+#'
+#' @param rasterDatatype Output data type. Passed to \code{\link[raster]{writeRaster}}
+#'
+#' @author Eliot McIntire
+#' @author Jean Marchal
+#' @export
+#' @importFrom methods is
+#' @importFrom raster shapefile writeRaster
+#' @importFrom reproducible Cache
+#' @importFrom sf st_write
+#' @rdname writeInputsOnDisk
+#'
+
+writeInputsOnDisk <- function(x, filename, rasterDatatype = NULL) {
+  if (is(x, "RasterLayer") ||
+      is(x, "RasterStack") ||
+      is(x, "RasterBrick")) {
+
+    writeRaster(x = x, overwrite = TRUE, format = "GTiff",
+                        datatype = rasterDatatype, filename = filename)
+  } else if (is(x, "SpatialPolygonsDataFrame")) {
+    shapefile(x = x, overwrite = TRUE, filename = filename)
+  } else if (is(x, "sf"))
+  {
+    st_write(obj = x, delete_dsn = TRUE, dsn = filename)
+  } else {
+    stop("Don't know how to write object of class ", class(x), " on disk.")
+  }
 }
