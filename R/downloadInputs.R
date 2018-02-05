@@ -481,7 +481,11 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
 #'
 maskInputs <- function(x, studyArea) {
   message("  Masking")
-  fastMask(x = x, polygon = studyArea)
+
+  if (is(x, "RasterStack"))
+    fastMask(x = x, polygon = studyArea)
+  else
+    raster::mask(x = x, mask = studyArea)
 }
 
 #' Write module inputs on disk
