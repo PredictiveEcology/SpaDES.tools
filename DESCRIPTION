@@ -46,6 +46,7 @@ Imports:
     Rcpp (>= 0.12.12),
     reproducible,
     raster (>= 2.5-8),
+    rgeos,
     sf,
     sp (>= 1.2-4),
     stats,
@@ -60,7 +61,6 @@ Suggests:
     parallel,
     profvis,
     RColorBrewer (>= 1.1-2),
-    rgeos,
     rmarkdown,
     testthat (>= 1.0.2)
 Remotes: 
