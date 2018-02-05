@@ -253,7 +253,7 @@ prepInputs <- function(targetFile,
       archive <- basename(archive)
       archivePath <- file.path(dataPath, archive)
 
-      checksums <- checkSums[file == targetFile, ]
+      checksums <- checkSums[file == archive, ]
 
       result <- if (quick) {
         file.size(asPath(archivePath)) == checksums[["filesize"]]
