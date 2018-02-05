@@ -222,7 +222,9 @@ prepInputs <- function(targetFile,
   result <- if (quick) {
     file.size(asPath(targetFilePath)) == checksums[["filesize"]]
   } else {
-    digest(asPath(targetFilePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+    if (file.exists(asPath(targetFilePath)))
+     digest(asPath(targetFilePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+    else NA
   }
 
   mismatch <- !isTRUE(result)
@@ -239,7 +241,10 @@ prepInputs <- function(targetFile,
 
       } else {
 
-        checkSum <- digest(file = asPath(targetFilePath), algo = checksums[["algorithm"]], file = TRUE)
+        if (file.exists(asPath(targetFilePath)))
+          checkSum <- digest(file = asPath(targetFilePath), algo = checksums[["algorithm"]], file = TRUE)
+        else
+          NA
 
         if (checksums[["checksum"]] != checkSum)
           warning("The version downloaded of ", targetFile, " does not match the checksums.")
@@ -253,10 +258,13 @@ prepInputs <- function(targetFile,
       result <- if (quick) {
         file.size(asPath(archivePath)) == checksums[["filesize"]]
       } else {
-        digest(asPath(archivePath), checksums[["algorithm"]]) == checksums[["checksum"]]
+        if (file.exists(asPath(archivePath)))
+          digest(asPath(archivePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+        else
+          NA
       }
 
-      mismatch <- !compareNA(result, "OK")
+      mismatch <- !isTRUE(result)
 
       if (mismatch) {
         downloadFromWebDB(archive, archivePath, dataset)
@@ -269,7 +277,7 @@ prepInputs <- function(targetFile,
 
         } else {
 
-          checkSum <- digest(file = asPath(archivePath), algo = checksums[["algorithm"]])
+          checkSum <- digest(file = asPath(archivePath), algo = checksums[["algorithm"]], file = TRUE)
 
           if (checksums[["checksum"]] != checkSum)
             warning("The version downloaded of ", archive, " does not match the checksums.")
