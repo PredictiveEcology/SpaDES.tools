@@ -34,9 +34,12 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL) {
           httr::authenticate(split[1L], split[2L])
         }
 
+      message("  Downloading ", filename)
+
       httr::GET(
         url = paste0(urls$url[[i]], filename),
         authenticate,
+        httr::progress(),
         httr::write_disk(filepath, overwrite = TRUE)
       )
       break
