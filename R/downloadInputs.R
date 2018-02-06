@@ -223,7 +223,7 @@ prepInputs <- function(targetFile,
     if (quick) {
       file.size(asPath(targetFilePath))
     } else {
-      digest(asPath(targetFilePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+      Cache(digest, asPath(targetFilePath), checksums[["algorithm"]], file = TRUE, notOlderThan = notOlderThan) == checksums[["checksum"]]
     }
   } else NA
 
@@ -256,7 +256,7 @@ prepInputs <- function(targetFile,
         if (quick) {
           file.size(asPath(archivePath))
         } else {
-          digest(asPath(archivePath), checksums[["algorithm"]], file = TRUE) == checksums[["checksum"]]
+          Cache(digest, asPath(archivePath), checksums[["algorithm"]], file = TRUE, notOlderThan = notOlderThan) == checksums[["checksum"]]
         }
       } else NA
 
@@ -404,7 +404,7 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
     if (!is.null(studyArea)) {
       if (!identical(targetCRS, crs(studyArea))) {
         if (is(studyArea, "sf"))
-          studyArea <- Cache(st_transform, x = studyArea, crs = targetCRS, userTags = cacheTags)
+          studyArea <- Cache(st_transform, x = studyArea, crs = targetCRS@projargs, userTags = cacheTags)
         else
           studyArea <- Cache(spTransform, x = studyArea, CRSobj = targetCRS, userTags = cacheTags)
       }
