@@ -33,7 +33,8 @@ thus avoiding filename collision.}
 
 \item{pkg}{Character string indicating the package in which to find \code{fun}.}
 
-\item{studyArea}{SpatialPolygonsDataFrame or sf object used for cropping and masking.}
+\item{studyArea}{Template SpatialPolygons* object used for reprojecting and
+cropping.}
 
 \item{rasterToMatch}{Template Raster* object used for reprojecting and
 cropping.}

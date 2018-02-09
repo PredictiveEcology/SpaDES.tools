@@ -155,7 +155,7 @@ smallNamify <- function(name) {
 #' @importFrom data.table data.table
 #' @importFrom methods is
 #' @importFrom reproducible Cache compareNA asPath
-#' @importFrom sf st_is_valid st_buffer st_transform st_write
+#' @importFrom sf st_crs st_is st_is_valid st_buffer st_intersection st_transform st_write
 #' @importFrom digest digest
 #' @rdname prepInputs
 #'
@@ -301,15 +301,16 @@ prepInputs <- function(targetFile,
       } else if (!is.null(studyArea)) {
         crs(studyArea)
       } else {
-        crs(targetFile)
+        if (is(x, "sf"))
+          CRS(sf::st_crs(x)$proj4string)
+        else
+          crs(x)
       }
 
     if (!is.null(studyArea)) {
       if (!identical(targetCRS, crs(studyArea))) {
-        if (is(studyArea, "sf"))
-          studyArea <- Cache(st_transform, x = studyArea, crs = targetCRS, quick = quick, userTags = cacheTags)
-        else
-          studyArea <- Cache(spTransform, x = studyArea, CRSobj = targetCRS, quick = quick, userTags = cacheTags)
+        studyArea <- Cache(spTransform, x = studyArea, CRSobj = targetCRS,
+                           quick = quick, userTags = cacheTags)
       }
     }
 
@@ -361,7 +362,8 @@ prepInputs <- function(targetFile,
 #'
 #' @param x a Spatial*, sf or Raster* object
 #'
-#' @param studyArea SpatialPolygonsDataFrame or sf object used for cropping and masking.
+#' @param studyArea Template SpatialPolygons* object used for reprojecting and
+#' cropping.
 #'
 #' @param rasterToMatch Template Raster* object used for reprojecting and
 #' cropping.
@@ -383,7 +385,7 @@ prepInputs <- function(targetFile,
 #' @importFrom rgeos gIsValid
 #' @importFrom reproducible Cache
 #' @importFrom sp SpatialPolygonsDataFrame spTransform
-#' @importFrom sf st_is_valid st_buffer st_transform
+#' @importFrom sf st_as_sf st_crs st_is_valid st_buffer st_transform
 #' @rdname cropReprojInputs
 
 cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
@@ -398,26 +400,28 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
       } else if (!is.null(studyArea)) {
         crs(studyArea)
       } else {
-        crs(x)
+        if (is(x, "sf"))
+          CRS(sf::st_crs(x)$proj4string)
+        else
+          crs(x)
       }
 
     if (!is.null(studyArea)) {
       if (!identical(targetCRS, crs(studyArea))) {
-        if (is(studyArea, "sf"))
-          studyArea <- Cache(st_transform, x = studyArea, crs = targetCRS@projargs, userTags = cacheTags)
-        else
-          studyArea <- Cache(spTransform, x = studyArea, CRSobj = targetCRS, userTags = cacheTags)
+        studyArea <- Cache(spTransform, x = studyArea, CRSobj = targetCRS, userTags = cacheTags)
       }
     }
 
     if (is(x, "RasterLayer") ||
         is(x, "RasterStack") ||
         is(x, "RasterBrick")) {
+
       if (!is.null(studyArea)) {
         x <- Cache(
           crop,
           x = x,
-          y = studyArea,
+          y = if(identical(raster::crs(studyArea), raster::crs(x))) studyArea
+              else Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags),
           userTags = cacheTags
         )
       }
@@ -435,11 +439,11 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
                      method = rasterInterpMethod, userTags = cacheTags)
         }
       }
-    } else if (is(x, "SpatialPolygonsDataFrame")) {
-      if (!suppressWarnings(gIsValid(x))) {
+    } else if (inherits(x, "SpatialPoints") || inherits(x, "SpatialLines") || inherits(x, "SpatialPolygons")) {
+      if (inherits(x, "SpatialPolygons") && !suppressWarnings(gIsValid(x))) {
         xValid <- Cache(buffer, x, dissolve = FALSE, width = 0, userTags = cacheTags)
-        x <- Cache(SpatialPolygonsDataFrame, Sr = xValid, data = as.data.frame(x),
-                   userTags = cacheTags)
+        x <- if(.hasSlot(x, "data")) xValid
+             else Cache(SpatialPolygonsDataFrame, Sr = xValid, data = as.data.frame(x), userTags = cacheTags)
       }
 
       if (!identical(targetCRS, crs(x)))
@@ -453,22 +457,22 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
         x <- Cache(crop, x, rasterToMatch, userTags = cacheTags)
       }
     } else if (is(x, "sf")) {
-      if (!suppressWarnings(st_is_valid(x))) {
-        x <- Cache(st_buffer, x, dist = 0, userTags = cacheTags)
+      if (any(st_is(x, c("POLYGON", "MULTIPOLYGON"))) && !any(isValid <- st_is_valid(x))) {
+        x[!isValid] <- Cache(st_buffer, x[!isValid], dist = 0, userTags = cacheTags)
       }
 
-      if (!identical(targetCRS, crs(x)))
-        x <- Cache(st_transform, x = x, crs = targetCRS, userTags = cacheTags)
+      if (!identical(st_crs(targetCRS@projargs), st_crs(x)))
+        x <- Cache(st_transform, x = x, crs = st_crs(targetCRS@projargs), userTags = cacheTags)
 
       if (!is.null(studyArea)) {
-        x <- Cache(crop, x, studyArea, userTags = cacheTags)
+        x <- Cache(st_intersection, x, st_as_sf(studyArea), userTags = cacheTags)
       }
 
       if (!is.null(rasterToMatch)) {
-        x <- Cache(crop, x, rasterToMatch, userTags = cacheTags)
+        x <- Cache(st_intersection, x, st_as_sf(as(extent(rasterToMatch), "SpatialPolygons")), userTags = cacheTags)
       }
     } else {
-      stop("Class ", class(x), " is not supported.")
+      stop("Class '", class(x), "' is not supported.")
     }
   }
   x
@@ -524,7 +528,7 @@ writeInputsOnDisk <- function(x, filename, rasterDatatype = NULL) {
 
     writeRaster(x = x, overwrite = TRUE, format = "GTiff",
                         datatype = rasterDatatype, filename = filename)
-  } else if (is(x, "SpatialPolygonsDataFrame")) {
+  } else if (inherits(x, "SpatialPoints") || inherits(x, "SpatialLines") || inherits(x, "SpatialPolygons")) {
     shapefile(x = x, overwrite = TRUE, filename = filename)
   } else if (is(x, "sf"))
   {
