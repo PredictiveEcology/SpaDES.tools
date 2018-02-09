@@ -11,7 +11,8 @@ cropReprojInputs(x, studyArea = NULL, rasterToMatch = NULL,
 \arguments{
 \item{x}{a Spatial*, sf or Raster* object}
 
-\item{studyArea}{SpatialPolygonsDataFrame or sf object used for cropping and masking.}
+\item{studyArea}{Template SpatialPolygons* object used for reprojecting and
+cropping.}
 
 \item{rasterToMatch}{Template Raster* object used for reprojecting and
 cropping.}
