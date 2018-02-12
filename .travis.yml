@@ -106,6 +106,10 @@ r_check_args: "--as-cran"
 warnings_are_errors: true
 notifications:
   email:
+    recipients:
+    - alex.chubaty@gamil.com
+    - eliotmcintire@gmail.com
+    - jean.d.marchal@gmail.com
     on_success: change
     on_failure: change
 branches:
