@@ -2,8 +2,7 @@
 % Please edit documentation in R/downloadInputs.R
 \name{prepInputs}
 \alias{prepInputs}
-\title{Download and optionally reproject, crop, mask raw data and output module
-inputs}
+\title{Download and optionally reproject, crop, mask raw data and output module inputs}
 \usage{
 prepInputs(targetFile, archive = NULL, alsoExtract = NULL, dataset = NULL,
   modulePath, moduleName, fun = "raster", pkg = "raster",
@@ -33,21 +32,21 @@ thus avoiding filename collision.}
 
 \item{pkg}{Character string indicating the package in which to find \code{fun}.}
 
-\item{studyArea}{Template SpatialPolygons* object used for reprojecting and
-cropping.}
+\item{studyArea}{Template \code{SpatialPolygons*} object used for reprojecting
+and cropping.}
 
-\item{rasterToMatch}{Template Raster* object used for reprojecting and
+\item{rasterToMatch}{Template \code{Raster*} object used for reprojecting and
 cropping.}
 
 \item{rasterInterpMethod}{Method used to compute values for the new
-RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.}
+\code{RasterLayer}. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.}
 
 \item{rasterDatatype}{Output data type. Passed to \code{\link[raster]{writeRaster}}}
 
-\item{writeCropped}{Write the output on disk ?}
+\item{writeCropped}{Logical. Should the output be written to disk?}
 
 \item{addTagsByObject}{Pass any object in there for which there is a
-.tagsByClass function}
+\code{.tagsByClass} function}
 
 \item{quick}{Logical. If \code{sideEffect = TRUE}, setting this to \code{TRUE},
 will hash the file's metadata (i.e., filename and file size) instead of

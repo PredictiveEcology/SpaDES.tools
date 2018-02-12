@@ -45,12 +45,15 @@ Imports:
     methods,
     quickPlot,
     RandomFields (>= 3.1.24),
-    Rcpp (>= 0.12.12),
-    reproducible,
     raster (>= 2.5-8),
+    Rcpp (>= 0.12.12),
+    rgeos,
+    reproducible,
+    sf,
     sp (>= 1.2-4),
     stats,
-    utils
+    utils,
+    webDatabases
 Suggests:
     DEoptim (>= 2.2-4),
     dplyr (>= 0.5.0),
@@ -61,17 +64,16 @@ Suggests:
     parallel,
     profvis,
     RColorBrewer (>= 1.1-2),
-    rgeos,
     rmarkdown,
-    sf,
     testthat (>= 1.0.2),
     velox
+Remotes:
+    ecohealthalliance/fasterize,
+    PredictiveEcology/webDatabases
 LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 ByteCompile: yes
-Additional_repositories:
-    https://github.com/ecohealthalliance/fasterize
 Collate: 
     'RcppExports.R'
     'heading.R'
@@ -88,6 +90,7 @@ Collate:
     'numerical-comparisons.R'
     'resample.R'
     'rings.R'
+    'spades-tools-deprecated.R'
     'spades-tools-package.R'
     'splitRaster.R'
     'spread.R'

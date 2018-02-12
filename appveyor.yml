@@ -39,6 +39,7 @@ branches:
     - master
     - development
     - testing
+    - prepInputs
 
   except:
     - gh-pages

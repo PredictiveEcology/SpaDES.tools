@@ -9,19 +9,19 @@ cropReprojInputs(x, studyArea = NULL, rasterToMatch = NULL,
   cacheTags = NULL)
 }
 \arguments{
-\item{x}{a Spatial*, sf or Raster* object}
+\item{x}{A \code{Spatial*}, \code{sf}, or \code{Raster*} object.}
 
-\item{studyArea}{Template SpatialPolygons* object used for reprojecting and
-cropping.}
+\item{studyArea}{Template \code{SpatialPolygons*} object used for reprojecting
+and cropping.}
 
-\item{rasterToMatch}{Template Raster* object used for reprojecting and
+\item{rasterToMatch}{Template \code{Raster*} object used for reprojecting and
 cropping.}
 
 \item{rasterInterpMethod}{Method used to compute values for the new
-RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.}
+\code{RasterLayer}. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.}
 
 \item{addTagsByObject}{Pass any object in there for which there is a
-.tagsByClass function}
+\code{.tagsByClass} function}
 
 \item{cacheTags}{Character vector with Tags. These Tags will be added to the
 repository along with the artifact.}

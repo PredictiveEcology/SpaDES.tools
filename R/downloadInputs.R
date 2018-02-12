@@ -17,6 +17,7 @@ if (getRversion() >= "3.1.0") {
 #' thus avoiding filename collision.
 #'
 #' @author Jean Marchal
+#' @importFrom httr authenticate GET progress write_disk
 #' @importFrom webDatabases urls
 #' @rdname downloadFromWebDB
 #'
@@ -28,11 +29,10 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL) {
 
   for (i in 1:nrow(urls)) {
     if (any(filename == urls$files[[i]])) {
-      authenticate <-
-        if (!is.na(urls$password[[i]])) {
+      authenticate <- if (!is.na(urls$password[[i]])) {
           split <- strsplit(urls$password[[i]], split = "[:]")[[1]]
           httr::authenticate(split[1L], split[2L])
-        }
+      }
 
       message("  Downloading ", filename)
 
@@ -105,13 +105,44 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
   c(extractedArchives, archivePath)
 }
 
+#' Add a prefix or suffix to a filename.
+#'
+#' Prepend (or postpend) a filename with a prefix (or suffix).
+#' If the directory name of the file cannot be ascertained from its path,
+#' it is assumed to be in the current working directory.
+#'
+#' @param f       A character string giving the name/path of a file.
+#' @param prefix  A character string to prepend to the filename.
+#' @param suffix  A character string to postpend to the filename.
+#'
+#' @author Jean Marchal
+#' @author Alex Chubaty
+#' @importFrom tools file_ext file_path_sans_ext
 #' @keywords internal
-smallNamify <- function(name) {
-  file.path(dirname(name), paste0("Small", basename(name)))
+#' @rdname prefix
+#'
+#' @examples
+#' # file's full path is specified (i.e., dirname is known)
+#' myFile <- file.path("~/data", "file.tif")
+#' SpaDES.tools:::.prefix(myFile, "small_")    ## "/home/username/data/small_file.tif"
+#' SpaDES.tools:::.suffix(myFile, "_cropped") ## "/home/username/data/myFile_cropped.shp"
+#'
+#' # file's full path is not specified
+#' SpaDES.tools:::.prefix("myFile.shp", "small")    ## "./small_myFile.shp"
+#' SpaDES.tools:::.suffix("myFile.shp", "_cropped") ## "./myFile_cropped.shp"
+#'
+.prefix <- function(f, prefix = "") {
+  file.path(dirname(f), paste0(prefix, basename(f)))
 }
 
-#' Download and optionally reproject, crop, mask raw data and output module
-#' inputs
+#' @keywords internal
+#' @rdname prefix
+.suffix <- function(f, suffix = "") {
+  file.path(dirname(f), paste0(tools::file_path_sans_ext(basename(f)), suffix,
+                               ".", tools::file_ext(f)))
+}
+
+#' Download and optionally reproject, crop, mask raw data and output module inputs
 #'
 #' This function can be used to prepare module inputs from raw data. It
 #' runs several other functions, conditionally and sequentially:
@@ -142,7 +173,7 @@ smallNamify <- function(name) {
 #'
 #' @inheritParams writeInputsOnDisk
 #'
-#' @param writeCropped Write the output on disk ?
+#' @param writeCropped Logical. Should the output be written to disk?
 #'
 #' @inheritParams reproducible::Cache
 #'
@@ -153,10 +184,10 @@ smallNamify <- function(name) {
 #' @author Jean Marchal
 #' @export
 #' @importFrom data.table data.table
+#' @importFrom digest digest
 #' @importFrom methods is
 #' @importFrom reproducible Cache compareNA asPath
-#' @importFrom sf st_crs st_is st_is_valid st_buffer st_intersection st_transform st_write
-#' @importFrom digest digest
+#' @importFrom sf st_buffer st_crs st_intersection st_is st_is_valid st_transform st_write
 #' @rdname prepInputs
 #'
 prepInputs <- function(targetFile,
@@ -223,7 +254,8 @@ prepInputs <- function(targetFile,
     if (quick) {
       file.size(asPath(targetFilePath))
     } else {
-      Cache(digest, asPath(targetFilePath), checksums[["algorithm"]], file = TRUE, notOlderThan = notOlderThan) == checksums[["checksum"]]
+      Cache(digest, asPath(targetFilePath), checksums[["algorithm"]], file = TRUE,
+            notOlderThan = notOlderThan) == checksums[["checksum"]]
     }
   } else NA
 
@@ -240,7 +272,6 @@ prepInputs <- function(targetFile,
           warning("The version downloaded of ", targetFile, " does not match the checksums.")
 
       } else {
-
         checkSum <- digest(asPath(targetFilePath), algo = checksums[["algorithm"]], file = TRUE)
 
         if (checksums[["checksum"]] != checkSum)
@@ -256,10 +287,12 @@ prepInputs <- function(targetFile,
         if (quick) {
           file.size(asPath(archivePath))
         } else {
-          Cache(digest, asPath(archivePath), checksums[["algorithm"]], file = TRUE, notOlderThan = notOlderThan) == checksums[["checksum"]]
+          Cache(digest, asPath(archivePath), checksums[["algorithm"]], file = TRUE,
+                notOlderThan = notOlderThan) == checksums[["checksum"]]
         }
-      } else NA
-
+      } else {
+        NA
+      }
       mismatch <- !isTRUE(result)
 
       if (mismatch) {
@@ -340,7 +373,7 @@ prepInputs <- function(targetFile,
     }
 
     if (writeCropped) {
-      smallFN <- smallNamify(targetFilePath)
+      smallFN <- .prefix(targetFilePath, "Small")
 
       Cache(
         writeInputsOnDisk,
@@ -360,19 +393,19 @@ prepInputs <- function(targetFile,
 #'
 #' This function can be used to crop or reproject module inputs from raw data.
 #'
-#' @param x a Spatial*, sf or Raster* object
+#' @param x A \code{Spatial*}, \code{sf}, or \code{Raster*} object.
 #'
-#' @param studyArea Template SpatialPolygons* object used for reprojecting and
-#' cropping.
+#' @param studyArea Template \code{SpatialPolygons*} object used for reprojecting
+#' and cropping.
 #'
-#' @param rasterToMatch Template Raster* object used for reprojecting and
+#' @param rasterToMatch Template \code{Raster*} object used for reprojecting and
 #' cropping.
 #'
 #' @param rasterInterpMethod Method used to compute values for the new
-#' RasterLayer. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.
+#' \code{RasterLayer}. See \code{\link[raster]{projectRaster}}. Defaults to bilinear.
 #'
 #' @param addTagsByObject Pass any object in there for which there is a
-#' .tagsByClass function
+#' \code{.tagsByClass} function
 #'
 #' @param cacheTags Character vector with Tags. These Tags will be added to the
 #' repository along with the artifact.
@@ -387,7 +420,7 @@ prepInputs <- function(targetFile,
 #' @importFrom sp SpatialPolygonsDataFrame spTransform
 #' @importFrom sf st_as_sf st_crs st_is_valid st_buffer st_transform
 #' @rdname cropReprojInputs
-
+#'
 cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
                              rasterInterpMethod = "bilinear",
                              addTagsByObject = NULL, cacheTags = NULL) {
@@ -420,7 +453,7 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
         x <- Cache(
           crop,
           x = x,
-          y = if(identical(raster::crs(studyArea), raster::crs(x))) studyArea
+          y = if (identical(raster::crs(studyArea), raster::crs(x))) studyArea
               else Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags),
           userTags = cacheTags
         )
@@ -439,11 +472,13 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
                      method = rasterInterpMethod, userTags = cacheTags)
         }
       }
-    } else if (inherits(x, "SpatialPoints") || inherits(x, "SpatialLines") || inherits(x, "SpatialPolygons")) {
+    } else if (inherits(x, "SpatialPoints") || inherits(x, "SpatialLines") ||
+               inherits(x, "SpatialPolygons")) {
       if (inherits(x, "SpatialPolygons") && !suppressWarnings(gIsValid(x))) {
         xValid <- Cache(buffer, x, dissolve = FALSE, width = 0, userTags = cacheTags)
-        x <- if(.hasSlot(x, "data")) xValid
-             else Cache(SpatialPolygonsDataFrame, Sr = xValid, data = as.data.frame(x), userTags = cacheTags)
+        x <- if (.hasSlot(x, "data")) xValid
+             else Cache(SpatialPolygonsDataFrame, Sr = xValid,
+                        data = as.data.frame(x), userTags = cacheTags)
       }
 
       if (!identical(targetCRS, crs(x)))
@@ -469,7 +504,8 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
       }
 
       if (!is.null(rasterToMatch)) {
-        x <- Cache(st_intersection, x, st_as_sf(as(extent(rasterToMatch), "SpatialPolygons")), userTags = cacheTags)
+        x <- Cache(st_intersection, x, st_as_sf(as(extent(rasterToMatch), "SpatialPolygons")),
+                   userTags = cacheTags)
       }
     } else {
       stop("Class '", class(x), "' is not supported.")
