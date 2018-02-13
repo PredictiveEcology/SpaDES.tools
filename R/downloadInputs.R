@@ -164,8 +164,7 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
 #'
 #' @param modulePath Character string giving the path to the module directory.
 #'
-#' @param fun Character string indicating the function to use to load
-#' \code{targetFile}.
+#' @param fun Character string indicating the function to use to load #' \code{targetFile}.
 #'
 #' @param pkg Character string indicating the package in which to find \code{fun}.
 #'
@@ -328,8 +327,7 @@ prepInputs <- function(targetFile,
   # objClass <- is(x)
 
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
-    targetCRS <-
-      if (!is.null(rasterToMatch)) {
+    targetCRS <- if (!is.null(rasterToMatch)) {
         crs(rasterToMatch)
       } else if (!is.null(studyArea)) {
         crs(studyArea)
@@ -427,8 +425,7 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
   message("  Cropping, reprojecting")
 
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
-    targetCRS <-
-      if (!is.null(rasterToMatch)) {
+    targetCRS <- if (!is.null(rasterToMatch)) {
         crs(rasterToMatch)
       } else if (!is.null(studyArea)) {
         crs(studyArea)
@@ -453,8 +450,12 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
         x <- Cache(
           crop,
           x = x,
-          y = if (identical(raster::crs(studyArea), raster::crs(x))) studyArea
-              else Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x), userTags = cacheTags),
+          y = if (identical(raster::crs(studyArea), raster::crs(x))) {
+            studyArea
+          } else {
+            Cache(sp::spTransform, x = studyArea, CRSobj = raster::crs(x),
+                  userTags = cacheTags)
+          },
           userTags = cacheTags
         )
       }
@@ -472,7 +473,8 @@ cropReprojInputs <- function(x, studyArea = NULL, rasterToMatch = NULL,
                      method = rasterInterpMethod, userTags = cacheTags)
         }
       }
-    } else if (inherits(x, "SpatialPoints") || inherits(x, "SpatialLines") ||
+    } else if (inherits(x, "SpatialPoints") ||
+               inherits(x, "SpatialLines") ||
                inherits(x, "SpatialPolygons")) {
       if (inherits(x, "SpatialPolygons") && !suppressWarnings(gIsValid(x))) {
         xValid <- Cache(buffer, x, dissolve = FALSE, width = 0, userTags = cacheTags)
@@ -539,9 +541,9 @@ maskInputs <- function(x, studyArea) {
 
 #' Write module inputs on disk
 #'
-#' This function can be used to write prepared inputs on disk
+#' Can be used to write prepared inputs on disk.
 #'
-#' @param x a Spatial*, sf or Raster* object
+#' @param x  A \code{Spatial*}, \code{sf} or \code{Raster*} object.
 #'
 #' @inheritParams raster::writeRaster
 #'
@@ -556,7 +558,6 @@ maskInputs <- function(x, studyArea) {
 #' @importFrom sf st_write
 #' @rdname writeInputsOnDisk
 #'
-
 writeInputsOnDisk <- function(x, filename, rasterDatatype = NULL) {
   if (is(x, "RasterLayer") ||
       is(x, "RasterStack") ||
@@ -564,7 +565,9 @@ writeInputsOnDisk <- function(x, filename, rasterDatatype = NULL) {
 
     writeRaster(x = x, overwrite = TRUE, format = "GTiff",
                         datatype = rasterDatatype, filename = filename)
-  } else if (inherits(x, "SpatialPoints") || inherits(x, "SpatialLines") || inherits(x, "SpatialPolygons")) {
+  } else if (inherits(x, "SpatialPoints") ||
+             inherits(x, "SpatialLines") ||
+             inherits(x, "SpatialPolygons")) {
     shapefile(x = x, overwrite = TRUE, filename = filename)
   } else if (is(x, "sf"))
   {

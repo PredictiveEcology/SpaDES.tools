@@ -7,14 +7,14 @@
 writeInputsOnDisk(x, filename, rasterDatatype = NULL)
 }
 \arguments{
-\item{x}{a Spatial*, sf or Raster* object}
+\item{x}{A \code{Spatial*}, \code{sf} or \code{Raster*} object.}
 
 \item{filename}{Output filename}
 
 \item{rasterDatatype}{Output data type. Passed to \code{\link[raster]{writeRaster}}}
 }
 \description{
-This function can be used to write prepared inputs on disk
+Can be used to write prepared inputs on disk.
 }
 \author{
 Eliot McIntire

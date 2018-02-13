@@ -27,8 +27,7 @@ thus avoiding filename collision.}
 
 \item{moduleName}{Character string giving the name of the module.}
 
-\item{fun}{Character string indicating the function to use to load
-\code{targetFile}.}
+\item{fun}{Character string indicating the function to use to load #' \code{targetFile}.}
 
 \item{pkg}{Character string indicating the package in which to find \code{fun}.}
 
