@@ -40,6 +40,7 @@ Imports:
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
     fpCompare (>= 0.2.1),
+    gdalUtils,
     httr,
     magrittr,
     methods,
@@ -48,11 +49,13 @@ Imports:
     raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
     rgeos,
+    rgdal,
     reproducible,
     sf,
     sp (>= 1.2-4),
     stats,
     utils,
+    velox,
     webDatabases
 Suggests:
     DEoptim (>= 2.2-4),
@@ -65,8 +68,7 @@ Suggests:
     profvis,
     RColorBrewer (>= 1.1-2),
     rmarkdown,
-    testthat (>= 1.0.2),
-    velox
+    testthat (>= 1.0.2)
 Remotes:
     ecohealthalliance/fasterize,
     PredictiveEcology/webDatabases
