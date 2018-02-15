@@ -55,7 +55,7 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL) {
 #' @param archivePath Character string giving the path of the archive
 #' containing the \code{file} to be extracted.
 #'
-#' @param dataPath Character string giving the path where \code{needed} will be
+#' @param destinationPath Character string giving the path where \code{needed} will be
 #' extracted. Defaults to the archive directory.
 #'
 #' @param needed Character string giving the name of the file(s) to be extracted.
@@ -69,39 +69,44 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL) {
 #' @importFrom tools file_ext
 #' @rdname extractFromArchive
 #'
-extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
+extractFromArchive <- function(archivePath, destinationPath = dirname(archivePath),
                                needed, extractedArchives = NULL) {
-  ext <- tolower(file_ext(archivePath))
-  args <- list(archivePath, exdir = dataPath)
+  args <- list(archivePath[1], exdir = destinationPath[1])
 
-  if (ext == "zip") {
-    fun <- "unzip"
-    filesInArchive <- unzip(archivePath, list = TRUE)$Name
-    args <- c(args, list(junkpaths = TRUE))
-  } else if (ext == "tar") {
-    fun <- "untar"
-    filesInArchive <- Cache(untar, archivePath, list = TRUE)
-  }
+  funWArgs <- .whichExtractFn(archivePath[1], args)
 
-  if (any(needed %in% basename(filesInArchive))) {
-    message(paste("  Extracting from archive:", basename(archivePath)))
-    do.call(fun, c(args, list(files = filesInArchive[basename(filesInArchive) %in% needed])))
-  }
+  filesInArchive <- Cache(funWArgs$fun, archivePath[1], list = TRUE)
+  if ("Name" %in% names(filesInArchive)) filesInArchive <- filesInArchive$Name # for zips
+  browser()
 
-  isArchive <- grepl(file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
+  if (length(archivePath) > 1) {
+    .unzipOrUnTar(funWArgs$fun, funWArgs$args, files = basename(archivePath[2]))
+    # recursion, removing one archive
+    extractFromArchive(archivePath[-1], destinationPath = destinationPath,
+                       needed = needed, extractedArchives = extractedArchives)
+  } else if (any(needed %in% basename(filesInArchive))) {
+    message(paste("  Extracting from archive:", basename(archivePath[1])))
+    .unzipOrUnTar(funWArgs$fun, funWArgs$args, files = filesInArchive[basename(filesInArchive) %in% needed])
+  } else { # don't have a 2nd archive, and don't have our needed file
+    isArchive <- grepl(file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
 
-  if (any(isArchive)) {
-    arch <- filesInArchive[isArchive]
-    do.call(fun, c(list(files = arch), args))
-    extractedArchives <- c(
-      extractedArchives,
-      unlist(
-        lapply(file.path(dataPath, arch), extractFromArchive, needed = needed,
-               extractedArchives = extractedArchives)
+    if (any(isArchive)) {
+      arch <- filesInArchive[isArchive]
+      .unzipOrUnTar(funWArgs$fun, funWArgs$args, files = arch)
+
+      # lapply(file.path(destinationPath, arch), function(archi)
+      #   extractFromArchive(archi, destinationPath, needed, extractedArchives))
+
+      extractedArchives <- c(
+        extractedArchives,
+        unlist(
+          lapply(file.path(destinationPath, arch), extractFromArchive, needed = needed,
+                 extractedArchives = extractedArchives)
+        )
       )
-    )
-  }
+    }
 
+  }
   c(extractedArchives, archivePath)
 }
 
@@ -151,7 +156,10 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
 #' @param targetFile Character string giving the path of the raw data.
 #'
 #' @param archive Optional character string giving the path of an archive
-#' containing \code{targetFile}.
+#' containing \code{targetFile}, or a vector giving a set of nested archives
+#' (e.g., \code{c("xxx.tar", "inner.zip")}). If there is/are (an) inner archive(s),
+#' but they are unknown, the function will try all until it finds the
+#' \code{targetFile}
 #'
 #' @param alsoExtract Optional character string naming files other than
 #' \code{targetFile} that must be extracted from the \code{archive}.
@@ -160,9 +168,8 @@ extractFromArchive <- function(archivePath, dataPath = dirname(archivePath),
 #' for download. Allows for restricting the lookup for the url to a dataset,
 #' thus avoiding filename collision.
 #'
-#' @param moduleName Character string giving the name of the module.
-#'
-#' @param modulePath Character string giving the path to the module directory.
+#' @param destinationpath Character string of where to download to, and do
+#'                        all writing of files in.
 #'
 #' @param fun Character string indicating the function to use to load #' \code{targetFile}.
 #'
@@ -193,8 +200,7 @@ prepInputs <- function(targetFile,
                        archive = NULL,
                        alsoExtract = NULL,
                        dataset = NULL,
-                       modulePath,
-                       moduleName,
+                       destinationPath,
                        fun = "raster",
                        pkg = "raster",
                        studyArea = NULL,
@@ -203,68 +209,77 @@ prepInputs <- function(targetFile,
                        rasterDatatype = "INT2U",
                        writeCropped = TRUE,
                        addTagsByObject = NULL,
-                       quick = FALSE,
+                       quickCheck = FALSE,
                        cacheTags = "stable") {
   message("Preparing: ", targetFile)
-  dataPath <- file.path(modulePath, moduleName, "data")
+  # destinationPath <- file.path(modulePath, moduleName, "data")
 
   targetFile <- basename(targetFile)
-  targetFilePath <- file.path(dataPath, targetFile)
+  targetFilePath <- file.path(destinationPath, targetFile)
+  archive <- basename(archive)
+  archivePath <- file.path(destinationPath, archive)
 
-  # Here we assume that if dataPath has not been updated checksums don't need to
+  # Here we assume that if destinationPath has not been updated checksums don't need to
   # be rerun. This is useful for WEB apps.
   capturedOutput <- capture.output(
-    tmp <- Cache(file.info, asPath(dir(dataPath, full.names = TRUE)), userTags = cacheTags),
+    tmp <- Cache(file.info, asPath(dir(destinationPath, full.names = TRUE)), userTags = cacheTags),
     type = "message"
   )
 
   notOlderThan <- if (length(capturedOutput) == 0) Sys.time()
 
-  checkSums <- data.table(
-    Cache(
-      read.table,
-      asPath(file.path(modulePath, moduleName, "data", "CHECKSUMS.txt")),
-      header = TRUE,
-      stringsAsFactors = FALSE,
-      digestPathContent = TRUE,
-      notOlderThan = notOlderThan,
-      userTags = cacheTags,
-      quick = quick
-    )
-  )
-
-  # checkSums <- data.table(
-  #   Cache(checksums,
-  #         module = moduleName,
-  #         path = modulePath,
-  #         digestPathContent = TRUE,
-  #         checksumFile = asPath(file.path(modulePath, moduleName, "data", "CHECKSUMS.txt")),
-  #         write = FALSE,
-  #         notOlderThan = notOlderThan,
-  #         userTags = cacheTags,
-  #         quickCheck = quick
+  chksumsFilePath <- file.path(destinationPath, "CHECKSUMS.txt")
+  # if (file.exists(chksumsFilePath)) {
+  #   checkSums <- data.table(
+  #     Cache(
+  #       read.table,
+  #       asPath(chksumsFilePath),
+  #       header = TRUE,
+  #       stringsAsFactors = FALSE,
+  #       digestPathContent = TRUE,
+  #       notOlderThan = notOlderThan,
+  #       userTags = cacheTags,
+  #       quickCheck = quickCheck
+  #     )
   #   )
-  # )
+  # }
+  #checkSums <- data.table(
+    #Cache(
+  moduleName <- basename(dirname(dirname(chksumsFilePath)))
+  modulePath <- dirname(dirname(dirname(chksumsFilePath)))
+  checkSums <- checksums(files = c(targetFilePath, archivePath),
+          module = moduleName,
+          path = modulePath,
+          checksumFile = asPath(chksumsFilePath),
+          write = FALSE,
+          quickCheck = quickCheck#,
+          # notOlderThan = notOlderThan,
+          # userTags = cacheTags,
+          # quickCheck = quickCheck
+    #)
+  )
+  result <- checkSums[checkSums$expectedFile == targetFile, ]$result
+  mismatch <- !isTRUE(result == "OK")
 
   # Check if the checkSums match, otherwise download or extract the file
-  checksums <- checkSums[file == targetFile, ]
+  #checksums <- checkSums[file == targetFile, ]
 
-  result <- if (file.exists(asPath(targetFilePath))) {
-    if (quick) {
-      file.size(asPath(targetFilePath))
-    } else {
-      Cache(digest, asPath(targetFilePath), checksums[["algorithm"]], file = TRUE,
-            notOlderThan = notOlderThan) == checksums[["checksum"]]
-    }
-  } else NA
-
-  mismatch <- !isTRUE(result)
+  # result <- if (file.exists(asPath(targetFilePath))) {
+  #   if (quickCheck) {
+  #     file.size(asPath(targetFilePath))
+  #   } else {
+  #     Cache(digest, asPath(targetFilePath), checksums[["algorithm"]], file = TRUE,
+  #           notOlderThan = notOlderThan) == checksums[["checksum"]]
+  #   }
+  # } else NA
+#
+#   mismatch <- !isTRUE(result)
 
   if (mismatch) {
     if (is.null(archive)) {
       downloadFromWebDB(targetFile, targetFilePath, dataset)
 
-      if (quick) {
+      if (quickCheck) {
         fileSize <- file.size(asPath(targetFilePath))
 
         if (checksums[["filesize"]] != fileSize)
@@ -277,42 +292,18 @@ prepInputs <- function(targetFile,
           warning("The version downloaded of ", targetFile, " does not match the checksums.")
       }
     } else {
-      archive <- basename(archive)
-      archivePath <- file.path(dataPath, archive)
-
-      checksums <- checkSums[file == archive, ]
-
-      result <- if (file.exists(asPath(archivePath))) {
-        if (quick) {
-          file.size(asPath(archivePath))
-        } else {
-          Cache(digest, asPath(archivePath), checksums[["algorithm"]], file = TRUE,
-                notOlderThan = notOlderThan) == checksums[["checksum"]]
-        }
-      } else {
-        NA
-      }
-      mismatch <- !isTRUE(result)
+      result <- checkSums[checkSums$expectedFile == targetFile, ]$result
+      mismatch <- !isTRUE(result == "OK")
 
       if (mismatch) {
-        downloadFromWebDB(archive, archivePath, dataset)
-
-        if (quick) {
-          fileSize <- file.size(asPath(archivePath))
-
-          if (checksums[["filesize"]] != fileSize)
-            warning("The version downloaded of ", archive, " does not match the checksums.")
-
+        if (missing(dataset)) {
+          downloadData(moduleName, modulePath, files = archivePath[1], checked = checkSums)
         } else {
-
-          checkSum <- digest(asPath(archivePath), algo = checksums[["algorithm"]], file = TRUE)
-
-          if (checksums[["checksum"]] != checkSum)
-            warning("The version downloaded of ", archive, " does not match the checksums.")
+          downloadFromWebDB(archive, archivePath, dataset)
         }
       }
 
-      unlink(extractFromArchive(archivePath = archivePath, needed = c(targetFile, alsoExtract)))
+      extractFromArchive(archivePath = archivePath, needed = c(targetFile, alsoExtract))
     }
   }
 
@@ -341,7 +332,7 @@ prepInputs <- function(targetFile,
     if (!is.null(studyArea)) {
       if (!identical(targetCRS, crs(studyArea))) {
         studyArea <- Cache(spTransform, x = studyArea, CRSobj = targetCRS,
-                           quick = quick, userTags = cacheTags)
+                           quick = quickCheck, userTags = cacheTags)
       }
     }
 
@@ -351,7 +342,7 @@ prepInputs <- function(targetFile,
       studyArea = studyArea,
       rasterToMatch = rasterToMatch,
       rasterInterpMethod = rasterInterpMethod,
-      quick = quick,
+      quick = quickCheck,
       cacheTags = cacheTags,
       userTags = cacheTags
     )
@@ -365,7 +356,7 @@ prepInputs <- function(targetFile,
           x = x,
           studyArea = studyArea,
           userTags = cacheTags,
-          quick = quick
+          quick = quickCheck
         )
       }
     }
@@ -378,7 +369,7 @@ prepInputs <- function(targetFile,
         x = x,
         filename = smallFN,
         rasterDatatype = rasterDatatype,
-        quick = quick,
+        quick = quickCheck,
         userTags = cacheTags,
         notOlderThan = if (!file.exists(asPath(smallFN))) Sys.time()
       )
@@ -575,4 +566,19 @@ writeInputsOnDisk <- function(x, filename, rasterDatatype = NULL) {
   } else {
     stop("Don't know how to write object of class ", class(x), " on disk.")
   }
+}
+
+.whichExtractFn <- function(archivePath, args) {
+  ext <- tolower(file_ext(archivePath))
+  if (ext == "zip") {
+    fun <- unzip
+    args <- c(args, list(junkpaths = TRUE))
+  } else if (ext == "tar") {
+    fun <- untar
+  }
+  return(list(fun = fun, args = args))
+}
+
+.unzipOrUnTar <- function(fun, args, files) {
+  do.call(fun, c(args, list(files = files)))
 }
