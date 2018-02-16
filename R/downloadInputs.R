@@ -152,7 +152,7 @@ extractFromArchive <- function(archivePath, destinationPath = dirname(archivePat
 #'
 #' This function can be used to prepare module inputs from raw data. It
 #' runs several other functions, conditionally and sequentially:
-#' \code{downloadFromWebDB} or \code{\link[SpaDES.core]{downloadData},
+#' \code{downloadFromWebDB} or \code{downloadData},
 #' \code{extractFromArchive}.
 #'
 #' @param targetFile Character string giving the path to the eventual
@@ -405,7 +405,6 @@ prepInputs <- function(targetFile, archive = NULL, alsoExtract = NULL,
 #' @importFrom methods is
 #' @importFrom raster buffer crop crs extent projectRaster res
 #' @importFrom rgeos gIsValid
-#' @importFrom SpaDES.core checksums downloadData
 #' @importFrom reproducible Cache
 #' @importFrom sp SpatialPolygonsDataFrame spTransform
 #' @importFrom sf st_as_sf st_crs st_is_valid st_buffer st_transform
