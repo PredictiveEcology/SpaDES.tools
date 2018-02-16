@@ -53,6 +53,7 @@ Imports:
     reproducible,
     sf,
     sp (>= 1.2-4),
+    SpaDES.core (>= 0.1.1)
     stats,
     utils,
     velox,
@@ -71,7 +72,8 @@ Suggests:
     testthat (>= 1.0.2)
 Remotes:
     ecohealthalliance/fasterize,
-    PredictiveEcology/webDatabases
+    PredictiveEcology/webDatabases,
+    PredictiveEcology/SpaDES.core
 LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
