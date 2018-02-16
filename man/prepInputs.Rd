@@ -5,16 +5,21 @@
 \title{Download and optionally reproject, crop, mask raw data and output module inputs}
 \usage{
 prepInputs(targetFile, archive = NULL, alsoExtract = NULL, dataset = NULL,
-  modulePath, moduleName, fun = "raster", pkg = "raster",
+  destinationPath = NULL, fun = "raster", pkg = "raster",
   studyArea = NULL, rasterToMatch = NULL, rasterInterpMethod = "bilinear",
   rasterDatatype = "INT2U", writeCropped = TRUE, addTagsByObject = NULL,
-  quick = FALSE, cacheTags = "stable")
+  quickCheck = FALSE, cacheTags = "")
 }
 \arguments{
-\item{targetFile}{Character string giving the path of the raw data.}
+\item{targetFile}{Character string giving the path to the eventual
+file (raster, shapefile, csv, etc.) that will be
+downloaded, extracted.}
 
 \item{archive}{Optional character string giving the path of an archive
-containing \code{targetFile}.}
+containing \code{targetFile}, or a vector giving a set of nested archives
+(e.g., \code{c("xxx.tar", "inner.zip")}). If there is/are (an) inner archive(s),
+but they are unknown, the function will try all until it finds the
+\code{targetFile}}
 
 \item{alsoExtract}{Optional character string naming files other than
 \code{targetFile} that must be extracted from the \code{archive}.}
@@ -23,9 +28,8 @@ containing \code{targetFile}.}
 for download. Allows for restricting the lookup for the url to a dataset,
 thus avoiding filename collision.}
 
-\item{modulePath}{Character string giving the path to the module directory.}
-
-\item{moduleName}{Character string giving the name of the module.}
+\item{destinationPath}{Character string of where to download to, and do
+all writing of files in.}
 
 \item{fun}{Character string indicating the function to use to load #' \code{targetFile}.}
 
@@ -47,19 +51,12 @@ cropping.}
 \item{addTagsByObject}{Pass any object in there for which there is a
 \code{.tagsByClass} function}
 
-\item{quick}{Logical. If \code{sideEffect = TRUE}, setting this to \code{TRUE},
-will hash the file's metadata (i.e., filename and file size) instead of
-hashing the contents of the file(s). If set to \code{FALSE} (default),
-the contents of the file(s) are hashed.
-\emph{NOTE: this argument is experimental and may change in future releases.}}
+\item{quickCheck}{Logical. If \code{TRUE}, then all Caching that occurs will
+be based on the much faster but less robust file.info. \code{FALSE},
+the default, uses \code{\link[digest]{digest}}}
 
 \item{cacheTags}{Character vector with Tags. These Tags will be added to the
 repository along with the artifact.}
-}
-\description{
-This function can be used to prepare module inputs from raw data. It
-runs several other functions, conditionally and sequentially:
-\code{downloadFromWebDB}, \code{extractFromArchive}.
 }
 \author{
 Eliot McIntire

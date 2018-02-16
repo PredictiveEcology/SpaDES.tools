@@ -4,14 +4,14 @@
 \alias{extractFromArchive}
 \title{Extract files from archive.}
 \usage{
-extractFromArchive(archivePath, dataPath = dirname(archivePath), needed,
-  extractedArchives = NULL)
+extractFromArchive(archivePath, destinationPath = dirname(archivePath),
+  needed, extractedArchives = NULL)
 }
 \arguments{
 \item{archivePath}{Character string giving the path of the archive
 containing the \code{file} to be extracted.}
 
-\item{dataPath}{Character string giving the path where \code{needed} will be
+\item{destinationPath}{Character string giving the path where \code{needed} will be
 extracted. Defaults to the archive directory.}
 
 \item{needed}{Character string giving the name of the file(s) to be extracted.}

@@ -100,8 +100,9 @@ extractFromArchive <- function(archivePath, destinationPath = dirname(archivePat
       extractedArchives <- c(
         extractedArchives,
         unlist(
-          lapply(file.path(destinationPath, arch), extractFromArchive, needed = needed,
-                 extractedArchives = extractedArchives)
+          lapply(file.path(destinationPath, arch), function(ap)
+            extractFromArchive(archivePath = ap, destinationPath = destinationPath,
+                               needed = needed, extractedArchives = extractedArchives))
         )
       )
     }
@@ -151,9 +152,12 @@ extractFromArchive <- function(archivePath, destinationPath = dirname(archivePat
 #'
 #' This function can be used to prepare module inputs from raw data. It
 #' runs several other functions, conditionally and sequentially:
-#' \code{downloadFromWebDB}, \code{extractFromArchive}.
+#' \code{downloadFromWebDB} or \code{\link[SpaDES.core]{downloadData},
+#' \code{extractFromArchive}.
 #'
-#' @param targetFile Character string giving the path of the raw data.
+#' @param targetFile Character string giving the path to the eventual
+#'                   file (raster, shapefile, csv, etc.) that will be
+#'                   downloaded, extracted.
 #'
 #' @param archive Optional character string giving the path of an archive
 #' containing \code{targetFile}, or a vector giving a set of nested archives
@@ -168,7 +172,7 @@ extractFromArchive <- function(archivePath, destinationPath = dirname(archivePat
 #' for download. Allows for restricting the lookup for the url to a dataset,
 #' thus avoiding filename collision.
 #'
-#' @param destinationpath Character string of where to download to, and do
+#' @param destinationPath Character string of where to download to, and do
 #'                        all writing of files in.
 #'
 #' @param fun Character string indicating the function to use to load #' \code{targetFile}.
@@ -183,6 +187,10 @@ extractFromArchive <- function(archivePath, destinationPath = dirname(archivePat
 #'
 #' @inheritParams reproducible::Cache
 #'
+#' @param quickCheck Logical. If \code{TRUE}, then all Caching that occurs will
+#'                   be based on the much faster but less robust file.info. \code{FALSE},
+#'                   the default, uses \code{\link[digest]{digest}}
+#'
 #' @param cacheTags Character vector with Tags. These Tags will be added to the
 #' repository along with the artifact.
 #'
@@ -196,21 +204,12 @@ extractFromArchive <- function(archivePath, destinationPath = dirname(archivePat
 #' @importFrom sf st_buffer st_crs st_intersection st_is st_is_valid st_transform st_write
 #' @rdname prepInputs
 #'
-prepInputs <- function(targetFile,
-                       archive = NULL,
-                       alsoExtract = NULL,
-                       dataset = NULL,
-                       destinationPath,
-                       fun = "raster",
-                       pkg = "raster",
-                       studyArea = NULL,
-                       rasterToMatch = NULL,
-                       rasterInterpMethod = "bilinear",
-                       rasterDatatype = "INT2U",
-                       writeCropped = TRUE,
-                       addTagsByObject = NULL,
-                       quickCheck = FALSE,
-                       cacheTags = "stable") {
+prepInputs <- function(targetFile, archive = NULL, alsoExtract = NULL,
+                       dataset = NULL, destinationPath = NULL, fun = "raster",
+                       pkg = "raster", studyArea = NULL, rasterToMatch = NULL,
+                       rasterInterpMethod = "bilinear", rasterDatatype = "INT2U",
+                       writeCropped = TRUE, addTagsByObject = NULL,
+                       quickCheck = FALSE, cacheTags = "") {
   message("Preparing: ", targetFile)
   # destinationPath <- file.path(modulePath, moduleName, "data")
 
@@ -303,7 +302,8 @@ prepInputs <- function(targetFile,
         }
       }
 
-      extractFromArchive(archivePath = archivePath, needed = c(targetFile, alsoExtract))
+      extractFromArchive(archivePath = archivePath, destinationPath = destinationPath,
+                         needed = c(targetFile, alsoExtract))
     }
   }
 
@@ -405,6 +405,7 @@ prepInputs <- function(targetFile,
 #' @importFrom methods is
 #' @importFrom raster buffer crop crs extent projectRaster res
 #' @importFrom rgeos gIsValid
+#' @importFrom SpaDES.core checksums downloadData
 #' @importFrom reproducible Cache
 #' @importFrom sp SpatialPolygonsDataFrame spTransform
 #' @importFrom sf st_as_sf st_crs st_is_valid st_buffer st_transform
