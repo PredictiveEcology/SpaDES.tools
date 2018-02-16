@@ -8,8 +8,8 @@
 ^\.travis\.yml$
 ^_pkgdown\.yml$
 ^appveyor\.yml$
-CONTRIBUTING\.md
-cran-comments\.md
+^CONTRIBUTING\.md$
+^cran-comments\.md$
 ^docs$
 ^LICENSE$
 vignettes/.*_cache$
