@@ -5,7 +5,6 @@ version 0.1.0.9000
 
 * add more detailed information to package Description, per CRAN
 * add `randomPolygon` function for single random polygon
-* new function `prepInputs`, intended to make loading and Caching from web databases easier
 * speed improvements with `spread2` when `asymmetry` used
 * minor bugfixes
 
