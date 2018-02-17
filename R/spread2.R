@@ -114,6 +114,13 @@ if (getRversion() >= "3.1.0") {
 #'                    neighbours is equal to the mean of \code{spreadProb} of
 #'                    the potential neighbours.
 #'
+#' @param persistProb Numeric of length 1 or \code{RasterLayer}.
+#'                    If numeric of length 1, then this is the global (absolute)
+#'                    probability of cell continuing to burn per time step.
+#'                    If a raster, then this must be the cell-specific (absolute)
+#'                    probability of a fire persisting.
+#'                    Default is \code{0}, meaning that a cell only burns for one time step.
+#'
 #' @param spreadProbRel Optional \code{RasterLayer} indicating a surface of relative
 #'                      probabilities useful when using \code{neighProbs} (which
 #'                      provides a mechanism for selecting a specific number of
@@ -323,7 +330,7 @@ if (getRversion() >= "3.1.0") {
 #'
 spread2 <-
   function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 2,
-           spreadProb = 0.23, asRaster = TRUE, maxSize, exactSize, directions = 8L,
+           spreadProb = 0.23, persistProb = 0, asRaster = TRUE, maxSize, exactSize, directions = 8L,
            iterations = 1e6L, returnDistances = FALSE, returnFrom = FALSE,
            spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
            asymmetry = NA_real_, asymmetryAngle = NA_real_, allowOverlap = FALSE,
@@ -346,6 +353,8 @@ spread2 <-
         checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
         checkClass(spreadProb, "RasterLayer")
       )
+      assert(checkNumeric(persistProb, 0, 1, min.len = 1, max.len = 1),
+             checkClass(persistProb, "RasterLayer"))
       assert(
         checkScalarNA(spreadProbRel),
         checkClass(spreadProbRel, "RasterLayer")
@@ -541,14 +550,14 @@ spread2 <-
                                includeBehavior = "excludePixels",
                                minRadius = resCur,
                                maxRadius = 4 * resCur)[, "indices"])
-            }) %>%
+          }) %>%
             do.call(what = rbind)
 
           dtPotential <- matrix(as.integer(dtPotential), ncol = 2)
           colnames(dtPotential) <- c("id", "to")
           dtPotentialJump <- cbind(from = fromPixels[dtPotential[, "id"]],
-                               to = dtPotential[, "to"],
-                               id = dtRetryJump$initialPixels[dtPotential[, "id"]])
+                                   to = dtPotential[, "to"],
+                                   id = dtRetryJump$initialPixels[dtPotential[, "id"]])
           dtRetry <- dtRetry[!clusterDT[whNeedJump]] # remove jumped neighbours
         }
         ## get adjacent neighbours
@@ -640,9 +649,9 @@ spread2 <-
           # This is a very fast version with allowOverlap = TRUE, allowDuplicates = FALSE,
           #   returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels"
           pureCircle <- .cirSpecialQuick(landscape,
-                            loci = lociHere,
-                            maxRadius = totalIterations,
-                            minRadius = totalIterations - 0.999999)
+                                         loci = lociHere,
+                                         maxRadius = totalIterations,
+                                         minRadius = totalIterations - 0.999999)
           pureCircle <- cbind(pureCircle[, c("id", "indices", "dists"), drop = FALSE],
                               distClass = ceiling(pureCircle[, "dists"]))
           colnames(pureCircle)[2] <- c("to")
@@ -710,7 +719,7 @@ spread2 <-
       # Step 4 -- assign "successful" to all dtPotentials --
       set(dtPotential, , "state", "successful")
 
-      # steb 5 -- optional -- Algorithm neighProbs - uses a specific number of neighbours
+      # Step 5 -- optional -- Algorithm neighProbs - uses a specific number of neighbours
       if (!anyNA(neighProbs)) {
         # numNeighs algorithm
         numNeighsByPixel <- unique(dtPotential, by = c("id", "from"))
@@ -765,14 +774,14 @@ spread2 <-
             set(numNeighsByPixel, , "numNeighs",
                 pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
             dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
-              .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
-              by = "from"]$V1]
+                                                                     .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
+                                                                     by = "from"]$V1]
           }
           set(dtPotential, , "spreadProbRel", NULL)
         }
       } # end of neighProbs -- should now have only dtPotentials that match number neighbours req'd
 
-      # step 6 -- spreadProb implementation - uses an absolute probability for
+      # Step 6 -- spreadProb implementation - uses an absolute probability for
       # each potential neighbour
       # Extract spreadProb for the current set of potentials
       actualSpreadProb <- if (length(spreadProb) == 1) {
@@ -805,9 +814,11 @@ spread2 <-
         actualSpreadProb <- asymmetryAdjust(angleQualities, actualSpreadProb, actualAsymmetry)
       }
 
+      # Step 7 <- calculate spread success based on actualSpreadProb
       spreadProbSuccess <- runifC(NROW(dtPotential)) <= actualSpreadProb
 
-      # Step 7 - Remove duplicates & bind dt and dtPotential
+
+      # Step 8 - Remove duplicates & bind dt and dtPotential
       if (anyNA(neighProbs)) {
         if (isTRUE(allowOverlap) | is.na(allowOverlap) | !canUseAvailable) {
           # overlapping allowed
@@ -858,7 +869,7 @@ spread2 <-
         if (NROW(dtPotential)) notAvailable[dtPotential$pixels] <- TRUE
       }
 
-      # Step 8 - Size issues -- i.e., if too big (remove extras) or too small (make sure keeps going) # nolint
+      # Step 9 - Size issues -- i.e., if too big (remove extras) or too small (make sure keeps going) # nolint
       if (!anyNA(maxSize) | !(anyNA(exactSize))) {
         # Too big first
         setkeyv(dt, "initialPixels") # must sort because maxSize is sorted
@@ -879,7 +890,7 @@ spread2 <-
           dt1b <- dt1[currentSizetooBigByNCells] # attach tooBigByNCells
           dt1a <- tryCatch(dt1b[, list(omit = origIndex[sample.int(.N, tooBigByNCells)]),
                                 by = "initialPixels"],
-                   error = function(x) TRUE)
+                           error = function(x) TRUE)
 
           dt <- dt[-dt1a$omit][, list(initialPixels, pixels, state)]
           dt[dt1a, state := "inactive"]
@@ -896,7 +907,7 @@ spread2 <-
             # so they don't need any special treatment
             currentSizeTooSmall <- currentSizeTooSmall[
               !dt[state %in% c("successful", "holding"), nomatch = 0]
-            ]
+              ]
           }
           # if the ones that are too small are unsuccessful, make them "tooSmall"
           set(dt, , "ind", seq_len(NROW(dt)))
@@ -922,7 +933,7 @@ spread2 <-
         set(clusterDT, , "tooBigByNCells", NULL)
       } # end size-based assessments
 
-      # Step 9 # Change states of cells
+      # Step 10 # Change states of cells
       if (usingAsymmetry){
         if(!(isTRUE(allowOverlap) | is.na(allowOverlap))) {
           if (circle) {
@@ -933,13 +944,36 @@ spread2 <-
         }
       }
 
+      # Step 10a # Persistence: starting fire pixels (activeSource) continue burning
+      # with a persistence probability, becoming "successful" and then
+      # "activeSources" in Step 11b
+
+      # Extract persistenceProb for the current set of source pixels
+      # browser()
+      actualPersistProb <- if (length(persistProb) == 1) {
+        rep(persistProb, sum(dt$state == "activeSource"))
+      }
+      else {
+        persistProb[dt[state == "activeSource", initialPixels]]
+      }
+
+      # browser()
+      startFires <- which(dt$state == "activeSource")
+      persistingFires <- runifC(length(startFires)) <= actualPersistProb
+      dt[startFires[persistingFires], state := "successful"]
+
+      # Step 10b convert previous states to new states
       notInactive <- dt$state != "inactive" # currently activeSource, successful, or holding
       whNotInactive <- which(notInactive)
       activeStates <- dt$state[whNotInactive]
+
+      # startFires <- which(activeStates == "activeSource")
+      # persistingFires <- runifC(length(startFires)) <= actualPersistProb
+      # activeStates[startFires[persistingFires]] <- "successful"
+
       whActive <- whNotInactive[activeStates == "successful" | activeStates == "holding"]
       whInactive <- whNotInactive[activeStates == "activeSource"]
 
-      # convert previous states to new states
       #   activeSource ==> inactive
       #   holding ==> activeSource
       #   successful ==> activeSource
@@ -948,7 +982,7 @@ spread2 <-
           c("inactive", "activeSource", "activeSource", "tooSmall")[
             fmatch(activeStates, c("activeSource", "holding", "successful", "tooSmall"))])
 
-      # Step 10 - plot it if necessary
+      # Step 11 - plot it if necessary
       if (plot.it) {
         newPlot <- FALSE
         if (totalIterations == 1) {
@@ -970,7 +1004,7 @@ spread2 <-
       }
     } # end of main loop
 
-    # Step 11 -- Add attributes
+    # Step 12 -- Add attributes
     attrList <- list(clusterDT = clusterDT,
                      whActive = whActive,
                      whInactive = whInactive,
@@ -984,7 +1018,7 @@ spread2 <-
     }
     setattr(dt, "spreadState", attrList)
 
-    # Step 12 -- return either raster or data.table
+    # Step 13 -- return either raster or data.table
     if (asRaster) {
       ras <- raster(landscape)
       # inside unit tests, this raster gives warnings if it is only NAs
