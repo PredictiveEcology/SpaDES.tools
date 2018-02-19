@@ -296,6 +296,7 @@ test_that("spread2 tests", {
   set.seed(299)
   sams <- sample(innerCells, 2)
   exactSizes <- 60:61
+
   out <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
                  exactSize = exactSizes, asRaster = FALSE)
   out2 <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,

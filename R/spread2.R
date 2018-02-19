@@ -1,8 +1,8 @@
 if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c(
-    "distance", "from", "i.size", "ind", "indClDT", "initialPixels",
-    "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
-    "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
+  utils::globalVariables(c("distance",
+                           "from", "i.size", "ind", "indClDT", "initialPixels",
+                           "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
+                           "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
   ))
 }
 
@@ -948,18 +948,15 @@ spread2 <-
       # with a persistence probability, becoming "successful" and then
       # "activeSources" in Step 11b
 
-      # Extract persistenceProb for the current set of source pixels
-      # browser()
+      # Extract persistenceProb for the current set of source pixels - this works
       actualPersistProb <- if (length(persistProb) == 1) {
         rep(persistProb, sum(dt$state == "activeSource"))
-      }
-      else {
+      } else {
         persistProb[dt[state == "activeSource", initialPixels]]
       }
 
-      # browser()
-      startFires <- which(dt$state == "activeSource")
-      persistingFires <- runifC(length(startFires)) <= actualPersistProb
+      startFires <- which(dt$state == "activeSource")   # this works
+      persistingFires <- runifC(length(startFires)) <= actualPersistProb   # this breaks quite a few tests, even when persistProb = 0
       dt[startFires[persistingFires], state := "successful"]
 
       # Step 10b convert previous states to new states
@@ -967,6 +964,7 @@ spread2 <-
       whNotInactive <- which(notInactive)
       activeStates <- dt$state[whNotInactive]
 
+      ## alternative way:
       # startFires <- which(activeStates == "activeSource")
       # persistingFires <- runifC(length(startFires)) <= actualPersistProb
       # activeStates[startFires[persistingFires]] <- "successful"
