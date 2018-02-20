@@ -39,6 +39,7 @@ branches:
     - master
     - development
     - testing
+    - prepInputs
 
   except:
     - gh-pages
@@ -79,6 +80,8 @@ notifications:
  - provider: Email
    to:
      - alex.chubaty@gmail.com
+     - eliot.mcintire@gmail.com
+     - jean.d.marchal@gmail.com
    subject: 'SpaDES.tools: r-appveyor build {{status}}'
    message: "https://ci.appveyor.com/project/achubaty/spades-tools"
    on_build_success: false
