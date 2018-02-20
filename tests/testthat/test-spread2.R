@@ -38,7 +38,7 @@ test_that("spread2 tests", {
                spreadProb = 0.225,
                maxSize = maxSizes,
                asRaster = FALSE)
-    expect_true(all(out[, .N, by = "initialPixels"]$n <= maxSizes[order(sams)]))
+    expect_true(all(out[, .N, by = "initialPixels"]$N <= maxSizes[order(sams)]))
   }
 
   if (interactive()) print("testing exactSize")
@@ -54,11 +54,11 @@ test_that("spread2 tests", {
     )
     attrib <- attr(out, "spreadState")$cluster$numRetries > 10
     if (any(attrib)) {
-      frequ <- out[, .N, by = "initialPixels"]$n
+      frequ <- out[, .N, by = "initialPixels"]$N
       expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
       expect_true(all(frequ[!attrib] == floor(exactSizes[order(sams)][!attrib])))
     } else {
-      expect_true(all(out[, .N, by = "initialPixels"]$n == floor(exactSizes[order(sams)])))
+      expect_true(all(out[, .N, by = "initialPixels"]$N == floor(exactSizes[order(sams)])))
     }
   }
 
@@ -69,11 +69,11 @@ test_that("spread2 tests", {
     out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
     attrib <- attr(out, "spreadState")$clusterDT$numRetries > 10
     if (any(attrib)) {
-      frequ <- out[, .N, by = "initialPixels"]$n
+      frequ <- out[, .N, by = "initialPixels"]$N
       expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
       expect_true(all(frequ[!attrib] == floor(exactSizes[order(sams)][!attrib])))
     } else {
-      expect_true(all(out[, .N, by = "initialPixels"]$n == floor(exactSizes[order(sams)])))
+      expect_true(all(out[, .N, by = "initialPixels"]$N == floor(exactSizes[order(sams)])))
     }
   }
 
@@ -85,7 +85,7 @@ test_that("spread2 tests", {
     set.seed(seed)
     sams <- sample(innerCells, 3)
     out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
-    expect_true(all(out[, .N, by = "initialPixels"]$n < exactSizes))
+    expect_true(all(out[, .N, by = "initialPixels"]$N < exactSizes))
     expect_true(all(out$numRetries == 11)) # current max
   }
 

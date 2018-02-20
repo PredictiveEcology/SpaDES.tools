@@ -934,7 +934,7 @@ spread2 <-
         set(clusterDT, , "tooBigByNCells", NULL)
       } # end size-based assessments
 
-      # Step 10 # Change states of cells
+      # Step 10 - Change states of cells
       if (usingAsymmetry){
         if(!(isTRUE(allowOverlap) | is.na(allowOverlap))) {
           if (circle) {
@@ -945,7 +945,7 @@ spread2 <-
         }
       }
 
-      # Step 10a # Persistence: starting fire pixels (activeSource) continue burning
+      # Step 10a - Persistence: starting fire pixels (activeSource) continue burning
       # with a persistence probability, becoming "successful" and then
       # "activeSources" in Step 10b
       # at the moment, this is skipped if persistence is left = 0 to avoid
