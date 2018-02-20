@@ -16,9 +16,5 @@ test_that("randomPolygon: does not work properly", {
   if (interactive())
     plot(poly1)
 
-  if (requireNamespace("rgeos"))
-    expect_true(abs(abs(rgeos::gArea(spTransform(poly1, areaCRS))/1e4 - area)) <  area/4)
-
-
-}
-)
+  expect_true(abs(abs(rgeos::gArea(spTransform(poly1, areaCRS))/1e4 - area)) <  area/4)
+})
