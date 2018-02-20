@@ -951,14 +951,19 @@ spread2 <-
       # at the moment, this is skipped if persistence is left = 0 to avoid
       # breaking some tests
 
-      if(length(persistProb) == 1 & all(is.na(persistProb[]))) {} else {
-        # Extract persistenceProb for the current set of source pixels
-        actualPersistProb <- if (length(persistProb) == 1) {
-          rep(persistProb, sum(dt$state == "activeSource"))
+      ## Extract persistenceProb for the current set of source pixels
+      if (length(persistProb) == 1) {
+        if (is.na(persistProb)) {
+          actualPersistProb <- NULL
         } else {
-          persistProb[dt[state == "activeSource", initialPixels]]
+          actualPersistProb <- rep(persistProb, sum(dt$state == "activeSource"))
         }
+      } else {
+        actualPersistProb <- persistProb[dt[state == "activeSource", initialPixels]]
+      }
 
+      ## "activeSource" fires become "successful" depending on prob of persistence
+      if (!is.null(actualPersistProb)) {
         startFires <- which(dt$state == "activeSource")
         persistingFires <- runifC(length(startFires)) <= actualPersistProb
         dt[startFires[persistingFires], state := "successful"]
