@@ -16,12 +16,9 @@ A \code{Raster*} object, masked (i.e., smaller extent and/or
         several pixels converted to NA)
 }
 \description{
-These alternatives to \code{mask} and \code{rasterize} are not as general as
-the originals, and have not been thoroughly tested.
-}
-\note{
-This is experimental and not all combinations of parameters or object
-types will work.
+This alternative to \code{mask} is included here, but it is
+simply passing the arguments to raster::mask for now. We are
+waiting for the fasterize pacakge to be submitted to CRAN.
 }
 \examples{
 \dontrun{
