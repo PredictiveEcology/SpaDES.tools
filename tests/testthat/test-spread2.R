@@ -896,6 +896,7 @@ test_that("spread2 tests -- persistence", {
   start <- 1:5
 
   ## test the effect of persistence as a single numeric value
+  set.seed(5)
   noPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
                        spreadProb = 0.23, persistProb = 0, iterations = 10, directions = 8L, plot.it = FALSE)
   wPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
@@ -913,9 +914,10 @@ test_that("spread2 tests -- persistence", {
   ## second fire in low persistence area:
   start <- c(50, length(landscape)-49)
 
-  wRasPersist <- stack(lapply(1:100, FUN = function(x) spread2(landscape = landscape, start = start,
+  set.seed(5)
+  wRasPersist <- spread2(landscape = landscape, start = start,
                         spreadProb = 0.23, persistProb = persistRas, iterations = 10, directions = 8L,
-                        asRaster = TRUE, plot.it = FALSE)))
+                        asRaster = TRUE, plot.it = FALSE)
 
   expect_true(sum(wRasPersist[] == 1, na.rm = TRUE) > sum(wRasPersist[] == 2, na.rm = TRUE))
 

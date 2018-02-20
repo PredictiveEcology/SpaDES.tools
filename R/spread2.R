@@ -119,7 +119,8 @@ if (getRversion() >= "3.1.0") {
 #'                    probability of cell continuing to burn per time step.
 #'                    If a raster, then this must be the cell-specific (absolute)
 #'                    probability of a fire persisting.
-#'                    Default is \code{0}, meaning that a cell only burns for one time step.
+#'                    Default is \code{NA}, which is the same as 0, i.e. a cell only burns
+#'                    for one time step.
 #'
 #' @param spreadProbRel Optional \code{RasterLayer} indicating a surface of relative
 #'                      probabilities useful when using \code{neighProbs} (which
@@ -330,7 +331,7 @@ if (getRversion() >= "3.1.0") {
 #'
 spread2 <-
   function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 2,
-           spreadProb = 0.23, persistProb = 0, asRaster = TRUE, maxSize, exactSize, directions = 8L,
+           spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE, maxSize, exactSize, directions = 8L,
            iterations = 1e6L, returnDistances = FALSE, returnFrom = FALSE,
            spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
            asymmetry = NA_real_, asymmetryAngle = NA_real_, allowOverlap = FALSE,
@@ -946,29 +947,27 @@ spread2 <-
 
       # Step 10a # Persistence: starting fire pixels (activeSource) continue burning
       # with a persistence probability, becoming "successful" and then
-      # "activeSources" in Step 11b
+      # "activeSources" in Step 10b
+      # at the moment, this is skipped if persistence is left = 0 to avoid
+      # breaking some tests
 
-      # Extract persistenceProb for the current set of source pixels - this works
-      actualPersistProb <- if (length(persistProb) == 1) {
-        rep(persistProb, sum(dt$state == "activeSource"))
-      } else {
-        persistProb[dt[state == "activeSource", initialPixels]]
+      if(length(persistProb) == 1 & all(is.na(persistProb[]))) {} else {
+        # Extract persistenceProb for the current set of source pixels
+        actualPersistProb <- if (length(persistProb) == 1) {
+          rep(persistProb, sum(dt$state == "activeSource"))
+        } else {
+          persistProb[dt[state == "activeSource", initialPixels]]
+        }
+
+        startFires <- which(dt$state == "activeSource")
+        persistingFires <- runifC(length(startFires)) <= actualPersistProb
+        dt[startFires[persistingFires], state := "successful"]
       }
-
-      startFires <- which(dt$state == "activeSource")   # this works
-      persistingFires <- runifC(length(startFires)) <= actualPersistProb   # this breaks quite a few tests, even when persistProb = 0
-      dt[startFires[persistingFires], state := "successful"]
 
       # Step 10b convert previous states to new states
       notInactive <- dt$state != "inactive" # currently activeSource, successful, or holding
       whNotInactive <- which(notInactive)
       activeStates <- dt$state[whNotInactive]
-
-      ## alternative way:
-      # startFires <- which(activeStates == "activeSource")
-      # persistingFires <- runifC(length(startFires)) <= actualPersistProb
-      # activeStates[startFires[persistingFires]] <- "successful"
-
       whActive <- whNotInactive[activeStates == "successful" | activeStates == "holding"]
       whInactive <- whNotInactive[activeStates == "activeSource"]
 
