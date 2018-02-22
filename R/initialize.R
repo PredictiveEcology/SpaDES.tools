@@ -38,7 +38,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @seealso \code{\link{RFsimulate}} and \code{\link{extent}}
 #'
-#' @importFrom RandomFields RFoptions RFsimulate RMexp round
+#' @importFrom RandomFields RFoptions RFsimulate RMexp round RMgauss RMstable
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
 #' @rdname gaussmap
@@ -52,6 +52,9 @@ if (getRversion() >= "3.1.0") {
 #' speedup <- max(1, nx/5e2)
 #' map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
 #' Plot(map1)
+#'
+#' # with non-default method
+#' map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
 #' }
 #'
 gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp", alpha = 1, inMemory = FALSE, ...) {
@@ -67,11 +70,17 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp", alph
   speedupEffectiveCol <- nc / ncSpeedup
   speedupEffectiveRow <- nr / nrSpeedup
   if (method == "RMgauss") {
-    model <- RMgauss(scale = scale, var = var)
+    model <- RMgauss(scale = scale, var = var, ...)
   } else if (method == "RMstable"){
-    model <- RMstable(alpha = alpha, scale = scale, var = var)
+    if (alpha > 2 && alpha < 0) {
+      stop("alpha must be between 0 and 2")
+    }
+    model <- RMstable(scale = scale, var = var, alpha = alpha)
   } else {
-    model <- RMexp(scale = scale, var = var)
+    if ( method != "RMexp") {
+      message("That method is not yet implemented, defaulting to RMexp")
+    }
+    model <- RMexp(scale = scale, var = var, ...)
   }
   map <- raster(RFsimulate(model, y = 1:ncSpeedup, x = 1:nrSpeedup, grid = TRUE, ...))
 
