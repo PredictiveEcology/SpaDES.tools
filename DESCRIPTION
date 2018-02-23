@@ -68,9 +68,9 @@ Suggests:
     sf,
     testthat (>= 1.0.2)
 Remotes:
-    ecohealthalliance/fasterize
-    PredictiveEcology/quickPlot@development
-    PredictiveEcology/reproducible@development
+    ecohealthalliance/fasterize,
+    PredictiveEcology/quickPlot@development,
+    PredictiveEcology/reproducible@development,
     PredictiveEcology/SpaDES.core@development
 LinkingTo: Rcpp
 License: GPL-3
