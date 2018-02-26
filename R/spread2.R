@@ -5,6 +5,7 @@ if (getRversion() >= "3.1.0") {
                            "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
   ))
 }
+# test
 
 ################################################################################
 #' Simulate a contagious spread process on a landscape, with data.table internals
