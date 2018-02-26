@@ -10,8 +10,8 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-01-29
-Version: 0.1.1
+Date: 2018-02-23
+Version: 0.1.1.9002
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
     role = c("aut", "cre")),
@@ -35,20 +35,25 @@ Imports:
     compiler,
     data.table (>= 1.10.4),
     digest,
+    fastdigest,
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
     fpCompare (>= 0.2.1),
+    gdalUtils,
+    httr,
     magrittr,
     methods,
     quickPlot,
     RandomFields (>= 3.1.24),
-    Rcpp (>= 0.12.12),
-    reproducible,
     raster (>= 2.5-8),
+    Rcpp (>= 0.12.12),
+    rgdal,
+    reproducible,
     sp (>= 1.2-4),
     stats,
-    utils
+    utils,
+    velox
 Suggests:
     DEoptim (>= 2.2-4),
     dplyr (>= 0.5.0),
@@ -61,11 +66,13 @@ Suggests:
     rgeos,
     rmarkdown,
     sf,
-    testthat (>= 1.0.2),
-    velox
-LinkingTo: Rcpp
+    testthat (>= 1.0.2)
 Remotes:
-    ecohealthalliance/fasterize
+    ecohealthalliance/fasterize,
+    PredictiveEcology/quickPlot@development,
+    PredictiveEcology/reproducible@development,
+    PredictiveEcology/SpaDES.core@development
+LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 ByteCompile: yes
@@ -74,7 +81,6 @@ Collate:
     'heading.R'
     'SELES.R'
     'distanceFromEachPoint.R'
-    'downloadInputs.R'
     'environment.R'
     'gis.R'
     'initialize.R'

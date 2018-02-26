@@ -17,9 +17,18 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param var      Spatial variance.
 #'
+#' @param method   The type of model used to produce the Gaussian pattern.
+#'                 Should be one of \code{"RMgauss"} (Gaussian covariance model),
+#'                 \code{"RMstable"} (the stable powered exponential model),
+#'                 or the default, \code{"RMexp"} (exponential covariance model).
+#'
 #' @param speedup  An numeric value indicating how much faster than 'normal'
 #'                 to generate maps. It may be necessary to give a value larger
 #'                 than 1 for large maps. Default is 1.
+#'
+#' @param alpha    A required parameter of the 'RMstable' model.
+#'                 Should be in the interval [0,2] to provide a valid covariance function.
+#'                 Default is 1.
 #'
 #' @param inMemory Should the RasterLayer be forced to be in memory?
 #'                 Default \code{FALSE}.
@@ -30,7 +39,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @seealso \code{\link{RFsimulate}} and \code{\link{extent}}
 #'
-#' @importFrom RandomFields RFoptions RFsimulate RMexp round
+#' @importFrom RandomFields RFoptions RFsimulate RMexp round RMgauss RMstable
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
 #' @rdname gaussmap
@@ -44,9 +53,13 @@ if (getRversion() >= "3.1.0") {
 #' speedup <- max(1, nx/5e2)
 #' map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
 #' Plot(map1)
+#'
+#' # with non-default method
+#' map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
 #' }
 #'
-gaussMap <- function(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...) {
+gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
+                     alpha = 1, inMemory = FALSE, ...) {
   RFoptions(spConform = FALSE)
   ext <- extent(x)
   resol <- res(x)
@@ -58,8 +71,19 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...)
   nrSpeedup <- wholeNumsRow[which.min(abs(wholeNumsRow - nr / speedup))]
   speedupEffectiveCol <- nc / ncSpeedup
   speedupEffectiveRow <- nr / nrSpeedup
-
-  model <- RMexp(scale = scale, var = var)
+  if (method == "RMgauss") {
+    model <- RMgauss(scale = scale, var = var, ...)
+  } else if (method == "RMstable") {
+    if (!inRange(alpha, 0, 2)) {
+      stop("alpha must be between 0 and 2")
+    }
+    model <- RMstable(scale = scale, var = var, alpha = alpha)
+  } else {
+    if ( method != "RMexp") {
+      message("method is not yet implemented, defaulting to RMexp.")
+    }
+    model <- RMexp(scale = scale, var = var, ...)
+  }
   map <- raster(RFsimulate(model, y = 1:ncSpeedup, x = 1:nrSpeedup, grid = TRUE, ...))
 
   if (inMemory) map <- setValues(map, getValues(map))
