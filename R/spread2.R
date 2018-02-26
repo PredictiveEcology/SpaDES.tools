@@ -608,6 +608,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     }
     for (x in colnames(dtPotential)) set(dtPotential, , x, dtPotential[[x]][i])
 
+    ## Remove potential cells with NA spreadProb (temporary ?)
+    dtPotential <- dtPotential[!is.na(spreadProb[dtPotential$to]),]
+
     # Step 3 -- if required -- calculate distances, if required ... attach to dt
     if (needDistance) {
       fromPts <- xyFromCell(landscape, dtPotential$id)
@@ -844,7 +847,6 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         # slow on large problems
         successCells <- dtPotential$to[spreadProbSuccess]
         dupsWithinDtPotential <- duplicatedInt(successCells)
-
         successCells <- successCells[!dupsWithinDtPotential] # remove the dupsWithinDtPotential
         potentialNotAvailable <- notAvailable[successCells]
 

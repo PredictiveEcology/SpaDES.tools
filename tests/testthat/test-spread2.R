@@ -899,6 +899,7 @@ test_that("spread2 tests -- persistence", {
   set.seed(5)
   noPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
                        spreadProb = 0.23, persistProb = 0, iterations = 10, directions = 8L, plot.it = FALSE)
+  set.seed(5)
   wPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
                       spreadProb = 0.23, persistProb = 0.8, iterations = 10, directions = 8L, plot.it = FALSE)
 
