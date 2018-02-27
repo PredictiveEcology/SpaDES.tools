@@ -845,7 +845,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         successCells <- dtPotential$to[spreadProbSuccess]
         dupsWithinDtPotential <- duplicatedInt(successCells)
 
-        successCells <- successCells[!dupsWithinDtPotential] # remove the dupsWithinDtPotential
+        successCells <- na.omit(successCells[!dupsWithinDtPotential]) # remove the dupsWithinDtPotential
         potentialNotAvailable <- notAvailable[successCells]
 
         # 3 reasons why potentials are not selected
