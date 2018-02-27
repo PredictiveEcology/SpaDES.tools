@@ -923,3 +923,17 @@ test_that("spread2 tests -- persistence", {
   expect_true(sum(wRasPersist[] == 1, na.rm = TRUE) > sum(wRasPersist[] == 2, na.rm = TRUE))
 
 })
+
+
+test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
+  library(raster)
+  landscape <- raster::raster(nrows = 50, ncols = 50)
+  landscape[] <- 1
+  landscape[51:55] <- NA
+  start <- 1:5
+  spreadProb = landscape
+  spreadProb[!is.na(landscape[])] <- runif(sum(!is.na(landscape[])))
+  expect_silent(spread2(landscape = landscape, spreadProb = spreadProb,start = start,
+          plot.it = FALSE))
+
+})
