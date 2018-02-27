@@ -785,11 +785,18 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 6 -- spreadProb implementation - uses an absolute probability for
     # each potential neighbour
     # Extract spreadProb for the current set of potentials
-    actualSpreadProb <- if (length(spreadProb) == 1) {
-      rep(spreadProb, NROW(dtPotential))
+    if (length(spreadProb) == 1) {
+      actualSpreadProb <- rep(spreadProb, NROW(dtPotential))
     } else {
-      spreadProb[dtPotential$to]
+      actualSpreadProb <- spreadProb[dtPotential$to]
+      # remove NA values that may come from a spreadProb raster
+      NAaSP <- !is.na(actualSpreadProb)
+      if (any(NAaSP)) {
+        dtPotential <- dtPotential[NAaSP,]
+        actualSpreadProb <- actualSpreadProb[NAaSP]
+      }
     }
+
 
     # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle
     #  -- circle asymmetry happens elsewhere
@@ -845,6 +852,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         successCells <- dtPotential$to[spreadProbSuccess]
         dupsWithinDtPotential <- duplicatedInt(successCells)
 
+        #successCells <- na.omit(successCells[!dupsWithinDtPotential]) # remove the dupsWithinDtPotential
         successCells <- successCells[!dupsWithinDtPotential] # remove the dupsWithinDtPotential
         potentialNotAvailable <- notAvailable[successCells]
 
