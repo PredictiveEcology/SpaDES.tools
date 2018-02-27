@@ -609,7 +609,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     }
     for (x in colnames(dtPotential)) set(dtPotential, , x, dtPotential[[x]][i])
 
-    ## Remove potential cells with NA spreadProb (temporary ?)
+    ## Remove potential cells with NA spreadProb
     dtPotential <- dtPotential[!is.na(spreadProb[dtPotential$to]),]
 
     # Step 3 -- if required -- calculate distances, if required ... attach to dt
