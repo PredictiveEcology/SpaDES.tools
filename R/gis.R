@@ -58,6 +58,7 @@ checkGDALVersion <- function(version) {
 #' @author Eliot Mcintire
 #' @export
 #' @importFrom raster crop extract mask nlayers raster stack
+#' @importFrom fasterize fasterize
 #'
 #' @examples
 #'\dontrun{
@@ -97,20 +98,21 @@ checkGDALVersion <- function(version) {
 #' }
 #'
 fastMask <- function(x, polygon) {
-  message("This function will eventually use the fasterize package")
-  # if (!requireNamespace("fasterize", quietly = TRUE) |
-  #     !requireNamespace("sf", quietly = TRUE)) {
-    # message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
-    #         " To install please try devtools::install_github('ecohealthalliance/fasterize')")
-  x <- mask(x, polygon)
-  # } else {
-  #   numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
-  #     is.numeric(polygon[[x]])
-  #   })))[1]]
-  #   a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
-  #   m <- is.na(a[])
-  #   x[m] <- NA
-  # }
+  #message("This function will eventually use the fasterize package")
+   if (!requireNamespace("fasterize", quietly = TRUE) |
+       !requireNamespace("sf", quietly = TRUE)) {
+     message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
+             " To install please try devtools::install_github('ecohealthalliance/fasterize')")
+    x <- mask(x, polygon)
+  } else {
+    message("Using the fasterize package to mask")
+    numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
+      is.numeric(polygon[[x]])
+    })))[1]]
+    a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
+    m <- is.na(a[])
+    x[m] <- NA
+  }
   if (nlayers(x) > 1) {
     stack(x)
   } else {

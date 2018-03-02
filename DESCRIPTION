@@ -10,8 +10,8 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-02-23
-Version: 0.1.1.9002
+Date: 2018-03-02
+Version: 0.1.1.9003
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
     role = c("aut", "cre")),
@@ -36,6 +36,7 @@ Imports:
     data.table (>= 1.10.4),
     digest,
     fastdigest,
+    fasterize,
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
