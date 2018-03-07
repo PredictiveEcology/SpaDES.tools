@@ -17,8 +17,8 @@ A \code{Raster*} object, masked (i.e., smaller extent and/or
 }
 \description{
 This alternative to \code{mask} is included here, but it is
-simply passing the arguments to raster::mask for now. We are
-waiting for the fasterize pacakge to be submitted to CRAN.
+simply passing the arguments to raster::mask for now.
+We are waiting for the \pkg{fasterize} to be submitted to CRAN.
 }
 \examples{
 \dontrun{

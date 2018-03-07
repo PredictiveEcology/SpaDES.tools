@@ -2,7 +2,7 @@
 #'
 #' @return \code{numeric_version}
 #'
-#' @author Alex Chubaty and  Eliot McIntire
+#' @author Alex Chubaty and Eliot McIntire
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom rgdal getGDALVersionInfo
@@ -45,8 +45,8 @@ checkGDALVersion <- function(version) {
 #' Faster operations on rasters
 #'
 #' This alternative to \code{mask} is included here, but it is
-#' simply passing the arguments to raster::mask for now. We are
-#' waiting for the fasterize pacakge to be submitted to CRAN.
+#' simply passing the arguments to raster::mask for now.
+#' We are waiting for the \pkg{fasterize} to be submitted to CRAN.
 #'
 #' @param x        A \code{Raster*} object.
 #'
@@ -57,8 +57,8 @@ checkGDALVersion <- function(version) {
 #'
 #' @author Eliot Mcintire
 #' @export
-#' @importFrom raster crop extract mask nlayers raster stack
 #' @importFrom fasterize fasterize
+#' @importFrom raster crop extract mask nlayers raster stack
 #'
 #' @examples
 #'\dontrun{
@@ -98,21 +98,13 @@ checkGDALVersion <- function(version) {
 #' }
 #'
 fastMask <- function(x, polygon) {
-  #message("This function will eventually use the fasterize package")
-   if (!requireNamespace("fasterize", quietly = TRUE) |
-       !requireNamespace("sf", quietly = TRUE)) {
-     message("Using raster::mask, which may be very slow, because 'fasterize' not installed. ",
-             " To install please try devtools::install_github('ecohealthalliance/fasterize')")
-    x <- mask(x, polygon)
-  } else {
-    message("Using the fasterize package to mask")
-    numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
-      is.numeric(polygon[[x]])
-    })))[1]]
-    a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
-    m <- is.na(a[])
-    x[m] <- NA
-  }
+  numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
+    is.numeric(polygon[[x]])
+  })))[1]]
+  a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
+  m <- is.na(a[])
+  x[m] <- NA
+
   if (nlayers(x) > 1) {
     stack(x)
   } else {
@@ -133,20 +125,16 @@ fastMask <- function(x, polygon) {
 #' @seealso \code{velox::VeloxRaster_crop}
 #'
 fastCrop <- function(x, y, ...) {
-  if (!requireNamespace("velox")) {
-    message("Using raster::crop, which may be very slow, because 'velox' not installed. ",
-            " To install please try devtools::install.packages('velox')")
-    a <- crop(x, y)
+  # velox package is much faster than raster package for rasterize function,
+  # but not as fast as gdal_rasterize for large polygonsv1 <- velox::velox(x)
+  a <- crop(x, y)
+  v1 <- velox::velox(x)
+  if (is(y, "Raster")) y <- extent(y)
+  v1$crop(y)
+  if (length(names(x)) > 1) {
+    a <- v1$as.RasterStack()
   } else {
-    v1 <- velox::velox(x) # velox package is much faster than raster package for rasterize function,
-    # but not as fast as gdal_rasterize for large polygons
-    if (is(y, "Raster")) y <- extent(y)
-    v1$crop(y)
-    if (length(names(x)) > 1) {
-      a <- v1$as.RasterStack()
-    } else {
-      a <- v1$as.RasterLayer(band = 1)
-    }
+    a <- v1$as.RasterLayer(band = 1)
   }
   a
 }
