@@ -71,8 +71,7 @@ Suggests:
 Remotes:
     ecohealthalliance/fasterize,
     PredictiveEcology/quickPlot@development,
-    PredictiveEcology/reproducible@development,
-    PredictiveEcology/SpaDES.core@development
+    PredictiveEcology/reproducible@development
 LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
