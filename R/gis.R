@@ -44,24 +44,23 @@ checkGDALVersion <- function(version) {
 
 #' Faster operations on rasters
 #'
-#' This alternative to \code{mask} is included here, but it is
-#' simply passing the arguments to raster::mask for now.
-#' We are waiting for the \pkg{fasterize} to be submitted to CRAN.
+#' This alternative to \code{mask} is included here. If you do
+#' not have the suggested packages, sf and fasterize, then it will use
+#' raster::mask. Installing those two packages will make this function
+#' much faster.
 #'
 #' @param x        A \code{Raster*} object.
 #'
-#' @param polygon  A \code{SpatialPolygons} object.
+#' @param y  A \code{SpatialPolygons} object.
 #'
 #' @return A \code{Raster*} object, masked (i.e., smaller extent and/or
 #'         several pixels converted to NA)
 #'
 #' @author Eliot Mcintire
 #' @export
-#' @importFrom fasterize fasterize
 #' @importFrom raster crop extract mask nlayers raster stack
 #'
 #' @examples
-#'\dontrun{
 #' library(raster)
 #'
 #' Sr1 <- Polygon(cbind(c(2, 4, 4, 0.9, 2), c(2, 3, 5, 4, 2)))
@@ -81,7 +80,7 @@ checkGDALVersion <- function(version) {
 #' origStack <- stack(poly)
 #' # original mask function in raster
 #' newStack1 <- mask(origStack, mask = shp)
-#' newStack2 <- fastMask(x = origStack, polygon = shp)
+#' newStack2 <- fastMask(x = origStack, y = shp)
 #'
 #' # test all equal
 #' all.equal(newStack1, newStack2)
@@ -94,21 +93,28 @@ checkGDALVersion <- function(version) {
 #'   plot(shp, add = TRUE)
 #' }
 #'
-#' file.remove("newMap.tif")
-#' }
 #'
-fastMask <- function(x, polygon) {
-  numericfield <- names(polygon)[which(unlist(lapply(names(polygon), function(x) {
-    is.numeric(polygon[[x]])
-  })))[1]]
-  a <- fasterize::fasterize(sf::st_as_sf(polygon), raster = x[[1]], field = numericfield)
-  m <- is.na(a[])
-  x[m] <- NA
+fastMask <- function(x, y) {
+  if (requireNamespace("sf") && requireNamespace("fasterize")) {
+    message("Using sf and fasterize")
+    numericfield <- names(y)[which(unlist(lapply(names(y), function(x) {
+      is.numeric(y[[x]])
+    })))[1]]
+    a <- fasterize::fasterize(sf::st_as_sf(y), raster = x[[1]], field = numericfield)
+    m <- is.na(a[])
+    x[m] <- NA
 
-  if (nlayers(x) > 1) {
-    stack(x)
+    if (nlayers(x) > 1) {
+      raster::stack(x)
+    } else {
+      x
+    }
   } else {
-    x
+    message("This function is using the much slower raster::mask. ",
+            "See https://github.com/r-spatial/sf to install gdal ",
+            "on your system. Then, 'install.packages(\"sf\")",
+            "; install.packages(\"fasterize\")')")
+    raster::mask(x, y)
   }
 }
 
@@ -207,130 +213,130 @@ fastCrop <- function(x, y, ...) {
 #'                          filename = "newMap")
 #' }
 fastRasterize <- function(polygon, ras, field, filename, useGDAL, datatype) {
-  minGDALVersion <- 2
+    minGDALVersion <- 2
 
-  keepInMemory <- inMemory(ras) & missing(filename)
+    keepInMemory <- inMemory(ras) & missing(filename)
 
-  if (missing(useGDAL)) {
-    if (ncell(ras) > 2e6) {
-      useGDAL <- checkGDALVersion(minGDALVersion)
-    } else {
-      useGDAL <- FALSE
-    }
-  } else {
-    if (isTRUE(useGDAL)) {
-      if (!is.na(getGDALVersion())) {
-        if (getGDALVersion() < minGDALVersion) {
-          warning("Outdated GDAL version detected. ",
-                  "A recent version (>2) recommended for best performance. ",
-                  "Using velox package instead.")
-          useGDAL <- FALSE
-        } else {
-          useGDAL <- TRUE
-        }
+    if (missing(useGDAL)) {
+      if (ncell(ras) > 2e6) {
+        useGDAL <- checkGDALVersion(minGDALVersion)
       } else {
-        stop("No suitable GDAL version detected. Please specify 'useGDAL = FALSE'.")
+        useGDAL <- FALSE
+      }
+    } else {
+      if (isTRUE(useGDAL)) {
+        if (!is.na(getGDALVersion())) {
+          if (getGDALVersion() < minGDALVersion) {
+            warning("Outdated GDAL version detected. ",
+                    "A recent version (>2) recommended for best performance. ",
+                    "Using velox package instead.")
+            useGDAL <- FALSE
+          } else {
+            useGDAL <- TRUE
+          }
+        } else {
+          stop("No suitable GDAL version detected. Please specify 'useGDAL = FALSE'.")
+        }
       }
     }
-  }
-  rstFilename <- if (!missing(filename)) {
-    extension(basename(filename), ".tif")
-  } else {
-    tempfile(fileext = ".tif")
-  }
+    rstFilename <- if (!missing(filename)) {
+      extension(basename(filename), ".tif")
+    } else {
+      tempfile(fileext = ".tif")
+    }
 
-  # These are taken from ?dataType from the raster package and http://www.gdal.org/frmt_gtiff.html
-  types <- data.frame(
-    rasterTypes = c("INT1S", "INT1U", "INT2S", "INT2U", "INT4S", "INT4U", "FLT4S", "FLT4U"),
-    gdalTypes = c("16Int", "U16Int", "16Int", "U16Int", "32Int", "U32Int", "32Float", "32Float"),
-    stringsAsFactors = FALSE)
+    # These are taken from ?dataType from the raster package and http://www.gdal.org/frmt_gtiff.html
+    types <- data.frame(
+      rasterTypes = c("INT1S", "INT1U", "INT2S", "INT2U", "INT4S", "INT4U", "FLT4S", "FLT4U"),
+      gdalTypes = c("16Int", "U16Int", "16Int", "U16Int", "32Int", "U32Int", "32Float", "32Float"),
+      stringsAsFactors = FALSE)
 
-  if (missing(field)) field <- names(polygon)
+    if (missing(field)) field <- names(polygon)
 
-  needFactor <- if (missing(field) | length(field) > 1) {
-    TRUE
-  } else if (length(field) == 1) {
-    is.factor(polygon[[field]]) | is.character(polygon[[field]])
-  }
+    needFactor <- if (missing(field) | length(field) > 1) {
+      TRUE
+    } else if (length(field) == 1) {
+      is.factor(polygon[[field]]) | is.character(polygon[[field]])
+    }
 
-  valsGDAL <- c(16, 32, 64)
-  valsRast <- data.frame(vals = c(2 ^ 8, 2 ^ 16, 2 ^ 32, 2 ^ 128), labels = c(1, 2, 4, 8))
-  intflt <- c("INT", "FLT")
+    valsGDAL <- c(16, 32, 64)
+    valsRast <- data.frame(vals = c(2 ^ 8, 2 ^ 16, 2 ^ 32, 2 ^ 128), labels = c(1, 2, 4, 8))
+    intflt <- c("INT", "FLT")
 
-  if (needFactor) {
-    int <- 1
-    rang <- c(1, NROW(polygon))
-    neg <- 2
-  } else {
-    int <- if (is.integer(polygon[[field]])) 1 else 2
-    rang <- range(polygon[[field]])
-    neg <- if (rang[1] < 0 & int == 1) 1 else 2
-  }
+    if (needFactor) {
+      int <- 1
+      rang <- c(1, NROW(polygon))
+      neg <- 2
+    } else {
+      int <- if (is.integer(polygon[[field]])) 1 else 2
+      rang <- range(polygon[[field]])
+      neg <- if (rang[1] < 0 & int == 1) 1 else 2
+    }
 
-  if (missing(datatype)) {
+    if (missing(datatype)) {
+      if (useGDAL) {
+        maxV <- which.min(diff(rang) < (2 ^ valsGDAL))
+        intflt <- c("Int", "Float")
+        datatypeGdal <- paste0("U"[neg], intflt[int], valsGDAL[maxV])
+      }
+    } else {
+      datatypeGdal <- types$gdalTypes[types$rasterTypes %in% datatype]
+    }
+
+    if (needFactor) {
+      attrNames <- names(polygon)
+      if (!("ID" %in% attrNames)) {
+        polygon$ID <- 1:NROW(polygon) # nolint
+      }
+    }
+
+    fieldTmp <- if (needFactor) "ID" else field
+
     if (useGDAL) {
-      maxV <- which.min(diff(rang) < (2 ^ valsGDAL))
-      intflt <- c("Int", "Float")
-      datatypeGdal <- paste0("U"[neg], intflt[int], valsGDAL[maxV])
+      tmpShpFilename <- tempfile(fileext = ".shp")
+
+      # write the polygon object to disk as a shapefile -- can't handle NAs without showing a warning
+      suppressWarnings(shapefile(polygon, filename = tmpShpFilename))
+
+      # Run rasterize from gdal
+      gdalUtils::gdal_rasterize(a = fieldTmp, tr = res(ras), a_nodata = NA_integer_,
+                                tmpShpFilename,
+                                te = c(xmin(ras), ymin(ras), xmax(ras), ymax(ras)),
+                                rstFilename, ot = datatypeGdal)
+      a <- raster(rstFilename)
+    } else {
+      # velox package is much faster than raster package for rasterize function,
+      # but not as fast as gdal_rasterize for large polygons
+      v1 <- velox(ras)
+      v1$rasterize(polygon, field = fieldTmp, background = NA_integer_)
+      a <- v1$as.RasterLayer(band = 1)
     }
-  } else {
-    datatypeGdal <- types$gdalTypes[types$rasterTypes %in% datatype]
-  }
 
-  if (needFactor) {
-    attrNames <- names(polygon)
-    if (!("ID" %in% attrNames)) {
-      polygon$ID <- 1:NROW(polygon) # nolint
+    if (needFactor) {
+      whichID <- names(polygon) %in% "ID"
+      whichOther <- names(polygon) %in% field
+      levels(a) <- data.frame(as.data.frame(polygon[, whichID]),
+                              as.data.frame(polygon[, whichOther]))
+      names(a) <- "layer"
+    } else {
+      names(a) <- field
     }
+
+    if (isTRUE(tryCatch(minValue(a), warning = function(x) TRUE)))
+      a <- setMinMax(a)
+
+    hasNA <- if (anyNA(a[])) 1 else 0
+    maxV <- pmax(pmax(min(which(diff(rang) < (valsRast$vals))), 1 + hasNA), (int == 2) * 4)
+    if (missing(datatype)) {
+      datatype <- paste0(intflt[int], valsRast$labels[maxV], c("U", "S")[neg])
+    }
+
+    dataType(a) <- datatype
+    if (keepInMemory & fromDisk(a)) a[] <- getValues(a)
+    if (!keepInMemory & inMemory(a)) {
+      a <- writeRaster(a, filename = file.path(tmpDir(), rstFilename),
+                       overwrite = TRUE, datatype = datatype) # need NA value
+    }
+
+    return(a)
   }
-
-  fieldTmp <- if (needFactor) "ID" else field
-
-  if (useGDAL) {
-    tmpShpFilename <- tempfile(fileext = ".shp")
-
-    # write the polygon object to disk as a shapefile -- can't handle NAs without showing a warning
-    suppressWarnings(shapefile(polygon, filename = tmpShpFilename))
-
-    # Run rasterize from gdal
-    gdalUtils::gdal_rasterize(a = fieldTmp, tr = res(ras), a_nodata = NA_integer_,
-                              tmpShpFilename,
-                              te = c(xmin(ras), ymin(ras), xmax(ras), ymax(ras)),
-                              rstFilename, ot = datatypeGdal)
-    a <- raster(rstFilename)
-  } else {
-    # velox package is much faster than raster package for rasterize function,
-    # but not as fast as gdal_rasterize for large polygons
-    v1 <- velox(ras)
-    v1$rasterize(polygon, field = fieldTmp, background = NA_integer_)
-    a <- v1$as.RasterLayer(band = 1)
-  }
-
-  if (needFactor) {
-    whichID <- names(polygon) %in% "ID"
-    whichOther <- names(polygon) %in% field
-    levels(a) <- data.frame(as.data.frame(polygon[, whichID]),
-                            as.data.frame(polygon[, whichOther]))
-    names(a) <- "layer"
-  } else {
-    names(a) <- field
-  }
-
-  if (isTRUE(tryCatch(minValue(a), warning = function(x) TRUE)))
-    a <- setMinMax(a)
-
-  hasNA <- if (anyNA(a[])) 1 else 0
-  maxV <- pmax(pmax(min(which(diff(rang) < (valsRast$vals))), 1 + hasNA), (int == 2) * 4)
-  if (missing(datatype)) {
-    datatype <- paste0(intflt[int], valsRast$labels[maxV], c("U", "S")[neg])
-  }
-
-  dataType(a) <- datatype
-  if (keepInMemory & fromDisk(a)) a[] <- getValues(a)
-  if (!keepInMemory & inMemory(a)) {
-    a <- writeRaster(a, filename = file.path(tmpDir(), rstFilename),
-                     overwrite = TRUE, datatype = datatype) # need NA value
-  }
-
-  return(a)
-}

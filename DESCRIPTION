@@ -36,7 +36,6 @@ Imports:
     data.table (>= 1.10.4),
     digest,
     fastdigest,
-    fasterize,
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
@@ -59,6 +58,7 @@ Suggests:
     DEoptim (>= 2.2-4),
     dplyr (>= 0.5.0),
     hunspell,
+    fasterize,
     knitr,
     microbenchmark,
     parallel,
@@ -69,7 +69,6 @@ Suggests:
     sf,
     testthat (>= 1.0.2)
 Remotes:
-    ecohealthalliance/fasterize,
     PredictiveEcology/quickPlot@development,
     PredictiveEcology/reproducible@development
 LinkingTo: Rcpp
