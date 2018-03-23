@@ -96,7 +96,7 @@ checkGDALVersion <- function(version) {
 #'
 fastMask <- function(x, y) {
   if (requireNamespace("sf") && requireNamespace("fasterize")) {
-    message("Using sf and fasterize")
+    message("fastMask is using sf and fasterize")
     numericfield <- names(y)[which(unlist(lapply(names(y), function(x) {
       is.numeric(y[[x]])
     })))[1]]
