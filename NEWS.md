@@ -3,6 +3,7 @@ Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 version 0.1.1.9000
 =============
 
+* now uses fasterize and sf, optionally, in fastMask
 * new options added to `gaussMap` (#20, @ianmseddy)
 
 version 0.1.1
