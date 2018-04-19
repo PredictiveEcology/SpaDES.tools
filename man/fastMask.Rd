@@ -4,31 +4,24 @@
 \alias{fastMask}
 \title{Faster operations on rasters}
 \usage{
-fastMask(x, polygon)
+fastMask(x, y)
 }
 \arguments{
 \item{x}{A \code{Raster*} object.}
 
-\item{polygon}{A \code{SpatialPolygons} object.}
+\item{y}{A \code{SpatialPolygons} object.}
 }
 \value{
 A \code{Raster*} object, masked (i.e., smaller extent and/or
         several pixels converted to NA)
 }
 \description{
-These alternatives to \code{mask} and \code{rasterize} are not as general as
-the originals, and have not been thoroughly tested.
-}
-\details{
-For \code{fastMask}, it is using \code{fasterize::fasterize} from
-"ecohealthalliance/fasterize" on GitHub.com.
-}
-\note{
-This is experimental and not all combinations of parameters or object
-types will work.
+This alternative to \code{mask} is included here. If you do
+not have the suggested packages, sf and fasterize, then it will use
+raster::mask. Installing those two packages will make this function
+much faster.
 }
 \examples{
-\dontrun{
 library(raster)
 
 Sr1 <- Polygon(cbind(c(2, 4, 4, 0.9, 2), c(2, 3, 5, 4, 2)))
@@ -48,7 +41,7 @@ poly[[2]] <- raster(raster::extent(shp), vals = 1, res = c(1, 1))
 origStack <- stack(poly)
 # original mask function in raster
 newStack1 <- mask(origStack, mask = shp)
-newStack2 <- fastMask(x = origStack, polygon = shp)
+newStack2 <- fastMask(x = origStack, y = shp)
 
 # test all equal
 all.equal(newStack1, newStack2)
@@ -61,8 +54,6 @@ if (interactive()) {
   plot(shp, add = TRUE)
 }
 
-file.remove("newMap.tif")
-}
 
 }
 \author{

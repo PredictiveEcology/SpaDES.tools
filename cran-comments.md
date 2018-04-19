@@ -1,6 +1,6 @@
 ## Resubmission
 
-This is an update to an existing package. We introduce several new functions, and update previous functions.
+This is an update to an existing package. We introduce several new functions, and update previous functions. We submitted this package 3 days ago with an external package "suggests" that was not allowed by CRAN policies. We have removed that "suggests" package.
 
 
 ## Test environments

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title><code>SELES</code> - Initiate agents — initiateAgents â€¢ SpaDES.tools</title>
+<title>SELES — initiateAgents â€¢ SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -23,17 +23,14 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
 <!-- mathjax -->
-<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
-
-
   </head>
 
   <body>
@@ -52,12 +49,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li>
@@ -83,18 +74,18 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1><code>SELES</code> - Initiate agents</h1>
+    <h1>SELES</h1>
     </div>
 
     
     <p>Sets the the number of agents to initiate. THIS IS NOT FULLY IMPLEMENTED.</p>
 <p>A <code>SELES</code>-like function to maintain conceptual backwards compatibility
 with that simulation tool. This is intended to ease transitions from
-<a href='http://www.gowlland.ca/'>SELES</a>.</p>
+<a href = 'http://www.gowlland.ca/'>SELES</a>.</p>
 <p>You must know how to use SELES for these to be useful.</p>
     
 
-    <pre class="usage"><span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>numAgents</span>, <span class='no'>probInit</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>indices</span>)
+    <pre><span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>numAgents</span>, <span class='no'>probInit</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>indices</span>)
 
 <span class='co'># S4 method for Raster,missing,missing,ANY,missing</span>
 <span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>numAgents</span>,
@@ -117,30 +108,19 @@ with that simulation tool. This is intended to ease transitions from
   <span class='no'>probInit</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>indices</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>map</th>
-      <td><p>RasterLayer with extent and resolution of desired return object</p></td>
-    </tr>
-    <tr>
-      <th>numAgents</th>
-      <td><p>numeric resulting from a call to <code><a href='SELESnumAgents.html'>numAgents</a></code></p></td>
-    </tr>
-    <tr>
-      <th>probInit</th>
-      <td><p>a Raster resulting from a <code><a href='SELESprobInit.html'>probInit</a></code> call</p></td>
-    </tr>
-    <tr>
-      <th>asSpatialPoints</th>
-      <td><p>logical. Should returned object be <code>RasterLayer</code>
-or <code>SpatialPointsDataFrame</code> (default)</p></td>
-    </tr>
-    <tr>
-      <th>indices</th>
-      <td><p>numeric. Indices of where agents should start</p></td>
-    </tr>
-    </table>
+    <dl class="dl-horizontal">
+      <dt>map</dt>
+      <dd><p>RasterLayer with extent and resolution of desired return object</p></dd>
+      <dt>numAgents</dt>
+      <dd><p>numeric resulting from a call to <code><a href='SELESnumAgents.html'>numAgents</a></code></p></dd>
+      <dt>probInit</dt>
+      <dd><p>a Raster resulting from a <code><a href='SELESprobInit.html'>probInit</a></code> call</p></dd>
+      <dt>asSpatialPoints</dt>
+      <dd><p>logical. Should returned object be <code>RasterLayer</code>
+or <code>SpatialPointsDataFrame</code> (default)</p></dd>
+      <dt>indices</dt>
+      <dd><p>numeric. Indices of where agents should start</p></dd>
+    </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -148,37 +128,59 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>library</span>(<span class='no'>magrittr</span>)
-<span class='fu'>library</span>(<span class='no'>raster</span>)
+    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>magrittr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘magrittr’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:raster’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    extract</span></div><div class='input'><span class='fu'>library</span>(<span class='no'>raster</span>)
 <span class='fu'>library</span>(<span class='no'>quickPlot</span>)
 
-<span class='no'>map</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='kw'>xmn</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>xmx</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>ymn</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>ymx</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>val</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>map</span> <span class='kw'>&lt;-</span> <span class='fu'>raster</span>(<span class='kw'>xmn</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>xmx</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>ymn</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>ymx</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>val</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>map</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussmap.html'>gaussMap</a></span>(<span class='no'>map</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>var</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>pr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SELESprobInit.html'>probInit</a></span>(<span class='no'>map</span>, <span class='kw'>p</span> <span class='kw'>=</span> (<span class='no'>map</span>/<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extremeValues'>maxValue</a></span>(<span class='no'>map</span>))^<span class='fl'>2</span>)
+<span class='no'>pr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SELESprobInit.html'>probInit</a></span>(<span class='no'>map</span>, <span class='kw'>p</span> <span class='kw'>=</span> (<span class='no'>map</span>/<span class='fu'>maxValue</span>(<span class='no'>map</span>))^<span class='fl'>2</span>)
 <span class='no'>agents</span> <span class='kw'>&lt;-</span> <span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='fl'>100</span>, <span class='no'>pr</span>)
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) {
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>map</span>)
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agents</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"map"</span>)
-}
-
+  <span class='fu'>clearPlot</span>()
+  <span class='fu'>Plot</span>(<span class='no'>map</span>)
+  <span class='fu'>Plot</span>(<span class='no'>agents</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"map"</span>)
+}</div><img src='initiateAgents-5.png' alt='' width='540' height='400' /><div class='input'>
 <span class='co'># Note, can also produce a Raster representing agents,</span>
 <span class='co'># then the number of points produced can't be more than</span>
 <span class='co'># the number of pixels:</span>
 <span class='no'>agentsRas</span> <span class='kw'>&lt;-</span> <span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='fl'>30</span>, <span class='no'>pr</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agentsRas</span>)
-
+<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'>Plot</span>(<span class='no'>agentsRas</span>)</div><img src='initiateAgents-7.png' alt='' width='540' height='400' /><div class='input'>
 <span class='kw'>if</span> (<span class='fu'>requireNamespace</span>(<span class='st'>"dplyr"</span>)) {
   <span class='co'># Check that the agents are more often at the higher probability areas based on pr</span>
-  <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/na.fail'>na.omit</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/crosstab'>crosstab</a></span>(<span class='no'>agentsRas</span>, <span class='no'>map</span>)), <span class='fu'>table</span>(<span class='fu'>round</span>(<span class='no'>map</span>[]))) <span class='kw'>%&gt;%</span>
-     <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='http://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>selectionRatio</span> <span class='kw'>=</span> <span class='no'>Freq</span>/<span class='no'>Freq.1</span>) <span class='kw'>%&gt;%</span>
-     <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='http://dplyr.tidyverse.org/reference/select.html'>select</a></span>(-<span class='no'>Var1</span>, -<span class='no'>Var1.1</span>) <span class='kw'>%&gt;%</span>
-     <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='http://dplyr.tidyverse.org/reference/select.html'>rename</a></span>(<span class='kw'>Present</span> <span class='kw'>=</span> <span class='no'>Freq</span>, <span class='kw'>Avail</span> <span class='kw'>=</span> <span class='no'>Freq.1</span>, <span class='kw'>Type</span> <span class='kw'>=</span> <span class='no'>Var2</span>)
+  <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>stats</span><span class='kw'>::</span><span class='fu'>na.omit</span>(<span class='fu'>crosstab</span>(<span class='no'>agentsRas</span>, <span class='no'>map</span>)), <span class='fu'>table</span>(<span class='fu'>round</span>(<span class='no'>map</span>[]))) <span class='kw'>%&gt;%</span>
+     <span class='kw'>dplyr</span><span class='kw'>::</span><span class='fu'>mutate</span>(<span class='kw'>selectionRatio</span> <span class='kw'>=</span> <span class='no'>Freq</span>/<span class='no'>Freq.1</span>) <span class='kw'>%&gt;%</span>
+     <span class='kw'>dplyr</span><span class='kw'>::</span><span class='fu'>select</span>(-<span class='no'>Var1</span>, -<span class='no'>Var1.1</span>) <span class='kw'>%&gt;%</span>
+     <span class='kw'>dplyr</span><span class='kw'>::</span><span class='fu'>rename</span>(<span class='kw'>Present</span> <span class='kw'>=</span> <span class='no'>Freq</span>, <span class='kw'>Avail</span> <span class='kw'>=</span> <span class='no'>Freq.1</span>, <span class='kw'>Type</span> <span class='kw'>=</span> <span class='no'>Var2</span>)
   <span class='no'>out</span>
-}
-
-<span class='co'># }</span></pre>
+}</div><div class='output co'>#&gt; <span class='message'>Loading required namespace: dplyr</span></div><div class='output co'>#&gt;    Type Present Avail selectionRatio
+#&gt; 1     0       1     1     1.00000000
+#&gt; 2     0       0     2     0.00000000
+#&gt; 3     2       2     6     0.33333333
+#&gt; 4     2       0     3     0.00000000
+#&gt; 5     3       6    17     0.35294118
+#&gt; 6     3       0    23     0.00000000
+#&gt; 7     4       3    16     0.18750000
+#&gt; 8     4       0    17     0.00000000
+#&gt; 9     5      14     8     1.75000000
+#&gt; 10    5       3     4     0.75000000
+#&gt; 11    6      15     1    15.00000000
+#&gt; 12    6       8     2     4.00000000
+#&gt; 13    7      10     1    10.00000000
+#&gt; 14    7       6     2     3.00000000
+#&gt; 15    8      10     6     1.66666667
+#&gt; 16    8       7     3     2.33333333
+#&gt; 17    9       4    17     0.23529412
+#&gt; 18    9       4    23     0.17391304
+#&gt; 19   10       3    16     0.18750000
+#&gt; 20   10       1    17     0.05882353
+#&gt; 21   11       1     8     0.12500000
+#&gt; 22   11       0     4     0.00000000
+#&gt; 23   12       1     1     1.00000000
+#&gt; 24   12       1     2     0.50000000</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -203,7 +205,7 @@ Eliot McIntire
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
 </div>
 
       </footer>

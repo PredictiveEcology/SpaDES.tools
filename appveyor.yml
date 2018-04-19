@@ -46,7 +46,7 @@ branches:
 clone_depth: 5
 
 build_script:
-  - Rscript -e "install.packages(c('data.table', 'devtools'), dependencies = TRUE, repos = 'https://cran.rstudio.com')"
+  - Rscript -e "install.packages(c('data.table', 'devtools'), dependencies = TRUE, repos = 'https://cran.rstudio.com', type = 'source')"
   - travis-tool.sh install_deps
 
 test_script:
@@ -79,6 +79,8 @@ notifications:
  - provider: Email
    to:
      - alex.chubaty@gmail.com
+     - eliot.mcintire@gmail.com
+     - jean.d.marchal@gmail.com
    subject: 'SpaDES.tools: r-appveyor build {{status}}'
    message: "https://ci.appveyor.com/project/achubaty/spades-tools"
    on_build_success: false
