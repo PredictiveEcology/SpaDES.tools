@@ -51,7 +51,8 @@ checkGDALVersion <- function(version) {
 #'
 #' @param x        A \code{Raster*} object.
 #'
-#' @param y  A \code{SpatialPolygons} object.
+#' @param y  A \code{SpatialPolygons} object. If it is not in the same projection
+#'           as \code{x}, it will be reprojected on the fly to that of \code{x}
 #'
 #' @return A \code{Raster*} object, masked (i.e., smaller extent and/or
 #'         several pixels converted to NA)

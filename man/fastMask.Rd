@@ -9,7 +9,8 @@ fastMask(x, y)
 \arguments{
 \item{x}{A \code{Raster*} object.}
 
-\item{y}{A \code{SpatialPolygons} object.}
+\item{y}{A \code{SpatialPolygons} object. If it is not in the same projection
+as \code{x}, it will be reprojected on the fly to that of \code{x}}
 }
 \value{
 A \code{Raster*} object, masked (i.e., smaller extent and/or
