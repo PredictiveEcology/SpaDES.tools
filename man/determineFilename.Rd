@@ -5,7 +5,7 @@
 \title{Determine filename, either automatically or manually}
 \usage{
 determineFilename(postProcessedFilename = TRUE, targetFilePath,
-  destinationPath)
+  destinationPath, ...)
 }
 \arguments{
 \item{postProcessedFilename}{Logical or character string (a file path). If logical,
@@ -21,6 +21,14 @@ relative.}
 \item{targetFilePath}{Character string. This is used if \code{postProcessedFilename}
 is \code{TRUE}. The resulting post-processed filename will be
 \code{.prefix(basename(targetFilePath), "Small")}.}
+
+\item{...}{\code{\link{cropInputs}}, \code{\link{projectInputs}},
+\code{\link{maskInputs}}, \code{\link{determineFilename}},
+\code{\link{writeOutputs}}. These then pass \code{...} into other functions, like
+\code{\link[raster]{writeRaster}}, or
+\code{sf::st_write}. This might include potentially important
+arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},
+with likely important arguments such as \code{method = "bilinear"}}
 }
 \description{
 Determine filename, either automatically or manually

@@ -102,6 +102,8 @@ NOTE: This function is still experimental: use with caution.
   \item Crop using \code{\link{cropInputs}}
   \item Project using \code{\link{projectInputs}}
   \item Mask using \code{\link{MaskInputs}}
+  \item Determine file name \code{\link{determineFilename}} via \code{postProcessedFilename}
+  \item Write that file name to disk, optionally \code{\link{writeOutputs}}
 }
 
 NOTE: checksumming does not occur during the post-processing stage, as there are
@@ -150,15 +152,14 @@ unlink(dPath, recursive = TRUE)
 ecozoneFilename <- file.path(dPath, "ecozones.shp")
 ecozoneFiles <- c("ecozones.dbf", "ecozones.prj",
                   "ecozones.sbn", "ecozones.sbx", "ecozones.shp", "ecozones.shx")
-shpEcozone <- prepInputs(targetFile = asPath(ecozoneFilename),
+shpEcozone <- prepInputs(targetFile = ecozoneFilename,
                     url = "http://sis.agr.gc.ca/cansis/nsdb/ecostrat/zone/ecozone_shp.zip",
-                    alsoExtract = asPath(ecozoneFiles),
+                    alsoExtract = ecozoneFiles,
                     fun = "shapefile", destinationPath = dPath)
 unlink(dPath, recursive = TRUE)
 
 #' # Add a study area to Crop and Mask to
 # Create a "study area"
-library(SpaDES.tools)
 StudyArea <- randomPolygon(x = sp::SpatialPoints(matrix(c(-110, 60), ncol=2)), 1e8)
 
 #  specify targetFile, alsoExtract, and fun, wrap with Cache
@@ -167,13 +168,16 @@ ecozoneFilename <- file.path(dPath, "ecozones.shp")
 #   targetFile is there, it will not redownload the archive.
 ecozoneFiles <- c("ecozones.dbf", "ecozones.prj",
                   "ecozones.sbn", "ecozones.sbx", "ecozones.shp", "ecozones.shx")
+library(reproducible)
 shpEcozoneSm <- Cache(prepInputs,
                          url = "http://sis.agr.gc.ca/cansis/nsdb/ecostrat/zone/ecozone_shp.zip",
-                         targetFile = asPath(ecozoneFilename),
-                         alsoExtract = asPath(ecozoneFiles),
+                         targetFile = reproducible::asPath(ecozoneFilename),
+                         alsoExtract = reproducible::asPath(ecozoneFiles),
                          studyArea = StudyArea,
-                         fun = "shapefile", destinationPath = dPath)
+                         fun = "shapefile", destinationPath = dPath,
+                         postProcessedFilename = "EcozoneFile.shp") # passed to determineFilename
 
+library(quickPlot)
 dev();
 Plot(shpEcozone)
 Plot(shpEcozoneSm, addTo = "shpEcozone", gp = gpar(col = "red"))

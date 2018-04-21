@@ -37,6 +37,8 @@ if (getRversion() >= "3.1.0") {
 #'   \item Crop using \code{\link{cropInputs}}
 #'   \item Project using \code{\link{projectInputs}}
 #'   \item Mask using \code{\link{MaskInputs}}
+#'   \item Determine file name \code{\link{determineFilename}} via \code{postProcessedFilename}
+#'   \item Write that file name to disk, optionally \code{\link{writeOutputs}}
 #' }
 #'
 #' NOTE: checksumming does not occur during the post-processing stage, as there are
@@ -151,15 +153,14 @@ if (getRversion() >= "3.1.0") {
 #' ecozoneFilename <- file.path(dPath, "ecozones.shp")
 #' ecozoneFiles <- c("ecozones.dbf", "ecozones.prj",
 #'                   "ecozones.sbn", "ecozones.sbx", "ecozones.shp", "ecozones.shx")
-#' shpEcozone <- prepInputs(targetFile = asPath(ecozoneFilename),
+#' shpEcozone <- prepInputs(targetFile = ecozoneFilename,
 #'                     url = "http://sis.agr.gc.ca/cansis/nsdb/ecostrat/zone/ecozone_shp.zip",
-#'                     alsoExtract = asPath(ecozoneFiles),
+#'                     alsoExtract = ecozoneFiles,
 #'                     fun = "shapefile", destinationPath = dPath)
 #' unlink(dPath, recursive = TRUE)
 #'
 #' #' # Add a study area to Crop and Mask to
 #' # Create a "study area"
-#' library(SpaDES.tools)
 #' StudyArea <- randomPolygon(x = sp::SpatialPoints(matrix(c(-110, 60), ncol=2)), 1e8)
 #'
 #' #  specify targetFile, alsoExtract, and fun, wrap with Cache
@@ -168,13 +169,16 @@ if (getRversion() >= "3.1.0") {
 #' #   targetFile is there, it will not redownload the archive.
 #' ecozoneFiles <- c("ecozones.dbf", "ecozones.prj",
 #'                   "ecozones.sbn", "ecozones.sbx", "ecozones.shp", "ecozones.shx")
+#' library(reproducible)
 #' shpEcozoneSm <- Cache(prepInputs,
 #'                          url = "http://sis.agr.gc.ca/cansis/nsdb/ecostrat/zone/ecozone_shp.zip",
-#'                          targetFile = asPath(ecozoneFilename),
-#'                          alsoExtract = asPath(ecozoneFiles),
+#'                          targetFile = reproducible::asPath(ecozoneFilename),
+#'                          alsoExtract = reproducible::asPath(ecozoneFiles),
 #'                          studyArea = StudyArea,
-#'                          fun = "shapefile", destinationPath = dPath)
+#'                          fun = "shapefile", destinationPath = dPath,
+#'                          postProcessedFilename = "EcozoneFile.shp") # passed to determineFilename
 #'
+#' library(quickPlot)
 #' dev();
 #' Plot(shpEcozone)
 #' Plot(shpEcozoneSm, addTo = "shpEcozone", gp = gpar(col = "red"))
@@ -360,6 +364,8 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
                            names(formals(fixErrors)),
                            names(formals(writeRaster)),
                            names(formals(projectRaster)),
+                           names(formals(determineFilename)),
+                           names(formals(writeOutputs)),
                            unlist(lapply(methods("postProcess"), function(x) names(formals(x))))))
   args <- dots[!(names(dots) %in% argsToRemove)]
   if (length(args) == 0) args <- NULL
@@ -369,13 +375,13 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     # Don't cache the reading of a raster -- normal reading of raster on disk is fast b/c only reads metadata
     x <- do.call(fun, append(list(asPath(targetFilePath)), args))
   } else {
-    x <- Cache(do.call, fun, append(list(asPath(targetFilePath)), args))
+    x <- do.call(fun, append(list(asPath(targetFilePath)), args))
     #x <- Cache(fun, asPath(targetFilePath), ...)
   }
 
 
   # postProcess
-  out <- postProcess(x, targetFilePath = targetFilePath, #destinationPath = destinationPath,
+  out <- postProcess(x, targetFilePath = targetFilePath, destinationPath = destinationPath,
                      ...)
   return(out)
 }
@@ -751,9 +757,10 @@ postProcess.default <- function(x, ...) {
 #' @param useSAcrs Logical. If \code{FALSE}, the default, then the desired projection
 #'                 will be taken from \code{rasterToMatch} or none at all.
 #'                 If \code{TRUE}, it will be taken from \code{studyArea}.
-#' @param ... \code{\link{cropInputs}}, \code{\link{writeOutputs}} and
-#'            \code{\link{Cache}}. These each may then pass \code{...} into
-#'            \code{\link[raster]{writeRaster}}, \code{\link[raster]{shapefile}}, or
+#' @param ... \code{\link{cropInputs}}, \code{\link{projectInputs}},
+#'            \code{\link{maskInputs}}, \code{\link{determineFilename}},
+#'            \code{\link{writeOutputs}}. These then pass \code{...} into other functions, like
+#'            \code{\link[raster]{writeRaster}}, or
 #'            \code{sf::st_write}. This might include potentially important
 #'            arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},
 #'            with likely important arguments such as \code{method = "bilinear"}
@@ -800,11 +807,9 @@ postProcess.spatialObjects <- function(x, targetFilePath, studyArea = NULL, rast
     x <- projectInputs(x, targetCRS = targetCRS, rasterToMatch = rasterToMatch, ...)
     x <- maskInputs(x, studyArea = studyArea, rasterToMatch = rasterToMatch, ...)
 
-    browser()
     newFilename <- determineFilename(targetFilePath = targetFilePath, ...)
+    if (!is.null(list(...)$filename)) stop("Can't pass filename; use postProcessedFilename")
     x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
-    # x <- postProcessedFilename(x, targetFilePath = targetFilePath,
-    #                   overwrite = overwrite, ...)
 
   }
   x
@@ -923,7 +928,7 @@ projectInputs.sf <- function(x, targetCRS, ...) {
   warning("sf class objects not fully implemented. Use with projectInputs.sf caution")
   if (requireNamespace("sf")) {
     if (any(sf::st_is(x, c("POLYGON", "MULTIPOLYGON"))) && !any(isValid <- sf::st_is_valid(x))) {
-      x[!isValid] <- Cache(sf::st_buffer, x[!isValid], dist = 0, ...)
+      x[!isValid] <- sf::st_buffer(x[!isValid], dist = 0, ...)
     }
 
     x <- sf::st_transform(x = x, crs = sf::st_crs(targetCRS@projargs), ...)
@@ -1032,7 +1037,7 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #'                     It will be tested whether it is an absolute or relative path and used
 #'                     as is if absolute or prepended with \code{destinationPath} if
 #'                     relative.
-determineFilename <- function(postProcessedFilename = TRUE, targetFilePath, destinationPath) {
+determineFilename <- function(postProcessedFilename = TRUE, targetFilePath, destinationPath, ...) {
   if (!(is.logical(postProcessedFilename) || is.character(postProcessedFilename))) {
     stop("postProcessedFilename must be logical or character string")
   }
@@ -1092,8 +1097,9 @@ writeOutputs.Raster <- function(x, filename, ...) {
 
 writeOutputs.Spatial <- function(x, filename, ...) {
   if (!is.null(filename)) {
-    shapefile(x = x, filename = filename, ...)
+    shapefile(x = x, filename = filename)
   }
+  x
 }
 
 writeOutputs.sf <- function(x, filename, ...) {

@@ -31,9 +31,10 @@ pass the checksums or the files are all there.}
 will be taken from \code{rasterToMatch} or none at all.
 If \code{TRUE}, it will be taken from \code{studyArea}.}
 
-\item{...}{\code{\link{cropInputs}}, \code{\link{writeOutputs}} and
-\code{\link{Cache}}. These each may then pass \code{...} into
-\code{\link[raster]{writeRaster}}, \code{\link[raster]{shapefile}}, or
+\item{...}{\code{\link{cropInputs}}, \code{\link{projectInputs}},
+\code{\link{maskInputs}}, \code{\link{determineFilename}},
+\code{\link{writeOutputs}}. These then pass \code{...} into other functions, like
+\code{\link[raster]{writeRaster}}, or
 \code{sf::st_write}. This might include potentially important
 arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},
 with likely important arguments such as \code{method = "bilinear"}}
