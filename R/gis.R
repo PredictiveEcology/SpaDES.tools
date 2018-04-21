@@ -97,7 +97,6 @@ checkGDALVersion <- function(version) {
 #'
 fastMask <- function(x, y) {
   if (requireNamespace("sf") && requireNamespace("fasterize")) {
-    browser()
     message("fastMask is using sf and fasterize")
 
     if (!identical(crs(y), crs(x))) {
