@@ -10,8 +10,8 @@
 \arguments{
 \item{x}{A \code{Spatial*}, \code{sf} or \code{Raster*} object.}
 
-\item{targetFilePath}{Character string. This is used if \code{writeCropped}
-is \code{TRUE}. The resulting cropped filename will be
+\item{targetFilePath}{Character string. This is used if \code{postProcessedFilename}
+is \code{TRUE}. The resulting post-processed filename will be
 \code{.prefix(basename(targetFilePath), "Small")}.}
 
 \item{studyArea}{Template \code{SpatialPolygons*} object used for masking, after cropping.
@@ -31,28 +31,18 @@ pass the checksums or the files are all there.}
 will be taken from \code{rasterToMatch} or none at all.
 If \code{TRUE}, it will be taken from \code{studyArea}.}
 
-\item{...}{\code{\link{cropInputs}}, \code{\link{writeInputsOnDisk}} and
+\item{...}{\code{\link{cropInputs}}, \code{\link{writeOutputs}} and
 \code{\link{Cache}}. These each may then pass \code{...} into
 \code{\link[raster]{writeRaster}}, \code{\link[raster]{shapefile}}, or
 \code{sf::st_write}. This might include potentially important
 arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},
 with likely important arguments such as \code{method = "bilinear"}}
-
-\item{writeCropped}{Logical or character string (a file path). If logical,
-then the cropped/masked raster will
-be written to disk with the original targetFile name,
-with \code{croppedFilenamePrefix} prefixed to the
-basename(targetFilename).
-If a character string, it will be the path of the saved raster.
-It will be tested whether it is an absolute or relative path and used
-as is if absolute or prepended with \code{destinationPath} if
-relative.}
 }
 \description{
 The method for spatialObjects (\code{Raster*} and \code{Spatial*}) will
 crop, reproject, and mask, in that order.  This function is a wrapper for
 \code{\link{cropInputs}}, \code{\link{maskInputs}} and
-\code{\link{writeInputsOnDisk}}, with a decent amount of data manipulating
+\code{\link{writeOutputs}}, with a decent amount of data manipulating
 between these calls so that the crs match.
 }
 \section{Passing \code{rasterToMatch} and/or \code{studyArea}}{

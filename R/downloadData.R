@@ -1,3 +1,10 @@
+### deal with spurious httr warnings
+if (getRversion() >= "3.1.0") {
+  utils::globalVariables(c(#"actualFile",
+                           "checksum.x", "checksum.y", #"content",
+                           "expectedFile", "filesize.x", "filesize.y", "result"))
+}
+
 ################################################################################
 #' Calculate checksums for a module's data files
 #'
@@ -313,15 +320,23 @@ remoteFileSize <- function(url) {
 #'         there is no possibility that the file has changed, i.e., if \code{downloadData} is
 #'         called from inside another function
 #'
+#' @param urls Character vector of urls from which to get the data. This is automatically
+#'             found from module metadata when this function invoked with
+#'            \code{SpaDES.core::downloadModule(..., data = TRUE)}. See also
+#'            \code{\link{prepInputs}}
+#'
+#' @param children The character vector of child modules (without path) to also
+#'                 run \code{downloadData} on
+#'
 #' @return Invisibly, a list of downloaded files.
 #'
-#' @seealso \code{checksums} and \code{downloadModule} in
+#' @seealso \code{\link{prepInputs}}, \code{checksums} and \code{downloadModule} in
 #'       \code{SpaDES.core} package for downloading modules and building a checksums file.
 #'
 #' @author Alex Chubaty
 #' @author Eliot McIntire
 #' @export
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate bind_rows
 #' @importFrom googledrive as_id drive_auth drive_download
 #' @importFrom reproducible checkPath
 #' @importFrom RCurl url.exists
@@ -350,7 +365,7 @@ setMethod(
   signature = c(module = "character", path = "character", quiet = "logical",
                 quickCheck = "ANY", overwrite = "ANY", files = "ANY", checked = "ANY",
                 urls = "ANY", children = "ANY"),
-  definition = function(module, path, quiet, quickCheck, overwrite, files, checked, children) {
+  definition = function(module, path, quiet, quickCheck, overwrite, files, checked, urls, children) {
     cwd <- getwd()
     path <- checkPath(path, create = FALSE)
     # inputs <- .parseModulePartial(filename = file.path(path, module, paste0(module, ".R")),
@@ -579,7 +594,7 @@ setMethod(
   "downloadData",
   signature = c(module = "character", path = "missing", quiet = "missing", quickCheck = "ANY",
                 overwrite = "ANY", files = "ANY", checked = "ANY", urls = "ANY", children = "ANY"),
-  definition = function(module, quickCheck, overwrite, files, checked, children) {
+  definition = function(module, quickCheck, overwrite, files, checked, urls, children) {
     downloadData(module = module, path = getOption("spades.modulePath"), quiet = FALSE,
                  quickCheck = quickCheck, overwrite = overwrite, files = files,
                  checked = checked, urls = urls, children = children)
@@ -606,3 +621,40 @@ setMethod(
                  quickCheck = quickCheck, overwrite = overwrite, files = files,
                  checked = checked, urls = urls, children = children)
   })
+
+
+################################################################################
+#' Calculate the hashes of multiple files
+#'
+#' Internal function. Wrapper for \code{\link[digest]{digest}} using \code{xxhash64}.
+#'
+#' @param file  Character vector of file paths.
+#' @inheritParams downloadData
+#' @param ...   Additional arguments to \code{digest::digest}.
+#'
+#' @return A character vector of hashes.
+#'
+#' @importFrom digest digest
+#' @keywords internal
+#' @rdname digest
+#'
+#' @author Alex Chubaty
+#'
+setGeneric(".digest", function(file, quickCheck, ...) {
+  standardGeneric(".digest")
+})
+
+#' @rdname digest
+setMethod(
+  ".digest",
+  signature = c(file = "character"),
+  definition = function(file, quickCheck, algo = "xxhash64", ...) {
+    if (quickCheck) {
+      file.size(file) %>% as.character() # need as.character for empty case
+    } else {
+      lapply(file, function(f) {
+        digest::digest(object = f, file = TRUE, algo = algo, ...)
+      }) %>% unlist() %>% unname() %>% as.character() # need as.character for empty case # nolint
+    }
+  })
+

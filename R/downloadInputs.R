@@ -373,8 +373,6 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     #x <- Cache(fun, asPath(targetFilePath), ...)
   }
 
-  # fix errors if methods available
-  fixErrors(x, targetFile = targetFile, ...)
 
   # postProcess
   out <- postProcess(x, targetFilePath = targetFilePath, #destinationPath = destinationPath,
@@ -631,6 +629,15 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
   file.path(dirname(f), paste0(prefix, basename(f)))
 }
 
+#' \code{SpaDES.tools} deprecated functions
+#'
+#' @param name A character string giving the name/path of a file.
+#'
+smallNamify <- function(name) {
+  .Deprecated(".prefix", package = "SpaDES.tools")
+  .prefix(name, prefix = "Small")
+}
+
 #' @export
 #' @rdname prefix
 .suffix <- function(f, suffix = "") {
@@ -731,29 +738,20 @@ postProcess.default <- function(x, ...) {
 #' The method for spatialObjects (\code{Raster*} and \code{Spatial*}) will
 #' crop, reproject, and mask, in that order.  This function is a wrapper for
 #' \code{\link{cropInputs}}, \code{\link{maskInputs}} and
-#' \code{\link{writeInputsOnDisk}}, with a decent amount of data manipulating
+#' \code{\link{writeOutputs}}, with a decent amount of data manipulating
 #' between these calls so that the crs match.
 #'
 #' @export
 #' @inheritParams prepInputs
 #' @inheritParams cropInputs
 #' @param x A \code{Spatial*}, \code{sf} or \code{Raster*} object.
-#' @param targetFilePath Character string. This is used if \code{writeCropped}
-#'                       is \code{TRUE}. The resulting cropped filename will be
+#' @param targetFilePath Character string. This is used if \code{postProcessedFilename}
+#'                       is \code{TRUE}. The resulting post-processed filename will be
 #'                       \code{.prefix(basename(targetFilePath), "Small")}.
-#' @param writeCropped Logical or character string (a file path). If logical,
-#'                     then the cropped/masked raster will
-#'                     be written to disk with the original targetFile name,
-#'                     with \code{croppedFilenamePrefix} prefixed to the
-#'                     basename(targetFilename).
-#'                     If a character string, it will be the path of the saved raster.
-#'                     It will be tested whether it is an absolute or relative path and used
-#'                     as is if absolute or prepended with \code{destinationPath} if
-#'                     relative.
 #' @param useSAcrs Logical. If \code{FALSE}, the default, then the desired projection
 #'                 will be taken from \code{rasterToMatch} or none at all.
 #'                 If \code{TRUE}, it will be taken from \code{studyArea}.
-#' @param ... \code{\link{cropInputs}}, \code{\link{writeInputsOnDisk}} and
+#' @param ... \code{\link{cropInputs}}, \code{\link{writeOutputs}} and
 #'            \code{\link{Cache}}. These each may then pass \code{...} into
 #'            \code{\link[raster]{writeRaster}}, \code{\link[raster]{shapefile}}, or
 #'            \code{sf::st_write}. This might include potentially important
@@ -791,17 +789,22 @@ postProcess.default <- function(x, ...) {
 #' }
 postProcess.spatialObjects <- function(x, targetFilePath, studyArea = NULL, rasterToMatch = NULL,
                                        overwrite = TRUE, useSAcrs = FALSE,
-                                       #destinationPath = tempdir(),
                                        ...) {
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
+
+    # fix errors if methods available
+    fixErrors(x, targetFile = basename(targetFilePath), ...)
 
     x <- cropInputs(x, studyArea = studyArea, rasterToMatch = rasterToMatch, ...)
     targetCRS <- getTargetCRS(useSAcrs, studyArea, rasterToMatch)
     x <- projectInputs(x, targetCRS = targetCRS, rasterToMatch = rasterToMatch, ...)
     x <- maskInputs(x, studyArea = studyArea, rasterToMatch = rasterToMatch, ...)
 
-    x <- writeCropped(x, targetFilePath = targetFilePath, #writeCropped = writeCropped,
-                      overwrite = overwrite, ...)
+    browser()
+    newFilename <- determineFilename(targetFilePath = targetFilePath, ...)
+    x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
+    # x <- postProcessedFilename(x, targetFilePath = targetFilePath,
+    #                   overwrite = overwrite, ...)
 
   }
   x
@@ -842,70 +845,6 @@ cropInputs <- function(x, studyArea, rasterToMatch, ...) {
   UseMethod("cropInputs")
 }
 
-#' Hierachically get crs from \code{Raster*}, \code{Spatial*}
-#'
-#' This is the function that follows the table of order of
-#' preference for determining CRS. See \code{\link{postProcess.spatialObjects}}
-#'
-#' @export
-getTargetCRS <- function(useSAcrs, studyArea, rasterToMatch) {
-  targetCRS <- if (useSAcrs) {
-    crs(studyArea)
-  } else if (!is.null(rasterToMatch)) {
-    crs(rasterToMatch)
-  } else {
-    NULL # don't reproject a Raster if only has studyArea -- too lossy
-  }
-  targetCRS
-}
-
-#' @export
-projectInputs <- function(x, targetCRS, ...) {
-  UseMethod("projectInputs")
-}
-
-#' @export
-projectInputs.Raster <- function(x, targetCRS, rasterToMatch, ...) {
-
-  if (!is.null(targetCRS)) {
-    if (!identical(crs(x), targetCRS) |
-        !identical(res(x), res(rasterToMatch)) |
-        !identical(extent(x), extent(rasterToMatch))) {
-      message("    reprojecting")
-      x <- projectRaster(from = x, to = rasterToMatch, ...)
-    } else {
-      message("    no reprojecting because target characteristics same as input Raster")
-    }
-  } else {
-    message("    no reprojecting because no rasterToMatch & useSAcrs is FALSE")
-  }
-  x
-}
-
-#' @export
-projectInputs.sf <- function(x, targetCRS, ...) {
-  warning("sf class objects not fully implemented. Use with projectInputs.sf caution")
-  if (requireNamespace("sf")) {
-    if (any(sf::st_is(x, c("POLYGON", "MULTIPOLYGON"))) && !any(isValid <- sf::st_is_valid(x))) {
-      x[!isValid] <- Cache(sf::st_buffer, x[!isValid], dist = 0, ...)
-    }
-
-    x <- sf::st_transform(x = x, crs = sf::st_crs(targetCRS@projargs), ...)
-
-  } else {
-    stop("Please install sf package: https://github.com/r-spatial/sf")
-  }
-}
-
-#' @export
-projectInputs.Spatial <- function(x, targetCRS, ...) {
-  if (!is.null(targetCRS)) {
-    x <- spTransform(x = x, CRSobj = targetCRS)
-  }
-  x
-}
-
-
 #' @export
 #' @importFrom raster projectExtent
 cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch, ...) {
@@ -939,6 +878,88 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch, ...) {
 }
 
 
+
+#' Project \code{Raster*} or {Spatial*} or \code{sf} objects
+#'
+#' A simple wrapper around the various different tools for these GIS types.
+#'
+#' @export
+#' @param x A \code{Raster*}, \code{Spatial*} or \code{sf} object
+#' @param targetCRS The CRS of x at the end  of this function (i.e., the goal)
+#' @param ... Passed into \code{\link[raster]{projectRaster}},
+#'            \code{\link[raster]{spTransform}} or \code{\link[sf]{st_transform}}
+#'
+#' @return
+#' A file of the same type as starting, but with projection (and possibly other
+#' characteristics, including resolution, origin, extent if changed.
+projectInputs <- function(x, targetCRS, ...) {
+  UseMethod("projectInputs")
+}
+
+#' @export
+projectInputs.Raster <- function(x, targetCRS = NULL, rasterToMatch = NULL, ...) {
+
+  if (!is.null(rasterToMatch)) {
+    if (!is.null(targetCRS)) {
+      if (!identical(crs(x), targetCRS) |
+          !identical(res(x), res(rasterToMatch)) |
+          !identical(extent(x), extent(rasterToMatch))) {
+        message("    reprojecting")
+        x <- projectRaster(from = x, to = rasterToMatch, ...)
+      } else {
+        message("    no reprojecting because target characteristics same as input Raster")
+      }
+    } else {
+      message("    no reprojecting because no rasterToMatch & useSAcrs is FALSE")
+    }
+  } else {
+    message("    no reprojecting because no rasterToMatch")
+  }
+  x
+}
+
+#' @export
+projectInputs.sf <- function(x, targetCRS, ...) {
+  warning("sf class objects not fully implemented. Use with projectInputs.sf caution")
+  if (requireNamespace("sf")) {
+    if (any(sf::st_is(x, c("POLYGON", "MULTIPOLYGON"))) && !any(isValid <- sf::st_is_valid(x))) {
+      x[!isValid] <- Cache(sf::st_buffer, x[!isValid], dist = 0, ...)
+    }
+
+    x <- sf::st_transform(x = x, crs = sf::st_crs(targetCRS@projargs), ...)
+
+  } else {
+    stop("Please install sf package: https://github.com/r-spatial/sf")
+  }
+}
+
+#' @export
+projectInputs.Spatial <- function(x, targetCRS, ...) {
+  if (!is.null(targetCRS)) {
+    x <- spTransform(x = x, CRSobj = targetCRS)
+  }
+  x
+}
+
+
+#' Hierachically get crs from \code{Raster*}, \code{Spatial*}
+#'
+#' This is the function that follows the table of order of
+#' preference for determining CRS. See \code{\link{postProcess.spatialObjects}}
+#' @inheritParams postProcess.spatialObjects
+#' @export
+getTargetCRS <- function(useSAcrs, studyArea, rasterToMatch) {
+  targetCRS <- if (useSAcrs) {
+    crs(studyArea)
+  } else if (!is.null(rasterToMatch)) {
+    crs(rasterToMatch)
+  } else {
+    NULL # don't reproject a Raster if only has studyArea -- too lossy
+  }
+  targetCRS
+}
+
+
 #' Mask module inputs
 #'
 #' This function can be used to mask module inputs from raw data.
@@ -952,6 +973,7 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch, ...) {
 #' @author Eliot McIntire
 #' @author Jean Marchal
 #' @export
+#' @inheritParams cropInputs
 #' @importFrom reproducible Cache
 #' @rdname maskInputs
 #'
@@ -982,47 +1004,54 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
   x
 }
 
-writeCropped <- function(x, targetFilePath, destinationPath, writeCropped = TRUE,
-                         overwrite = TRUE, ...) {
-  # Some assertions
-  if (!(is.logical(writeCropped) || is.character(writeCropped))) {
-    stop("writeCropped must be logical or character string")
+# postProcessedFilename <- function(x, targetFilePath, destinationPath, postProcessedFilename = TRUE,
+#                          overwrite = TRUE, ...) {
+#   # Some assertions
+#   dots <- list(...)
+#   if (!is.null(dots$writeCropped))  {
+#     message("writeCropped is deprecated; use postProcessedFilename")
+#     postProcessedFilename <- dots$writeCropped
+#   }
+#
+#   x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
+#
+#
+#   x
+# }
+
+
+#' Determine filename, either automatically or manually
+#'
+#' @inheritParams postProcess.spatialObjects
+#' @param postProcessedFilename Logical or character string (a file path). If logical,
+#'                     then the cropped/masked raster will
+#'                     be written to disk with the original targetFile name,
+#'                     with \code{croppedFilenamePrefix} prefixed to the
+#'                     basename(targetFilename).
+#'                     If a character string, it will be the path of the saved raster.
+#'                     It will be tested whether it is an absolute or relative path and used
+#'                     as is if absolute or prepended with \code{destinationPath} if
+#'                     relative.
+determineFilename <- function(postProcessedFilename = TRUE, targetFilePath, destinationPath) {
+  if (!(is.logical(postProcessedFilename) || is.character(postProcessedFilename))) {
+    stop("postProcessedFilename must be logical or character string")
   }
 
-  if (!identical(writeCropped, FALSE)) { # allow TRUE or path
-    smallFN <- if (isTRUE(writeCropped) ) {
+  newFilename <- if (!identical(postProcessedFilename, FALSE)) { # allow TRUE or path
+    if (isTRUE(postProcessedFilename) ) {
       .prefix(targetFilePath, "Small")
     } else {
-      if (isAbsolutePath(writeCropped)) {
-        writeCropped
+      if (isAbsolutePath(postProcessedFilename)) {
+        postProcessedFilename
       } else {
-        file.path(destinationPath, basename(writeCropped))
+        file.path(destinationPath, basename(postProcessedFilename))
       }
-
     }
-
-    xTmp <- writeInputsOnDisk(
-      x = x,
-      filename = smallFN,
-      overwrite = overwrite,
-      ...
-    )
-
-    if (is(xTmp, "Raster")) { # Rasters need to have their disk-backed value assigned, but not shapefiles
-
-      # This is a bug in writeRaster was spotted with crs of xTmp became
-      # +proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
-      # should have stayed at
-      # +proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0
-      if (!identical(crs(xTmp), crs(x)))
-        crs(xTmp) <- crs(x)
-
-      x <- xTmp
-    }
+  } else {
+    NULL
   }
-  x
+  newFilename
 }
-
 #' Write module inputs on disk
 #'
 #' Can be used to write prepared inputs on disk.
@@ -1039,30 +1068,46 @@ writeCropped <- function(x, targetFilePath, destinationPath, writeCropped = TRUE
 #' @importFrom methods is
 #' @importFrom raster shapefile writeRaster
 #' @importFrom reproducible Cache
-#' @rdname writeInputsOnDisk
+#' @rdname writeOutputs
 #'
-writeInputsOnDisk <- function(x, filename, ...) {
-  UseMethod("writeInputsOnDisk")
+writeOutputs <- function(x, filename, ...) {
+  UseMethod("writeOutputs")
 }
 
-writeInputsOnDisk.Raster <- function(x, filename, ...) {
-  writeRaster(x = x, filename = filename, ...)
-}
+writeOutputs.Raster <- function(x, filename, ...) {
+  if (!is.null(filename)) {
+    xTmp <- writeRaster(x = x, filename = filename, ...)
 
-writeInputsOnDisk.Spatial <- function(x, filename, ...) {
-  shapefile(x = x, filename = filename, ...)
-}
+    # This is a bug in writeRaster was spotted with crs of xTmp became
+    # +proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
+    # should have stayed at
+    # +proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0
+    if (!identical(crs(xTmp), crs(x)))
+      crs(xTmp) <- crs(x)
 
-writeInputsOnDisk.sf <- function(x, filename, ...) {
-  if (requireNamespace("sf")) {
-    x <- sf::st_write(obj = x, delete_dsn = TRUE, dsn = filename)
-  } else {
-    stop("Please install sf package: https://github.com/r-spatial/sf")
+    x <- xTmp
   }
   x
 }
 
-writeInputsOnDisk.default <- function(x, filename, ...) {
+writeOutputs.Spatial <- function(x, filename, ...) {
+  if (!is.null(filename)) {
+    shapefile(x = x, filename = filename, ...)
+  }
+}
+
+writeOutputs.sf <- function(x, filename, ...) {
+  if (!is.null(filename)) {
+    if (requireNamespace("sf")) {
+      x <- sf::st_write(obj = x, delete_dsn = TRUE, dsn = filename)
+    } else {
+      stop("Please install sf package: https://github.com/r-spatial/sf")
+    }
+  }
+  x
+}
+
+writeOutputs.default <- function(x, filename, ...) {
   stop("Don't know how to write object of class ", class(x), " on disk.")
 }
 

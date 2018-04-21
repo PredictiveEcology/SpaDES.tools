@@ -17,6 +17,11 @@ maskInputs(x, studyArea, ...)
 
 \item{...}{Arguments passed to methods}
 
+\item{rasterToMatch}{Template \code{Raster*} object used for cropping (so extent should be
+the extent of desired outcome), reprojecting (including changing the
+resolution and projection). See details in
+\code{\link{postProcess.spatialObjects}}.}
+
 \item{maskWithRTM}{Logical. If \code{TRUE}, then the default,}
 }
 \description{

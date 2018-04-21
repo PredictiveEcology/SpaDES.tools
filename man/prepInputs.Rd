@@ -67,25 +67,49 @@ See details and examples.}
 \description{
 This function can be used to prepare R objects from remote or local data sources.
 The object of this function is to provide a reproducible version of a series of
-commonly used steps for getting, loading, and processing data. In the case of
-\code{Spatial*} and \code{Raster*} objects, then the postprocessing may include
-cropping, reprojecting, masking, if the appropriate arguments are used. See examples.
+commonly used steps for getting, loading, and processing data.
+This function has 2 stages: Getting data (download, extracting from archives, loading
+into R) and postProcessing (for \code{Spatial*} and \code{Raster*} objects, this is
+crop, reproject, mask/intersect). To trigger the first stage, provide \code{url} or
+\code{archive}. To trigger the second stage, provide
+\code{studyArea} or \code{rasterToMatch}. See examples.
 }
 \details{
-\code{prepInputs} has some functionality of its own; however, its primary purpose
-is to run in sequence: \code{downloadFile}, \code{extractFromArchive}, \code{fun},
-\code{postProcess}.
-runs several other functions, conditionally and sequentially:
-\code{downloadFromWebDB} or \code{downloadData} if used within a module. If used
-outside of a SpaDES module, then it will use \code{file.download} or
-\code{googledrive::drive_download} if the \code{url} has \code{https://drive.google.com}.
-If the download is a .zip or .tar file (i.e., an archive), then the function will
-run \code{extractFromArchive}. Then it will sequentially try to load the extracted file (if
-passed as \code{targetFile}). If the default \code{fun} is not left as is,
-the function will try to use those. If the file is not a raster file, it will try
-using raster::shapefile. NOTE: This function is still experimental: use
-with caution.
+NOTE: This function is still experimental: use with caution.
 }
+\section{Stage 1 - Getting data}{
+
+
+\enumerate{
+  \item Download from the web via either \code{\link[googledrive]{drive_download}},
+        \code{\link[utils]{download.file}}, or \code{\link{downloadFromWebDB}}.
+  \item Extract from archive using \code{\link{unzip}} or \code{\link{untar}}
+  \item Load into R using \code{\link[raster]{raster}},
+        \code{\link[raster]{shapefile}}, or any other function passed in
+        with \code{fun}
+  \item Checksuming of all files during this process. This is put into a \code{CHECKSUMS.txt}
+        file in the \code{destinationPath}, appending if it is already there,
+        overwriting the entries for same files if entries already exist.
+}
+}
+
+\section{Stage 2 - Post processing}{
+
+
+\enumerate{
+  \item Fix errors. Currently only errors fixed are for \code{SpatialPolygons} using
+        \code{buffer(..., width = 0)}.
+  \item Crop using \code{\link{cropInputs}}
+  \item Project using \code{\link{projectInputs}}
+  \item Mask using \code{\link{MaskInputs}}
+}
+
+NOTE: checksumming does not occur during the post-processing stage, as there are
+no file downloads. To achieve fast results, wrap \code{prepInputs} with \code{Cache}
+
+NOTE: \code{sf} objects are still very experimental.
+}
+
 \section{postProcessing of \code{Raster*} and \code{Spatial*} objects}{
 
 

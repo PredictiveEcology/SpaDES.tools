@@ -13,10 +13,11 @@ downloadData(module, path, quiet, quickCheck = FALSE, overwrite = FALSE,
   files = NULL, checked = NULL, urls = NULL, children = NULL)
 
 \S4method{downloadData}{character,character,logical}(module, path, quiet,
-  quickCheck, overwrite, files, checked, children)
+  quickCheck = FALSE, overwrite = FALSE, files = NULL, checked = NULL,
+  urls = NULL, children = NULL)
 
 \S4method{downloadData}{character,missing,missing}(module, quickCheck,
-  overwrite, files, checked, children)
+  overwrite, files, checked, urls, children)
 
 \S4method{downloadData}{character,missing,logical}(module, quiet, quickCheck,
   overwrite, files, checked, urls, children)
@@ -44,6 +45,14 @@ checked in the CHECKSUMS.txt file}
 \item{checked}{The result of a previous checksums(...) call. This should only be used when
 there is no possibility that the file has changed, i.e., if \code{downloadData} is
 called from inside another function}
+
+\item{urls}{Character vector of urls from which to get the data. This is automatically
+ found from module metadata when this function invoked with
+\code{SpaDES.core::downloadModule(..., data = TRUE)}. See also
+\code{\link{prepInputs}}}
+
+\item{children}{The character vector of child modules (without path) to also
+run \code{downloadData} on}
 }
 \value{
 Invisibly, a list of downloaded files.
@@ -85,7 +94,7 @@ downloadData("thisModule", "there", files = "theFilename.zip")
 
 }
 \seealso{
-\code{checksums} and \code{downloadModule} in
+\code{\link{prepInputs}}, \code{checksums} and \code{downloadModule} in
       \code{SpaDES.core} package for downloading modules and building a checksums file.
 }
 \author{
