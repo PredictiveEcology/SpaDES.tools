@@ -12,7 +12,7 @@ projectInputs(x, targetCRS, ...)
 \item{targetCRS}{The CRS of x at the end  of this function (i.e., the goal)}
 
 \item{...}{Passed into \code{\link[raster]{projectRaster}},
-\code{\link[raster]{spTransform}} or \code{\link[sf]{st_transform}}}
+\code{\link[sp]{spTransform}} or \code{\link[sf]{st_transform}}}
 }
 \value{
 A file of the same type as starting, but with projection (and possibly other

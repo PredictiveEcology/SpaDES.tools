@@ -36,7 +36,7 @@ if (getRversion() >= "3.1.0") {
 #'         \code{buffer(..., width = 0)}.
 #'   \item Crop using \code{\link{cropInputs}}
 #'   \item Project using \code{\link{projectInputs}}
-#'   \item Mask using \code{\link{MaskInputs}}
+#'   \item Mask using \code{\link{maskInputs}}
 #'   \item Determine file name \code{\link{determineFilename}} via \code{postProcessedFilename}
 #'   \item Write that file name to disk, optionally \code{\link{writeOutputs}}
 #' }
@@ -892,7 +892,7 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch, ...) {
 #' @param x A \code{Raster*}, \code{Spatial*} or \code{sf} object
 #' @param targetCRS The CRS of x at the end  of this function (i.e., the goal)
 #' @param ... Passed into \code{\link[raster]{projectRaster}},
-#'            \code{\link[raster]{spTransform}} or \code{\link[sf]{st_transform}}
+#'            \code{\link[sp]{spTransform}} or \code{\link[sf]{st_transform}}
 #'
 #' @return
 #' A file of the same type as starting, but with projection (and possibly other
@@ -1037,6 +1037,8 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #'                     It will be tested whether it is an absolute or relative path and used
 #'                     as is if absolute or prepended with \code{destinationPath} if
 #'                     relative.
+#' @param destinationPath If \code{postProcessedFilename} is a relative file path, then this
+#'                        will be the directory of the resulting absolute file path
 determineFilename <- function(postProcessedFilename = TRUE, targetFilePath, destinationPath, ...) {
   if (!(is.logical(postProcessedFilename) || is.character(postProcessedFilename))) {
     stop("postProcessedFilename must be logical or character string")

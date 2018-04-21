@@ -22,6 +22,9 @@ relative.}
 is \code{TRUE}. The resulting post-processed filename will be
 \code{.prefix(basename(targetFilePath), "Small")}.}
 
+\item{destinationPath}{If \code{postProcessedFilename} is a relative file path, then this
+will be the directory of the resulting absolute file path}
+
 \item{...}{\code{\link{cropInputs}}, \code{\link{projectInputs}},
 \code{\link{maskInputs}}, \code{\link{determineFilename}},
 \code{\link{writeOutputs}}. These then pass \code{...} into other functions, like

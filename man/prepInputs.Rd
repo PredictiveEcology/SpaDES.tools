@@ -101,7 +101,7 @@ NOTE: This function is still experimental: use with caution.
         \code{buffer(..., width = 0)}.
   \item Crop using \code{\link{cropInputs}}
   \item Project using \code{\link{projectInputs}}
-  \item Mask using \code{\link{MaskInputs}}
+  \item Mask using \code{\link{maskInputs}}
   \item Determine file name \code{\link{determineFilename}} via \code{postProcessedFilename}
   \item Write that file name to disk, optionally \code{\link{writeOutputs}}
 }
