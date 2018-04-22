@@ -108,6 +108,8 @@ if (getRversion() >= "3.1.0") {
 #'   \code{\link{postProcess}}, these will also be passed into the inner
 #'   functions, e.g., \code{\link{cropInputs}}. See details and examples.
 #'
+#' @param useCache Passed to Cache in various places. Default \code{FALSE}
+#'
 #'
 #' @author Eliot McIntire
 #' @author Jean Marchal
@@ -206,7 +208,7 @@ if (getRversion() >= "3.1.0") {
 prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NULL,
                        destinationPath = ".", fun = NULL,
                        quick = getOption("reproducible.quick"),
-                       overwrite = FALSE, purge = FALSE,
+                       overwrite = FALSE, purge = FALSE, useCache = FALSE,
                        ...) {
 
   dots <- list(...)
@@ -378,8 +380,11 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 
 
   # postProcess
-  out <- postProcess(x, targetFilePath = targetFilePath, destinationPath = destinationPath,
-                     ...)
+  mess <- capture.output(type = "message",
+                         out <-  Cache(postProcess, useCache = useCache,
+                                       x, targetFilePath = targetFilePath, destinationPath = destinationPath,
+                     ...))
+  message(mess)
   return(out)
 }
 

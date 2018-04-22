@@ -7,7 +7,7 @@
 prepInputs(targetFile, url = NULL, archive = NULL, alsoExtract = NULL,
   destinationPath = ".", fun = NULL,
   quick = getOption("reproducible.quick"), overwrite = FALSE,
-  purge = FALSE, ...)
+  purge = FALSE, useCache = FALSE, ...)
 }
 \arguments{
 \item{targetFile}{Character string giving the path to the eventual file
@@ -54,6 +54,8 @@ even if they pass the checksums or the files are all there.}
 \item{purge}{When prepInputs is called from outside a module, it will write a
 \code{CHECKSUMS.txt} file. If there is an incorrect \code{CHECKSUMS.txt},
 this will purge it.}
+
+\item{useCache}{Passed to Cache in various places. Default \code{FALSE}}
 
 \item{...}{Additional arguments that can be passed to \code{fun},
 \code{\link{postProcess}} and also passed to

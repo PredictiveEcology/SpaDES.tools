@@ -32,6 +32,8 @@ even if they pass the checksums or the files are all there.}
 will be taken from \code{rasterToMatch} or none at all.
 If \code{TRUE}, it will be taken from \code{studyArea}.}
 
+\item{useCache}{Passed to Cache in various places. Default \code{FALSE}}
+
 \item{...}{\code{\link{cropInputs}}, \code{\link{projectInputs}},
 \code{\link{maskInputs}}, \code{\link{determineFilename}},
 \code{\link{writeOutputs}}. These then pass \code{...} into other functions, like
