@@ -16,14 +16,13 @@ downloadFromWebDB(filename, filepath, dataset = NULL, quick = FALSE,
 for download. Allows for restricting the lookup for the url to a dataset,
 thus avoiding filename collision.}
 
-\item{quick}{Logical. This is passed internally to \code{\link{checksums}} and
-\code{\link{downloadData}} (the quickCheck argument for both),
-and to \code{\link{Cache}} (the quick argument). This results in
-faster, though less robust checking of inputs. See the respective
-functions.}
+\item{quick}{Logical. This is passed internally to \code{\link{checksums}}
+and \code{\link{downloadData}} (the quickCheck argument for both), and to
+\code{\link{Cache}} (the quick argument). This results in faster, though
+less robust checking of inputs. See the respective functions.}
 
-\item{overwrite}{Logical. Should downloading and all the other actions occur even if they
-pass the checksums or the files are all there.}
+\item{overwrite}{Logical. Should downloading and all the other actions occur
+even if they pass the checksums or the files are all there.}
 }
 \description{
 This function can be used to download a file from a web database listed in

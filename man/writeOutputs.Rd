@@ -4,7 +4,7 @@
 \alias{writeOutputs}
 \title{Write module inputs on disk}
 \usage{
-writeOutputs(x, filename, ...)
+writeOutputs(x, filename, overwrite, ...)
 }
 \arguments{
 \item{x}{An object of postProcessing. See individual methods.}
