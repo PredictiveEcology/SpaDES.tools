@@ -116,14 +116,10 @@ NOTE: This function is still experimental: use with caution.
   \emph{Crop, reproject, mask}, which appears to be a common sequence in
   spatial simulation. See \code{\link{postProcess.spatialObjects}}.
 
-  \subsection{Understanding various combinations of \code{rasterToMatch}
-  and/or \code{studyArea}}{ Please see
-  \code{\link{postProcess.spatialObjects}} }
+  \emph{Understanding various combinations of \code{rasterToMatch}
+  and/or \code{studyArea}:}
+  Please see \code{\link{postProcess.spatialObjects}}.
  }
-
-See also \code{\link{postProcess}}, and notably
-\code{\link{postProcess.spatialObjects}} if a \code{Raster*} or a
-\code{Spatial*}
 }
 
 \examples{
