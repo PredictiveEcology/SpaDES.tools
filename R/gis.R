@@ -51,14 +51,16 @@ checkGDALVersion <- function(version) {
 #'
 #' @param x        A \code{Raster*} object.
 #'
-#' @param y  A \code{SpatialPolygons} object.
+#' @param y  A \code{SpatialPolygons} object. If it is not in the same projection
+#'           as \code{x}, it will be reprojected on the fly to that of \code{x}
 #'
 #' @return A \code{Raster*} object, masked (i.e., smaller extent and/or
 #'         several pixels converted to NA)
 #'
 #' @author Eliot Mcintire
 #' @export
-#' @importFrom raster crop extract mask nlayers raster stack
+#' @importFrom raster crop extract mask nlayers raster stack crs
+#' @importFrom sp spTransform SpatialPolygonsDataFrame
 #'
 #' @examples
 #' library(raster)
@@ -97,6 +99,17 @@ checkGDALVersion <- function(version) {
 fastMask <- function(x, y) {
   if (requireNamespace("sf") && requireNamespace("fasterize")) {
     message("fastMask is using sf and fasterize")
+
+    if (!identical(crs(y), crs(x))) {
+      y <- spTransform(x = y, CRSobj = crs(x))
+    }
+
+
+    if (!is(y, "SpatialPolygonsDataFrame")) {
+      y <- SpatialPolygonsDataFrame(Sr = y, data = data.frame(ID = seq(length(y))),
+                                            match.ID = FALSE)
+    }
+
     numericfield <- names(y)[which(unlist(lapply(names(y), function(x) {
       is.numeric(y[[x]])
     })))[1]]
