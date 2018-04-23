@@ -216,22 +216,27 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   dots <- list(...)
 
   if (!is.null(dots$cacheTags))  {
-    message("cacheTags is deprecated; use userTags which will pass directly to Cache")
+    message("cacheTags is being deprecated; use userTags which will pass directly to Cache")
     dots$userTags <- dots$cacheTags
     dots$cacheTags <- NULL
   }
+  if (!is.null(dots$writeCropped))  {
+    message("writeCropped is being deprecated; use postProcessedFilename, used in determineFilename")
+    dots$postProcessedFilename <- dots$writeCropped
+    dots$writeCropped <- NULL
+  }
   if (!is.null(dots$rasterInterpMethod))  {
-    message("rasterInterpMethod is deprecated; use method which will pass directly to projectRaster")
+    message("rasterInterpMethod is being deprecated; use method which will pass directly to projectRaster")
     dots$method <- dots$rasterInterpMethod
     dots$rasterInterpMethod <- NULL
   }
   if (!is.null(dots$rasterDatatype))  {
-    message("rasterDatatype is deprecated; use datatype which will pass directly to writeRaster")
+    message("rasterDatatype is being deprecated; use datatype which will pass directly to writeRaster")
     dots$datatype <- dots$rasterDatatype
     dots$rasterDatatype <- NULL
   }
   if (!is.null(dots$pkg))  {
-    message("pkg is deprecated; name the package and function directly, ",
+    message("pkg is being deprecated; name the package and function directly, ",
             "if needed, e.g., 'pkg::fun'")
     fun <- paste0(dots$pkg, "::", fun)
     dots$pkg <- NULL
@@ -1066,7 +1071,7 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #   # Some assertions
 #   dots <- list(...)
 #   if (!is.null(dots$writeCropped))  {
-#     message("writeCropped is deprecated; use postProcessedFilename")
+#     message("writeCropped is being deprecated; use postProcessedFilename")
 #     postProcessedFilename <- dots$writeCropped
 #   }
 #
