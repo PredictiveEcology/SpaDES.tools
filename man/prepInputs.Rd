@@ -108,10 +108,8 @@ NOTE: This function is still experimental: use with caution.
   \code{prepInputs} with \code{Cache}
 
   NOTE: \code{sf} objects are still very experimental.
-}
 
-\section{postProcessing of \code{Raster*} and \code{Spatial*} objects}{
-
+\subsection{postProcessing of \code{Raster*} and \code{Spatial*} objects:}{
 
   If \code{rasterToMatch} or \code{studyArea} are used, then this will
   trigger several subsequent functions, specifically the sequence,
@@ -121,6 +119,11 @@ NOTE: This function is still experimental: use with caution.
   \subsection{Understanding various combinations of \code{rasterToMatch}
   and/or \code{studyArea}}{ Please see
   \code{\link{postProcess.spatialObjects}} }
+ }
+
+See also \code{\link{postProcess}}, and notably
+\code{\link{postProcess.spatialObjects}} if a \code{Raster*} or a
+\code{Spatial*}
 }
 
 \examples{

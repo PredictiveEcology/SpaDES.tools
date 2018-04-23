@@ -44,7 +44,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #'   NOTE: \code{sf} objects are still very experimental.
 #'
-#' @section postProcessing of \code{Raster*} and \code{Spatial*} objects:
+#' \subsection{postProcessing of \code{Raster*} and \code{Spatial*} objects:}{
 #'
 #'   If \code{rasterToMatch} or \code{studyArea} are used, then this will
 #'   trigger several subsequent functions, specifically the sequence,
@@ -54,7 +54,11 @@ if (getRversion() >= "3.1.0") {
 #'   \subsection{Understanding various combinations of \code{rasterToMatch}
 #'   and/or \code{studyArea}}{ Please see
 #'   \code{\link{postProcess.spatialObjects}} }
+#'  }
 #'
+#' See also \code{\link{postProcess}}, and notably
+#' \code{\link{postProcess.spatialObjects}} if a \code{Raster*} or a
+#' \code{Spatial*}
 #'
 #' @param targetFile Character string giving the path to the eventual file
 #'   (raster, shapefile, csv, etc.) after downloading and extracting from a zip
@@ -749,6 +753,35 @@ postProcess.default <- function(x, ...) {
 #' \code{\link{writeOutputs}}, with a decent amount of data manipulating
 #' between these calls so that the crs match.
 #'
+#'
+#' @section Post processing sequence:
+#'
+#'   \enumerate{ \item Fix errors. Currently only errors fixed are for
+#'   \code{SpatialPolygons} using \code{buffer(..., width = 0)}. \item Crop
+#'   using \code{\link{cropInputs}} \item Project using
+#'   \code{\link{projectInputs}} \item Mask using \code{\link{maskInputs}} \item
+#'   Determine file name \code{\link{determineFilename}} via
+#'   \code{postProcessedFilename} \item Write that file name to disk, optionally
+#'   \code{\link{writeOutputs}} }
+#'
+#'   NOTE: checksumming does not occur during the post-processing stage, as
+#'   there are no file downloads. To achieve fast results, wrap
+#'   \code{prepInputs} with \code{Cache}
+#'
+#'   NOTE: \code{sf} objects are still very experimental.
+#'
+#' \subsection{postProcessing of \code{Raster*} and \code{Spatial*} objects:}{
+#'
+#'   If \code{rasterToMatch} or \code{studyArea} are used, then this will
+#'   trigger several subsequent functions, specifically the sequence,
+#'   \emph{Crop, reproject, mask}, which appears to be a common sequence in
+#'   spatial simulation. See \code{\link{postProcess.spatialObjects}}.
+#'
+#'   \subsection{Understanding various combinations of \code{rasterToMatch}
+#'   and/or \code{studyArea}}{ Please see
+#'   \code{\link{postProcess.spatialObjects}} }
+#'  }
+#'
 #' @export
 #' @inheritParams prepInputs
 #' @inheritParams cropInputs
@@ -1054,7 +1087,7 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #' @param postProcessedFilename Logical or character string (a file path). If logical,
 #'                     then the cropped/masked raster will
 #'                     be written to disk with the original targetFile name,
-#'                     with \code{croppedFilenamePrefix} prefixed to the
+#'                     with "Small" prefixed to the
 #'                     basename(targetFilename).
 #'                     If a character string, it will be the path of the saved raster.
 #'                     It will be tested whether it is an absolute or relative path and used

@@ -11,7 +11,7 @@ determineFilename(postProcessedFilename = TRUE, targetFilePath,
 \item{postProcessedFilename}{Logical or character string (a file path). If logical,
 then the cropped/masked raster will
 be written to disk with the original targetFile name,
-with \code{croppedFilenamePrefix} prefixed to the
+with "Small" prefixed to the
 basename(targetFilename).
 If a character string, it will be the path of the saved raster.
 It will be tested whether it is an absolute or relative path and used
