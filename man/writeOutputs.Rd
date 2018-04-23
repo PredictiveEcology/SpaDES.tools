@@ -4,13 +4,16 @@
 \alias{writeOutputs}
 \title{Write module inputs on disk}
 \usage{
-writeOutputs(x, filename, ...)
+writeOutputs(x, filename, overwrite, ...)
 }
 \arguments{
 \item{x}{An object of postProcessing. See individual methods.}
 
 \item{filename}{The filename to save the output object to disk (a \code{Raster*} or
 \code{Spatial*} object)}
+
+\item{overwrite}{Logical. Should file being written overwrite an existing file if it
+exists.}
 
 \item{...}{Passed to \code{\link[raster]{writeRaster}}, such as \code{datatype},
 and \code{\link[raster]{shapefile}}}

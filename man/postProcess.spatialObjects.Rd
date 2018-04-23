@@ -5,7 +5,8 @@
 \title{Post processing for \code{spatialObjects}}
 \usage{
 \method{postProcess}{spatialObjects}(x, targetFilePath, studyArea = NULL,
-  rasterToMatch = NULL, overwrite = TRUE, useSAcrs = FALSE, ...)
+  rasterToMatch = NULL, overwrite = TRUE, useSAcrs = FALSE,
+  useCache = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{Spatial*}, \code{sf} or \code{Raster*} object.}
@@ -24,12 +25,14 @@ the extent of desired outcome), reprojecting (including changing the
 resolution and projection). See details in
 \code{\link{postProcess.spatialObjects}}.}
 
-\item{overwrite}{Logical. Should downloading and all the other actions occur even if they
-pass the checksums or the files are all there.}
+\item{overwrite}{Logical. Should downloading and all the other actions occur
+even if they pass the checksums or the files are all there.}
 
 \item{useSAcrs}{Logical. If \code{FALSE}, the default, then the desired projection
 will be taken from \code{rasterToMatch} or none at all.
 If \code{TRUE}, it will be taken from \code{studyArea}.}
+
+\item{useCache}{Passed to Cache in various places. Default \code{FALSE}}
 
 \item{...}{\code{\link{cropInputs}}, \code{\link{projectInputs}},
 \code{\link{maskInputs}}, \code{\link{determineFilename}},

@@ -7,72 +7,72 @@
 prepInputs(targetFile, url = NULL, archive = NULL, alsoExtract = NULL,
   destinationPath = ".", fun = NULL,
   quick = getOption("reproducible.quick"), overwrite = FALSE,
-  purge = FALSE, ...)
+  purge = FALSE, useCache = FALSE, ...)
 }
 \arguments{
-\item{targetFile}{Character string giving the path to the eventual
-file (raster, shapefile, csv, etc.) after downloading and extracting from
-a zip or tar archive. This is the file \emph{before}
-it is passed to \code{postProcess}. Currently, the internal
-checksumming does not checksum the file after it is
-\code{postProcess}ed (e.g., cropped/reprojected/masked).
-Using \code{Cache} around \code{prepInputs} will do a
-sufficient job in these cases.}
+\item{targetFile}{Character string giving the path to the eventual file
+(raster, shapefile, csv, etc.) after downloading and extracting from a zip
+or tar archive. This is the file \emph{before} it is passed to
+\code{postProcess}. Currently, the internal checksumming does not checksum
+the file after it is \code{postProcess}ed (e.g.,
+cropped/reprojected/masked). Using \code{Cache} around \code{prepInputs}
+will do a sufficient job in these cases.}
 
-\item{url}{Optional character string indicating the URL to download from. Normally,
-if used within a module, this url should be explicitly given as sourceURL for an
-\code{expectsInput}. In that case, it will use the module's checksums file to
-confirm that the download occurred correctly. If URL is used here, an ad hoc
-checksums will be created in the \code{destinationPath}. This will be used in
-subsequent calls to \code{prepInputs}, comparing the file on hand with the ad hoc
+\item{url}{Optional character string indicating the URL to download from.
+Normally, if used within a module, this url should be explicitly given as
+sourceURL for an \code{expectsInput}. In that case, it will use the
+module's checksums file to confirm that the download occurred correctly. If
+URL is used here, an ad hoc checksums will be created in the
+\code{destinationPath}. This will be used in subsequent calls to
+\code{prepInputs}, comparing the file on hand with the ad hoc
 \code{checksums.txt}.}
 
 \item{archive}{Optional character string giving the path of an archive
 containing \code{targetFile}, or a vector giving a set of nested archives
-(e.g., \code{c("xxx.tar", "inner.zip")}). If there is/are (an) inner archive(s),
-but they are unknown, the function will try all until it finds the
-\code{targetFile}}
+(e.g., \code{c("xxx.tar", "inner.zip")}). If there is/are (an) inner
+archive(s), but they are unknown, the function will try all until it finds
+the \code{targetFile}}
 
 \item{alsoExtract}{Optional character string naming files other than
 \code{targetFile} that must be extracted from the \code{archive}.}
 
-\item{destinationPath}{Character string of a directory in which to download and
-save the file that comes from \code{url} and is also
-where the function will look for \code{archive} or
-\code{targetFile}.}
+\item{destinationPath}{Character string of a directory in which to download
+and save the file that comes from \code{url} and is also where the function
+will look for \code{archive} or \code{targetFile}.}
 
-\item{fun}{Character string indicating the function to use to load \code{targetFile} into
-an \code{R} object.}
+\item{fun}{Character string indicating the function to use to load
+\code{targetFile} into an \code{R} object.}
 
-\item{quick}{Logical. This is passed internally to \code{\link{checksums}} and
-\code{\link{downloadData}} (the quickCheck argument for both),
-and to \code{\link{Cache}} (the quick argument). This results in
-faster, though less robust checking of inputs. See the respective
-functions.}
+\item{quick}{Logical. This is passed internally to \code{\link{checksums}}
+and \code{\link{downloadData}} (the quickCheck argument for both), and to
+\code{\link{Cache}} (the quick argument). This results in faster, though
+less robust checking of inputs. See the respective functions.}
 
-\item{overwrite}{Logical. Should downloading and all the other actions occur even if they
-pass the checksums or the files are all there.}
+\item{overwrite}{Logical. Should downloading and all the other actions occur
+even if they pass the checksums or the files are all there.}
 
-\item{purge}{When prepInputs is called from outside a module, it will write a \code{CHECKSUMS.txt}
-file. If there is an incorrect \code{CHECKSUMS.txt}, this will purge it.}
+\item{purge}{When prepInputs is called from outside a module, it will write a
+\code{CHECKSUMS.txt} file. If there is an incorrect \code{CHECKSUMS.txt},
+this will purge it.}
 
-\item{...}{Additional arguments that can be passed to
-\code{fun}, \code{\link{fixErrors}} and \code{\link{postProcess}} and
-also \code{\link[reproducible]{Cache}}
-(if \code{useCache = TRUE}, which is the default unless
-\code{options(reproducible.useCache = FALSE)}). Since \code{...} is passed to
-\code{\link{postProcess}}, these may be passed into other functions.
-See details and examples.}
+\item{useCache}{Passed to Cache in various places. Default \code{FALSE}}
+
+\item{...}{Additional arguments that can be passed to \code{fun},
+\code{\link{postProcess}} and also passed to
+\code{\link[reproducible]{Cache}} inside \code{postProcess.spatialObjects}.
+Default is \code{useCache = FALSE}. S Aince \code{...} is passed to
+\code{\link{postProcess}}, these will also be passed into the inner
+functions, e.g., \code{\link{cropInputs}}. See details and examples.}
 }
 \description{
-This function can be used to prepare R objects from remote or local data sources.
-The object of this function is to provide a reproducible version of a series of
-commonly used steps for getting, loading, and processing data.
-This function has 2 stages: Getting data (download, extracting from archives, loading
-into R) and postProcessing (for \code{Spatial*} and \code{Raster*} objects, this is
-crop, reproject, mask/intersect). To trigger the first stage, provide \code{url} or
-\code{archive}. To trigger the second stage, provide
-\code{studyArea} or \code{rasterToMatch}. See examples.
+This function can be used to prepare R objects from remote or local data
+sources. The object of this function is to provide a reproducible version of
+a series of commonly used steps for getting, loading, and processing data.
+This function has 2 stages: Getting data (download, extracting from archives,
+loading into R) and postProcessing (for \code{Spatial*} and \code{Raster*}
+objects, this is crop, reproject, mask/intersect). To trigger the first
+stage, provide \code{url} or \code{archive}. To trigger the second stage,
+provide \code{studyArea} or \code{rasterToMatch}. See examples.
 }
 \details{
 NOTE: This function is still experimental: use with caution.
@@ -80,48 +80,47 @@ NOTE: This function is still experimental: use with caution.
 \section{Stage 1 - Getting data}{
 
 
-\enumerate{
-  \item Download from the web via either \code{\link[googledrive]{drive_download}},
-        \code{\link[utils]{download.file}}, or \code{\link{downloadFromWebDB}}.
+  \enumerate{ \item Download from the web via either
+  \code{\link[googledrive]{drive_download}},
+  \code{\link[utils]{download.file}}, or \code{\link{downloadFromWebDB}}.
   \item Extract from archive using \code{\link{unzip}} or \code{\link{untar}}
   \item Load into R using \code{\link[raster]{raster}},
-        \code{\link[raster]{shapefile}}, or any other function passed in
-        with \code{fun}
-  \item Checksuming of all files during this process. This is put into a \code{CHECKSUMS.txt}
-        file in the \code{destinationPath}, appending if it is already there,
-        overwriting the entries for same files if entries already exist.
-}
+  \code{\link[raster]{shapefile}}, or any other function passed in with
+  \code{fun} \item Checksuming of all files during this process. This is put
+  into a \code{CHECKSUMS.txt} file in the \code{destinationPath}, appending
+  if it is already there, overwriting the entries for same files if entries
+  already exist. }
 }
 
 \section{Stage 2 - Post processing}{
 
 
-\enumerate{
-  \item Fix errors. Currently only errors fixed are for \code{SpatialPolygons} using
-        \code{buffer(..., width = 0)}.
-  \item Crop using \code{\link{cropInputs}}
-  \item Project using \code{\link{projectInputs}}
-  \item Mask using \code{\link{maskInputs}}
-  \item Determine file name \code{\link{determineFilename}} via \code{postProcessedFilename}
-  \item Write that file name to disk, optionally \code{\link{writeOutputs}}
-}
+  \enumerate{ \item Fix errors. Currently only errors fixed are for
+  \code{SpatialPolygons} using \code{buffer(..., width = 0)}. \item Crop
+  using \code{\link{cropInputs}} \item Project using
+  \code{\link{projectInputs}} \item Mask using \code{\link{maskInputs}} \item
+  Determine file name \code{\link{determineFilename}} via
+  \code{postProcessedFilename} \item Write that file name to disk, optionally
+  \code{\link{writeOutputs}} }
 
-NOTE: checksumming does not occur during the post-processing stage, as there are
-no file downloads. To achieve fast results, wrap \code{prepInputs} with \code{Cache}
+  NOTE: checksumming does not occur during the post-processing stage, as
+  there are no file downloads. To achieve fast results, wrap
+  \code{prepInputs} with \code{Cache}
 
-NOTE: \code{sf} objects are still very experimental.
+  NOTE: \code{sf} objects are still very experimental.
 }
 
 \section{postProcessing of \code{Raster*} and \code{Spatial*} objects}{
 
 
-If \code{rasterToMatch} or \code{studyArea} are used, then this will trigger several
-subsequent functions, specifically the sequence, \emph{Crop, reproject, mask}, which appears
-to be a common sequence in spatial simulation. See \code{\link{postProcess.spatialObjects}}.
+  If \code{rasterToMatch} or \code{studyArea} are used, then this will
+  trigger several subsequent functions, specifically the sequence,
+  \emph{Crop, reproject, mask}, which appears to be a common sequence in
+  spatial simulation. See \code{\link{postProcess.spatialObjects}}.
 
-\subsection{Understanding various combinations of \code{rasterToMatch} and/or \code{studyArea}}{
-  Please see \code{\link{postProcess.spatialObjects}}
-}
+  \subsection{Understanding various combinations of \code{rasterToMatch}
+  and/or \code{studyArea}}{ Please see
+  \code{\link{postProcess.spatialObjects}} }
 }
 
 \examples{
