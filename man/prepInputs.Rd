@@ -57,11 +57,10 @@ this will purge it.}
 
 \item{useCache}{Passed to Cache in various places. Default \code{FALSE}}
 
-\item{...}{Additional arguments that can be passed to \code{fun},
-\code{\link{postProcess}} and also passed to
-\code{\link[reproducible]{Cache}} inside \code{postProcess.spatialObjects}.
-Default is \code{useCache = FALSE}. S Aince \code{...} is passed to
-\code{\link{postProcess}}, these will also be passed into the inner
+\item{...}{Additional arguments passed to \code{fun} (i.e,. user supplied),
+ \code{\link{postProcess}} and \code{\link[reproducible]{Cache}}.
+Since \code{...} is passed to \code{\link{postProcess}}, these will
+\code{...} will also be passed into the inner
 functions, e.g., \code{\link{cropInputs}}. See details and examples.}
 }
 \description{
@@ -94,6 +93,9 @@ NOTE: This function is still experimental: use with caution.
 
 \section{Stage 2 - Post processing}{
 
+
+  This will be triggered if either \code{rasterToMatch} or \code{studyArea}
+  is supplied.
 
   \enumerate{ \item Fix errors. Currently only errors fixed are for
   \code{SpatialPolygons} using \code{buffer(..., width = 0)}. \item Crop

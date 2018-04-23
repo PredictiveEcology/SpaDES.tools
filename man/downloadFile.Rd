@@ -58,11 +58,10 @@ being called}
 
 \item{modulePath}{Character string of the path where the \code{moduleName} is located.}
 
-\item{...}{Additional arguments that can be passed to \code{fun},
-\code{\link{postProcess}} and also passed to
-\code{\link[reproducible]{Cache}} inside \code{postProcess.spatialObjects}.
-Default is \code{useCache = FALSE}. S Aince \code{...} is passed to
-\code{\link{postProcess}}, these will also be passed into the inner
+\item{...}{Additional arguments passed to \code{fun} (i.e,. user supplied),
+ \code{\link{postProcess}} and \code{\link[reproducible]{Cache}}.
+Since \code{...} is passed to \code{\link{postProcess}}, these will
+\code{...} will also be passed into the inner
 functions, e.g., \code{\link{cropInputs}}. See details and examples.}
 }
 \description{

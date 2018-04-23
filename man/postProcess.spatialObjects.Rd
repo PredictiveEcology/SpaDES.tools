@@ -52,13 +52,17 @@ between these calls so that the crs match.
 \section{Post processing sequence}{
 
 
-  \enumerate{ \item Fix errors. Currently only errors fixed are for
-  \code{SpatialPolygons} using \code{buffer(..., width = 0)}. \item Crop
-  using \code{\link{cropInputs}} \item Project using
-  \code{\link{projectInputs}} \item Mask using \code{\link{maskInputs}} \item
-  Determine file name \code{\link{determineFilename}} via
-  \code{postProcessedFilename} \item Write that file name to disk, optionally
-  \code{\link{writeOutputs}} }
+  If the \code{rasterToMatch} or \code{studyArea} are passed, then
+  the following sequence will occur:
+
+  \enumerate{
+    \item Fix errors. Currently only errors fixed are for \code{SpatialPolygons} using
+           \code{buffer(..., width = 0)}.
+    \item Crop using \code{\link{cropInputs}}
+    \item Project using \code{\link{projectInputs}} \item Mask using \code{\link{maskInputs}}
+    \item Determine file name \code{\link{determineFilename}} via \code{postProcessedFilename}
+    \item Write that file name to disk, optionally \code{\link{writeOutputs}}
+  }
 
   NOTE: checksumming does not occur during the post-processing stage, as
   there are no file downloads. To achieve fast results, wrap
@@ -66,16 +70,9 @@ between these calls so that the crs match.
 
   NOTE: \code{sf} objects are still very experimental.
 
-\subsection{postProcessing of \code{Raster*} and \code{Spatial*} objects:}{
-
-  If \code{rasterToMatch} or \code{studyArea} are used, then this will
-  trigger several subsequent functions, specifically the sequence,
-  \emph{Crop, reproject, mask}, which appears to be a common sequence in
-  spatial simulation. See \code{\link{postProcess.spatialObjects}}.
-
-  \subsection{Understanding various combinations of \code{rasterToMatch}
+ \subsection{Understanding various combinations of \code{rasterToMatch}
   and/or \code{studyArea}}{ Please see
-  \code{\link{postProcess.spatialObjects}} }
+  \code{\link{postProcess.spatialObjects}}
  }
 }
 
