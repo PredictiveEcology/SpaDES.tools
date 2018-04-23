@@ -44,17 +44,16 @@ if (getRversion() >= "3.1.0") {
 #'
 #'   NOTE: \code{sf} objects are still very experimental.
 #'
-#' @section postProcessing of \code{Raster*} and \code{Spatial*} objects:
+#'   \subsection{postProcessing of \code{Raster*} and \code{Spatial*} objects:}
 #'
 #'   If \code{rasterToMatch} or \code{studyArea} are used, then this will
 #'   trigger several subsequent functions, specifically the sequence,
 #'   \emph{Crop, reproject, mask}, which appears to be a common sequence in
 #'   spatial simulation. See \code{\link{postProcess.spatialObjects}}.
 #'
-#'   \subsection{Understanding various combinations of \code{rasterToMatch}
-#'   and/or \code{studyArea}}{ Please see
-#'   \code{\link{postProcess.spatialObjects}} }
-#'
+#'   \emph{Understanding various combinations of \code{rasterToMatch}
+#'   and/or \code{studyArea}:}
+#'   Please see \code{\link{postProcess.spatialObjects}}.
 #'
 #' @param targetFile Character string giving the path to the eventual file
 #'   (raster, shapefile, csv, etc.) after downloading and extracting from a zip
