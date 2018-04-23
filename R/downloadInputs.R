@@ -1089,6 +1089,8 @@ determineFilename <- function(postProcessedFilename = TRUE, targetFilePath, dest
 #' @inheritParams postProcess
 #' @param filename The filename to save the output object to disk (a \code{Raster*} or
 #'                 \code{Spatial*} object)
+#' @param overwrite Logical. Should file being written overwrite an existing file if it
+#'                  exists.
 #' @param ... Passed to \code{\link[raster]{writeRaster}}, such as \code{datatype},
 #'            and \code{\link[raster]{shapefile}}
 #'
