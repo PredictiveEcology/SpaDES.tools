@@ -381,7 +381,8 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     # Don't cache the reading of a raster -- normal reading of raster on disk is fast b/c only reads metadata
     x <- do.call(fun, append(list(asPath(targetFilePath)), args))
   } else {
-    x <- do.call(fun, append(list(asPath(targetFilePath)), args))
+    
+    x <- Cache(do.call, fun, append(list(asPath(targetFilePath)), args))
     #x <- Cache(fun, asPath(targetFilePath), ...)
   }
 
@@ -1059,10 +1060,12 @@ maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, 
   x
 }
 
-maskInputs.Spatial <- function(x, studyArea, ...) {
+maskInputs <- function(x, studyArea, ...) {
   message("    Intersecting")
   studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
-  x <- raster::intersect(x, spTransform(studyArea, CRSobj = crs(x)))
+  studyArea <- spTransform(studyArea, CRSobj = crs(x))
+  studyArea <- fixErrors(studyArea, "studyArea")
+  x <- raster::intersect(x, studyArea)
   x
 }
 
@@ -1265,6 +1268,7 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
     # The download step
     if (!is.null(moduleName)) { # means it is inside a SpaDES module
       if (!is.null(fileToDownload)) {
+        browser()
         downloadData(moduleName, modulePath, files = fileToDownload,
                      checked = checkSums, quickCheck = quick, overwrite = overwrite)
       }
