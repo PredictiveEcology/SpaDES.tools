@@ -49,7 +49,7 @@ Imports:
     raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
     rgdal,
-    reproducible,
+    reproducible (>= 0.1.4.9011),
     sp (>= 1.2-4),
     stats,
     utils,
