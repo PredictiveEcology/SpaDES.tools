@@ -1066,36 +1066,24 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
   x
 }
 
-# postProcessedFilename <- function(x, targetFilePath, destinationPath, postProcessedFilename = TRUE,
-#                          overwrite = TRUE, ...) {
-#   # Some assertions
-#   dots <- list(...)
-#   if (!is.null(dots$writeCropped))  {
-#     message("writeCropped is being deprecated; use postProcessedFilename")
-#     postProcessedFilename <- dots$writeCropped
-#   }
-#
-#   x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
-#
-#
-#   x
-# }
-
 
 #' Determine filename, either automatically or manually
 #'
+#' If postProcessedFilename is \code{TRUE} (the default), then a name
+#' will be created automatically. See details.
+#'
 #' @inheritParams postProcess.spatialObjects
-#' @param postProcessedFilename Logical or character string (a file path). If logical,
-#'                     then the cropped/masked raster will
-#'                     be written to disk with the original targetFile name,
-#'                     with "Small" prefixed to the
-#'                     basename(targetFilename).
-#'                     If a character string, it will be the path of the saved raster.
-#'                     It will be tested whether it is an absolute or relative path and used
-#'                     as is if absolute or prepended with \code{destinationPath} if
-#'                     relative.
+#' @param postProcessedFilename Logical or character string (a file path). See details.
 #' @param destinationPath If \code{postProcessedFilename} is a relative file path, then this
 #'                        will be the directory of the resulting absolute file path
+#'
+#'  If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
+#'  raster will be written to disk with the original targetFile name, with
+#'  \code{"Small"} prefixed to the basename(\code{targetFilename}). If a character string, it
+#'  will be the path of the saved raster. It will be tested whether it is an
+#'  absolute or relative path and used as is if absolute or prepended with
+#'  \code{destinationPath} if relative.
+
 determineFilename <- function(postProcessedFilename = TRUE, targetFilePath, destinationPath, ...) {
   if (!(is.logical(postProcessedFilename) || is.character(postProcessedFilename))) {
     stop("postProcessedFilename must be logical or character string")
