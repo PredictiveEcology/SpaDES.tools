@@ -6,7 +6,7 @@
 \usage{
 \method{postProcess}{spatialObjects}(x, targetFilePath, studyArea = NULL,
   rasterToMatch = NULL, overwrite = TRUE, useSAcrs = FALSE,
-  useCache = FALSE, ...)
+  useCache = getOption("reproducible.useCache", FALSE), ...)
 }
 \arguments{
 \item{x}{A \code{Spatial*}, \code{sf} or \code{Raster*} object.}

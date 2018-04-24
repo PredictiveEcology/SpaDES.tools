@@ -11,7 +11,7 @@ URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
 Date: 2018-04-21
-Version: 0.1.1.9009
+Version: 0.1.1.9010
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
     role = c("aut", "cre")),
@@ -48,11 +48,13 @@ Imports:
     magrittr,
     methods,
     quickPlot,
+    R.utils (>= 2.6.0),
     RandomFields (>= 3.1.24),
     raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
     RCurl (>= 1.95-4.8),
     rgdal,
+    rgeos (>= 0.3-26), 
     reproducible (>= 0.1.4.9011),
     sp (>= 1.2-4),
     stats,

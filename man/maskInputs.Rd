@@ -7,8 +7,7 @@
 \usage{
 maskInputs(x, studyArea, ...)
 
-\method{maskInputs}{Raster}(x, studyArea, rasterToMatch, maskWithRTM = FALSE,
-  ...)
+maskInputs.Raster(x, studyArea, rasterToMatch, maskWithRTM = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{Raster*} object}
