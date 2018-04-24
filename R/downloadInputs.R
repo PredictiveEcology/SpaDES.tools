@@ -210,7 +210,7 @@ if (getRversion() >= "3.1.0") {
 prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NULL,
                        destinationPath = ".", fun = NULL,
                        quick = getOption("reproducible.quick"),
-                       overwrite = FALSE, purge = FALSE, useCache = FALSE,
+                       overwrite = FALSE, purge = FALSE, useCache = getOption("reproducible.useCache", FALSE),
                        ...) {
 
   dots <- list(...)
@@ -832,7 +832,8 @@ postProcess.default <- function(x, ...) {
 #'   * Can be overridden with \code{useSAcrs}
 #' }
 postProcess.spatialObjects <- function(x, targetFilePath, studyArea = NULL, rasterToMatch = NULL,
-                                       overwrite = TRUE, useSAcrs = FALSE, useCache = FALSE,
+                                       overwrite = TRUE, useSAcrs = FALSE,
+                                       useCache = getOption("reproducible.useCache", FALSE),
                                        ...) {
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
 
