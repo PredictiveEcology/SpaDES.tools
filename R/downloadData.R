@@ -372,7 +372,6 @@ setMethod(
     #                               defineModuleElement = "inputObjects")
     # urls <- inputs$sourceURL
 
-    browser()
     if (is.call(urls)) {
       # This is the case where it can't evaluate the .parseModulePartial because of a reference
       #  to the sim object that isn't available. Because sourceURL is unlikely to use
