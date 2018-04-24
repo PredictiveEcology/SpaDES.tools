@@ -381,18 +381,13 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     # Don't cache the reading of a raster -- normal reading of raster on disk is fast b/c only reads metadata
     x <- do.call(fun, append(list(asPath(targetFilePath)), args))
   } else {
-
     x <- Cache(do.call, fun, append(list(asPath(targetFilePath)), args))
-    #x <- Cache(fun, asPath(targetFilePath), ...)
   }
 
-
   # postProcess
-  mess <- capture.output(type = "message",
-                         out <-  Cache(postProcess, useCache = useCache,
-                                       x, targetFilePath = targetFilePath, destinationPath = destinationPath,
-                                       ...))
-  message(mess)
+  out <-  Cache(postProcess, useCache = useCache, x,
+                targetFilePath = targetFilePath, destinationPath = destinationPath,
+                ...)
   return(out)
 }
 
@@ -844,30 +839,35 @@ postProcess.spatialObjects <- function(x, targetFilePath, studyArea = NULL, rast
     skipCacheMess <- "useCache is FALSE, skipping Cache"
     skipCacheMess2 <- "No cacheRepo supplied"
     mess <- capture.output(type = "message",
-                           Cache(fixErrors, x,
+                           tmp <- Cache(fixErrors, x,
                                  targetFile = basename(targetFilePath),
                                  useCache = useCache, ...))
-    message(paste(grep(mess, pattern = skipCacheMess, invert = TRUE, value = TRUE), collapse = "\n"))
+    .groupedMessage(mess, omitPattern = skipCacheMess)
 
+    # cropInputs
     mess <- capture.output(type = "message",
                            x <- Cache(cropInputs, x, studyArea = studyArea,
                                       rasterToMatch = rasterToMatch, useCache = useCache, ...))
-    mess <- grep(mess, pattern = paste(skipCacheMess, skipCacheMess2, sep = "|"), invert = TRUE, value = TRUE)
-    if (length(mess)) message(mess)
+    .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
+
+    # projectInputs
     targetCRS <- getTargetCRS(useSAcrs, studyArea, rasterToMatch)
     mess <- capture.output(type = "message",
                            x <- Cache(projectInputs, x, targetCRS = targetCRS,
                                       rasterToMatch = rasterToMatch, useCache = useCache, ...))
-    mess <- grep(mess, pattern = paste(skipCacheMess, skipCacheMess2, sep = "|"), invert = TRUE, value = TRUE)
-    if (length(mess)) message(mess)
+    .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
+
+    # maskInputs
     mess <- capture.output(type = "message",
                            x <- Cache(maskInputs, x, studyArea = studyArea,
                                       rasterToMatch = rasterToMatch, useCache = useCache, ...))
-    mess <- grep(mess, pattern = paste(skipCacheMess, skipCacheMess2, sep = "|"), invert = TRUE, value = TRUE)
-    if (length(mess)) message(mess)
+    .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
+    # filename
     newFilename <- determineFilename(targetFilePath = targetFilePath, ...)
     if (!is.null(list(...)$filename)) stop("Can't pass filename; use postProcessedFilename")
+
+    # writeOutputs
     x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
 
   }
@@ -1062,13 +1062,14 @@ maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, 
 }
 
 maskInputs <- function(x, studyArea, ...) {
-  message("    Intersecting")
+  message("    intersecting")
   studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
   studyArea <- spTransform(studyArea, CRSobj = crs(x))
   suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
   x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
     warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
-    return(x)})
+    return(x)
+    })
   x
 }
 
@@ -1362,4 +1363,10 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
   } else {
     stop("There is no sourceURL in module metadata")
   }
+}
+
+.groupedMessage <- function(mess, omitPattern) {
+  mess <- grep(mess, pattern = omitPattern,
+               invert = TRUE, value = TRUE)
+  if (length(mess)) message(paste(mess, collapse = "\n    "))
 }
