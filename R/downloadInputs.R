@@ -425,13 +425,14 @@ fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE, ...) {
 #' @export
 #' @param x A \code{SpatialPolygons} object
 #' @inheritParams fixErrors
-fixErrors.SpatialPolygons <- function(x, targetFile, attemptErrorFixes = TRUE, ...) {
+fixErrors.SpatialPolygons <- function(x, targetFile, attemptErrorFixes = TRUE,
+                                      useCache = getOption("reproducible.useCache", FALSE), ...) {
   if (attemptErrorFixes) {
     if (is(x, "SpatialPolygons")) {
       message("Checking for errors in ", targetFile)
       if (suppressWarnings(any(!rgeos::gIsValid(x, byid = TRUE)))) {
         message("Found errors in ", targetFile, ". Attempting to correct.")
-        x1 <- try(raster::buffer(x, width = 0, dissolve = FALSE))
+        x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
         if (is(x1, "try-error")) {
           message("There are errors with ", targetFile,
                   ". Couldn't fix them with raster::buffer(..., width = 0)")
@@ -838,10 +839,9 @@ postProcess.spatialObjects <- function(x, targetFilePath, studyArea = NULL, rast
     }
     skipCacheMess <- "useCache is FALSE, skipping Cache"
     skipCacheMess2 <- "No cacheRepo supplied"
-    mess <- capture.output(type = "message",
-                           tmp <- Cache(fixErrors, x,
-                                 targetFile = basename(targetFilePath),
-                                 useCache = useCache, ...))
+    mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
+                           x <- fixErrors(x, targetFile = basename(targetFilePath),
+                                          useCache = useCache, ...))
     .groupedMessage(mess, omitPattern = skipCacheMess)
 
     # cropInputs
