@@ -1280,8 +1280,8 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
     # The download step
     if (!is.null(moduleName)) { # means it is inside a SpaDES module
       if (!is.null(fileToDownload)) {
-        b <- parse(file = file.path(modulePath, moduleName, paste0(moduleName, '.R')))
-        urls <- .getSourceURL(pattern = fileToDownload, x = b)
+        parsedModule <- parse(file = file.path(modulePath, moduleName, paste0(moduleName, '.R')))
+        urls <- .getSourceURL(pattern = fileToDownload, x = parsedModule)
         downloadData(moduleName, modulePath, files = fileToDownload,
                      checked = checkSums, quickCheck = quick, overwrite = overwrite,
                      urls = urls)
@@ -1348,15 +1348,17 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
 
 
 .getSourceURL <- function(pattern, x) {
-  browser()
   srcURL <- "sourceURL"
-  b <- grep(srcURL, x = x)
-  if (length(b) == 1) {
-    .getSourceURL(pattern, x[[b]])
-  } else if (length(b) > 1) {
+  grepIndex <- grep(srcURL, x = x)
+  if (length(grepIndex) == 1) {
+    .getSourceURL(pattern, x[[grepIndex]])
+  } else if (length(grepIndex) > 1 | length(grepIndex) == 0) {
     y <- grep(pattern = basename(pattern), x)
     if (length(y) == 1) {
-      urls <- eval(x[[y]])$sourceURL
+      urls <- if (length(grepIndex) > 1)
+        eval(x[[y]])$sourceURL
+      else
+        eval(x)$sourceURL
     } else {
       stop("There is no sourceURL for an object named ", basename(pattern))
     }
