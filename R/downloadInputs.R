@@ -1067,7 +1067,7 @@ maskInputs <- function(x, studyArea, ...) {
   suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
   x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
     warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
-    return(x))
+    return(x)})
   x
 }
 
@@ -1346,6 +1346,7 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
 
 
 .getSourceURL <- function(pattern, x) {
+  browser()
   srcURL <- "sourceURL"
   b <- grep(srcURL, x = x)
   if (length(b) == 1) {
