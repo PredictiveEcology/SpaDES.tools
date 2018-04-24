@@ -15,14 +15,7 @@ is \code{TRUE}. The resulting post-processed filename will be
 \code{.prefix(basename(targetFilePath), "Small")}.}
 
 \item{destinationPath}{If \code{postProcessedFilename} is a relative file path, then this
-                       will be the directory of the resulting absolute file path
-
- If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
- raster will be written to disk with the original targetFile name, with
- \code{"Small"} prefixed to the basename(\code{targetFilename}). If a character string, it
- will be the path of the saved raster. It will be tested whether it is an
- absolute or relative path and used as is if absolute or prepended with
- \code{destinationPath} if relative.}
+will be the directory of the resulting absolute file path}
 
 \item{...}{\code{\link{cropInputs}}, \code{\link{projectInputs}},
 \code{\link{maskInputs}}, \code{\link{determineFilename}},
@@ -35,4 +28,12 @@ with likely important arguments such as \code{method = "bilinear"}}
 \description{
 If postProcessedFilename is \code{TRUE} (the default), then a name
 will be created automatically. See details.
+}
+\details{
+If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
+ raster will be written to disk with the original targetFile name, with
+ \code{"Small"} prefixed to the basename(\code{targetFilename}). If a character string, it
+ will be the path of the saved raster. It will be tested whether it is an
+ absolute or relative path and used as is if absolute or prepended with
+ \code{destinationPath} if relative.
 }
