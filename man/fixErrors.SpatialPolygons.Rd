@@ -5,7 +5,7 @@
 \title{Fix \code{rgeos::gIsValid} failures in \code{SpatialPolygons}}
 \usage{
 \method{fixErrors}{SpatialPolygons}(x, targetFile, attemptErrorFixes = TRUE,
-  ...)
+  useCache = getOption("reproducible.useCache", FALSE), ...)
 }
 \arguments{
 \item{x}{A \code{SpatialPolygons} object}

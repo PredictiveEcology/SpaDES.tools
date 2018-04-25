@@ -252,6 +252,12 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     targetFilePath <- NULL
   }
 
+  if (!is.null(alsoExtract)) {
+    alsoExtract <- basename(alsoExtract)
+    alsoExtract <- file.path(destinationPath, alsoExtract)
+  }
+
+
   checkSumFilePath <- file.path(destinationPath, "CHECKSUMS.txt")
   if (purge) unlink(checkSumFilePath)
 
@@ -268,12 +274,12 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 
   if (!is.null(archive)) {
     archive <- file.path(destinationPath, basename(archive))
-    filesToCheck <- c(targetFilePath, archive)
+    filesToCheck <- c(targetFilePath, archive, alsoExtract)
   } else {
     if (!is.null(url)) {
       archive <- .isArchive(file.path(destinationPath, basename(url)))
     }
-    filesToCheck <- targetFilePath
+    filesToCheck <- c(targetFilePath, alsoExtract)
   }
 
   # If quick, then use file.info as part of cache/memoise ... otherwise,
@@ -282,7 +288,11 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   modulePath <- NULL
   if (is.null(url)) { # the only way for this to be useful is if there is a SpaDES module
     # and url can be gotten during downloadData from module metadata
-    fileinfo <- if (quick) file.info(filesToCheck) else runif(1)
+    fileinfo <- if (quick)  {
+      file.info(filesToCheck)
+    } else {
+      runif(1)
+    }
     if (file.exists(checkSumFilePath)) {
       out <- .checkSumsMem(asPath(filesToCheck), fileinfo,
                            asPath(checkSumFilePath), quick = quick)
@@ -315,28 +325,31 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   filesToChecksum <- if (is.null(archive)) character() else basename(archive)
   on.exit({
     if (needChecksums > 0) {
-      if (needChecksums == 2) { # a checksums file already existed, need to keep some of it
-        cs <- try(read.table(checkSumFilePath, header = TRUE), silent = TRUE)
-        if (is(cs, "try-error")) { # meant that it was an empty CHECKSUMS.txt file -- rebuild it
-          needChecksums <- 1
-        } else {
-          nonCurrentFiles <- cs %>%
-            filter(!file %in% filesToChecksum)
-        }
-      }
-      currentFiles <- checksums(path = destinationPath, write = TRUE, #checksumFile = checkSumFilePath,
-                                files = file.path(destinationPath, filesToChecksum))
-      if (needChecksums == 2) { # a checksums file already existed, need to keep some of it
-        currentFiles <- rbind(nonCurrentFiles, currentFiles)
-        writeChecksumsTable(currentFiles, checkSumFilePath, dots = list())
-      }
+      appendChecksumsTable(checkSumFilePath = checkSumFilePath, filesToChecksum = filesToChecksum,
+                           destinationPath = destinationPath, append = needChecksums == 2)
+
+      # if (needChecksums == 2) { # a checksums file already existed, need to keep some of it
+      #   cs <- try(read.table(checkSumFilePath, header = TRUE), silent = TRUE)
+      #   if (is(cs, "try-error")) { # meant that it was an empty CHECKSUMS.txt file -- rebuild it
+      #     needChecksums <- 1
+      #   } else {
+      #     nonCurrentFiles <- cs %>%
+      #       filter(!file %in% filesToChecksum)
+      #   }
+      # }
+      # currentFiles <- checksums(path = destinationPath, write = TRUE, #checksumFile = checkSumFilePath,
+      #                           files = file.path(destinationPath, filesToChecksum))
+      # if (needChecksums == 2) { # a checksums file already existed, need to keep some of it
+      #   currentFiles <- rbind(nonCurrentFiles, currentFiles)
+      #   writeChecksumsTable(currentFiles, checkSumFilePath, dots = list())
+      # }
     }
   })
 
   # Stage 1 - Extract from archive
   filesExtracted <- extractFromArchive(archive = archive, destinationPath = destinationPath,
                                        neededFiles = neededFiles,
-                                       checkSums = checkSums, needChecksums = needChecksums, ...)
+                                       checkSums = checkSums, needChecksums = needChecksums)
   filesToChecksum <- unique(c(filesToChecksum, targetFile, alsoExtract,
                               basename(filesExtracted$filesExtracted)))
   needChecksums <- filesExtracted$needChecksums
@@ -513,7 +526,8 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL, quick = FALSE,
 #'
 #' @param neededFiles Character string giving the name of the file(s) to be extracted.
 #'
-#' @param extractedArchives Used internally.
+#' @param extractedArchives Used internally to track archives that have been extracted from.
+#' @param filesExtracted Used internally to track files that have been extracted.
 #' @param checkSums A checksums file, e.g., created by checksums(..., write = TRUE)
 #' @param needChecksums A numeric, with \code{0} indicating do not write a new checksums,
 #'                      \code{1} write a new one,
@@ -529,13 +543,14 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL, quick = FALSE,
 #'
 extractFromArchive <- function(archive, destinationPath = dirname(archive),
                                neededFiles, extractedArchives = NULL, checkSums, needChecksums,
-                               ...) {
+                               filesExtracted = character()) {
+
   result <- if (!is.null(neededFiles)) {
     checkSums[checkSums$expectedFile %in% basename(neededFiles), ]$result
   } else {
     "NotOK"
   }
-  filesExtracted <- character()
+  extractedObjs <- list(filesExtraced = character())
   # needs to pass checkSums & have all neededFiles files
   if (!(all(compareNA(result, "OK")) && all(neededFiles %in% checkSums$expectedFile))) {
     if (!is.null(archive)) {
@@ -559,12 +574,11 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
 
         if (length(archive) > 1) {
           filesExtracted <- c(filesExtracted,
-                              .unzipOrUnTar(funWArgs$fun, funWArgs$args, files = basename(archive[2])),
-                              ...)
+                              .unzipOrUnTar(funWArgs$fun, funWArgs$args, files = basename(archive[2])))
           # recursion, removing one archive
-          extractFromArchive(archive[-1], destinationPath = destinationPath,
+          extractedObjs <- extractFromArchive(archive[-1], destinationPath = destinationPath,
                              neededFiles = neededFiles, extractedArchives = extractedArchives,
-                             checkSums, needChecksums, ...)
+                             checkSums, needChecksums, filesExtracted = filesExtracted)
         } else if (any(neededFiles %in% basename(filesInArchive)) || is.null(neededFiles)) {
           extractingTheseFiles <- paste(basename(filesInArchive[basename(filesInArchive) %in% neededFiles]),
                                         collapse = ", ")
@@ -587,27 +601,29 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
             # lapply(file.path(destinationPath, arch), function(archi)
             #   extractFromArchive(archi, destinationPath, neededFiles, extractedArchives))
 
+
             extractedArchives <- c(
               extractedArchives,
               unlist(
                 lapply(file.path(destinationPath, arch), function(ap)
                   extractFromArchive(archive = ap, destinationPath = destinationPath,
                                      neededFiles = neededFiles, extractedArchives = extractedArchives,
-                                     checkSums, needChecksums, ...))
+                                     filesExtracted = filesExtracted,
+                                     checkSums, needChecksums))
               )
             )
           }
         }
       } else {
-        message("Skipping extractFromArchive because all files already extracted")
+        message("  Skipping extractFromArchive: all files already extracted")
         filesExtracted <- checkSums[checkSums$expectedFile %in% basename(filesInArchive), ]$expectedFile
       }
     }
   } else {
-    message("Skipping extractFromArchive because targetFile already extracted")
+    message("  Skipping extractFromArchive: targetFile (and any alsoExtract) already extracted")
   }
   list(extractedArchives = c(extractedArchives, archive),
-       filesExtracted = filesExtracted,
+       filesExtracted = unique(c(filesExtracted, extractedObjs$filesExtracted)),
        needChecksums = needChecksums)
 }
 
@@ -1186,7 +1202,18 @@ writeOutputs.default <- function(x, filename, ...) {
 }
 
 .unzipOrUnTar <- function(fun, args, files, overwrite = TRUE) {
-  do.call(fun, c(args, list(files = files, overwrite = overwrite)))
+  argList <- list(files = files)
+  isUnzip <- ("overwrite" %in% names(formals(fun)))
+  argList <- if (isUnzip) {
+    c(argList, overwrite = overwrite)
+  } else {
+    c(argList)
+  }
+  extractedFiles <- do.call(fun, c(args, argList))
+  if (!isUnzip) {
+    extractedFiles <- files
+  }
+  extractedFiles
 }
 
 
@@ -1264,9 +1291,9 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
 
   if (missingNeededFiles) {
     fileToDownload <- if (is.null(archive[1])) {
-      "All"
+      neededFiles
     } else {
-      result <- checkSums[checkSums$expectedFile == basename(archive), ]$result
+      result <- checkSums[checkSums$expectedFile %in% basename(archive[1]), ]$result
       missingArchive <- !isTRUE(result == "OK")
       if (missingArchive) {
         archive[1]
@@ -1337,7 +1364,7 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
       message("   Skipping download because all files listed in CHECKSUMS.txt file are present.",
               " If this is not correct, rerun prepInputs with purge = TRUE")
     } else {
-      message("  Skipping download because targetFile already present")
+      message("  Skipping download: targetFile (and any alsoExtract) already present")
     }
 
   }

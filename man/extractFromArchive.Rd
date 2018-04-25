@@ -5,7 +5,8 @@
 \title{Extract files from archive.}
 \usage{
 extractFromArchive(archive, destinationPath = dirname(archive), neededFiles,
-  extractedArchives = NULL, checkSums, needChecksums, ...)
+  extractedArchives = NULL, checkSums, needChecksums,
+  filesExtracted = character())
 }
 \arguments{
 \item{archive}{Character string giving the path of the archive
@@ -16,13 +17,15 @@ extracted. Defaults to the archive directory.}
 
 \item{neededFiles}{Character string giving the name of the file(s) to be extracted.}
 
-\item{extractedArchives}{Used internally.}
+\item{extractedArchives}{Used internally to track archives that have been extracted from.}
 
 \item{checkSums}{A checksums file, e.g., created by checksums(..., write = TRUE)}
 
 \item{needChecksums}{A numeric, with \code{0} indicating do not write a new checksums,
 \code{1} write a new one,
 \code{2} append new information to existing one.}
+
+\item{filesExtracted}{Used internally to track files that have been extracted.}
 
 \item{...}{Passed to \code{unzip} or \code{untar}, e.g., \code{overwrite}}
 }
