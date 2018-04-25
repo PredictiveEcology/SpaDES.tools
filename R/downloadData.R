@@ -242,6 +242,23 @@ writeChecksumsTable <- function(out, checksumFile, dots) {
                         dots))
 }
 
+appendChecksumsTable <- function(checkSumFilePath, filesToChecksum, destinationPath, append = TRUE) {
+  if (append) {# needChecksums == 2) { # a checksums file already existed, need to keep some of it
+    cs <- try(read.table(checkSumFilePath, header = TRUE), silent = TRUE)
+    if (is(cs, "try-error")) { # meant that it was an empty CHECKSUMS.txt file -- rebuild it
+      append <- FALSE
+    } else {
+      nonCurrentFiles <- cs %>%
+        filter(!file %in% filesToChecksum)
+    }
+  }
+  currentFiles <- checksums(path = destinationPath, write = TRUE, #checksumFile = checkSumFilePath,
+                            files = file.path(destinationPath, filesToChecksum))
+  if (append) { # a checksums file already existed, need to keep some of it
+    currentFiles <- rbind(nonCurrentFiles, currentFiles)
+    writeChecksumsTable(currentFiles, checkSumFilePath, dots = list())
+  }
+}
 
 #' Determine the size of a remotely hosted file
 #'
@@ -420,12 +437,13 @@ setMethod(
                                 paste(to.dl, collapse = ", "),
                                 ". Perhaps you need to run\n",
                                 "checksums(\"", module, "\", path = \"", path,
-                                "\", write = TRUE)", sep = ""))
-        if (interactive())  {
-          out <- readline(prompt = "Would you like to download it now anyway? (Y)es or (N)o: ")
-        } else {
-          out = "No"
-        }
+                                "\", write = TRUE). Downloading it anyway.", sep = ""))
+        out <- "Yes"
+        # if (interactive())  {
+        #   out <- readline(prompt = "Would you like to download it now anyway? (Y)es or (N)o: ")
+        # } else {
+        #   out = "No"
+        # }
         if (!isTRUE(any(pmatch("Y", toupper(out) )))) {
           message(crayon::magenta("  No data to download for module ", module, ".", sep = ""))
           doDownload <- FALSE
@@ -535,15 +553,23 @@ setMethod(
       })
 
       if (!allInChecksums) {
-        if (interactive()) {
-          readline("If download was successful, would you like to run a new checksums? (Y)es or (N)o: ")
-        } else {
-          out = "No"
-        }
-        if (isTRUE(any(pmatch("Y", toupper(out) )))) {
-          message("Making new checksums file")
-          checksums(module = module, path = path, write = TRUE)
-        }
+        # if (interactive()) {
+        #   readline("If download was successful, would you like to run a new checksums? (Y)es or (N)o: ")
+        # } else {
+        #   out = "No"
+        # }
+        # if (isTRUE(any(pmatch("Y", toupper(out) )))) {
+          message("Updating new checksums file. If this is not desired, ",
+                  "manually run checksums(..., write = TRUE)")
+          checkSumFolder <- file.path(path, module, "data")
+          appendChecksumsTable(destinationPath = checkSumFolder, filesToChecksum = basename(to.dl),
+                               append = TRUE,
+                               checkSumFilePath = file.path(checkSumFolder, "CHECKSUMS.txt"))
+
+          # path = destinationPath, write = TRUE, #checksumFile = checkSumFilePath,
+          # files = file.path(destinationPath, filesToChecksum)
+          # checksums(module = module, path = path, write = TRUE)
+        #}
 
       }
 
