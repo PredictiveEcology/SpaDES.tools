@@ -210,7 +210,7 @@ if (getRversion() >= "3.1.0") {
 prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NULL,
                        destinationPath = ".", fun = NULL,
                        quick = getOption("reproducible.quick"),
-                       overwrite = FALSE, purge = FALSE, useCache = FALSE,
+                       overwrite = FALSE, purge = FALSE, useCache = getOption("reproducible.useCache", FALSE),
                        ...) {
 
   dots <- list(...)
@@ -281,7 +281,7 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   moduleName <- NULL
   modulePath <- NULL
   if (is.null(url)) { # the only way for this to be useful is if there is a SpaDES module
-                      # and url can be gotten during downloadData from module metadata
+    # and url can be gotten during downloadData from module metadata
     fileinfo <- if (quick) file.info(filesToCheck) else runif(1)
     if (file.exists(checkSumFilePath)) {
       out <- .checkSumsMem(asPath(filesToCheck), fileinfo,
@@ -306,8 +306,8 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 
   # Stage 1 -- Download
   downloadFileResult <- downloadFile(archive, targetFile, neededFiles = neededFiles,
-               destinationPath, quick, checkSums, url, needChecksums = needChecksums,
-               overwrite = overwrite, moduleName = moduleName, modulePath = modulePath)
+                                     destinationPath, quick, checkSums, url, needChecksums = needChecksums,
+                                     overwrite = overwrite, moduleName = moduleName, modulePath = modulePath)
   needChecksums <- downloadFileResult$needChecksums
   neededFiles <- downloadFileResult$neededFiles
   if (is.null(archive)) archive <- downloadFileResult$archive
@@ -335,8 +335,8 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 
   # Stage 1 - Extract from archive
   filesExtracted <- extractFromArchive(archive = archive, destinationPath = destinationPath,
-                       neededFiles = neededFiles,
-                     checkSums = checkSums, needChecksums = needChecksums, ...)
+                                       neededFiles = neededFiles,
+                                       checkSums = checkSums, needChecksums = needChecksums, ...)
   filesToChecksum <- unique(c(filesToChecksum, targetFile, alsoExtract,
                               basename(filesExtracted$filesExtracted)))
   needChecksums <- filesExtracted$needChecksums
@@ -344,8 +344,8 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 
   #targetFilePath might still be NULL, need destinationPath too
   targetParams <- .guessAtTargetAndFun(targetFilePath, destinationPath,
-                                 filesExtracted$filesExtracted,
-                                 fun) # passes through if all known
+                                       filesExtracted$filesExtracted,
+                                       fun) # passes through if all known
   targetFile <- basename(targetParams$targetFilePath)
   targetFilePath <- targetParams$targetFilePath
   fun <- targetParams$fun
@@ -381,18 +381,13 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     # Don't cache the reading of a raster -- normal reading of raster on disk is fast b/c only reads metadata
     x <- do.call(fun, append(list(asPath(targetFilePath)), args))
   } else {
-    
     x <- Cache(do.call, fun, append(list(asPath(targetFilePath)), args))
-    #x <- Cache(fun, asPath(targetFilePath), ...)
   }
 
-
   # postProcess
-  mess <- capture.output(type = "message",
-                         out <-  Cache(postProcess, useCache = useCache,
-                                       x, targetFilePath = targetFilePath, destinationPath = destinationPath,
-                     ...))
-  message(mess)
+  out <-  Cache(postProcess, useCache = useCache, x,
+                targetFilePath = targetFilePath, destinationPath = destinationPath,
+                ...)
   return(out)
 }
 
@@ -430,13 +425,14 @@ fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE, ...) {
 #' @export
 #' @param x A \code{SpatialPolygons} object
 #' @inheritParams fixErrors
-fixErrors.SpatialPolygons <- function(x, targetFile, attemptErrorFixes = TRUE, ...) {
+fixErrors.SpatialPolygons <- function(x, targetFile, attemptErrorFixes = TRUE,
+                                      useCache = getOption("reproducible.useCache", FALSE), ...) {
   if (attemptErrorFixes) {
     if (is(x, "SpatialPolygons")) {
       message("Checking for errors in ", targetFile)
       if (suppressWarnings(any(!rgeos::gIsValid(x, byid = TRUE)))) {
         message("Found errors in ", targetFile, ". Attempting to correct.")
-        x1 <- try(raster::buffer(x, width = 0, dissolve = FALSE))
+        x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
         if (is(x1, "try-error")) {
           message("There are errors with ", targetFile,
                   ". Couldn't fix them with raster::buffer(..., width = 0)")
@@ -578,7 +574,7 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
                   "  Extracting ", extractingTheseFiles)
           filesExtracted <- c(filesExtracted,
                               .unzipOrUnTar(funWArgs$fun, funWArgs$args,
-                                          files = filesInArchive[basename(filesInArchive) %in% neededFiles]))
+                                            files = filesInArchive[basename(filesInArchive) %in% neededFiles]))
         } else {
           # don't have a 2nd archive, and don't have our neededFiles file
           isArchive <- grepl(file_ext(filesInArchive), pattern = "(zip|tar)", ignore.case = TRUE)
@@ -677,53 +673,53 @@ smallNamify <- function(name) {
 #' @param destinationPath Full path of the directory where the target file should be
 .guessAtTargetAndFun <- function(targetFilePath, destinationPath, filesExtracted, fun) {
   #if (is.null(targetFilePath)) {
-    #filesExtracted <- dir(destinationPath)
-    possibleFiles <- basename(unique(c(targetFilePath, filesExtracted)))
-    isShapefile <- grepl("shp", file_ext(possibleFiles))
-    isRaster <- file_ext(possibleFiles) %in% c("tif", "grd")
-    if (is.null(fun)) { #i.e., the default
-      fun <-if (any(isShapefile)) {
-        "raster::shapefile"
-      } else {
-        "raster::raster"
-      }
+  #filesExtracted <- dir(destinationPath)
+  possibleFiles <- basename(unique(c(targetFilePath, filesExtracted)))
+  isShapefile <- grepl("shp", file_ext(possibleFiles))
+  isRaster <- file_ext(possibleFiles) %in% c("tif", "grd")
+  if (is.null(fun)) { #i.e., the default
+    fun <-if (any(isShapefile)) {
+      "raster::shapefile"
+    } else {
+      "raster::raster"
     }
+  }
 
-    if (is.null(targetFilePath)) {
-      message("  targetFile was not specified. ", if (any(isShapefile)) {
-        c(" Trying raster::shapefile on ", possibleFiles[isShapefile],
-          ". If that is not correct, please specify different targetFile",
-          " and/or fun")
+  if (is.null(targetFilePath)) {
+    message("  targetFile was not specified. ", if (any(isShapefile)) {
+      c(" Trying raster::shapefile on ", possibleFiles[isShapefile],
+        ". If that is not correct, please specify different targetFile",
+        " and/or fun")
+    } else {
+      c(" Trying ", fun,
+        ". If that is not correct, please specify a targetFile",
+        " and/or different fun. The current files in the targetFilePath's ",
+        "directory are: \n",
+        paste(possibleFiles, collapse = "\n"))
+    })
+
+    targetFilePath <- if (endsWith(suffix = "shapefile", fun )) {
+      possibleFiles[isShapefile]
+    } else {
+      if (any(isRaster)) {
+        possibleFiles[isRaster]
       } else {
-        c(" Trying ", fun,
-          ". If that is not correct, please specify a targetFile",
-          " and/or different fun. The current files in the targetFilePath's ",
-          "directory are: \n",
-          paste(possibleFiles, collapse = "\n"))
-      })
-
-      targetFilePath <- if (endsWith(suffix = "shapefile", fun )) {
-        possibleFiles[isShapefile]
-      } else {
-        if (any(isRaster)) {
-          possibleFiles[isRaster]
-        } else {
-          message("  Don't know which file to load. Please specify targetFile")
-        }
-
+        message("  Don't know which file to load. Please specify targetFile")
       }
-      if (length(targetFilePath) > 1)  {
-        message("  More than one possible files to load, ", paste(targetFilePath, collapse = ", "),
-                " Picking the first one. If not correct, specify a targetFile")
-        targetFilePath <- targetFilePath[1]
-      } else {
-        message("  Trying ", targetFilePath, " with ", fun)
-      }
-      targetFile <- targetFilePath
-      targetFilePath <- file.path(destinationPath, targetFile)
+
     }
+    if (length(targetFilePath) > 1)  {
+      message("  More than one possible files to load, ", paste(targetFilePath, collapse = ", "),
+              " Picking the first one. If not correct, specify a targetFile")
+      targetFilePath <- targetFilePath[1]
+    } else {
+      message("  Trying ", targetFilePath, " with ", fun)
+    }
+    targetFile <- targetFilePath
+    targetFilePath <- file.path(destinationPath, targetFile)
+  }
 
-    list(targetFilePath = targetFilePath, fun = fun)
+  list(targetFilePath = targetFilePath, fun = fun)
 }
 
 #' Generic function to post process objects
@@ -832,7 +828,8 @@ postProcess.default <- function(x, ...) {
 #'   * Can be overridden with \code{useSAcrs}
 #' }
 postProcess.spatialObjects <- function(x, targetFilePath, studyArea = NULL, rasterToMatch = NULL,
-                                       overwrite = TRUE, useSAcrs = FALSE, useCache = FALSE,
+                                       overwrite = TRUE, useSAcrs = FALSE,
+                                       useCache = getOption("reproducible.useCache", FALSE),
                                        ...) {
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
 
@@ -842,31 +839,35 @@ postProcess.spatialObjects <- function(x, targetFilePath, studyArea = NULL, rast
     }
     skipCacheMess <- "useCache is FALSE, skipping Cache"
     skipCacheMess2 <- "No cacheRepo supplied"
-    mess <- capture.output(type = "message",
-                           Cache(fixErrors, x,
-                                 targetFile = basename(targetFilePath),
-                                 useCache = useCache, ...))
-    message(paste(grep(mess, pattern = skipCacheMess, invert = TRUE, value = TRUE), collapse = "\n"))
+    mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
+                           x <- fixErrors(x, targetFile = basename(targetFilePath),
+                                          useCache = useCache, ...))
+    .groupedMessage(mess, omitPattern = skipCacheMess)
 
+    # cropInputs
     mess <- capture.output(type = "message",
                            x <- Cache(cropInputs, x, studyArea = studyArea,
                                       rasterToMatch = rasterToMatch, useCache = useCache, ...))
-    mess <- grep(mess, pattern = paste(skipCacheMess, skipCacheMess2, sep = "|"), invert = TRUE, value = TRUE)
-    if (length(mess)) message(mess)
+    .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
+
+    # projectInputs
     targetCRS <- getTargetCRS(useSAcrs, studyArea, rasterToMatch)
     mess <- capture.output(type = "message",
                            x <- Cache(projectInputs, x, targetCRS = targetCRS,
                                       rasterToMatch = rasterToMatch, useCache = useCache, ...))
-    mess <- grep(mess, pattern = paste(skipCacheMess, skipCacheMess2, sep = "|"), invert = TRUE, value = TRUE)
-    if (length(mess)) message(mess)
+    .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
+
+    # maskInputs
     mess <- capture.output(type = "message",
                            x <- Cache(maskInputs, x, studyArea = studyArea,
                                       rasterToMatch = rasterToMatch, useCache = useCache, ...))
-    mess <- grep(mess, pattern = paste(skipCacheMess, skipCacheMess2, sep = "|"), invert = TRUE, value = TRUE)
-    if (length(mess)) message(mess)
+    .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
+    # filename
     newFilename <- determineFilename(targetFilePath = targetFilePath, ...)
     if (!is.null(list(...)$filename)) stop("Can't pass filename; use postProcessedFilename")
+
+    # writeOutputs
     x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
 
   }
@@ -1061,11 +1062,14 @@ maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, 
 }
 
 maskInputs <- function(x, studyArea, ...) {
-  message("    Intersecting")
+  message("    intersecting")
   studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
   studyArea <- spTransform(studyArea, CRSobj = crs(x))
-  studyArea <- fixErrors(studyArea, "studyArea")
-  x <- raster::intersect(x, studyArea)
+  suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
+  x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
+    warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
+    return(x)
+    })
   x
 }
 
@@ -1232,9 +1236,17 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
 
   if (!is.null(neededFiles)) {
     if ("shp" %in% file_ext(neededFiles)) { # if user wants .shp file, needs other anciliary files
+      # but not all
       shpfileBase <- gsub(".shp$", "", neededFiles[file_ext(neededFiles) %in% "shp"])
-      otherShpfiles <- paste0(shpfileBase, ".", c("shx", "dbf", "prj", "sbx", "cpg", "shp.xml", "sbn"))
-      neededFiles <- unique(c(neededFiles, otherShpfiles))
+      reqdShpFiles <- paste0(shpfileBase, ".", c("shx", "dbf", "prj", "sbx", "sbn"))
+      if (length(neededFiles) > 0) {
+        if (identical(FALSE, (all(reqdShpFiles %in% neededFiles)))) {
+          optionalShpFiles <- paste0(shpfileBase, ".", c("cpg", "shp.xml"))
+          otherShpfiles <- c(reqdShpFiles, optionalShpFiles)
+          neededFiles <- unique(c(neededFiles, otherShpfiles))
+        }
+      }
+
     }
   }
 
@@ -1267,9 +1279,11 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
     # The download step
     if (!is.null(moduleName)) { # means it is inside a SpaDES module
       if (!is.null(fileToDownload)) {
-        browser()
+        parsedModule <- parse(file = file.path(modulePath, moduleName, paste0(moduleName, '.R')))
+        urls <- .getSourceURL(pattern = fileToDownload, x = parsedModule)
         downloadData(moduleName, modulePath, files = fileToDownload,
-                     checked = checkSums, quickCheck = quick, overwrite = overwrite)
+                     checked = checkSums, quickCheck = quick, overwrite = overwrite,
+                     urls = urls)
       }
     } else {
       # The ad hoc case
@@ -1329,4 +1343,31 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
   }
   archiveReturn <- if (is.null(archive)) archive else file.path(destinationPath, basename(archive))
   list(needChecksums = needChecksums, archive = archiveReturn, neededFiles = neededFiles)
+}
+
+
+.getSourceURL <- function(pattern, x) {
+  srcURL <- "sourceURL"
+  grepIndex <- grep(srcURL, x = x)
+  if (length(grepIndex) == 1) {
+    .getSourceURL(pattern, x[[grepIndex]])
+  } else if (length(grepIndex) > 1 | length(grepIndex) == 0) {
+    y <- grep(pattern = basename(pattern), x)
+    if (length(y) == 1) {
+      urls <- if (length(grepIndex) > 1)
+        eval(x[[y]])$sourceURL
+      else
+        eval(x)$sourceURL
+    } else {
+      stop("There is no sourceURL for an object named ", basename(pattern))
+    }
+  } else {
+    stop("There is no sourceURL in module metadata")
+  }
+}
+
+.groupedMessage <- function(mess, omitPattern) {
+  mess <- grep(mess, pattern = omitPattern,
+               invert = TRUE, value = TRUE)
+  if (length(mess)) message(paste(mess, collapse = "\n    "))
 }

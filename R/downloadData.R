@@ -338,7 +338,7 @@ remoteFileSize <- function(url) {
 #' @export
 #' @importFrom dplyr mutate bind_rows
 #' @importFrom googledrive as_id drive_auth drive_download
-#' @importFrom reproducible checkPath
+#' @importFrom reproducible checkPath compareNA
 #' @importFrom RCurl url.exists
 #' @importFrom utils download.file
 #' @rdname downloadData
@@ -409,7 +409,8 @@ setMethod(
 
     allInChecksums <- TRUE
     doDownload <- TRUE
-    if (!((any(chksums$result == "FAIL") | any(is.na(chksums$result))) )) {
+    if (! ( NROW(chksums) > 0 && all(compareNA(chksums$result, "OK")))) {
+    #if (!((any(chksums$result == "FAIL") | any(is.na(chksums$result))) )) {
       if (length(to.dl) == 0) {
         message(crayon::magenta("  No data to download for module ", module, ".", sep = ""))
         doDownload <- FALSE
