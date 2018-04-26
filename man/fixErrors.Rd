@@ -4,7 +4,8 @@
 \alias{fixErrors}
 \title{Do some minor error fixing}
 \usage{
-fixErrors(x, targetFile, attemptErrorFixes = TRUE, ...)
+fixErrors(x, targetFile, attemptErrorFixes = TRUE,
+  useCache = getOption("reproducible.useCache", FALSE), ...)
 }
 \arguments{
 \item{x}{Any object that could be fixed for errors.
@@ -19,8 +20,11 @@ cropped/reprojected/masked). Using \code{Cache} around \code{prepInputs}
 will do a sufficient job in these cases.}
 
 \item{attemptErrorFixes}{Will attempt to fix known errors. Currently only some failures
-      for SpatialPolygons* are attempted. Notably with \code{raster::buffer(..., width = 0)}.
-      Default \code{TRUE}, though this may not be the right action for all cases.
+for SpatialPolygons* are attempted. Notably with \code{raster::buffer(..., width = 0)}.
+Default \code{TRUE}, though this may not be the right action for all cases.}
+
+\item{useCache}{Logical, default \code{getOption("reproducible.useCache", FALSE)}, whether
+               Cache is used on the internal \code{raster::buffer} command.
 @examples}
 
 \item{...}{None used currently}

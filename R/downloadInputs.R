@@ -294,10 +294,17 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
       runif(1)
     }
     if (file.exists(checkSumFilePath)) {
+      if (!grepl("data", basename(dirname(checkSumFilePath)))) {
+        stop("You appear to be using prepInputs inside a module, but are not using data subfolder. ",
+             "Currently, this does not work. Please specify url if you would like to do this, or ",
+             "use the data subfolder")
+      }
+
       out <- .checkSumsMem(asPath(filesToCheck), fileinfo,
                            asPath(checkSumFilePath), quick = quick)
       moduleName <- out$moduleName
       modulePath <- out$modulePath
+
       checkSums <- out$checkSums
     } else {
       checkSums <- out <- emptyChecksums
@@ -419,14 +426,18 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 #' @param attemptErrorFixes Will attempt to fix known errors. Currently only some failures
 #'        for SpatialPolygons* are attempted. Notably with \code{raster::buffer(..., width = 0)}.
 #'        Default \code{TRUE}, though this may not be the right action for all cases.
+#' @param useCache Logical, default \code{getOption("reproducible.useCache", FALSE)}, whether
+#'                 Cache is used on the internal \code{raster::buffer} command.
 #'  @examples
-fixErrors <- function(x, targetFile, attemptErrorFixes = TRUE, ...) {
+fixErrors <- function(x, targetFile, attemptErrorFixes = TRUE,
+                      useCache = getOption("reproducible.useCache", FALSE), ...) {
   UseMethod("fixErrors")
 }
 
 #' @export
 #' @keywords internal
-fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE, ...) {
+fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE,
+                              useCache = getOption("reproducible.useCache", FALSE), ...) {
   x
 }
 
