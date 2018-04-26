@@ -426,14 +426,18 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 #' @param attemptErrorFixes Will attempt to fix known errors. Currently only some failures
 #'        for SpatialPolygons* are attempted. Notably with \code{raster::buffer(..., width = 0)}.
 #'        Default \code{TRUE}, though this may not be the right action for all cases.
+#' @param useCache Logical, default \code{getOption("reproducible.useCache", FALSE)}, whether
+#'                 Cache is used on the internal \code{raster::buffer} command.
 #'  @examples
-fixErrors <- function(x, targetFile, attemptErrorFixes = TRUE, ...) {
+fixErrors <- function(x, targetFile, attemptErrorFixes = TRUE,
+                      useCache = getOption("reproducible.useCache", FALSE), ...) {
   UseMethod("fixErrors")
 }
 
 #' @export
 #' @keywords internal
-fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE, ...) {
+fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE,
+                              useCache = getOption("reproducible.useCache", FALSE), ...) {
   x
 }
 
