@@ -294,10 +294,17 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
       runif(1)
     }
     if (file.exists(checkSumFilePath)) {
+      if (!grepl("data", basename(dirname(checkSumFilePath)))) {
+        stop("You appear to be using prepInputs inside a module, but are not using data subfolder. ",
+             "Currently, this does not work. Please specify url if you would like to do this, or ",
+             "use the data subfolder")
+      }
+
       out <- .checkSumsMem(asPath(filesToCheck), fileinfo,
                            asPath(checkSumFilePath), quick = quick)
       moduleName <- out$moduleName
       modulePath <- out$modulePath
+
       checkSums <- out$checkSums
     } else {
       checkSums <- out <- emptyChecksums
