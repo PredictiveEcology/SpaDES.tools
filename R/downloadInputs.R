@@ -1088,7 +1088,9 @@ maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, 
   x
 }
 
-maskInputs <- function(x, studyArea, ...) {
+#' @export
+#' @rdname maskInputs
+maskInputs.Spatial <- function(x, studyArea, ...) {
   message("    intersecting")
   studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
   studyArea <- spTransform(studyArea, CRSobj = crs(x))

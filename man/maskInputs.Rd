@@ -3,11 +3,15 @@
 \name{maskInputs}
 \alias{maskInputs}
 \alias{maskInputs.Raster}
+\alias{maskInputs.Spatial}
 \title{Mask module inputs}
 \usage{
 maskInputs(x, studyArea, ...)
 
-maskInputs.Raster(x, studyArea, rasterToMatch, maskWithRTM = FALSE, ...)
+\method{maskInputs}{Raster}(x, studyArea, rasterToMatch, maskWithRTM = FALSE,
+  ...)
+
+\method{maskInputs}{Spatial}(x, studyArea, ...)
 }
 \arguments{
 \item{x}{A \code{Raster*} object}
