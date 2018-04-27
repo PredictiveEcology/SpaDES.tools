@@ -118,11 +118,12 @@ setMethod(
 
     if (!write && file.info(checksumFile)$size > 0) {
       txt <- read.table(checksumFile, header = TRUE, stringsAsFactors = FALSE)
-      txt <- if (dim(txt)[1] == 0) txt %>%
-        dplyr::mutate_all(as.character)
+      if (dim(txt)[1] == 0) {
+        txt <- dplyr::mutate_all(txt, as.character)
+      }
     } else {
-      txt <- data.frame(file = character(0), checksum = character(0), filesize = character(0),
-                 stringsAsFactors = FALSE)
+      txt <- data.frame(file = character(0), checksum = character(0),
+                        filesize = character(0), stringsAsFactors = FALSE)
     }
 
     if (is.null(dots$algo)) {
