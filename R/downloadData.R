@@ -116,10 +116,12 @@ setMethod(
         grep(basename(checksumFile), ., value = TRUE, invert = TRUE)
     }
 
-    txt <- if (!write && file.info(checksumFile)$size > 0) {
-      read.table(checksumFile, header = TRUE, stringsAsFactors = FALSE)
+    if (!write && file.info(checksumFile)$size > 0) {
+      txt <- read.table(checksumFile, header = TRUE, stringsAsFactors = FALSE)
+      txt <- if (dim(txt)[1] == 0) txt %>%
+        dplyr::mutate_all(as.character)
     } else {
-      data.frame(file = character(0), checksum = character(0), filesize = character(0),
+      txt <- data.frame(file = character(0), checksum = character(0), filesize = character(0),
                  stringsAsFactors = FALSE)
     }
 
