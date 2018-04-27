@@ -5,11 +5,12 @@
 \title{Simulate a contagious spread process on a landscape, with data.table internals}
 \usage{
 spread2(landscape, start = ncell(landscape)/2 - ncol(landscape)/2,
-  spreadProb = 0.23, asRaster = TRUE, maxSize, exactSize, directions = 8L,
-  iterations = 1000000L, returnDistances = FALSE, returnFrom = FALSE,
-  spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
-  asymmetry = NA_real_, asymmetryAngle = NA_real_, allowOverlap = FALSE,
-  neighProbs = NA_real_, skipChecks = FALSE)
+  spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE, maxSize,
+  exactSize, directions = 8L, iterations = 1000000L,
+  returnDistances = FALSE, returnFrom = FALSE, spreadProbRel = NA_real_,
+  plot.it = FALSE, circle = FALSE, asymmetry = NA_real_,
+  asymmetryAngle = NA_real_, allowOverlap = FALSE, neighProbs = NA_real_,
+  skipChecks = FALSE)
 }
 \arguments{
 \item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
@@ -32,6 +33,14 @@ If used together, then the relative probabilities will be
 re-scaled so that the mean relative probability of potential
 neighbours is equal to the mean of \code{spreadProb} of
 the potential neighbours.}
+
+\item{persistProb}{Numeric of length 1 or \code{RasterLayer}.
+If numeric of length 1, then this is the global (absolute)
+probability of cell continuing to burn per time step.
+If a raster, then this must be the cell-specific (absolute)
+probability of a fire persisting.
+Default is \code{NA}, which is the same as 0, i.e. a cell only burns
+for one time step.}
 
 \item{asRaster}{Logical, length 1. If \code{TRUE}, the function will return a \code{Raster}
 where raster non NA values indicate the cells that were "active", and the

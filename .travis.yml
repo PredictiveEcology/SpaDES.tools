@@ -69,6 +69,7 @@ matrix:
     - sh -e /etc/init.d/xvfb start
     r_packages:
     - rgdal
+    - devtools
     after_success:
     - Rscript -e 'covr::coveralls(package_coverage(type = "all", quiet = FALSE)))'
     - Rscript -e 'lintr::lint_package()'
@@ -106,6 +107,10 @@ r_check_args: "--as-cran"
 warnings_are_errors: true
 notifications:
   email:
+    recipients:
+    - alex.chubaty@gamil.com
+    - eliotmcintire@gmail.com
+    - jean.d.marchal@gmail.com
     on_success: change
     on_failure: change
 branches:
