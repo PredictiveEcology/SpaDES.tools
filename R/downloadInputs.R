@@ -7,43 +7,46 @@ if (getRversion() >= "3.1.0") {
 #' This function can be used to prepare R objects from remote or local data
 #' sources. The object of this function is to provide a reproducible version of
 #' a series of commonly used steps for getting, loading, and processing data.
-#' This function has 2 stages: Getting data (download, extracting from archives,
+#' This function has two stages: Getting data (download, extracting from archives,
 #' loading into R) and postProcessing (for \code{Spatial*} and \code{Raster*}
-#' objects, this is crop, reproject, mask/intersect). To trigger the first
-#' stage, provide \code{url} or \code{archive}. To trigger the second stage,
-#' provide \code{studyArea} or \code{rasterToMatch}. See examples.
+#' objects, this is crop, reproject, mask/intersect).
+#' To trigger the first stage, provide \code{url} or \code{archive}.
+#' To trigger the second stage, provide \code{studyArea} or \code{rasterToMatch}.
+#' See examples.
 #'
-#' NOTE: This function is still experimental: use with caution.
+#' @note This function is still experimental: use with caution.
 #'
 #' @section Stage 1 - Getting data:
 #'
-#'   \enumerate{ \item Download from the web via either
-#'   \code{\link[googledrive]{drive_download}},
-#'   \code{\link[utils]{download.file}}, or \code{\link{downloadFromWebDB}}.
-#'   \item Extract from archive using \code{\link{unzip}} or \code{\link{untar}}
-#'   \item Load into R using \code{\link[raster]{raster}},
-#'   \code{\link[raster]{shapefile}}, or any other function passed in with
-#'   \code{fun} \item Checksuming of all files during this process. This is put
-#'   into a \code{CHECKSUMS.txt} file in the \code{destinationPath}, appending
-#'   if it is already there, overwriting the entries for same files if entries
-#'   already exist. }
+#'   \enumerate{
+#'     \item Download from the web via either \code{\link[googledrive]{drive_download}},
+#'     \code{\link[utils]{download.file}}, or \code{\link{downloadFromWebDB}};
+#'     \item Extract from archive using \code{\link{unzip}} or \code{\link{untar}};
+#'     \item Load into R using \code{\link[raster]{raster}},
+#'     \code{\link[raster]{shapefile}}, or any other function passed in with \code{fun};
+#'     \item Checksumming of all files during this process. This is put into a
+#'     \file{CHECKSUMS.txt} file in the \code{destinationPath}, appending if it is
+#'     already there, overwriting the entries for same files if entries already exist.
+#'  }
 #'
 #' @section Stage 2 - Post processing:
 #'
 #'   This will be triggered if either \code{rasterToMatch} or \code{studyArea}
 #'   is supplied.
 #'
-#'   \enumerate{ \item Fix errors. Currently only errors fixed are for
-#'   \code{SpatialPolygons} using \code{buffer(..., width = 0)}. \item Crop
-#'   using \code{\link{cropInputs}} \item Project using
-#'   \code{\link{projectInputs}} \item Mask using \code{\link{maskInputs}} \item
-#'   Determine file name \code{\link{determineFilename}} via
-#'   \code{postProcessedFilename} \item Write that file name to disk, optionally
-#'   \code{\link{writeOutputs}} }
+#'   \enumerate{
+#'     \item Fix errors. Currently only errors fixed are for \code{SpatialPolygons}
+#'     using \code{buffer(..., width = 0)};
+#'     \item Crop using \code{\link{cropInputs}};
+#'     \item Project using \code{\link{projectInputs}};
+#'     \item Mask using \code{\link{maskInputs}};
+#'     \item Determine file name \code{\link{determineFilename}} via \code{postProcessedFilename};
+#'     \item Optionally, write that file name to disk via \code{\link{writeOutputs}}.
+#'    }
 #'
 #'   NOTE: checksumming does not occur during the post-processing stage, as
 #'   there are no file downloads. To achieve fast results, wrap
-#'   \code{prepInputs} with \code{Cache}
+#'   \code{prepInputs} with \code{Cache}.
 #'
 #'   NOTE: \code{sf} objects are still very experimental.
 #'
@@ -63,9 +66,8 @@ if (getRversion() >= "3.1.0") {
 #'   (raster, shapefile, csv, etc.) after downloading and extracting from a zip
 #'   or tar archive. This is the file \emph{before} it is passed to
 #'   \code{postProcess}. Currently, the internal checksumming does not checksum
-#'   the file after it is \code{postProcess}ed (e.g.,
-#'   cropped/reprojected/masked). Using \code{Cache} around \code{prepInputs}
-#'   will do a sufficient job in these cases.
+#'   the file after it is \code{postProcess}ed (e.g., cropped/reprojected/masked).
+#'   Using \code{Cache} around \code{prepInputs} will do a sufficient job in these cases.
 #'
 #' @param archive Optional character string giving the path of an archive
 #'   containing \code{targetFile}, or a vector giving a set of nested archives
@@ -112,7 +114,6 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param useCache Passed to Cache in various places. Default \code{FALSE}
 #'
-#'
 #' @author Eliot McIntire
 #' @author Jean Marchal
 #' @export
@@ -125,10 +126,10 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom googledrive drive_get drive_auth drive_download as_id
 #' @rdname prepInputs
 #' @seealso \code{\link{downloadFile}}, \code{\link{extractFromArchive}},
-#'          \code{\link{downloadFile}},  \code{\link{postProcess}}.
+#'          \code{\link{downloadFile}}, \code{\link{postProcess}}.
 #' @examples
 #' # This function works within a module, however, currently,
-#' #   "sourceURL" is not yet working as desired. Use url.
+#' #   \cde{sourceURL} is not yet working as desired. Use \code{url}.
 #' \dontrun{
 #' # Put chunks like this in your .inputObjects
 #' if (!suppliedElsewhere("test", sim))
@@ -382,7 +383,6 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   } else {
     fun <- get(fun)
   }
-
 
   # dots will contain too many things for some functions -- need to remove those that are known going
   #   into prepInputs
