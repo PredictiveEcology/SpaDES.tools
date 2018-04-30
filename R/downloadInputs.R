@@ -817,9 +817,10 @@ postProcess.default <- function(x, ...) {
 #' @param useSAcrs Logical. If \code{FALSE}, the default, then the desired projection
 #'                 will be taken from \code{rasterToMatch} or none at all.
 #'                 If \code{TRUE}, it will be taken from \code{studyArea}.
-#' @param ... \code{\link{cropInputs}}, \code{\link{projectInputs}},
-#'            \code{\link{maskInputs}}, \code{\link{determineFilename}},
-#'            \code{\link{writeOutputs}}. These then pass \code{...} into other functions, like
+#' @param ... Additonal arguments passed to \code{\link{cropInputs}},
+#'            \code{\link{projectInputs}}, \code{\link{maskInputs}},
+#'            \code{\link{determineFilename}}, and \code{\link{writeOutputs}}.
+#'            These then pass \code{...} into other functions, like
 #'            \code{\link[raster]{writeRaster}}, or
 #'            \code{sf::st_write}. This might include potentially important
 #'            arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},
