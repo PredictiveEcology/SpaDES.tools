@@ -67,7 +67,6 @@ Imports:
 Suggests:
     DEoptim (>= 2.2-4),
     hunspell,
-    fasterize,
     knitr,
     microbenchmark,
     parallel,
