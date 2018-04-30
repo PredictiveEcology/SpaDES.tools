@@ -13,5 +13,5 @@ getGDALVersion()
 Check the GDAL version in use
 }
 \author{
-Alex Chubaty and  Eliot McIntire
+Alex Chubaty and Eliot McIntire
 }

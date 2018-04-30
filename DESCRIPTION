@@ -10,10 +10,10 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-02-23
-Version: 0.1.1.9002
+Date: 2018-04-30
+Version: 0.1.1.9010
 Authors@R: c(
-    person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
+    person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
     role = c("aut", "cre")),
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
     role = c("aut")),
@@ -33,8 +33,10 @@ Imports:
     checkmate (>= 1.8.2),
     CircStats (>= 0.2-4),
     compiler,
+    crayon,
     data.table (>= 1.10.4),
     digest,
+    dplyr (>= 0.5.0),
     fastdigest,
     fasterize,
     fastmatch (>= 1.1-0),
@@ -42,36 +44,41 @@ Imports:
     ffbase (>= 0.12.3),
     fpCompare (>= 0.2.1),
     gdalUtils,
+    googledrive (>= 0.1.1),
     httr,
     magrittr,
     methods,
     quickPlot,
+    R.utils (>= 2.6.0),
     RandomFields (>= 3.1.24),
     raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
+    RCurl (>= 1.95-4.8),
     rgdal,
-    reproducible,
+    rgeos (>= 0.3-26), 
+    reproducible (>= 0.1.4.9011),
+    sf,
     sp (>= 1.2-4),
     stats,
+    tools,
     utils,
-    velox
+    velox,
+    webDatabases
 Suggests:
     DEoptim (>= 2.2-4),
-    dplyr (>= 0.5.0),
     hunspell,
+    fasterize,
     knitr,
     microbenchmark,
     parallel,
     profvis,
     RColorBrewer (>= 1.1-2),
-    rgeos,
     rmarkdown,
-    sf,
     testthat (>= 1.0.2)
 Remotes:
     PredictiveEcology/quickPlot@development,
     PredictiveEcology/reproducible@development,
-    PredictiveEcology/SpaDES.core@development
+    PredictiveEcology/webDatabases
 LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
@@ -81,6 +88,8 @@ Collate:
     'heading.R'
     'SELES.R'
     'distanceFromEachPoint.R'
+    'downloadData.R'
+    'downloadInputs.R'
     'environment.R'
     'gis.R'
     'initialize.R'
