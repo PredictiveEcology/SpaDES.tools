@@ -10,7 +10,7 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-04-21
+Date: 2018-04-30
 Version: 0.1.1.9010
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
@@ -38,6 +38,7 @@ Imports:
     digest,
     dplyr (>= 0.5.0),
     fastdigest,
+    fasterize,
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
@@ -56,6 +57,7 @@ Imports:
     rgdal,
     rgeos (>= 0.3-26), 
     reproducible (>= 0.1.4.9011),
+    sf,
     sp (>= 1.2-4),
     stats,
     tools,
@@ -65,14 +67,12 @@ Imports:
 Suggests:
     DEoptim (>= 2.2-4),
     hunspell,
-    fasterize,
     knitr,
     microbenchmark,
     parallel,
     profvis,
     RColorBrewer (>= 1.1-2),
     rmarkdown,
-    sf,
     testthat (>= 1.0.2)
 Remotes:
     PredictiveEcology/quickPlot@development,

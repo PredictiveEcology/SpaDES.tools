@@ -15,9 +15,8 @@
 (raster, shapefile, csv, etc.) after downloading and extracting from a zip
 or tar archive. This is the file \emph{before} it is passed to
 \code{postProcess}. Currently, the internal checksumming does not checksum
-the file after it is \code{postProcess}ed (e.g.,
-cropped/reprojected/masked). Using \code{Cache} around \code{prepInputs}
-will do a sufficient job in these cases.}
+the file after it is \code{postProcess}ed (e.g., cropped/reprojected/masked).
+Using \code{Cache} around \code{prepInputs} will do a sufficient job in these cases.}
 
 \item{attemptErrorFixes}{Will attempt to fix known errors. Currently only some failures
 for SpatialPolygons* are attempted. Notably with \code{raster::buffer(..., width = 0)}.

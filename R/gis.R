@@ -44,10 +44,7 @@ checkGDALVersion <- function(version) {
 
 #' Faster operations on rasters
 #'
-#' This alternative to \code{mask} is included here. If you do
-#' not have the suggested packages, sf and fasterize, then it will use
-#' raster::mask. Installing those two packages will make this function
-#' much faster.
+#' This alternative to \code{raster::mask} is included here.
 #'
 #' @param x        A \code{Raster*} object.
 #'
@@ -95,7 +92,6 @@ checkGDALVersion <- function(version) {
 #'   plot(shp, add = TRUE)
 #' }
 #'
-#'
 fastMask <- function(x, y) {
   if (requireNamespace("sf") && requireNamespace("fasterize")) {
     message("fastMask is using sf and fasterize")
@@ -104,10 +100,9 @@ fastMask <- function(x, y) {
       y <- spTransform(x = y, CRSobj = crs(x))
     }
 
-
     if (!is(y, "SpatialPolygonsDataFrame")) {
       y <- SpatialPolygonsDataFrame(Sr = y, data = data.frame(ID = seq(length(y))),
-                                            match.ID = FALSE)
+                                    match.ID = FALSE)
     }
 
     numericfield <- names(y)[which(unlist(lapply(names(y), function(x) {
@@ -141,11 +136,12 @@ fastMask <- function(x, y) {
 #'
 #' @export
 #' @importFrom raster crop extent
+#' @importFrom velox velox
 #' @seealso \code{velox::VeloxRaster_crop}
 #'
 fastCrop <- function(x, y, ...) {
   # velox package is much faster than raster package for rasterize function,
-  # but not as fast as gdal_rasterize for large polygonsv1 <- velox::velox(x)
+  # but not as fast as gdal_rasterize for large polygons
   a <- crop(x, y)
   v1 <- velox::velox(x)
   if (is(y, "Raster")) y <- extent(y)

@@ -19,9 +19,8 @@ the \code{targetFile}}
 (raster, shapefile, csv, etc.) after downloading and extracting from a zip
 or tar archive. This is the file \emph{before} it is passed to
 \code{postProcess}. Currently, the internal checksumming does not checksum
-the file after it is \code{postProcess}ed (e.g.,
-cropped/reprojected/masked). Using \code{Cache} around \code{prepInputs}
-will do a sufficient job in these cases.}
+the file after it is \code{postProcess}ed (e.g., cropped/reprojected/masked).
+Using \code{Cache} around \code{prepInputs} will do a sufficient job in these cases.}
 
 \item{neededFiles}{Character string giving the name of the file(s) to be extracted.}
 

@@ -17,9 +17,10 @@ is \code{TRUE}. The resulting post-processed filename will be
 \item{destinationPath}{If \code{postProcessedFilename} is a relative file path, then this
 will be the directory of the resulting absolute file path.}
 
-\item{...}{\code{\link{cropInputs}}, \code{\link{projectInputs}},
-\code{\link{maskInputs}}, \code{\link{determineFilename}},
-\code{\link{writeOutputs}}. These then pass \code{...} into other functions, like
+\item{...}{Additonal arguments passed to \code{\link{cropInputs}},
+\code{\link{projectInputs}}, \code{\link{maskInputs}},
+\code{\link{determineFilename}}, and \code{\link{writeOutputs}}.
+These then pass \code{...} into other functions, like
 \code{\link[raster]{writeRaster}}, or
 \code{sf::st_write}. This might include potentially important
 arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},

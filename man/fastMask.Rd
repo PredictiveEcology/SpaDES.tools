@@ -17,10 +17,7 @@ A \code{Raster*} object, masked (i.e., smaller extent and/or
         several pixels converted to NA)
 }
 \description{
-This alternative to \code{mask} is included here. If you do
-not have the suggested packages, sf and fasterize, then it will use
-raster::mask. Installing those two packages will make this function
-much faster.
+This alternative to \code{raster::mask} is included here.
 }
 \examples{
 library(raster)
@@ -54,7 +51,6 @@ if (interactive()) {
   plot(newStack2[[1]])
   plot(shp, add = TRUE)
 }
-
 
 }
 \author{
