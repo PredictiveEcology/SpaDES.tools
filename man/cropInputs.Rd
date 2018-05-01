@@ -2,9 +2,16 @@
 % Please edit documentation in R/downloadInputs.R
 \name{cropInputs}
 \alias{cropInputs}
+\alias{cropInputs.default}
+\alias{cropInputs.spatialObjects}
 \title{Reproject, crop a \code{Spatial*} or \code{Raster*} object}
 \usage{
 cropInputs(x, studyArea, rasterToMatch, ...)
+
+\method{cropInputs}{default}(x, studyArea, rasterToMatch, ...)
+
+\method{cropInputs}{spatialObjects}(x, studyArea, rasterToMatch = NULL,
+  extentToMatch = NULL, extentCRS = NULL, ...)
 }
 \arguments{
 \item{x}{A \code{Spatial*}, \code{sf}, or \code{Raster*} object.}
@@ -16,11 +23,19 @@ CRS of \code{x} before masking. Currently, this function will not reproject the
 
 \item{rasterToMatch}{Template \code{Raster*} object used for cropping (so extent should be
 the extent of desired outcome), reprojecting (including changing the
-resolution and projection). See details in
-\code{\link{postProcess.spatialObjects}}.}
+resolution and projection).
+See details in \code{\link{postProcess.spatialObjects}}.}
 
 \item{...}{Passed to \code{projectRaster} and \code{Cache}
 cropping.}
+
+\item{extentToMatch}{Optional. Can pass an extent here and a \code{crs} to
+\code{extentCRS} instead of \code{rasterToMatch}. These
+will override \code{rasterToMatch}, with a warning if both
+passed.}
+
+\item{extentCRS}{Optional. Can pass a \code{crs} here with an extent to
+\code{extentTomatch} instead of \code{rasterToMatch}}
 }
 \description{
 This function can be used to crop or reproject module inputs from raw data.

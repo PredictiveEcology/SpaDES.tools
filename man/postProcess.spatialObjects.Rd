@@ -4,9 +4,10 @@
 \alias{postProcess.spatialObjects}
 \title{Post processing for \code{spatialObjects}}
 \usage{
-\method{postProcess}{spatialObjects}(x, targetFilePath, studyArea = NULL,
-  rasterToMatch = NULL, overwrite = TRUE, useSAcrs = FALSE,
-  useCache = getOption("reproducible.useCache", FALSE), ...)
+\method{postProcess}{spatialObjects}(x, targetFilePath = NULL,
+  studyArea = NULL, rasterToMatch = NULL, overwrite = TRUE,
+  useSAcrs = FALSE, useCache = getOption("reproducible.useCache", FALSE),
+  ...)
 }
 \arguments{
 \item{x}{A \code{Spatial*}, \code{sf} or \code{Raster*} object.}
@@ -22,8 +23,8 @@ CRS of \code{x} before masking. Currently, this function will not reproject the
 
 \item{rasterToMatch}{Template \code{Raster*} object used for cropping (so extent should be
 the extent of desired outcome), reprojecting (including changing the
-resolution and projection). See details in
-\code{\link{postProcess.spatialObjects}}.}
+resolution and projection).
+See details in \code{\link{postProcess.spatialObjects}}.}
 
 \item{overwrite}{Logical. Should downloading and all the other actions occur
 even if they pass the checksums or the files are all there.}

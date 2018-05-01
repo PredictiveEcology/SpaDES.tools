@@ -18,8 +18,8 @@ CRS of \code{x} before masking. Currently, this function will not reproject the
 
 \item{rasterToMatch}{Template \code{Raster*} object used for cropping (so extent should be
 the extent of desired outcome), reprojecting (including changing the
-resolution and projection). See details in
-\code{\link{postProcess.spatialObjects}}.}
+resolution and projection).
+See details in \code{\link{postProcess.spatialObjects}}.}
 }
 \description{
 This is the function that follows the table of order of
