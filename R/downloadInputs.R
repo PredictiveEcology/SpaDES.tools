@@ -948,20 +948,40 @@ postProcess.spatialObjects <- function(x, targetFilePath = NULL,
 #'
 
 #' @export
+#' @rdname cropInputs
 cropInputs <- function(x, studyArea, rasterToMatch, ...) {
   UseMethod("cropInputs")
 }
 
 #' @export
-#' @importFrom raster projectExtent
-cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch, ...) {
-  if (!is.null(studyArea) || !is.null(rasterToMatch)) {
+#' @rdname cropInputs
+cropInputs.default <- function(x, studyArea, rasterToMatch, ...) {
+  x
+}
 
-    cropTo <- if (!is.null(rasterToMatch)) {
-      rasterToMatch
-    } else {
-      studyArea
+#' @export
+#' @rdname cropInputs
+#' @importFrom raster projectExtent
+#' @param extentToMatch Optional. Can pass an extent here and a \code{crs} to
+#'                      \code{extentCRS} instead of \code{rasterToMatch}. These
+#'                      will override \code{rasterToMatch}, with a warning if both
+#'                      passed.
+#' @param extentCRS     Optional. Can pass a \code{crs} here with an extent to
+#'                      \code{extentTomatch} instead of \code{rasterToMatch}
+cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extentToMatch = NULL,
+                                      extentCRS = NULL, ...) {
+
+  if (!is.null(studyArea) || !is.null(rasterToMatch) || !is.null(extentToMatch)) {
+
+    rasterToMatch <- if (!is.null(extentToMatch)) {
+      raster(extentToMatch, crs = extentCRS)
     }
+    cropTo <-
+      if (!is.null(rasterToMatch)) {
+        rasterToMatch
+      } else {
+        studyArea
+      }
 
     # have to project the extent to the x projection so crop will work -- this is temporary
     #   once cropped, then cropExtent should be rm
@@ -975,10 +995,15 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch, ...) {
       }
     }
 
+
+
     # crop it
     if (!identical(cropExtent, extent(x))) {
       message("    cropping")
-      x <- crop(x = x, y = cropExtent)
+      x <- raster::crop(x = x, y = cropExtent)
+      if (is.null(x)) {
+        message("    polygons do not intersect")
+      }
     }
   }
   x
@@ -1114,7 +1139,7 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
   x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
     warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
     return(x)
-    })
+  })
   x
 }
 
