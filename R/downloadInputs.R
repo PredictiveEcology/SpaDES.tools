@@ -856,7 +856,8 @@ postProcess.default <- function(x, ...) {
 #'   }
 #'   * Can be overridden with \code{useSAcrs}
 #' }
-postProcess.spatialObjects <- function(x, targetFilePath, studyArea = NULL, rasterToMatch = NULL,
+postProcess.spatialObjects <- function(x, targetFilePath = NULL,
+                                       studyArea = NULL, rasterToMatch = NULL,
                                        overwrite = TRUE, useSAcrs = FALSE,
                                        useCache = getOption("reproducible.useCache", FALSE),
                                        ...) {
