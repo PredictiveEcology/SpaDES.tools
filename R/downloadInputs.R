@@ -1160,7 +1160,8 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #'  will be the path of the saved raster. It will be tested whether it is an
 #'  absolute or relative path and used as is if absolute or prepended with
 #'  \code{destinationPath} if relative.
-determineFilename <- function(postProcessedFilename = TRUE, targetFilePath, destinationPath, ...) {
+determineFilename <- function(postProcessedFilename = TRUE, targetFilePath,
+                              destinationPath, ...) {
   if (!(is.logical(postProcessedFilename) || is.character(postProcessedFilename))) {
     stop("postProcessedFilename must be logical or character string")
   }
@@ -1172,7 +1173,11 @@ determineFilename <- function(postProcessedFilename = TRUE, targetFilePath, dest
       if (isAbsolutePath(postProcessedFilename)) {
         postProcessedFilename
       } else {
-        file.path(destinationPath, basename(postProcessedFilename))
+        if (!is.null(destinationPath)) {
+          file.path(destinationPath, basename(postProcessedFilename))
+        } else {
+          postProcessedFilename # accept relative
+        }
       }
     }
   } else {
