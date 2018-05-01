@@ -449,9 +449,11 @@ fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE,
 #' @export
 #' @param x A \code{SpatialPolygons} object
 #' @inheritParams fixErrors
-fixErrors.SpatialPolygons <- function(x, targetFile, attemptErrorFixes = TRUE,
+fixErrors.SpatialPolygons <- function(x, targetFile = NULL,
+                                      attemptErrorFixes = TRUE,
                                       useCache = getOption("reproducible.useCache", FALSE), ...) {
   if (attemptErrorFixes) {
+    if (is.null(targetFile)) targetFile = "SpatialPolygon"
     if (is(x, "SpatialPolygons")) {
       message("Checking for errors in ", targetFile)
       if (suppressWarnings(any(!rgeos::gIsValid(x, byid = TRUE)))) {
@@ -588,8 +590,8 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
                               .unzipOrUnTar(funWArgs$fun, funWArgs$args, files = basename(archive[2])))
           # recursion, removing one archive
           extractedObjs <- extractFromArchive(archive[-1], destinationPath = destinationPath,
-                             neededFiles = neededFiles, extractedArchives = extractedArchives,
-                             checkSums, needChecksums, filesExtracted = filesExtracted)
+                                              neededFiles = neededFiles, extractedArchives = extractedArchives,
+                                              checkSums, needChecksums, filesExtracted = filesExtracted)
         } else if (any(neededFiles %in% basename(filesInArchive)) || is.null(neededFiles)) {
           extractingTheseFiles <- paste(basename(filesInArchive[basename(filesInArchive) %in% neededFiles]),
                                         collapse = ", ")
