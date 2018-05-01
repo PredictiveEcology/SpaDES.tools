@@ -869,37 +869,50 @@ postProcess.spatialObjects <- function(x, targetFilePath = NULL,
     }
     skipCacheMess <- "useCache is FALSE, skipping Cache"
     skipCacheMess2 <- "No cacheRepo supplied"
-    mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
-                           x <- fixErrors(x, targetFile = basename(targetFilePath),
-                                          useCache = useCache, ...))
-    .groupedMessage(mess, omitPattern = skipCacheMess)
 
-    # cropInputs
+    # cropInputs -- pass the extent and crs so Caching is faster than whole Raster
+    if (!is.null(rasterToMatch)) {
+      extRTM <- extent(rasterToMatch)
+      crsRTM <- crs(rasterToMatch)
+    } else {
+      extRTM <- NULL
+      crsRTM <- NULL
+    }
     mess <- capture.output(type = "message",
                            x <- Cache(cropInputs, x, studyArea = studyArea,
-                                      rasterToMatch = rasterToMatch, useCache = useCache, ...))
+                                      extentToMatch = extRTM,
+                                      extentCRS = crsRTM,
+                                      useCache = useCache, ...))
     .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
-    # projectInputs
-    targetCRS <- getTargetCRS(useSAcrs, studyArea, rasterToMatch)
-    mess <- capture.output(type = "message",
-                           x <- Cache(projectInputs, x, targetCRS = targetCRS,
-                                      rasterToMatch = rasterToMatch, useCache = useCache, ...))
-    .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
+    # cropInputs may have returned NULL if they don't overlap
+    if (!is.null(x)) {
+      targetFile <- if (is.null(targetFilePath)) { NULL } else { basename(targetFilePath) }
+      mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
+                             x <- fixErrors(x, targetFile = targetFile,
+                                            useCache = useCache, ...))
+      .groupedMessage(mess, omitPattern = skipCacheMess)
 
-    # maskInputs
-    mess <- capture.output(type = "message",
-                           x <- Cache(maskInputs, x, studyArea = studyArea,
-                                      rasterToMatch = rasterToMatch, useCache = useCache, ...))
-    .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
+      # projectInputs
+      targetCRS <- getTargetCRS(useSAcrs, studyArea, rasterToMatch)
+      mess <- capture.output(type = "message",
+                             x <- Cache(projectInputs, x, targetCRS = targetCRS,
+                                        rasterToMatch = rasterToMatch, useCache = useCache, ...))
+      .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
-    # filename
-    newFilename <- determineFilename(targetFilePath = targetFilePath, ...)
-    if (!is.null(list(...)$filename)) stop("Can't pass filename; use postProcessedFilename")
+      # maskInputs
+      mess <- capture.output(type = "message",
+                             x <- Cache(maskInputs, x, studyArea = studyArea,
+                                        rasterToMatch = rasterToMatch, useCache = useCache, ...))
+      .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
-    # writeOutputs
-    x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
+      # filename
+      newFilename <- determineFilename(targetFilePath = targetFilePath, ...)
+      if (!is.null(list(...)$filename)) stop("Can't pass filename; use postProcessedFilename")
 
+      # writeOutputs
+      x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
+    }
   }
   x
 }
@@ -917,8 +930,8 @@ postProcess.spatialObjects <- function(x, targetFilePath = NULL,
 #'
 #' @param rasterToMatch Template \code{Raster*} object used for cropping (so extent should be
 #'                      the extent of desired outcome), reprojecting (including changing the
-#'                      resolution and projection). See details in
-#'                      \code{\link{postProcess.spatialObjects}}.
+#'                      resolution and projection).
+#'                      See details in \code{\link{postProcess.spatialObjects}}.
 #' @param ... Passed to \code{projectRaster} and \code{Cache}
 #' cropping.
 #'
