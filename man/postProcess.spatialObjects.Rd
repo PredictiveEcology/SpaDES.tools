@@ -39,10 +39,10 @@ If \code{TRUE}, it will be taken from \code{studyArea}.}
 \code{\link{projectInputs}}, \code{\link{maskInputs}},
 \code{\link{determineFilename}}, and \code{\link{writeOutputs}}.
 These then pass \code{...} into other functions, like
-\code{\link[raster]{writeRaster}}, or
-\code{sf::st_write}. This might include potentially important
-arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},
-with likely important arguments such as \code{method = "bilinear"}}
+\code{\link[raster]{writeRaster}}, or \code{sf::st_write}.
+This might include potentially important arguments like \code{datatype},
+\code{format}. Also passed to \code{projectRaster},
+with likely important arguments such as \code{method = "bilinear"}.}
 }
 \description{
 The method for spatialObjects (\code{Raster*} and \code{Spatial*}) will

@@ -808,7 +808,6 @@ postProcess.default <- function(x, ...) {
 #'   \code{\link{postProcess.spatialObjects}}
 #'  }
 #'
-#'
 #' @export
 #' @inheritParams prepInputs
 #' @inheritParams cropInputs
@@ -823,10 +822,10 @@ postProcess.default <- function(x, ...) {
 #'            \code{\link{projectInputs}}, \code{\link{maskInputs}},
 #'            \code{\link{determineFilename}}, and \code{\link{writeOutputs}}.
 #'            These then pass \code{...} into other functions, like
-#'            \code{\link[raster]{writeRaster}}, or
-#'            \code{sf::st_write}. This might include potentially important
-#'            arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},
-#'            with likely important arguments such as \code{method = "bilinear"}
+#'            \code{\link[raster]{writeRaster}}, or \code{sf::st_write}.
+#'            This might include potentially important arguments like \code{datatype},
+#'            \code{format}. Also passed to \code{projectRaster},
+#'            with likely important arguments such as \code{method = "bilinear"}.
 #'
 #' @section Passing \code{rasterToMatch} and/or \code{studyArea}:
 #'
@@ -1147,20 +1146,19 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 
 #' Determine filename, either automatically or manually
 #'
-#' If postProcessedFilename is \code{TRUE} (the default), then a name
-#' will be created automatically. See details.
+#'  If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
+#'  raster will be written to disk with the original \code{targetFile} name, with
+#'  \code{"Small"} prefixed to the basename(\code{targetFilename}).
+#'  If a character string, it will be the path of the saved raster.
+#'  It will be tested whether it is an absolute or relative path and used as is
+#'  if absolute or prepended with \code{destinationPath} if relative.
 #'
 #' @inheritParams postProcess.spatialObjects
 #' @param postProcessedFilename Logical or character string (a file path). See details.
 #' @param destinationPath If \code{postProcessedFilename} is a relative file path, then this
 #'                        will be the directory of the resulting absolute file path.
-#' @details
-#'  If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
-#'  raster will be written to disk with the original targetFile name, with
-#'  \code{"Small"} prefixed to the basename(\code{targetFilename}). If a character string, it
-#'  will be the path of the saved raster. It will be tested whether it is an
-#'  absolute or relative path and used as is if absolute or prepended with
-#'  \code{destinationPath} if relative.
+#'
+#' @author Eliot McIntire
 determineFilename <- function(postProcessedFilename = TRUE, targetFilePath,
                               destinationPath, ...) {
   if (!(is.logical(postProcessedFilename) || is.character(postProcessedFilename))) {
