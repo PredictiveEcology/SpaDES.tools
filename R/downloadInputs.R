@@ -406,7 +406,7 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 
   # postProcess
   out <-  Cache(postProcess, useCache = useCache, x,
-                targetFilePath = targetFilePath, destinationPath = destinationPath,
+                inputFilePath = targetFilePath, destinationPath = destinationPath,
                 ...)
   return(out)
 }
@@ -423,20 +423,22 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
 #' @export
 #' @keywords internal
 #' @param ... None used currently
+#' @param objectName Optional. This is only for messaging; if provided, then messages relayed
+#'                   to user will mention this.
 #' @param attemptErrorFixes Will attempt to fix known errors. Currently only some failures
 #'        for SpatialPolygons* are attempted. Notably with \code{raster::buffer(..., width = 0)}.
 #'        Default \code{TRUE}, though this may not be the right action for all cases.
 #' @param useCache Logical, default \code{getOption("reproducible.useCache", FALSE)}, whether
 #'                 Cache is used on the internal \code{raster::buffer} command.
 #'  @examples
-fixErrors <- function(x, targetFile, attemptErrorFixes = TRUE,
+fixErrors <- function(x, objectName, attemptErrorFixes = TRUE,
                       useCache = getOption("reproducible.useCache", FALSE), ...) {
   UseMethod("fixErrors")
 }
 
 #' @export
 #' @keywords internal
-fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE,
+fixErrors.default <- function(x, objectName, attemptErrorFixes = TRUE,
                               useCache = getOption("reproducible.useCache", FALSE), ...) {
   x
 }
@@ -449,18 +451,18 @@ fixErrors.default <- function(x, targetFile, attemptErrorFixes = TRUE,
 #' @export
 #' @param x A \code{SpatialPolygons} object
 #' @inheritParams fixErrors
-fixErrors.SpatialPolygons <- function(x, targetFile = NULL,
+fixErrors.SpatialPolygons <- function(x, objectName = NULL,
                                       attemptErrorFixes = TRUE,
                                       useCache = getOption("reproducible.useCache", FALSE), ...) {
   if (attemptErrorFixes) {
-    if (is.null(targetFile)) targetFile = "SpatialPolygon"
+    if (is.null(objectName)) objectName = "SpatialPolygon"
     if (is(x, "SpatialPolygons")) {
-      message("Checking for errors in ", targetFile)
+      message("Checking for errors in ", objectName)
       if (suppressWarnings(any(!rgeos::gIsValid(x, byid = TRUE)))) {
-        message("Found errors in ", targetFile, ". Attempting to correct.")
+        message("Found errors in ", objectName, ". Attempting to correct.")
         x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
         if (is(x1, "try-error")) {
-          message("There are errors with ", targetFile,
+          message("There are errors with ", objectName,
                   ". Couldn't fix them with raster::buffer(..., width = 0)")
         } else {
           x <- x1
@@ -812,8 +814,12 @@ postProcess.default <- function(x, ...) {
 #' @inheritParams prepInputs
 #' @inheritParams cropInputs
 #' @param x A \code{Spatial*}, \code{sf} or \code{Raster*} object.
-#' @param targetFilePath Character string. This is used if \code{postProcessedFilename}
-#'                       is \code{TRUE}. The resulting post-processed filename will be
+#' @param postProcessedFilename Character string. If provided, then it is passed to
+#'                 \code{determineFilename} and then \code{writeOutputs}
+#' @param targetFilePath Character string. This is the file path of the input object,
+#'                       if it has one. This is then used if \code{postProcessedFilename}
+#'                       is \code{TRUE} to name the output file, where
+#'                       the resulting post-processed filename will be
 #'                       \code{.prefix(basename(targetFilePath), "Small")}.
 #' @param useSAcrs Logical. If \code{FALSE}, the default, then the desired projection
 #'                 will be taken from \code{rasterToMatch} or none at all.
@@ -856,11 +862,21 @@ postProcess.default <- function(x, ...) {
 #'   }
 #'   * Can be overridden with \code{useSAcrs}
 #' }
-postProcess.spatialObjects <- function(x, targetFilePath = NULL,
+postProcess.spatialObjects <- function(x, inputFilePath = NULL,
                                        studyArea = NULL, rasterToMatch = NULL,
                                        overwrite = TRUE, useSAcrs = FALSE,
                                        useCache = getOption("reproducible.useCache", FALSE),
+                                       postProcessedFilename = NULL,
                                        ...) {
+  dots <- list(...)
+
+  if (!is.null(dots$targetFilePath))  {
+    message("targetFilePath is being deprecated; use inputFilePath")
+    inputFilePath <- dots$targetFilePath
+    dots$targetFilePath <- NULL
+  }
+
+
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
 
     # fix errors if methods available
@@ -887,9 +903,9 @@ postProcess.spatialObjects <- function(x, targetFilePath = NULL,
 
     # cropInputs may have returned NULL if they don't overlap
     if (!is.null(x)) {
-      targetFile <- if (is.null(targetFilePath)) { NULL } else { basename(targetFilePath) }
+      objectName <- if (is.null(inputFilePath)) { NULL } else { basename(inputFilePath) }
       mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
-                             x <- fixErrors(x, targetFile = targetFile,
+                             x <- fixErrors(x, objectName = objectName,
                                             useCache = useCache, ...))
       .groupedMessage(mess, omitPattern = skipCacheMess)
 
@@ -907,7 +923,12 @@ postProcess.spatialObjects <- function(x, targetFilePath = NULL,
       .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
       # filename
-      newFilename <- determineFilename(targetFilePath = targetFilePath, ...)
+      if (is.null(postProcessedFilename)) {
+        postProcessedFilename <- TRUE
+      }
+      newFilename <- determineFilename(inputFilePath = inputFilePath,
+                                       postProcessedFilename = postProcessedFilename,
+                                       ...)
       if (!is.null(list(...)$filename)) stop("Can't pass filename; use postProcessedFilename")
 
       # writeOutputs
@@ -1155,19 +1176,38 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #'
 #' @inheritParams postProcess.spatialObjects
 #' @param postProcessedFilename Logical or character string (a file path). See details.
-#' @param destinationPath If \code{postProcessedFilename} is a relative file path, then this
+#' @param inputFilePath Optional. Filename (with or without full path). Only used if
+#'                       \code{postProcessedFilename} is \code{TRUE}, in which case,
+#'                       this is used to help name the output.
+#' @param destinationPath Optional. If \code{postProcessedFilename} is a relative file path, then this
 #'                        will be the directory of the resulting absolute file path.
-#'
-#' @author Eliot McIntire
-determineFilename <- function(postProcessedFilename = TRUE, targetFilePath,
+#' @details
+#'  If \code{postProcessedFilename} is \code{logical}, then the output
+#'  filename will be \code{"Small"} prefixed to the basename(\code{inputFilePath}).
+#'  If a character string, it
+#'  will be the path returned. It will be tested whether it is an
+#'  absolute or relative path and used as is if absolute or prepended with
+#'  \code{destinationPath} if provided, and if \code{postProcessedFilename} is relative.
+determineFilename <- function(postProcessedFilename = TRUE, inputFilePath = NULL,
                               destinationPath, ...) {
+
+  dots <- list(...)
+  if (!is.null(dots$targetFilePath))  {
+    message("targetFilePath is being deprecated from determineFilename; use postProcessedFilename",
+            "and inputFilePath")
+    if (is.null(inputFilePath)) {
+      inputFilePath <- dots$targetFilePath
+      dots$targetFilePath <- NULL
+    }
+  }
+
   if (!(is.logical(postProcessedFilename) || is.character(postProcessedFilename))) {
     stop("postProcessedFilename must be logical or character string")
   }
 
   newFilename <- if (!identical(postProcessedFilename, FALSE)) { # allow TRUE or path
     if (isTRUE(postProcessedFilename) ) {
-      .prefix(targetFilePath, "Small")
+      .prefix(inputFilePath, "Small")
     } else {
       if (isAbsolutePath(postProcessedFilename)) {
         postProcessedFilename

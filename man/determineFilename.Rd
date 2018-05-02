@@ -4,17 +4,17 @@
 \alias{determineFilename}
 \title{Determine filename, either automatically or manually}
 \usage{
-determineFilename(postProcessedFilename = TRUE, targetFilePath,
+determineFilename(postProcessedFilename = TRUE, inputFilePath = NULL,
   destinationPath, ...)
 }
 \arguments{
 \item{postProcessedFilename}{Logical or character string (a file path). See details.}
 
-\item{targetFilePath}{Character string. This is used if \code{postProcessedFilename}
-is \code{TRUE}. The resulting post-processed filename will be
-\code{.prefix(basename(targetFilePath), "Small")}.}
+\item{inputFilePath}{Optional. Filename (with or without full path). Only used if
+\code{postProcessedFilename} is \code{TRUE}, in which case,
+this is used to help name the output.}
 
-\item{destinationPath}{If \code{postProcessedFilename} is a relative file path, then this
+\item{destinationPath}{Optional. If \code{postProcessedFilename} is a relative file path, then this
 will be the directory of the resulting absolute file path.}
 
 \item{...}{Additonal arguments passed to \code{\link{cropInputs}},
@@ -27,6 +27,7 @@ This might include potentially important arguments like \code{datatype},
 with likely important arguments such as \code{method = "bilinear"}.}
 }
 \description{
+<<<<<<< Updated upstream
 If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
  raster will be written to disk with the original \code{targetFile} name, with
  \code{"Small"} prefixed to the basename(\code{targetFilename}).
@@ -36,4 +37,16 @@ If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
 }
 \author{
 Eliot McIntire
+=======
+If postProcessedFilename is \code{TRUE} (the default), then a name
+will be created automatically. See details.
+}
+\details{
+If \code{postProcessedFilename} is \code{logical}, then the output
+ filename will be \code{"Small"} prefixed to the basename(\code{inputFilePath}).
+ If a character string, it
+ will be the path returned. It will be tested whether it is an
+ absolute or relative path and used as is if absolute or prepended with
+ \code{destinationPath} if provided, and if \code{postProcessedFilename} is relative.
+>>>>>>> Stashed changes
 }

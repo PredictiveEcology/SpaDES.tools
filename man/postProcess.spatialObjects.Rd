@@ -4,17 +4,13 @@
 \alias{postProcess.spatialObjects}
 \title{Post processing for \code{spatialObjects}}
 \usage{
-\method{postProcess}{spatialObjects}(x, targetFilePath = NULL,
+\method{postProcess}{spatialObjects}(x, inputFilePath = NULL,
   studyArea = NULL, rasterToMatch = NULL, overwrite = TRUE,
   useSAcrs = FALSE, useCache = getOption("reproducible.useCache", FALSE),
-  ...)
+  postProcessedFilename = NULL, ...)
 }
 \arguments{
 \item{x}{A \code{Spatial*}, \code{sf} or \code{Raster*} object.}
-
-\item{targetFilePath}{Character string. This is used if \code{postProcessedFilename}
-is \code{TRUE}. The resulting post-processed filename will be
-\code{.prefix(basename(targetFilePath), "Small")}.}
 
 \item{studyArea}{Template \code{SpatialPolygons*} object used for masking, after cropping.
 If not in same CRS, then it will be \code{spTransform}ed to
@@ -35,14 +31,30 @@ If \code{TRUE}, it will be taken from \code{studyArea}.}
 
 \item{useCache}{Passed to Cache in various places. Default \code{FALSE}}
 
+\item{postProcessedFilename}{Character string. If provided, then it is passed to
+\code{determineFilename} and then \code{writeOutputs}}
+
 \item{...}{Additonal arguments passed to \code{\link{cropInputs}},
 \code{\link{projectInputs}}, \code{\link{maskInputs}},
 \code{\link{determineFilename}}, and \code{\link{writeOutputs}}.
 These then pass \code{...} into other functions, like
+<<<<<<< Updated upstream
 \code{\link[raster]{writeRaster}}, or \code{sf::st_write}.
 This might include potentially important arguments like \code{datatype},
 \code{format}. Also passed to \code{projectRaster},
 with likely important arguments such as \code{method = "bilinear"}.}
+=======
+\code{\link[raster]{writeRaster}}, or
+\code{sf::st_write}. This might include potentially important
+arguments like \code{datatype}, \code{format}. Also passed to \code{projectRaster},
+with likely important arguments such as \code{method = "bilinear"}}
+
+\item{targetFilePath}{Character string. This is the file path of the input object,
+if it has one. This is then used if \code{postProcessedFilename}
+is \code{TRUE} to name the output file, where
+the resulting post-processed filename will be
+\code{.prefix(basename(targetFilePath), "Small")}.}
+>>>>>>> Stashed changes
 }
 \description{
 The method for spatialObjects (\code{Raster*} and \code{Spatial*}) will

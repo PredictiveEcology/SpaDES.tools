@@ -4,19 +4,15 @@
 \alias{fixErrors}
 \title{Do some minor error fixing}
 \usage{
-fixErrors(x, targetFile, attemptErrorFixes = TRUE,
+fixErrors(x, objectName, attemptErrorFixes = TRUE,
   useCache = getOption("reproducible.useCache", FALSE), ...)
 }
 \arguments{
 \item{x}{Any object that could be fixed for errors.
 See \code{\link{fixErrors.SpatialPolygons}}}
 
-\item{targetFile}{Character string giving the path to the eventual file
-(raster, shapefile, csv, etc.) after downloading and extracting from a zip
-or tar archive. This is the file \emph{before} it is passed to
-\code{postProcess}. Currently, the internal checksumming does not checksum
-the file after it is \code{postProcess}ed (e.g., cropped/reprojected/masked).
-Using \code{Cache} around \code{prepInputs} will do a sufficient job in these cases.}
+\item{objectName}{Optional. This is only for messaging; if provided, then messages relayed
+to user will mention this.}
 
 \item{attemptErrorFixes}{Will attempt to fix known errors. Currently only some failures
 for SpatialPolygons* are attempted. Notably with \code{raster::buffer(..., width = 0)}.
