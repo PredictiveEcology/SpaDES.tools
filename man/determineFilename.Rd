@@ -5,7 +5,7 @@
 \title{Determine filename, either automatically or manually}
 \usage{
 determineFilename(postProcessedFilename = TRUE, inputFilePath = NULL,
-  destinationPath, ...)
+  destinationPath = NULL, ...)
 }
 \arguments{
 \item{postProcessedFilename}{Logical or character string (a file path). See details.}
