@@ -816,11 +816,13 @@ postProcess.default <- function(x, ...) {
 #' @param x A \code{Spatial*}, \code{sf} or \code{Raster*} object.
 #' @param postProcessedFilename Character string. If provided, then it is passed to
 #'                 \code{determineFilename} and then \code{writeOutputs}
-#' @param targetFilePath Character string. This is the file path of the input object,
+#' @param inputFilePath Character string. This is the file path of the \emph{input} object,
 #'                       if it has one. This is then used if \code{postProcessedFilename}
 #'                       is \code{TRUE} to name the output file, where
 #'                       the resulting post-processed filename will be
-#'                       \code{.prefix(basename(targetFilePath), "Small")}.
+#'                       \code{.prefix(basename(inputFilePath), "Small")}. Mostly used
+#'                       by \code{\link{prepInputs}}, where \code{postProcessedFilename} is
+#'                       missing.
 #' @param useSAcrs Logical. If \code{FALSE}, the default, then the desired projection
 #'                 will be taken from \code{rasterToMatch} or none at all.
 #'                 If \code{TRUE}, it will be taken from \code{studyArea}.
@@ -836,7 +838,7 @@ postProcess.default <- function(x, ...) {
 #' @section Passing \code{rasterToMatch} and/or \code{studyArea}:
 #'
 #' Depending on which of these were passed, different things will happen to the \code{targetFile}
-#' located at \code{targetFilePath}.
+#' located at \code{inputFilePath}.
 #'
 #' \subsection{If \code{targetFile} is a \code{Raster*} object:}{
 #'   \tabular{lccc}{
