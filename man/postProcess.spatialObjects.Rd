@@ -12,13 +12,13 @@
 \arguments{
 \item{x}{A \code{Spatial*}, \code{sf} or \code{Raster*} object.}
 
-\item{inputFilePath}{Character string. This is the file path of the \emph{input} object,
+\item{inputFilePath}{Character string giving the file path of the \emph{input} object,
 if it has one. This is then used if \code{postProcessedFilename}
-is \code{TRUE} to name the output file, where
-the resulting post-processed filename will be
-\code{.prefix(basename(inputFilePath), "Small")}. Mostly used
-by \code{\link{prepInputs}}, where \code{postProcessedFilename} is
-missing.}
+is \code{TRUE} to name the output file, where the resulting
+post-processed filename will be
+\code{.prefix(basename(inputFilePath), "Small")}.
+Mostly used by \code{\link{prepInputs}},
+where \code{postProcessedFilename} is missing.}
 
 \item{studyArea}{Template \code{SpatialPolygons*} object used for masking, after cropping.
 If not in same CRS, then it will be \code{spTransform}ed to
@@ -80,8 +80,7 @@ between these calls so that the crs match.
   NOTE: \code{sf} objects are still very experimental.
 
  \subsection{Understanding various combinations of \code{rasterToMatch}
-  and/or \code{studyArea}}{ Please see
-  \code{\link{postProcess.spatialObjects}}
+  and/or \code{studyArea}}{ Please see \code{\link{postProcess.spatialObjects}}
  }
 }
 

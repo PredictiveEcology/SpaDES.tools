@@ -806,8 +806,7 @@ postProcess.default <- function(x, ...) {
 #'   NOTE: \code{sf} objects are still very experimental.
 #'
 #'  \subsection{Understanding various combinations of \code{rasterToMatch}
-#'   and/or \code{studyArea}}{ Please see
-#'   \code{\link{postProcess.spatialObjects}}
+#'   and/or \code{studyArea}}{ Please see \code{\link{postProcess.spatialObjects}}
 #'  }
 #'
 #' @export
@@ -816,13 +815,13 @@ postProcess.default <- function(x, ...) {
 #' @param x A \code{Spatial*}, \code{sf} or \code{Raster*} object.
 #' @param postProcessedFilename Character string. If provided, then it is passed to
 #'                 \code{determineFilename} and then \code{writeOutputs}
-#' @param inputFilePath Character string. This is the file path of the \emph{input} object,
-#'                       if it has one. This is then used if \code{postProcessedFilename}
-#'                       is \code{TRUE} to name the output file, where
-#'                       the resulting post-processed filename will be
-#'                       \code{.prefix(basename(inputFilePath), "Small")}. Mostly used
-#'                       by \code{\link{prepInputs}}, where \code{postProcessedFilename} is
-#'                       missing.
+#' @param inputFilePath Character string giving the file path of the \emph{input} object,
+#'                      if it has one. This is then used if \code{postProcessedFilename}
+#'                      is \code{TRUE} to name the output file, where the resulting
+#'                      post-processed filename will be
+#'                      \code{.prefix(basename(inputFilePath), "Small")}.
+#'                      Mostly used by \code{\link{prepInputs}},
+#'                      where \code{postProcessedFilename} is missing.
 #' @param useSAcrs Logical. If \code{FALSE}, the default, then the desired projection
 #'                 will be taken from \code{rasterToMatch} or none at all.
 #'                 If \code{TRUE}, it will be taken from \code{studyArea}.
@@ -905,7 +904,7 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
 
     # cropInputs may have returned NULL if they don't overlap
     if (!is.null(x)) {
-      objectName <- if (is.null(inputFilePath)) { NULL } else { basename(inputFilePath) }
+      objectName <- if (is.null(inputFilePath)) NULL else basename(inputFilePath)
       mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
                              x <- fixErrors(x, objectName = objectName,
                                             useCache = useCache, ...))
@@ -1096,7 +1095,6 @@ projectInputs.Spatial <- function(x, targetCRS, ...) {
   x
 }
 
-
 #' Hierachically get crs from \code{Raster*}, \code{Spatial*}
 #'
 #' This is the function that follows the table of order of
@@ -1113,7 +1111,6 @@ getTargetCRS <- function(useSAcrs, studyArea, rasterToMatch) {
   }
   targetCRS
 }
-
 
 #' Mask module inputs
 #'
@@ -1147,7 +1144,6 @@ maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, 
     msg <- capture.output(type = "message",
                           x <- fastMask(x = x, y = studyArea))
     message(paste0("      ", paste(msg, collapse = "\n      ")))
-
   }
   x
 }
@@ -1165,7 +1161,6 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
   })
   x
 }
-
 
 #' Determine filename, either automatically or manually
 #'
@@ -1195,8 +1190,8 @@ determineFilename <- function(postProcessedFilename = TRUE, inputFilePath = NULL
 
   dots <- list(...)
   if (!is.null(dots$targetFilePath))  {
-    message("targetFilePath is being deprecated from determineFilename; use postProcessedFilename",
-            "and inputFilePath")
+    message("targetFilePath is being deprecated from determineFilename:\n",
+            "  use postProcessedFilename and inputFilePath.")
     if (is.null(inputFilePath)) {
       inputFilePath <- dots$targetFilePath
       dots$targetFilePath <- NULL
@@ -1226,6 +1221,7 @@ determineFilename <- function(postProcessedFilename = TRUE, inputFilePath = NULL
   }
   newFilename
 }
+
 #' Write module inputs on disk
 #'
 #' Can be used to write prepared inputs on disk.
@@ -1343,7 +1339,6 @@ writeOutputs.default <- function(x, filename, ...) {
   }
 
 }
-
 
 #' A wrapper around a set of downloading functions
 #'
@@ -1471,7 +1466,6 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
   archiveReturn <- if (is.null(archive)) archive else file.path(destinationPath, basename(archive))
   list(needChecksums = needChecksums, archive = archiveReturn, neededFiles = neededFiles)
 }
-
 
 .getSourceURL <- function(pattern, x) {
   srcURL <- "sourceURL"
