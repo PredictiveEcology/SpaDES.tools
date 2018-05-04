@@ -502,7 +502,7 @@ setMethod(
             checkPath(create = TRUE) %>%
             file.path(., xFile)
 
-          if (!RCurl::url.exists(to.dl[xInd])) {
+          if (httr::http_error(to.dl[xInd])) {
             ## if the URL doesn't work allow the user to retrieve it manually
             message(crayon::magenta("Cannot download ", xFile, " for module ", module, ":\n",
                                     "\u2937 cannot open URL '", to.dl[xInd], "'.", sep = ""))
