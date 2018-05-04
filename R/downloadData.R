@@ -400,7 +400,9 @@ setMethod(
       #urls <- moduleMetadata(module, path)$inputObjects$sourceURL
     }
 
-    ids <- which(urls == "" | is.na(urls))
+    ids <- if(is.null(urls)) {
+      ids <-  integer()
+    } else which(urls == "" | is.na(urls))
     to.dl <- if (length(ids)) urls[-ids] else urls
     if (is.null(checked)) {
       chksums <- checksums(module, path, quickCheck = quickCheck, files = files)
