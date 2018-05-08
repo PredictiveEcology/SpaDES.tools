@@ -29,6 +29,7 @@
 #'                parallel::makeCluster or equivalent. This is an alternative way, instead
 #'                of \code{beginCluster()}, to use parallelism for this function, allowing for
 #'                more control over cluster use.
+#' @param rType   Datatype of the split rasters. Defaults to FLT4S.
 #'
 #' @return \code{splitRaster} returns a list (length \code{nx*ny}) of cropped raster tiles.
 #'
@@ -47,7 +48,7 @@
 #'
 setGeneric(
   "splitRaster",
-  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = file.path(getwd(), names(r)), cl) {
+  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = file.path(getwd(), names(r)), cl, rType = "FLT4S") {
   standardGeneric("splitRaster")
 })
 
@@ -56,7 +57,7 @@ setGeneric(
 setMethod(
   "splitRaster",
   signature = signature(r = "RasterLayer"),
-  definition = function(r, nx, ny, buffer, path, cl) {
+  definition = function(r, nx, ny, buffer, path, cl, rType) {
     if (!is.numeric(nx) | !is.numeric(ny) | !is.numeric(buffer)) {
       stop("nx, ny, and buffer must be numeric")
     }
@@ -98,18 +99,18 @@ setMethod(
       }
     }
 
-    croppy <- function(i, e, r, path) {
+    croppy <- function(i, e, r, path, rType = "FLT4S") {
       filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
       ri <- crop(r, e[[i]])
       crs(ri) <- crs(r)
-      writeRaster(ri, filename, overwrite = TRUE)
+      writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
       return(raster(filename))
     }
 
     tiles <- if (!is.null(cl)) {
-      clusterApplyLB(cl = cl, x = seq_along(extents), fun = croppy, e = extents, r = r, path = path)
+      clusterApplyLB(cl = cl, x = seq_along(extents), fun = croppy, e = extents, r = r, path = path, rType = rType)
     } else {
-      lapply(X = seq_along(extents), FUN = croppy, e = extents, r = r, path = path)
+      lapply(X = seq_along(extents), FUN = croppy, e = extents, r = r, path = path, rType = rType)
     }
 
     return(tiles)

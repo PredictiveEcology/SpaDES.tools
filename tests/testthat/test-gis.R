@@ -21,11 +21,11 @@ test_that("fastMask produces correct results", {
 
   ## mask
   newStack1 <- raster::stack(raster::mask(origStack, mask = shp))
-  newStack2 <- fastMask(x = origStack, polygon = shp)
+  newStack2 <- fastMask(x = origStack, y = shp)
   expect_equal(newStack1, newStack2)
 
   newStack1 <- raster::mask(origStack[[2]], mask = shp)
-  newStack2 <- fastMask(x = origStack[[2]], polygon = shp)
+  newStack2 <- fastMask(x = origStack[[2]], y = shp)
   expect_equal(newStack1, newStack2)
 })
 

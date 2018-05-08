@@ -542,7 +542,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       set(dtRetry, , "state", NULL)
       whNeedJump <- which(((clusterDT$numRetries + 1) %% 10) == 0)
       if (length(whNeedJump)) {
-        # jump every 10, starting at 4
+        # jump every 10, starting at 20
         resCur <- res(landscape)[1]
         dtRetryJump <- dtRetry[clusterDT[whNeedJump], nomatch = 0]
         fromPixels <- dtRetryJump$pixels
@@ -550,7 +550,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           cbind(id = fp, cir(landscape, loci = fromPixels[fp],
                              includeBehavior = "excludePixels",
                              minRadius = resCur,
-                             maxRadius = 4 * resCur)[, "indices"])
+                             maxRadius = 20 * resCur)[, "indices"]) # 20 pixels
         }) %>%
           do.call(what = rbind)
 
