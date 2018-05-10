@@ -140,7 +140,8 @@ setMethod(
       }
     }
 
-    if (!is.null(txt$algorithm)) {
+
+    if (!is.null(txt$algorithm) & length(txt$algorithm)) {
       if (!write) dots$algo <- unique(txt$algorithm)[1]
     } else {
       if (NROW(txt)) {
