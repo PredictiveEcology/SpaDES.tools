@@ -393,6 +393,8 @@ setMethod(
     cwd <- getwd()
     path <- checkPath(path, create = FALSE)
 
+    ## if urls are not provided, get them from module metadata
+    if (!length(urls)) {
     if (is.call(urls)) {
       # This is the case where it can't evaluate the .parseModulePartial because of a reference
       #  to the sim object that isn't available. Because sourceURL is unlikely to use
@@ -400,9 +402,10 @@ setMethod(
       urls <- eval(urls)
       urls <- moduleMetadata(module, path)$inputObjects$sourceURL
     } else{
-      inputs <- .parseModulePartial(filename = file.path(path, module, paste0(module, ".R")),
-                                    defineModuleElement = "inputObjects")
-      urls <- inputs$sourceURL
+        inputs <- .parseModulePartial(filename = file.path(path, module, paste0(module, ".R")),
+                                      defineModuleElement = "inputObjects")
+        urls <- inputs$sourceURL
+      }
     }
 
     ids <- if (is.null(urls)) {
