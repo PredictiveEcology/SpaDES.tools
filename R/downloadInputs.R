@@ -258,7 +258,6 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     alsoExtract <- file.path(destinationPath, alsoExtract)
   }
 
-
   checkSumFilePath <- file.path(destinationPath, "CHECKSUMS.txt")
   if (purge) unlink(checkSumFilePath)
 
@@ -355,9 +354,11 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   })
 
   # Stage 1 - Extract from archive
+
   filesExtracted <- extractFromArchive(archive = archive, destinationPath = destinationPath,
-                                       neededFiles = neededFiles,
-                                       checkSums = checkSums, needChecksums = needChecksums)
+                                         neededFiles = neededFiles,
+                                         checkSums = checkSums, needChecksums = needChecksums)
+
   filesToChecksum <- unique(c(filesToChecksum, targetFile, alsoExtract,
                               basename(filesExtracted$filesExtracted)))
   needChecksums <- filesExtracted$needChecksums
@@ -877,6 +878,7 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
     dots$targetFilePath <- NULL
   }
 
+
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
 
     # fix errors if methods available
@@ -917,7 +919,6 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
       .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
       # maskInputs
-
       mess <- capture.output(type = "message",
                              x <- Cache(maskInputs, x, studyArea = studyArea,
                                         rasterToMatch = rasterToMatch, useCache = useCache, ...))
@@ -927,13 +928,12 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
       if (is.null(postProcessedFilename)) {
         postProcessedFilename <- TRUE
       }
-      newFilename <- determineFilename(inputFilePath = inputFilePath,  # [ FIX ] newFilename needs to be in data folder, and it is not!
+      newFilename <- determineFilename(inputFilePath = inputFilePath,
                                        postProcessedFilename = postProcessedFilename,
                                        ...)
       if (!is.null(list(...)$filename)) stop("Can't pass filename; use postProcessedFilename")
 
       # writeOutputs
-
       x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
     }
   }
@@ -1152,19 +1152,19 @@ maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, 
 #' @export
 #' @rdname maskInputs
 maskInputs.Spatial <- function(x, studyArea, ...) {
-if(!is.null(studyArea)){
-  message("    intersecting")
-  studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
-  studyArea <- spTransform(studyArea, CRSobj = crs(x))
-  suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
-  x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
-    warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
+  if(!is.null(studyArea)){
+    message("    intersecting")
+    studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
+    studyArea <- spTransform(studyArea, CRSobj = crs(x))
+    suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
+    x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
+      warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
+      return(x)
+    })
     return(x)
-  })
-  return(x)
-} else {
-  message("studyArea not provided, skipping masking")
-  return(x)
+  } else {
+    message("studyArea not provided, skipping masking")
+    return(x)
   }
 }
 
