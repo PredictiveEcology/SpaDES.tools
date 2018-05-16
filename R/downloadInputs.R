@@ -1186,7 +1186,7 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #'  absolute or relative path and used as is if absolute or prepended with
 #'  \code{destinationPath} if provided, and if \code{postProcessedFilename} is relative.
 determineFilename <- function(postProcessedFilename = TRUE, inputFilePath = NULL,
-                              destinationPath, ...) {
+                              destinationPath = NULL, ...) {
 
   dots <- list(...)
   if (!is.null(dots$targetFilePath))  {
