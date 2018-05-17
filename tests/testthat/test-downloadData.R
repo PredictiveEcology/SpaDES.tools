@@ -1,7 +1,7 @@
 test_that("downloadData downloads and unzips module data", {
   if (identical(Sys.getenv("TRAVIS"), "true") &&
       tolower(Sys.info()[["sysname"]]) == "darwin") skip("On Travis OSX")
-  # skip_on_cran()
+  skip_on_cran()
 
   if (Sys.info()["sysname"] == "Windows") {
     options(download.file.method = "auto")
@@ -17,25 +17,24 @@ test_that("downloadData downloads and unzips module data", {
 
   filenames <- c("DEM.tif", "habitatQuality.tif")
   if (paste0(R.version$major, ".", R.version$minor) > "3.4.2") {
-    chksums <- structure(list(
-      file = structure(1:2, .Label = c("DEM.tif", "habitatQuality.tif"),
-                       class = "factor"),
-    checksum = structure(1:2, .Label = c("77c56d42fecac5b1", "f21251dcdf23dde0"),
-                         class = "factor"),
-    filesize = structure(1:2, .Label = c("6045", "43558"), class = "factor"),
-    algorithm = structure(1:2, .Label = c("xxhash64", "xxhash64"), class = "factor")),
-    .Names = c("file", "checksum", "filesize", "algorithm"),
-    class = "data.frame", row.names = c(NA, -2L))
-
+    chksums <- structure(
+      list(
+        file = structure(1:2, .Label = c("DEM.tif", "habitatQuality.tif"), class = "factor"),
+        checksum = structure(1:2, .Label = c("77c56d42fecac5b1", "f21251dcdf23dde0"), class = "factor")
+      ),
+      .Names = c("file", "checksum"),
+      class = "data.frame", row.names = c(NA, -2L)
+    )
     moduleDir <- file.path(tmpdir, "test")
     dataDir <- file.path(moduleDir, "data")
-    write.table(chksums, file = file.path(dataDir, "CHECKSUMS.txt"), row.names = FALSE)
-    expectsInputs <- data.frame(objectName = c("DEM", "habitatQuality"),
-                             objectClass = "RasterLayer",
-                             sourceURL = c("https://raw.githubusercontent.com/PredictiveEcology/quickPlot/master/inst/maps/DEM.tif",
-                                           "https://raw.githubusercontent.com/PredictiveEcology/quickPlot/master/inst/maps/habitatQuality.tif"),
-                             stringsAsFactors = FALSE
-                    )
+    write.table(chksums, file = file.path(dataDir, "CHECKSUMS.txt") )
+    expectsInputs <- data.frame(
+      objectName = c("DEM", "habitatQuality"),
+      objectClass = "RasterLayer",
+      sourceURL = c("https://raw.githubusercontent.com/PredictiveEcology/quickPlot/master/inst/maps/DEM.tif",
+                    "https://raw.githubusercontent.com/PredictiveEcology/quickPlot/master/inst/maps/habitatQuality.tif"),
+      stringsAsFactors = FALSE
+    )
 
     reproducible::checkPath(dataDir, create = TRUE)
 
@@ -70,7 +69,7 @@ test_that("downloadData downloads and unzips module data", {
       downloadData(m, tmpdir, quiet = TRUE, urls = expectsInputs$sourceURL)
       expect_true(all(file.exists(file.path(datadir, filenames))))
     }
-
+    
     # downloads data using urls described in module metadata
     m <- "LccToBeaconsReclassify"
     tmpdir <- file.path(tempdir(), "modules") %>% reproducible::checkPath(create = TRUE)
@@ -132,4 +131,3 @@ test_that("downloadData downloads and unzips module data", {
     expect_true(all(file.exists(file.path(dataDir, filenames))))
   }
 })
-

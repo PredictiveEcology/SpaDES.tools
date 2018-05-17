@@ -11,7 +11,7 @@ if (getRversion() >= "3.1.0") {
 #' Verify (and optionally write) checksums for data files in a module's
 #' \code{data/} subdirectory. The file \code{data/CHECKSUMS.txt} contains the
 #' expected checksums for each data file.
-#' Checksums are computed using \code{SpaDES.core:::.digest}, which is simply a
+#' Checksums are computed using \code{SpaDES.tools:::.digest}, which is simply a
 #' wrapper around \code{digest::digest}.
 #'
 #' Modules may require data that for various reasons cannot be distributed with
@@ -106,9 +106,7 @@ setMethod(
     checksumFile <- file.path(path, basename(checksumFile))
 
     if (!write) {
-      if(!file.exists(checksumFile)) {
-      stop("Missing checksums file")
-      }
+      stopifnot(file.exists(checksumFile))
     } else if (!file.exists(checksumFile)) {
       file.create(checksumFile)
     }
@@ -140,8 +138,7 @@ setMethod(
       }
     }
 
-
-    if (!is.null(txt$algorithm) & length(txt$algorithm)) {
+    if (!is.null(txt$algorithm)) {
       if (!write) dots$algo <- unique(txt$algorithm)[1]
     } else {
       if (NROW(txt)) {
@@ -276,7 +273,7 @@ appendChecksumsTable <- function(checkSumFilePath, filesToChecksum, destinationP
 #'
 #' @author Eliot McIntire and Alex Chubaty
 #' @export
-#' @importFrom httr http_error
+#' @importFrom RCurl url.exists
 #'
 #' @examples
 #' urls <- c("https://www.alexchubaty.com/uploads/2011/11/open-forest-science-journal.csl",
@@ -286,11 +283,10 @@ appendChecksumsTable <- function(checkSumFilePath, filesToChecksum, destinationP
 #'
 remoteFileSize <- function(url) {
   contentLength <- vapply(url, function(u) {
-    header <- tryCatch(httr::GET(u), error = function(err) NULL)
-    status <- if (!is.null(header)) header$status_code else 0
-
+    header <- RCurl::url.exists(u, .header = TRUE)
+    status <- tryCatch(as.numeric(header[["status"]]), error = function(x) 0)
     if (status == 200) {
-      as.numeric(header$headers[["content-length"]])
+      as.numeric(header[["Content-Length"]])
     } else {
       0
     }
@@ -392,6 +388,9 @@ setMethod(
   definition = function(module, path, quiet, quickCheck, overwrite, files, checked, urls, children) {
     cwd <- getwd()
     path <- checkPath(path, create = FALSE)
+    # inputs <- .parseModulePartial(filename = file.path(path, module, paste0(module, ".R")),
+    #                               defineModuleElement = "inputObjects")
+    # urls <- inputs$sourceURL
 
     ## if urls are not provided, get them from module metadata
     if (!length(urls)) {
@@ -454,9 +453,7 @@ setMethod(
       }
     }
 
-    ids <- if (is.null(urls)) {
-      ids <-  integer()
-    } else which(urls == "" | is.na(urls))
+    ids <- which(urls == "" | is.na(urls))
     to.dl <- if (length(ids)) urls[-ids] else urls
     if (is.null(checked)) {
       chksums <- checksums(module, path, quickCheck = quickCheck, files = files)
@@ -558,9 +555,7 @@ setMethod(
             checkPath(create = TRUE) %>%
             file.path(., xFile)
 
-          tryURL <- tryCatch(httr::http_error(to.dl[xInd]),
-                             error = function(err) return(TRUE))
-          if (tryURL) {
+          if (!RCurl::url.exists(to.dl[xInd])) {
             ## if the URL doesn't work allow the user to retrieve it manually
             message(crayon::magenta("Cannot download ", xFile, " for module ", module, ":\n",
                                     "\u2937 cannot open URL '", to.dl[xInd], "'.", sep = ""))

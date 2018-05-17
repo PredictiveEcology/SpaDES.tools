@@ -59,7 +59,7 @@ A \code{data.frame} with columns: \code{result}, \code{expectedFile},
 Verify (and optionally write) checksums for data files in a module's
 \code{data/} subdirectory. The file \code{data/CHECKSUMS.txt} contains the
 expected checksums for each data file.
-Checksums are computed using \code{SpaDES.core:::.digest}, which is simply a
+Checksums are computed using \code{SpaDES.tools:::.digest}, which is simply a
 wrapper around \code{digest::digest}.
 }
 \details{

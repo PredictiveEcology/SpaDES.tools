@@ -473,11 +473,9 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
         message("  Found no errors")
       }
     }
-
   }
   x
 }
-
 
 #' Download file from web databases
 #'
