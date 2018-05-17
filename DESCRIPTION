@@ -10,7 +10,7 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-04-30
+Date: 2018-05-17
 Version: 0.1.1.9010
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
@@ -68,6 +68,7 @@ Suggests:
     DEoptim (>= 2.2-4),
     hunspell,
     knitr,
+    mgcv,
     microbenchmark,
     parallel,
     profvis,
