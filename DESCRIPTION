@@ -68,6 +68,7 @@ Suggests:
     DEoptim (>= 2.2-4),
     hunspell,
     knitr,
+    mgcv,
     microbenchmark,
     parallel,
     profvis,
