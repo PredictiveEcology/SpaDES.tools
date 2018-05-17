@@ -17,7 +17,6 @@ test_that("checksums read and written correctly", {
              "f21251dcdf23dde0", "86e342cfc6876b7d")
 
   # 1. read checksums without CHECKSUMS.txt file
-  browser()
   expect_error(checksums("test_checksums", dirname(dirname(tmpdir))))
 
   # 2. read checksums with empty CHECKSUMS.txt file
@@ -43,7 +42,7 @@ test_that("checksums read and written correctly", {
   # 5. read checksums with non-empty CHECKSUMS.txt file
   out <- data.frame(file = basename(sampleFiles[-1]),
                     checksum = csums[-1],
-                    filesize = c("6045", "12142", "21686", "43558")
+                    filesize = c("6045", "12142", "21686", "43558"),
                     algorithm = c("xxhash64", "xxhash64", "xxhash64", "xxhash64"),
                     stringsAsFactors = FALSE)
   utils::write.table(out, csf, eol = "\n", col.names = TRUE, row.names = FALSE)
