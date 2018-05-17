@@ -363,7 +363,7 @@ remoteFileSize <- function(url) {
 #' @importFrom dplyr mutate bind_rows
 #' @importFrom googledrive as_id drive_auth drive_download
 #' @importFrom reproducible checkPath compareNA
-#' @importFrom RCurl url.exists
+#' @importFrom httr http_error
 #' @importFrom utils download.file
 #' @importFrom SpaDES.core moduleMetadata .parseModulePartial
 #' @rdname downloadData
@@ -396,16 +396,62 @@ setMethod(
 
     ## if urls are not provided, get them from module metadata
     if (!length(urls)) {
-    if (is.call(urls)) {
-      # This is the case where it can't evaluate the .parseModulePartial because of a reference
-      #  to the sim object that isn't available. Because sourceURL is unlikely to use
-      #  a call to sim object, then try to evaluate again here, just the one column
-      urls <- eval(urls)
-      urls <- moduleMetadata(module, path)$inputObjects$sourceURL
-    } else{
-        inputs <- .parseModulePartial(filename = file.path(path, module, paste0(module, ".R")),
-                                      defineModuleElement = "inputObjects")
-        urls <- inputs$sourceURL
+      if (is.call(urls)) {
+        # This is the case where it can't evaluate the .parseModulePartial because of a reference
+        #  to the sim object that isn't available. Because sourceURL is unlikely to use
+        #  a call to sim object, then try to evaluate again here, just the one column
+
+        ## can't use SpaDES.cor functions for now
+        # urls <- eval(urls)
+        # urls <- moduleMetadata(module, path)$inputObjects$sourceURL
+
+        ## temporary fix:
+        tmp <- list()
+        tmp[["parsedFile"]] <- parse(file.path(path, module, paste0(module, ".R")))
+        tmp[["defineModuleItem"]] <- grepl(pattern = "defineModule", tmp[["parsedFile"]])
+        tmp[["pf"]] <- tmp[["parsedFile"]][tmp[["defineModuleItem"]]]
+
+        inputs <- tmp[["pf"]][[1]][[3]]["inputObjects"][[1]]
+        inputs <- tryCatch(expr = eval(inputs), error = function(err) inputs)
+
+        if(class(inputs) == "data.frame") {
+          urls <- inputs$sourceURL
+        } else {
+          sourceURLs <- regmatches(as.character(inputs), m = regexec(pattern = "sourceURL = .*\".", text = inputs))
+          sourceURLs <- unlist(sapply(sourceURLs, function(x) {
+            if(length(x) > 0) {
+              if(!grepl("sourceURL = NA", x)) x
+            }
+          }))
+          urls <- sub("\")", "", sub("sourceURL = \"", "", sourceURLs))
+        }
+
+      } else {
+        ## can't use SpaDES.cor functions for now
+
+        # inputs <- .parseModulePartial(filename = file.path(path, module, paste0(module, ".R")),
+        #                               defineModuleElement = "inputObjects")
+
+        ## temporary fix:
+        tmp <- list()
+        tmp[["parsedFile"]] <- parse(file.path(path, module, paste0(module, ".R")))
+        tmp[["defineModuleItem"]] <- grepl(pattern = "defineModule", tmp[["parsedFile"]])
+        tmp[["pf"]] <- tmp[["parsedFile"]][tmp[["defineModuleItem"]]]
+
+        inputs <- tmp[["pf"]][[1]][[3]]["inputObjects"][[1]]
+        inputs <- tryCatch(expr = eval(inputs), error = function(err) inputs)
+
+        if(class(inputs) == "data.frame") {
+          urls <- inputs$sourceURL
+        } else {
+          sourceURLs <- regmatches(as.character(inputs), m = regexec(pattern = "sourceURL = .*\".", text = inputs))
+          sourceURLs <- unlist(sapply(sourceURLs, function(x) {
+            if(length(x) > 0) {
+              if(!grepl("sourceURL = NA", x)) x
+            }
+          }))
+          urls <- sub("\")", "", sub("sourceURL = \"", "", sourceURLs))
+        }
       }
     }
 
