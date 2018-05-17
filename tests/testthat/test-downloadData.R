@@ -17,19 +17,24 @@ test_that("downloadData downloads and unzips module data", {
 
   filenames <- c("DEM.tif", "habitatQuality.tif")
   if (paste0(R.version$major, ".", R.version$minor) > "3.4.2") {
-    chksums <- structure(list(file = structure(1:2, .Label = c("DEM.tif", "habitatQuality.tif"
-    ), class = "factor"), checksum = structure(1:2, .Label = c("77c56d42fecac5b1",
-                                                               "f21251dcdf23dde0"), class = "factor")), .Names = c("file", "checksum"
-                                                               ), class = "data.frame", row.names = c(NA, -2L))
+    chksums <- structure(
+      list(
+        file = structure(1:2, .Label = c("DEM.tif", "habitatQuality.tif"), class = "factor"),
+        checksum = structure(1:2, .Label = c("77c56d42fecac5b1", "f21251dcdf23dde0"), class = "factor")
+      ),
+      .Names = c("file", "checksum"),
+      class = "data.frame", row.names = c(NA, -2L)
+    )
     moduleDir <- file.path(tmpdir, "test")
     dataDir <- file.path(moduleDir, "data")
     write.table(chksums, file = file.path(dataDir, "CHECKSUMS.txt") )
-    expectsInputs <- data.frame(objectName = c("DEM", "habitatQuality"),
-                             objectClass = "RasterLayer",
-                             sourceURL = c("https://raw.githubusercontent.com/PredictiveEcology/quickPlot/master/inst/maps/DEM.tif",
-                                           "https://raw.githubusercontent.com/PredictiveEcology/quickPlot/master/inst/maps/habitatQuality.tif"),
-                             stringsAsFactors = FALSE
-                    )
+    expectsInputs <- data.frame(
+      objectName = c("DEM", "habitatQuality"),
+      objectClass = "RasterLayer",
+      sourceURL = c("https://raw.githubusercontent.com/PredictiveEcology/quickPlot/master/inst/maps/DEM.tif",
+                    "https://raw.githubusercontent.com/PredictiveEcology/quickPlot/master/inst/maps/habitatQuality.tif"),
+      stringsAsFactors = FALSE
+    )
 
     reproducible::checkPath(dataDir, create = TRUE)
 
