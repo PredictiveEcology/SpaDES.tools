@@ -81,7 +81,7 @@ test_that("downloadData downloads and unzips module data", {
 
     on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
     downloadModule(name = m, path = tmpdir, data = FALSE, quiet = TRUE)
-    downloadData(module = m, path = tmpdir)
+    suppressWarnings(downloadData(module = m, path = tmpdir, quiet = TRUE))
 
     expect_true(all(file.exists(file.path(dataDir, filenames))))
   }

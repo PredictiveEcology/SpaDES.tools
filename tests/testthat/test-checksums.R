@@ -11,7 +11,7 @@ test_that("checksums read and written correctly", {
 
   csf <- file.path(tmpdir, "CHECKSUMS.txt")
   cnamesR <- c("result", "expectedFile", "actualFile", "checksum.x", "checksum.y",
-                "algorithm.x", "algorithm.y")
+               "algorithm.x", "algorithm.y")
   cnamesW <- c("file", "checksum", "filesize", "algorithm")
   csums <- c("77c56d42fecac5b1", "8affcdf311555fd6", "e2dd8734d6ed3d05",
              "f21251dcdf23dde0", "86e342cfc6876b7d")
@@ -42,7 +42,7 @@ test_that("checksums read and written correctly", {
   # 5. read checksums with non-empty CHECKSUMS.txt file
   out <- data.frame(file = basename(sampleFiles[-1]),
                     checksum = csums[-1],
-                    filesize = c("6045", "12142", "21686", "43558")
+                    filesize = c("6045", "12142", "21686", "43558"),
                     algorithm = c("xxhash64", "xxhash64", "xxhash64", "xxhash64"),
                     stringsAsFactors = FALSE)
   utils::write.table(out, csf, eol = "\n", col.names = TRUE, row.names = FALSE)
