@@ -868,6 +868,7 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
                                        useCache = getOption("reproducible.useCache", FALSE),
                                        postProcessedFilename = NULL,
                                        ...) {
+
   shpe <- c("SpatialPolygonsDataFrame","SpatialPolygons","sf")
   if(!is.null(studyArea) & !(class(studyArea) %in% shpe)){
     stop(paste0("The 'studyArea'",
@@ -1019,6 +1020,8 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
       } else {
         studyArea
       }
+
+    shpe <- c("SpatialPolygonsDataFrame","SpatialPolygons","sf")
 
     # have to project the extent to the x projection so crop will work -- this is temporary
     #   once cropped, then cropExtent should be rm
