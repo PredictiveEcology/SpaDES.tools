@@ -365,7 +365,6 @@ remoteFileSize <- function(url) {
 #' @importFrom reproducible checkPath compareNA
 #' @importFrom httr http_error
 #' @importFrom utils download.file
-#' @importFrom SpaDES.core moduleMetadata .parseModulePartial
 #' @rdname downloadData
 #' @examples
 #' \dontrun{
