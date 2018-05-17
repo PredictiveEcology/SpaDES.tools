@@ -258,7 +258,6 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     alsoExtract <- file.path(destinationPath, alsoExtract)
   }
 
-
   checkSumFilePath <- file.path(destinationPath, "CHECKSUMS.txt")
   if (purge) unlink(checkSumFilePath)
 
@@ -355,9 +354,11 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   })
 
   # Stage 1 - Extract from archive
+
   filesExtracted <- extractFromArchive(archive = archive, destinationPath = destinationPath,
-                                       neededFiles = neededFiles,
-                                       checkSums = checkSums, needChecksums = needChecksums)
+                                         neededFiles = neededFiles,
+                                         checkSums = checkSums, needChecksums = needChecksums)
+
   filesToChecksum <- unique(c(filesToChecksum, targetFile, alsoExtract,
                               basename(filesExtracted$filesExtracted)))
   needChecksums <- filesExtracted$needChecksums
@@ -474,7 +475,7 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
       }
     }
   }
-  x
+  return(x)
 }
 
 #' Download file from web databases
@@ -867,6 +868,19 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
                                        useCache = getOption("reproducible.useCache", FALSE),
                                        postProcessedFilename = NULL,
                                        ...) {
+
+  shpe <- c("SpatialPolygonsDataFrame","SpatialPolygons","sf")
+  if(!is.null(studyArea) & !(class(studyArea) %in% shpe)){
+    stop(paste0("The 'studyArea'",
+                   " provided is NOT a Spatial* object."))
+  }
+
+  if(!is.null(rasterToMatch) &
+     !class(rasterToMatch)=="RasterLayer"){
+    stop(paste0("The 'rasterToMatch'",
+                " provided is NOT a Raster* object."))
+  }
+
   dots <- list(...)
 
   if (!is.null(dots$targetFilePath))  {
@@ -874,7 +888,6 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
     inputFilePath <- dots$targetFilePath
     dots$targetFilePath <- NULL
   }
-
 
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
 
@@ -893,11 +906,13 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
       extRTM <- NULL
       crsRTM <- NULL
     }
+
     mess <- capture.output(type = "message",
                            x <- Cache(cropInputs, x, studyArea = studyArea,
                                       extentToMatch = extRTM,
                                       extentCRS = crsRTM,
                                       useCache = useCache, ...))
+
     .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
     # cropInputs may have returned NULL if they don't overlap
@@ -910,15 +925,18 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
 
       # projectInputs
       targetCRS <- getTargetCRS(useSAcrs, studyArea, rasterToMatch)
+
       mess <- capture.output(type = "message",
                              x <- Cache(projectInputs, x, targetCRS = targetCRS,
                                         rasterToMatch = rasterToMatch, useCache = useCache, ...))
+
       .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
       # maskInputs
       mess <- capture.output(type = "message",
                              x <- Cache(maskInputs, x, studyArea = studyArea,
                                         rasterToMatch = rasterToMatch, useCache = useCache, ...))
+
       .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
       # filename
@@ -934,7 +952,7 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
       x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
     }
   }
-  x
+  return(x)
 }
 
 #' Reproject, crop a \code{Spatial*} or \code{Raster*} object
@@ -1003,30 +1021,36 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
         studyArea
       }
 
+    shpe <- c("SpatialPolygonsDataFrame","SpatialPolygons","sf")
+
     # have to project the extent to the x projection so crop will work -- this is temporary
     #   once cropped, then cropExtent should be rm
+
     cropExtent <- if (identical(crs(x), crs(cropTo))) {
-      extent(cropTo)
+       extent(cropTo)
     } else {
       if (!is.null(rasterToMatch)) {
         projectExtent(cropTo, crs(x))
       } else {
-        spTransform(x = cropTo, CRSobj = crs(x))
+        if(class(studyArea) %in% shpe){
+          spTransform(x = cropTo, CRSobj = crs(x))
+        } else {
+          NULL }
       }
     }
 
+    if (!is.null(cropExtent)){
 
-
-    # crop it
+  # crop it
     if (!identical(cropExtent, extent(x))) {
       message("    cropping")
       x <- raster::crop(x = x, y = cropExtent)
       if (is.null(x)) {
-        message("    polygons do not intersect")
+        message("    polygons do not intersect")}
       }
     }
   }
-  x
+  return(x)
 }
 
 
@@ -1135,29 +1159,40 @@ maskInputs <- function(x, studyArea, ...) {
 #' @param maskWithRTM Logical. If \code{TRUE}, then the default,
 #' @rdname maskInputs
 maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, ...) {
+
   message("    Masking")
   if (isTRUE(maskWithRTM)) {
     x[is.na(rasterToMatch)] <- NA
   } else {
+    if(!is.null(studyArea)){
     msg <- capture.output(type = "message",
                           x <- fastMask(x = x, y = studyArea))
     message(paste0("      ", paste(msg, collapse = "\n      ")))
+    } else {
+      message("studyArea not provided, skipping masking")
+    }
   }
-  x
+  return(x)
 }
 
 #' @export
 #' @rdname maskInputs
 maskInputs.Spatial <- function(x, studyArea, ...) {
-  message("    intersecting")
-  studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
-  studyArea <- spTransform(studyArea, CRSobj = crs(x))
-  suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
-  x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
-    warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
+
+  if(!is.null(studyArea)){
+    message("    intersecting")
+    studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
+    studyArea <- spTransform(studyArea, CRSobj = crs(x))
+    suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
+    x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
+      warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
+      return(x)
+    })
     return(x)
-  })
-  x
+    } else {
+    message("studyArea not provided, skipping masking")
+    return(x)
+  }
 }
 
 #' Determine filename, either automatically or manually
