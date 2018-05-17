@@ -106,7 +106,9 @@ setMethod(
     checksumFile <- file.path(path, basename(checksumFile))
 
     if (!write) {
-      stopifnot(file.exists(checksumFile))
+      if(!file.exists(checksumFile)) {
+      stop("Missing checksums file")
+      }
     } else if (!file.exists(checksumFile)) {
       file.create(checksumFile)
     }
@@ -138,7 +140,8 @@ setMethod(
       }
     }
 
-    if (!is.null(txt$algorithm)) {
+
+    if (!is.null(txt$algorithm) & length(txt$algorithm)) {
       if (!write) dots$algo <- unique(txt$algorithm)[1]
     } else {
       if (NROW(txt)) {
@@ -273,7 +276,7 @@ appendChecksumsTable <- function(checkSumFilePath, filesToChecksum, destinationP
 #'
 #' @author Eliot McIntire and Alex Chubaty
 #' @export
-#' @importFrom RCurl url.exists
+#' @importFrom httr http_error
 #'
 #' @examples
 #' urls <- c("https://www.alexchubaty.com/uploads/2011/11/open-forest-science-journal.csl",
@@ -283,10 +286,11 @@ appendChecksumsTable <- function(checkSumFilePath, filesToChecksum, destinationP
 #'
 remoteFileSize <- function(url) {
   contentLength <- vapply(url, function(u) {
-    header <- RCurl::url.exists(u, .header = TRUE)
-    status <- tryCatch(as.numeric(header[["status"]]), error = function(x) 0)
+    header <- tryCatch(httr::GET(u), error = function(err) NULL)
+    status <- if (!is.null(header)) header$status_code else 0
+
     if (status == 200) {
-      as.numeric(header[["Content-Length"]])
+      as.numeric(header$headers[["content-length"]])
     } else {
       0
     }
@@ -361,6 +365,7 @@ remoteFileSize <- function(url) {
 #' @importFrom reproducible checkPath compareNA
 #' @importFrom RCurl url.exists
 #' @importFrom utils download.file
+#' @importFrom SpaDES.core moduleMetadata .parseModulePartial
 #' @rdname downloadData
 #' @examples
 #' \dontrun{
@@ -388,19 +393,25 @@ setMethod(
   definition = function(module, path, quiet, quickCheck, overwrite, files, checked, urls, children) {
     cwd <- getwd()
     path <- checkPath(path, create = FALSE)
-    # inputs <- .parseModulePartial(filename = file.path(path, module, paste0(module, ".R")),
-    #                               defineModuleElement = "inputObjects")
-    # urls <- inputs$sourceURL
 
+    ## if urls are not provided, get them from module metadata
+    if (!length(urls)) {
     if (is.call(urls)) {
       # This is the case where it can't evaluate the .parseModulePartial because of a reference
       #  to the sim object that isn't available. Because sourceURL is unlikely to use
       #  a call to sim object, then try to evaluate again here, just the one column
       urls <- eval(urls)
-      #urls <- moduleMetadata(module, path)$inputObjects$sourceURL
+      urls <- moduleMetadata(module, path)$inputObjects$sourceURL
+    } else{
+        inputs <- .parseModulePartial(filename = file.path(path, module, paste0(module, ".R")),
+                                      defineModuleElement = "inputObjects")
+        urls <- inputs$sourceURL
+      }
     }
 
-    ids <- which(urls == "" | is.na(urls))
+    ids <- if (is.null(urls)) {
+      ids <-  integer()
+    } else which(urls == "" | is.na(urls))
     to.dl <- if (length(ids)) urls[-ids] else urls
     if (is.null(checked)) {
       chksums <- checksums(module, path, quickCheck = quickCheck, files = files)
@@ -502,7 +513,9 @@ setMethod(
             checkPath(create = TRUE) %>%
             file.path(., xFile)
 
-          if (!RCurl::url.exists(to.dl[xInd])) {
+          tryURL <- tryCatch(httr::http_error(to.dl[xInd]),
+                             error = function(err) return(TRUE))
+          if (tryURL) {
             ## if the URL doesn't work allow the user to retrieve it manually
             message(crayon::magenta("Cannot download ", xFile, " for module ", module, ":\n",
                                     "\u2937 cannot open URL '", to.dl[xInd], "'.", sep = ""))
