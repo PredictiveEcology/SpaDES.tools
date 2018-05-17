@@ -7,7 +7,7 @@ version 0.1.1.9000
 
 * new function `prepInputs` and its internal modular pieces to aid in common GIS problems.
 * `downloadData` moved from `SpaDES.core` to here. This fits well with the new `prepInputs`. Also gets a logical `overwrite` argument. 
-* new options added to `gaussMap` (#20, @ianmseddy)
+* new options added to `gaussMap` (#20, @ianmseddy).
 
 ## Dependency changes
 
