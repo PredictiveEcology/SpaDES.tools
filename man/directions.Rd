@@ -26,7 +26,7 @@ in which case all cells are considered \code{to}.}
 \value{
 A sorted matrix on \code{id} with same number of rows as \code{to},
         but with one extra column, \code{angles} indicating the angle in radians
-        between from and to. For speed, this angle will be between \rode{-pi/2}
+        between from and to. For speed, this angle will be between \code{-pi/2}
         and \code{3*pi/2}.
         If the user wants this between say, \code{0} and \code{2*pi},
         then \code{angles \%\% (2*pi)} will do the trick. See example.
