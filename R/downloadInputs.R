@@ -211,34 +211,39 @@ if (getRversion() >= "3.1.0") {
 prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NULL,
                        destinationPath = ".", fun = NULL,
                        quick = getOption("reproducible.quick"),
-                       overwrite = FALSE, purge = FALSE, useCache = getOption("reproducible.useCache", FALSE),
-                       ...) {
+                       overwrite = FALSE, purge = FALSE,
+                       useCache = getOption("reproducible.useCache", FALSE), ...) {
 
   dots <- list(...)
 
   if (!is.null(dots$cacheTags))  {
-    message("cacheTags is being deprecated; use userTags which will pass directly to Cache")
+    message("cacheTags is being deprecated;",
+            " use userTags which will pass directly to Cache.")
     dots$userTags <- dots$cacheTags
     dots$cacheTags <- NULL
   }
   if (!is.null(dots$writeCropped))  {
-    message("writeCropped is being deprecated; use postProcessedFilename, used in determineFilename")
+    message("writeCropped is being deprecated;",
+            " use postProcessedFilename, used in determineFilename.")
     dots$postProcessedFilename <- dots$writeCropped
     dots$writeCropped <- NULL
   }
   if (!is.null(dots$rasterInterpMethod))  {
-    message("rasterInterpMethod is being deprecated; use method which will pass directly to projectRaster")
+    message("rasterInterpMethod is being deprecated;",
+            " use method which will pass directly to projectRaster.")
     dots$method <- dots$rasterInterpMethod
     dots$rasterInterpMethod <- NULL
   }
   if (!is.null(dots$rasterDatatype))  {
-    message("rasterDatatype is being deprecated; use datatype which will pass directly to writeRaster")
+    message("rasterDatatype is being deprecated;",
+            " use datatype which will pass directly to writeRaster.")
     dots$datatype <- dots$rasterDatatype
     dots$rasterDatatype <- NULL
   }
   if (!is.null(dots$pkg))  {
-    message("pkg is being deprecated; name the package and function directly, ",
-            "if needed, e.g., 'pkg::fun'")
+    message("pkg is being deprecated;",
+            "name the package and function directly, if needed,\n",
+            "  e.g., 'pkg::fun'.")
     fun <- paste0(dots$pkg, "::", fun)
     dots$pkg <- NULL
   }
@@ -257,7 +262,6 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     alsoExtract <- basename(alsoExtract)
     alsoExtract <- file.path(destinationPath, alsoExtract)
   }
-
 
   checkSumFilePath <- file.path(destinationPath, "CHECKSUMS.txt")
   if (purge) unlink(checkSumFilePath)
@@ -289,16 +293,17 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   modulePath <- NULL
   if (is.null(url)) { # the only way for this to be useful is if there is a SpaDES module
     # and url can be gotten during downloadData from module metadata
-    fileinfo <- if (quick)  {
+    fileinfo <- if (quick) {
       file.info(filesToCheck)
     } else {
       runif(1)
     }
     if (file.exists(checkSumFilePath)) {
       if (!grepl("data", basename(dirname(checkSumFilePath)))) {
-        stop("You appear to be using prepInputs inside a module, but are not using data subfolder. ",
-             "Currently, this does not work. Please specify url if you would like to do this, or ",
-             "use the data subfolder")
+        stop("You appear to be using prepInputs inside a module,",
+             " but are not using the 'data/' subdirectory.\n",
+             "Currently, this does not work.",
+             " Please specify a url if you would like to do this, or use the 'data/' subdirectory.")
       }
 
       out <- .checkSumsMem(asPath(filesToCheck), fileinfo,
@@ -355,9 +360,11 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   })
 
   # Stage 1 - Extract from archive
+
   filesExtracted <- extractFromArchive(archive = archive, destinationPath = destinationPath,
-                                       neededFiles = neededFiles,
-                                       checkSums = checkSums, needChecksums = needChecksums)
+                                         neededFiles = neededFiles,
+                                         checkSums = checkSums, needChecksums = needChecksums)
+
   filesToChecksum <- unique(c(filesToChecksum, targetFile, alsoExtract,
                               basename(filesExtracted$filesExtracted)))
   needChecksums <- filesExtracted$needChecksums
@@ -466,15 +473,15 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
                   ". Couldn't fix them with raster::buffer(..., width = 0)")
         } else {
           x <- x1
-          message("  Some or all of the errors fixed")
+          message("  Some or all of the errors fixed.")
         }
 
       } else {
-        message("  Found no errors")
+        message("  Found no errors.")
       }
     }
   }
-  x
+  return(x)
 }
 
 #' Download file from web databases
@@ -514,7 +521,7 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL, quick = FALSE,
     if (httr::http_error(url))
       stop("Can not access url", url)
 
-    message("  Downloading ", filename)
+    message("  Downloading ", filename, " ...")
 
     httr::GET(
       url = paste0(url, filename),
@@ -596,8 +603,7 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
                                         collapse = ", ")
           if (!nzchar(extractingTheseFiles))
             extractingTheseFiles <- paste0("all files: ", paste(basename(filesInArchive), collapse = ", "))
-          message("From:", basename(archive[1]),
-                  "  Extracting ", extractingTheseFiles)
+          message("From:", basename(archive[1]), "  Extracting ", extractingTheseFiles)
           filesExtracted <- c(filesExtracted,
                               .unzipOrUnTar(funWArgs$fun, funWArgs$args,
                                             files = filesInArchive[basename(filesInArchive) %in% neededFiles]))
@@ -613,7 +619,6 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
             # lapply(file.path(destinationPath, arch), function(archi)
             #   extractFromArchive(archi, destinationPath, neededFiles, extractedArchives))
 
-
             extractedArchives <- c(
               extractedArchives,
               unlist(
@@ -627,12 +632,12 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
           }
         }
       } else {
-        message("  Skipping extractFromArchive: all files already extracted")
+        message("  Skipping extractFromArchive: all files already extracted.")
         filesExtracted <- checkSums[checkSums$expectedFile %in% basename(filesInArchive), ]$expectedFile
       }
     }
   } else {
-    message("  Skipping extractFromArchive: targetFile (and any alsoExtract) already extracted")
+    message("  Skipping extractFromArchive: targetFile (and any alsoExtract) already extracted.")
   }
   list(extractedArchives = c(extractedArchives, archive),
        filesExtracted = unique(c(filesExtracted, extractedObjs$filesExtracted)),
@@ -715,9 +720,9 @@ smallNamify <- function(name) {
 
   if (is.null(targetFilePath)) {
     message("  targetFile was not specified. ", if (any(isShapefile)) {
-      c(" Trying raster::shapefile on ", possibleFiles[isShapefile],
-        ". If that is not correct, please specify different targetFile",
-        " and/or fun")
+      c(" Trying raster::shapefile on ", possibleFiles[isShapefile], ".",
+        " If that is not correct, please specify different targetFile",
+        " and/or fun.")
     } else {
       c(" Trying ", fun,
         ". If that is not correct, please specify a targetFile",
@@ -732,16 +737,16 @@ smallNamify <- function(name) {
       if (any(isRaster)) {
         possibleFiles[isRaster]
       } else {
-        message("  Don't know which file to load. Please specify targetFile")
+        message("  Don't know which file to load. Please specify targetFile.")
       }
 
     }
     if (length(targetFilePath) > 1)  {
       message("  More than one possible files to load, ", paste(targetFilePath, collapse = ", "),
-              " Picking the first one. If not correct, specify a targetFile")
+              " Picking the first one. If not correct, specify a targetFile.")
       targetFilePath <- targetFilePath[1]
     } else {
-      message("  Trying ", targetFilePath, " with ", fun)
+      message("  Trying ", targetFilePath, " with ", fun, ".")
     }
     targetFile <- targetFilePath
     targetFilePath <- file.path(destinationPath, targetFile)
@@ -866,20 +871,29 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
                                        useCache = getOption("reproducible.useCache", FALSE),
                                        postProcessedFilename = NULL,
                                        ...) {
+
+  # Test if user supplied wrong type of file for "studyArea", "rasterToMatch"
+  if (!is.null(studyArea) & !is(studyArea, "Spatial")) {
+    stop("The 'studyArea' provided is not a Spatial* object.")
+  }
+
+  if (!is.null(rasterToMatch) & !is(rasterToMatch, "RasterLayer")) {
+    stop("The 'rasterToMatch' provided is not a Raster* object.")
+  }
+
   dots <- list(...)
 
   if (!is.null(dots$targetFilePath))  {
-    message("targetFilePath is being deprecated; use inputFilePath")
+    message("targetFilePath is being deprecated; use inputFilePath.")
     inputFilePath <- dots$targetFilePath
     dots$targetFilePath <- NULL
   }
-
 
   if (!is.null(studyArea) || !is.null(rasterToMatch)) {
 
     # fix errors if methods available
     if (identical(useCache, FALSE)) {
-      message("useCache is FALSE, skipping Cache during post-processing")
+      message("useCache is FALSE, skipping Cache during post-processing.")
     }
     skipCacheMess <- "useCache is FALSE, skipping Cache"
     skipCacheMess2 <- "No cacheRepo supplied"
@@ -892,11 +906,13 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
       extRTM <- NULL
       crsRTM <- NULL
     }
+
     mess <- capture.output(type = "message",
                            x <- Cache(cropInputs, x, studyArea = studyArea,
                                       extentToMatch = extRTM,
                                       extentCRS = crsRTM,
                                       useCache = useCache, ...))
+
     .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
     # cropInputs may have returned NULL if they don't overlap
@@ -909,15 +925,18 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
 
       # projectInputs
       targetCRS <- getTargetCRS(useSAcrs, studyArea, rasterToMatch)
+
       mess <- capture.output(type = "message",
                              x <- Cache(projectInputs, x, targetCRS = targetCRS,
                                         rasterToMatch = rasterToMatch, useCache = useCache, ...))
+
       .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
       # maskInputs
       mess <- capture.output(type = "message",
                              x <- Cache(maskInputs, x, studyArea = studyArea,
                                         rasterToMatch = rasterToMatch, useCache = useCache, ...))
+
       .groupedMessage(mess, omitPattern = paste(skipCacheMess, skipCacheMess2, sep = "|"))
 
       # filename
@@ -933,7 +952,7 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
       x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
     }
   }
-  x
+  return(x)
 }
 
 #' Reproject, crop a \code{Spatial*} or \code{Raster*} object
@@ -990,8 +1009,9 @@ cropInputs.default <- function(x, studyArea, rasterToMatch, ...) {
 cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extentToMatch = NULL,
                                       extentCRS = NULL, ...) {
 
-  if (!is.null(studyArea) || !is.null(rasterToMatch) || !is.null(extentToMatch)) {
 
+  if (!is.null(studyArea) ||
+      !is.null(rasterToMatch) || !is.null(extentToMatch)) {
     rasterToMatch <- if (!is.null(extentToMatch)) {
       raster(extentToMatch, crs = extentCRS)
     }
@@ -1004,31 +1024,34 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
 
     # have to project the extent to the x projection so crop will work -- this is temporary
     #   once cropped, then cropExtent should be rm
+
     cropExtent <- if (identical(crs(x), crs(cropTo))) {
       extent(cropTo)
     } else {
       if (!is.null(rasterToMatch)) {
         projectExtent(cropTo, crs(x))
       } else {
-        spTransform(x = cropTo, CRSobj = crs(x))
+        if (is(studyArea, "Spatial")) {
+          spTransform(x = cropTo, CRSobj = crs(x))
+        } else {
+          NULL
+        }
       }
     }
 
-
-
-    # crop it
-    if (!identical(cropExtent, extent(x))) {
-      message("    cropping")
-      x <- raster::crop(x = x, y = cropExtent)
-      if (is.null(x)) {
-        message("    polygons do not intersect")
+    if (!is.null(cropExtent)) {
+      # crop it
+      if (!identical(cropExtent, extent(x))) {
+        message("    cropping ...")
+        x <- raster::crop(x = x, y = cropExtent)
+        if (is.null(x)) {
+          message("    polygons do not intersect.")
+        }
       }
     }
   }
-  x
+  return(x)
 }
-
-
 
 #' Project \code{Raster*} or {Spatial*} or \code{sf} objects
 #'
@@ -1055,23 +1078,23 @@ projectInputs.Raster <- function(x, targetCRS = NULL, rasterToMatch = NULL, ...)
       if (!identical(crs(x), targetCRS) |
           !identical(res(x), res(rasterToMatch)) |
           !identical(extent(x), extent(rasterToMatch))) {
-        message("    reprojecting")
+        message("    reprojecting ...")
         x <- projectRaster(from = x, to = rasterToMatch, ...)
       } else {
-        message("    no reprojecting because target characteristics same as input Raster")
+        message("    no reprojecting because target characteristics same as input Raster.")
       }
     } else {
-      message("    no reprojecting because no rasterToMatch & useSAcrs is FALSE")
+      message("    no reprojecting because no rasterToMatch & useSAcrs is FALSE.")
     }
   } else {
-    message("    no reprojecting because no rasterToMatch")
+    message("    no reprojecting because no rasterToMatch.")
   }
   x
 }
 
 #' @export
 projectInputs.sf <- function(x, targetCRS, ...) {
-  warning("sf class objects not fully implemented. Use with projectInputs.sf caution")
+  warning("sf class objects not fully implemented. Use with projectInputs.sf caution.")
   if (requireNamespace("sf")) {
     if (any(sf::st_is(x, c("POLYGON", "MULTIPOLYGON"))) && !any(isValid <- sf::st_is_valid(x))) {
       x[!isValid] <- sf::st_buffer(x[!isValid], dist = 0, ...)
@@ -1134,29 +1157,42 @@ maskInputs <- function(x, studyArea, ...) {
 #' @param maskWithRTM Logical. If \code{TRUE}, then the default,
 #' @rdname maskInputs
 maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, ...) {
-  message("    Masking")
+
+  message("    masking...")
   if (isTRUE(maskWithRTM)) {
     x[is.na(rasterToMatch)] <- NA
   } else {
-    msg <- capture.output(type = "message",
-                          x <- fastMask(x = x, y = studyArea))
-    message(paste0("      ", paste(msg, collapse = "\n      ")))
+    if (!is.null(studyArea)) {
+      msg <- capture.output(type = "message",
+                            x <- fastMask(x = x, y = studyArea))
+      message(paste0("      ", paste(msg, collapse = "\n      ")))
+    } else {
+      message("studyArea not provided, skipping masking.")
+    }
   }
-  x
+  return(x)
 }
 
 #' @export
 #' @rdname maskInputs
 maskInputs.Spatial <- function(x, studyArea, ...) {
-  message("    intersecting")
-  studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
-  studyArea <- spTransform(studyArea, CRSobj = crs(x))
-  suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
-  x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
-    warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
+
+  if (!is.null(studyArea)) {
+    message("    intersecting ...")
+    studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
+    studyArea <- spTransform(studyArea, CRSobj = crs(x))
+    suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
+    x <- tryCatch(raster::intersect(x, studyArea), error = function(e) {
+          warning("  Could not mask with studyArea, for unknown reasons.",
+                  " Returning object without masking.")
+          return(x)
+        }
+      )
     return(x)
-  })
-  x
+  } else {
+    message("studyArea not provided, skipping masking.")
+    return(x)
+  }
 }
 
 #' Determine filename, either automatically or manually
@@ -1427,7 +1463,7 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
             }
             destFile <- file.path(tempdir(), basename(downloadFilename))
             if (!isTRUE(checkSums[ checkSums$expectedFile ==  basename(destFile), ]$result == "OK")) {
-              message("  Downloading from google drive")
+              message("  Downloading from Google Drive.")
               googledrive::drive_download(googledrive::as_id(url), path = destFile,
                                           overwrite = overwrite, verbose = TRUE)
             } else {

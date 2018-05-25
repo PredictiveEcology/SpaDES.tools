@@ -6,13 +6,18 @@ version 0.1.1.9000
 ## New features
 
 * new function `prepInputs` and its internal modular pieces to aid in common GIS problems.
-* `downloadData` moved from `SpaDES.core` to here. This fits well with the new `prepInputs`. Also gets a logical `overwrite` argument. 
+* `prepInputs` gets a logical `overwrite` argument.
+* `downloadData` moved from `SpaDES.core` to here.
 * new options added to `gaussMap` (#20, @ianmseddy).
 
 ## Dependency changes
 
 * add `fasterize` and `sf` to Imports.
 * add `mgcv` to Suggests because it's used in tests.
+
+## Bug fixes
+
+* `prepInputs` does more checking for data types and provides more meaningful messages (#41, @tati-micheletti)
 
 version 0.1.1
 =============
