@@ -495,9 +495,8 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
 #'
 #' @author Jean Marchal
 #' @importFrom httr authenticate GET http_error progress write_disk
-#' @importFrom webDatabases webDatabases
 #' @importFrom stats runif
-#' @rdname downloadFromWebDB
+#' @importFrom webDatabases webDatabases
 #'
 downloadFromWebDB <- function(filename, filepath, dataset = NULL, quick = FALSE, overwrite = TRUE) {
   urls <- webDatabases(local = quick)

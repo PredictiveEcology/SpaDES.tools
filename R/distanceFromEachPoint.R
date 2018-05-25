@@ -85,12 +85,10 @@
 #' inverse distance weights.
 #' See examples.
 #'
-#' @name distanceFromEachPoint
-#' @aliases distanceFromEachPoint
 #' @export
 #' @importFrom raster getCluster ncell returnCluster xyFromCell
 #' @importFrom parallel clusterApply
-#' @rdname distances
+#'
 #' @example inst/examples/example_distanceFromEachPoint.R
 #'
 distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
@@ -308,6 +306,12 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' This function has the potential to use a lot of memory if there are a lot of
 #' \code{from} and \code{to} points.
 #'
+#' \code{directionFromEachPoint} calls \code{.pointDirection}, which is
+#' not intended to be called directly by the user.
+#'
+#' If knowing the which from cell matches with which to cell is important,
+#' put a column "id" (e.g., starting cell) in the \code{from} matrix.
+#'
 #' @param from matrix with 2 or 3 columns, x and y, representing x and y coordinates
 #'             of \code{from} cell, and optional \code{id}, which will be returned,
 #'             and if \code{id} column is in \code{to}, it will be matched with that.
@@ -316,27 +320,20 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'           optional \code{id} which will be matched with \code{id} from \code{from}.
 #'           It makes no sense to have \code{id} column here with no \code{id} column
 #'           in \code{from}.
-#' @param landscape (opional) \code{RasterLayer}.
-#'                  This is only used if \code{to = NULL}, in which case all cells
-#'                  are considered \code{to}.
-#' @rdname directions
-#' @export
-#' @seealso \code{\link{distanceFromEachPoint}}, which will also return directions
-#' if \code{angles = TRUE}.
+#' @param landscape (optional) \code{RasterLayer}. This is only used if \code{to = NULL},
+#'                  in which case all cells are considered \code{to}.
 #'
-#' @details \code{directionFromEachPoint} calls \code{.pointDirection}, which is
-#' not intended to be called directly by the user.
-#'
-#' If knowing the which from cell matches with which to cell is important,
-#' put a column "id" (e.g., starting cell) in the \code{from} matrix.
-#'
-#' @name directionFromEachPoint
-#' @aliases directionFromEachPoint
 #' @return A sorted matrix on \code{id} with same number of rows as \code{to},
-#'         but with one extra column, \code{angles}
-#'         indicating the angle in radians between from and to. For speed, this
-#'         angle will be between -pi/2 and 3*pi/2. If the user wants this between
-#'         say, 0 and 2*pi, then \code{angles \%\% (2*pi)} will do the trick. See example.
+#'         but with one extra column, \code{angles} indicating the angle in radians
+#'         between from and to. For speed, this angle will be between \code{-pi/2}
+#'         and \code{3*pi/2}.
+#'         If the user wants this between say, \code{0} and \code{2*pi},
+#'         then \code{angles \%\% (2*pi)} will do the trick. See example.
+#'
+#' @export
+#' @rdname directions
+#' @seealso \code{\link{distanceFromEachPoint}}, which will also return directions
+#'          if \code{angles = TRUE}.
 #'
 #' @examples
 #' library(raster)
