@@ -211,33 +211,39 @@ if (getRversion() >= "3.1.0") {
 prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NULL,
                        destinationPath = ".", fun = NULL,
                        quick = getOption("reproducible.quick"),
-                       overwrite = FALSE, purge = FALSE, useCache = getOption("reproducible.useCache", FALSE),
+                       overwrite = FALSE, purge = FALSE,
+                       useCache = getOption("reproducible.useCache", FALSE),
                        ...) {
 
   dots <- list(...)
 
   if (!is.null(dots$cacheTags))  {
-    message("cacheTags is being deprecated; use userTags which will pass directly to Cache")
+    message("cacheTags is being deprecated;
+            use userTags which will pass directly to Cache")
     dots$userTags <- dots$cacheTags
     dots$cacheTags <- NULL
   }
   if (!is.null(dots$writeCropped))  {
-    message("writeCropped is being deprecated; use postProcessedFilename, used in determineFilename")
+    message("writeCropped is being deprecated;
+            use postProcessedFilename, used in determineFilename")
     dots$postProcessedFilename <- dots$writeCropped
     dots$writeCropped <- NULL
   }
   if (!is.null(dots$rasterInterpMethod))  {
-    message("rasterInterpMethod is being deprecated; use method which will pass directly to projectRaster")
+    message("rasterInterpMethod is being deprecated;
+            use method which will pass directly to projectRaster")
     dots$method <- dots$rasterInterpMethod
     dots$rasterInterpMethod <- NULL
   }
   if (!is.null(dots$rasterDatatype))  {
-    message("rasterDatatype is being deprecated; use datatype which will pass directly to writeRaster")
+    message("rasterDatatype is being deprecated;
+            use datatype which will pass directly to writeRaster")
     dots$datatype <- dots$rasterDatatype
     dots$rasterDatatype <- NULL
   }
   if (!is.null(dots$pkg))  {
-    message("pkg is being deprecated; name the package and function directly, ",
+    message("pkg is being deprecated;
+            name the package and function directly, ",
             "if needed, e.g., 'pkg::fun'")
     fun <- paste0(dots$pkg, "::", fun)
     dots$pkg <- NULL
@@ -868,16 +874,13 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
                                        postProcessedFilename = NULL,
                                        ...) {
 
-  shpe <- c("SpatialPolygonsDataFrame","SpatialPolygons","sf")
-  if(!is.null(studyArea) & !(class(studyArea) %in% shpe)){
-    stop(paste0("The 'studyArea'",
-                   " provided is NOT a Spatial* object."))
+  # Test if user supplied wrong type of file for "studyArea", "rasterToMatch"
+  if(!is.null(studyArea) & !is(studyArea, "Spatial")){
+    stop("The 'studyArea' provided is NOT a Spatial* object.")
   }
 
-  if(!is.null(rasterToMatch) &
-     !class(rasterToMatch)=="RasterLayer"){
-    stop(paste0("The 'rasterToMatch'",
-                " provided is NOT a Raster* object."))
+  if(!is.null(rasterToMatch) & !is(rasterToMatch, "RasterLayer"){
+    stop("The 'rasterToMatch' provided is NOT a Raster* object.")
   }
 
   dots <- list(...)
@@ -1008,8 +1011,9 @@ cropInputs.default <- function(x, studyArea, rasterToMatch, ...) {
 cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extentToMatch = NULL,
                                       extentCRS = NULL, ...) {
 
-  if (!is.null(studyArea) || !is.null(rasterToMatch) || !is.null(extentToMatch)) {
 
+  if (!is.null(studyArea) ||
+      !is.null(rasterToMatch) || !is.null(extentToMatch)) {
     rasterToMatch <- if (!is.null(extentToMatch)) {
       raster(extentToMatch, crs = extentCRS)
     }
@@ -1020,32 +1024,31 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
         studyArea
       }
 
-    shpe <- c("SpatialPolygonsDataFrame","SpatialPolygons","sf")
-
     # have to project the extent to the x projection so crop will work -- this is temporary
     #   once cropped, then cropExtent should be rm
 
     cropExtent <- if (identical(crs(x), crs(cropTo))) {
-       extent(cropTo)
+      extent(cropTo)
     } else {
       if (!is.null(rasterToMatch)) {
         projectExtent(cropTo, crs(x))
       } else {
-        if(class(studyArea) %in% shpe){
+        if (is(studyArea, "Spatial") {
           spTransform(x = cropTo, CRSobj = crs(x))
         } else {
-          NULL }
+          NULL
+        }
       }
     }
 
-    if (!is.null(cropExtent)){
-
-  # crop it
-    if (!identical(cropExtent, extent(x))) {
-      message("    cropping")
-      x <- raster::crop(x = x, y = cropExtent)
-      if (is.null(x)) {
-        message("    polygons do not intersect")}
+    if (!is.null(cropExtent)) {
+      # crop it
+      if (!identical(cropExtent, extent(x))) {
+        message("    cropping")
+        x <- raster::crop(x = x, y = cropExtent)
+        if (is.null(x)) {
+          message("    polygons do not intersect")
+        }
       }
     }
   }
@@ -1178,17 +1181,20 @@ maskInputs.Raster <- function(x, studyArea, rasterToMatch, maskWithRTM = FALSE, 
 #' @rdname maskInputs
 maskInputs.Spatial <- function(x, studyArea, ...) {
 
-  if(!is.null(studyArea)){
+  if (!is.null(studyArea)) {
     message("    intersecting")
     studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
     studyArea <- spTransform(studyArea, CRSobj = crs(x))
     suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
-    x <- tryCatch(raster::intersect(x, studyArea), error = function(y) {
-      warning("  Could not mask with studyArea, for unknown reasons. Returning object without masking.")
-      return(x)
-    })
+    x <- tryCatch(raster::intersect(x, studyArea), error = function(e) {
+          warning(
+            "  Could not mask with studyArea, for unknown reasons. Returning object without masking."
+          )
+          return(x)
+        }
+      )
     return(x)
-    } else {
+  } else {
     message("studyArea not provided, skipping masking")
     return(x)
   }
