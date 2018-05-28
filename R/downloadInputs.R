@@ -519,7 +519,7 @@ downloadFromWebDB <- function(filename, filepath, dataset = NULL, quick = FALSE,
     url <- urls$url[wh]
 
     if (httr::http_error(url))
-      stop("Can not access url", url)
+      stop("Can not access url ", url)
 
     message("  Downloading ", filename, " ...")
 
@@ -644,56 +644,6 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
        needChecksums = needChecksums)
 }
 
-#' Add a prefix or suffix to the basename part of a file path
-#'
-#' Prepend (or postpend) a filename with a prefix (or suffix).
-#' If the directory name of the file cannot be ascertained from its path,
-#' it is assumed to be in the current working directory.
-#'
-#' @param f       A character string giving the name/path of a file.
-#' @param prefix  A character string to prepend to the filename.
-#' @param suffix  A character string to postpend to the filename.
-#'
-#' @author Jean Marchal
-#' @author Alex Chubaty
-#' @export
-#' @importFrom tools file_ext file_path_sans_ext
-#' @rdname prefix
-#'
-#' @examples
-#' # file's full path is specified (i.e., dirname is known)
-#' myFile <- file.path("~/data", "file.tif")
-#' .prefix(myFile, "small_")    ## "/home/username/data/small_file.tif"
-#' .suffix(myFile, "_cropped") ## "/home/username/data/myFile_cropped.shp"
-#'
-#' # file's full path is not specified
-#' .prefix("myFile.shp", "small")    ## "./small_myFile.shp"
-#' .suffix("myFile.shp", "_cropped") ## "./myFile_cropped.shp"
-#'
-.prefix <- function(f, prefix = "") {
-  file.path(dirname(f), paste0(prefix, basename(f)))
-}
-
-#' \code{SpaDES.tools} deprecated functions
-#'
-#' @param name A character string giving the name/path of a file.
-#'
-smallNamify <- function(name) {
-  .Deprecated(".prefix", package = "SpaDES.tools")
-  .prefix(name, prefix = "Small")
-}
-
-#' @export
-#' @rdname prefix
-.suffix <- function(f, suffix = "") {
-  file.path(dirname(f), paste0(tools::file_path_sans_ext(basename(f)), suffix,
-                               ".", tools::file_ext(f)))
-}
-
-
-
-
-
 #' Try to pick a file to load
 #'
 #' @keywords internal
@@ -811,12 +761,15 @@ postProcess.default <- function(x, ...) {
 #'   and/or \code{studyArea}}{ Please see \code{\link{postProcess.spatialObjects}}
 #'  }
 #'
-#' @export
 #' @inheritParams prepInputs
+#'
 #' @inheritParams cropInputs
+#'
 #' @param x A \code{Spatial*}, \code{sf} or \code{Raster*} object.
+#'
 #' @param postProcessedFilename Character string. If provided, then it is passed to
-#'                 \code{determineFilename} and then \code{writeOutputs}
+#'                 \code{determineFilename} and then \code{writeOutputs}.
+#'
 #' @param inputFilePath Character string giving the file path of the \emph{input} object,
 #'                      if it has one. This is then used if \code{postProcessedFilename}
 #'                      is \code{TRUE} to name the output file, where the resulting
@@ -824,9 +777,11 @@ postProcess.default <- function(x, ...) {
 #'                      \code{.prefix(basename(inputFilePath), "Small")}.
 #'                      Mostly used by \code{\link{prepInputs}},
 #'                      where \code{postProcessedFilename} is missing.
+#'
 #' @param useSAcrs Logical. If \code{FALSE}, the default, then the desired projection
 #'                 will be taken from \code{rasterToMatch} or none at all.
 #'                 If \code{TRUE}, it will be taken from \code{studyArea}.
+#'
 #' @param ... Additonal arguments passed to \code{\link{cropInputs}},
 #'            \code{\link{projectInputs}}, \code{\link{maskInputs}},
 #'            \code{\link{determineFilename}}, and \code{\link{writeOutputs}}.
@@ -835,6 +790,8 @@ postProcess.default <- function(x, ...) {
 #'            This might include potentially important arguments like \code{datatype},
 #'            \code{format}. Also passed to \code{projectRaster},
 #'            with likely important arguments such as \code{method = "bilinear"}.
+#'
+#' @export
 #'
 #' @section Passing \code{rasterToMatch} and/or \code{studyArea}:
 #'
@@ -981,11 +938,6 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
 #' @importFrom rgeos gIsValid
 #' @importFrom reproducible Cache
 #' @importFrom sp SpatialPolygonsDataFrame spTransform CRS
-#' @rdname cropInputs
-#'
-#'
-
-#' @export
 #' @rdname cropInputs
 cropInputs <- function(x, studyArea, rasterToMatch, ...) {
   UseMethod("cropInputs")
@@ -1197,20 +1149,26 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 
 #' Determine filename, either automatically or manually
 #'
-#'  If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
-#'  raster will be written to disk with the original \code{targetFile} name, with
-#'  \code{"Small"} prefixed to the basename(\code{targetFilename}).
-#'  If a character string, it will be the path of the saved raster.
-#'  It will be tested whether it is an absolute or relative path and used as is
-#'  if absolute or prepended with \code{destinationPath} if relative.
+#' If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
+#' raster will be written to disk with the original \code{targetFile} name, with
+#' \code{"Small"} prefixed to the basename(\code{targetFilename}).
+#' If a character string, it will be the path of the saved raster.
+#' It will be tested whether it is an absolute or relative path and used as is
+#' if absolute or prepended with \code{destinationPath} if relative.
 #'
 #' @inheritParams postProcess.spatialObjects
+#'
 #' @param postProcessedFilename Logical or character string (a file path). See details.
+#'
 #' @param inputFilePath Optional. Filename (with or without full path). Only used if
 #'                       \code{postProcessedFilename} is \code{TRUE}, in which case,
 #'                       this is used to help name the output.
+#'
 #' @param destinationPath Optional. If \code{postProcessedFilename} is a relative file path, then this
 #'                        will be the directory of the resulting absolute file path.
+#'
+#' @include helpers.R
+#'
 #' @details
 #'  If \code{postProcessedFilename} is \code{logical}, then the output
 #'  filename will be \code{"Small"} prefixed to the basename(\code{inputFilePath}).
@@ -1218,6 +1176,7 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #'  will be the path returned. It will be tested whether it is an
 #'  absolute or relative path and used as is if absolute or prepended with
 #'  \code{destinationPath} if provided, and if \code{postProcessedFilename} is relative.
+#'
 determineFilename <- function(postProcessedFilename = TRUE, inputFilePath = NULL,
                               destinationPath = NULL, ...) {
 
@@ -1345,7 +1304,6 @@ writeOutputs.default <- function(x, filename, ...) {
   extractedFiles
 }
 
-
 .checkSums <- function(filesToCheck, fileinfo, chksumsFilePath, quick) {
   if (missing(chksumsFilePath)) {
     chksumsFilePath <- file.path(dirname(filesToCheck), "CHECKSUMS.txt")
@@ -1404,7 +1362,6 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
 
     }
   }
-
 
   if (!is.null(neededFiles)) {
     result <- checkSums[checkSums$expectedFile %in% neededFiles, ]$result
@@ -1494,7 +1451,6 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
     } else {
       message("  Skipping download: targetFile (and any alsoExtract) already present")
     }
-
   }
   archiveReturn <- if (is.null(archive)) archive else file.path(destinationPath, basename(archive))
   list(needChecksums = needChecksums, archive = archiveReturn, neededFiles = neededFiles)

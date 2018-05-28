@@ -45,8 +45,7 @@ if (getRversion() >= "3.1.0") {
 #' so that it can deal with a \code{RasterLayer} of \code{asymmetryAngle}.
 #' Here, the \code{spreadProb} values of a given set of neighbours around each active pixel
 #' are adjusted to create \code{adjustedSpreadProb} which is calculated maintain the
-#' following
-#' two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
+#' following two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
 #' \deqn{max(spreadProb)/min(spreadProb) = asymmetry} along the axis of
 #' \code{asymmetryAngle}. NOTE: this means that the 8 neighbours around an active
 #' cell may not fulfill the preceeding equality if \code{asymmetryAngle} is not
@@ -897,7 +896,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         dt1b <- dt1[currentSizetooBigByNCells] # attach tooBigByNCells
         dt1a <- tryCatch(dt1b[, list(omit = origIndex[sample.int(.N, tooBigByNCells)]),
                               by = "initialPixels"],
-                         error = function(x) TRUE)
+                         error = function(e) TRUE)
 
         dt <- dt[-dt1a$omit][, list(initialPixels, pixels, state)]
         dt[dt1a, state := "inactive"]

@@ -68,7 +68,7 @@ setMethod(
     checkPath(path, create = TRUE)
 
     if (missing(cl)) {
-      cl <- tryCatch(getCluster(), error = function(x) NULL)
+      cl <- tryCatch(getCluster(), error = function(e) NULL)
       on.exit(if (!is.null(cl)) returnCluster(), add = TRUE)
     }
 

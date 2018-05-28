@@ -10,7 +10,7 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-05-25
+Date: 2018-06-05
 Version: 0.1.1.9010
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
@@ -89,6 +89,7 @@ Collate:
     'SELES.R'
     'distanceFromEachPoint.R'
     'downloadData.R'
+    'helpers.R'
     'downloadInputs.R'
     'environment.R'
     'gis.R'

@@ -614,6 +614,7 @@ test_that("spread2 tests -- asymmetry", {
   library(data.table); on.exit(detach("package:data.table"), add = TRUE)
   library(fpCompare); on.exit(detach("package:fpCompare"), add = TRUE)
   library(CircStats); on.exit(detach("package:CircStats"), add = TRUE)
+  library(quickPlot); on.exit(detach("package:quickPlot"), add = TRUE)
 
   # inputs for x
   a <- raster(extent(0, 100, 0, 100), res = 1)
