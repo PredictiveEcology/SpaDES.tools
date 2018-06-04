@@ -362,8 +362,8 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   # Stage 1 - Extract from archive
 
   filesExtracted <- extractFromArchive(archive = archive, destinationPath = destinationPath,
-                                         neededFiles = neededFiles,
-                                         checkSums = checkSums, needChecksums = needChecksums)
+                                       neededFiles = neededFiles,
+                                       checkSums = checkSums, needChecksums = needChecksums)
 
   filesToChecksum <- unique(c(filesToChecksum, targetFile, alsoExtract,
                               basename(filesExtracted$filesExtracted)))
@@ -1041,9 +1041,32 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
 
     if (!is.null(cropExtent)) {
       # crop it
+
       if (!identical(cropExtent, extent(x))) {
         message("    cropping ...")
-        x <- raster::crop(x = x, y = cropExtent)
+        numFails <- 0L
+
+        while (numFails >= 0) {
+          xTry <- try(raster::crop(x = x, y = cropExtent))
+          if (is(xTry, "try-error")) {
+            numFails <- numFails + 1
+            if (numFails >= 2) {
+              print(xTry)
+              stop("The original SpatialPolygon has errors that can't be solved here. Please correct them.")
+            }
+
+            #objectName <- if (is.null(inputFilePath)) NULL else basename(inputFilePath)
+            #mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
+                                   x <- fixErrors(x, #objectName = objectName,
+                                                  useCache = useCache, ...)
+            #.groupedMessage(mess, omitPattern = skipCacheMess)
+
+          } else {
+            x <- xTry
+            break
+          }
+        }
+
         if (is.null(x)) {
           message("    polygons do not intersect.")
         }
@@ -1182,12 +1205,14 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
     studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
     studyArea <- spTransform(studyArea, CRSobj = crs(x))
     suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
-    x <- tryCatch(raster::intersect(x, studyArea), error = function(e) {
-          warning("  Could not mask with studyArea, for unknown reasons.",
-                  " Returning object without masking.")
-          return(x)
-        }
-      )
+    x <- tryCatch(raster::intersect(x, studyArea),
+      error = function(e) {
+        warning("  Could not mask with studyArea, for unknown reasons.",
+          " Returning object without masking."
+        )
+        return(x)
+      }
+    )
     return(x)
   } else {
     message("studyArea not provided, skipping masking.")
