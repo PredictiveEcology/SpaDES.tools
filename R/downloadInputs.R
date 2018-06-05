@@ -465,21 +465,62 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
     if (is.null(objectName)) objectName = "SpatialPolygon"
     if (is(x, "SpatialPolygons")) {
       message("Checking for errors in ", objectName)
-      if (suppressWarnings(any(!rgeos::gIsValid(x, byid = TRUE)))) {
-        message("Found errors in ", objectName, ". Attempting to correct.")
-        x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
-        if (is(x1, "try-error")) {
-          message("There are errors with ", objectName,
-                  ". Couldn't fix them with raster::buffer(..., width = 0)")
-        } else {
-          x <- x1
-          message("  Some or all of the errors fixed.")
+
+      attempt <- 1L
+      while (suppressWarnings(any(!rgeos::gIsValid(x, byid = TRUE)))) {
+        if(attempt == 1L){
+          message("Found errors in ", objectName, ". Attempting to correct using raster::buffer(..., width = 0).")
+          }
+        if(attempt == 2L){
+          message("Found more errors in ", objectName, ". Attempting to correct using lwgeom::st_make_valid()")
+          }
+        if(attempt > 2L){
+          stop("Errors in ", objectName, "can't be automatically fixed. Please correct them and try again.")
+          }
+
+        # Try to correct using buffer:
+        if(attempt==1){
+            x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
+          if (is(x1, "try-error")) {
+            message("There are errors with ", objectName,
+                    ". Couldn't fix them with raster::buffer(..., width = 0)")
+            attempt <- attempt + 1
+          } else {
+            x <- x1
+            message("  Some or all of the errors fixed with raster::buffer(..., width = 0).")
+            attempt <- attempt + 1
+            next
+          }
         }
 
-      } else {
-        message("  Found no errors.")
+        # Try to correct using lwgeom::st_make_valid():
+        if(attempt==2){
+          if (requireNamespace("sf")) { # Transform to sf object
+            xTrans <- sf::st_as_sf(x) #Make it flexible to errors? Does it return messages of errors?
+          } else {
+            stop("Please install sf package: https://github.com/r-spatial/sf")
+          }
+
+          if (requireNamespace("lwgeom")) { # Fix using lwgeom
+            x1 <- try(Cache(lwgeom::st_make_valid, x, useCache = useCache)) # CHECK ALL ARGUMENTS FOR st_make_valid
+            if (is(x1, "try-error")) {
+            message("There are errors with ", objectName,
+                    ". Couldn't fix them with lwgeom::st_make_valid()")
+            attempt <- attempt + 1
+            } else {
+              x2 <- sf::as(x1, "Spatial") #Make it flexible to errors? Does it return messages of errors?
+              message("  Some or all of the errors fixed with lwgeom::st_make_valid().")
+              x <- x2
+              attempt <- attempt + 1
+              next
+            }
+          } else {
+            stop("Please install sf package: lwgeom")
+          }
+        }
       }
     }
+      message("  Found no (more) errors.")
   }
   return(x)
 }
@@ -1046,7 +1087,7 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
         message("    cropping ...")
         numFails <- 0L
 
-        while (numFails >= 0) {
+        while (numFails >= 0)
           xTry <- try(raster::crop(x = x, y = cropExtent))
           if (is(xTry, "try-error")) {
 
