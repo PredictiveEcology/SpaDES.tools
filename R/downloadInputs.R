@@ -486,9 +486,6 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
 
 #' Download file from web databases
 #'
-#' This function can be used to download a file from a web database listed in
-#'\link[webDatabases]{webDatabases}.
-#'
 #' @param filename Character string naming the file to be downloaded.
 #'
 #' @param filepath Character string giving the path where the file will be written.
@@ -502,7 +499,7 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
 #' @author Jean Marchal
 #' @importFrom httr authenticate GET http_error progress write_disk
 #' @importFrom stats runif
-#' @importFrom webDatabases webDatabases
+#' @include webDatabases.R
 #'
 downloadFromWebDB <- function(filename, filepath, dataset = NULL, quick = FALSE, overwrite = TRUE) {
   urls <- webDatabases(local = quick)
