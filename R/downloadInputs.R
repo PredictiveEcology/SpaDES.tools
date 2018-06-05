@@ -480,7 +480,7 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
 
         # Try to correct using buffer:
         if(attempt==1){
-            x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
+            x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE)) #, useCache = useCache)
           if (is(x1, "try-error")) {
             message("There are errors with ", objectName,
                     ". Couldn't fix them with raster::buffer(..., width = 0)")
@@ -502,7 +502,7 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
           }
 
           if (requireNamespace("lwgeom")) { # Fix using lwgeom
-            x1 <- try(Cache(lwgeom::st_make_valid, x, useCache = useCache)) # CHECK ALL ARGUMENTS FOR st_make_valid
+            x1 <- try(Cache(lwgeom::st_make_valid, x)) #, useCache = useCache)
             if (is(x1, "try-error")) {
             message("There are errors with ", objectName,
                     ". Couldn't fix them with lwgeom::st_make_valid()")
@@ -948,7 +948,7 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
       crsRTM <- NULL
     }
 
-    mess <- capture.output(type = "message",
+    mess <- capture.output(type = "message", # It shouldn't give the messages only when it finishes the cropping... We have lots of important messages in the middle too (i.e. fixError)
                            x <- Cache(cropInputs, x, studyArea = studyArea,
                                       extentToMatch = extRTM,
                                       extentCRS = crsRTM,
@@ -1048,7 +1048,7 @@ cropInputs.default <- function(x, studyArea, rasterToMatch, ...) {
 #' @param extentCRS     Optional. Can pass a \code{crs} here with an extent to
 #'                      \code{extentTomatch} instead of \code{rasterToMatch}
 cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extentToMatch = NULL,
-                                      extentCRS = NULL, useCache = useCache, ...) {
+                                      extentCRS = NULL, useCache = TRUE, ...) {
 
 
   if (!is.null(studyArea) ||
@@ -1096,14 +1096,13 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
               print(xTry)
               stop("The original SpatialPolygon has errors that can't be solved here. Please correct them.")
             }
-
             x <- fixErrors(x, useCache = useCache, ...)
             next
 
           } else {
             x <- xTry
-            break
           }
+          break
         }
 
         if (is.null(x)) {
