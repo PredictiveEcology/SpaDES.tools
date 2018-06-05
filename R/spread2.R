@@ -878,6 +878,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       setkeyv(dtPotential, "initialPixels")
       dtPotClusterDT <- dtPotential[, list(size = as.integer(.N)), by = "initialPixels"]
       clusterDT[dtPotClusterDT, size := size + i.size]
+
       # This next line is a work around for a problem that doesn't make sense:
       # See: https://stackoverflow.com/q/29615181/1380598
       alloc.col(clusterDT, 7)
@@ -1064,9 +1065,9 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
   if (NROW(dtPotential)) {
     # need fill = TRUE if user has passed extra columns
     dt <- rbindlist(list(dt, dtPotential), fill = TRUE)
-  } else {
-    dt
   }
+
+  return(dt)
 }
 
 #' Internal helpers for \code{spread2}
