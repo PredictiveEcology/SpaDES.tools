@@ -305,26 +305,21 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
-#' @importFrom raster ncell raster res ncol pointDistance
 #' @importFrom bit bit
-#' @importFrom data.table := alloc.col as.data.table data.table is.data.table
-#' @importFrom data.table rbindlist setcolorder setattr set setkeyv setnames uniqueN
 #' @importFrom checkmate assert assertClass assertNumeric
 #' @importFrom checkmate checkClass checkDataTable checkLogical checkNumeric checkScalarNA
 #' @importFrom checkmate qassert
-#' @importFrom stats runif
+#' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
+#' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
+#' @importFrom ff ff
 #' @importFrom fpCompare %<=% %>>%
+#' @importFrom magrittr %>%
+#' @importFrom quickPlot Plot
+#' @importFrom raster ncell raster res ncol pointDistance
+#' @importFrom stats runif
 #'
 #' @seealso \code{\link{spread}} for a different implementation of the same alogorithm.
 #' \code{spread} is less robust but it is often slightly faster.
-#'
-#' @aliases spread2
-#' @export
-#' @importFrom data.table copy
-#' @importFrom magrittr %>%
-#' @importFrom quickPlot Plot
-#' @name spread2
-#' @rdname spread2
 #'
 #' @example inst/examples/example_spread2.R
 #'
@@ -474,7 +469,6 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       set(dt, NULL, "distClass", 0) # it is zero distance to self
     }
     totalIterations <- 0
-
   } else {
     # a "return" entry into spread2
     dt <- start
@@ -591,7 +585,8 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         directions = directions,
         id = dt$initialPixels[whActive],
         cells = dt$pixels[whActive], cutoff.for.data.table = 5e2,
-        returnDT = TRUE)
+        returnDT = TRUE
+      )
 
       # only iterate if it is not a Retry situation
       its <- its + 1
@@ -805,6 +800,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       } else {
         asymmetry[dtPotential$to]
       }
+
       actualAsymmetryAngle <- if (length(asymmetryAngle) == 1) {
         asymmetryAngle
       } else {

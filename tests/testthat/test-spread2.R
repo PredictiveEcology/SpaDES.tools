@@ -32,12 +32,8 @@ test_that("spread2 tests", {
     seed <- sample(1e6, 1)
     set.seed(seed)
     sams <- sample(innerCells, 2)
-    out <-
-      spread2(a,
-               start = sams,
-               spreadProb = 0.225,
-               maxSize = maxSizes,
-               asRaster = FALSE)
+    out <- spread2(a, start = sams, spreadProb = 0.225, maxSize = maxSizes,
+                   asRaster = FALSE)
     expect_true(all(out[, .N, by = "initialPixels"]$N <= maxSizes[order(sams)]))
   }
 
@@ -106,7 +102,8 @@ test_that("spread2 tests", {
 
   # test circle
   sams <- sort(sample(innerCells, 3)) # sorted -- makes comparisons later easier
-  out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, asRaster = FALSE, returnDistances = TRUE)
+  out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, asRaster = FALSE,
+                 returnDistances = TRUE)
   expect_true(NROW(out) == ncell(a))
   expect_true(all(out$state == "inactive"))
   expect_true(all(out$distance <= (sqrt(2) * ncol(a))))
@@ -232,7 +229,7 @@ test_that("spread2 tests", {
                  start = ncell(b) / 2 - ncol(b) / 2, spreadProbRel = bProb,
                  returnFrom = TRUE, neighProbs = c(0.3, 0.7), exactSize = 30)
 
-  set(out, , "relProb", bProb[][out$pixels])
+  set(out, NULL, "relProb", bProb[][out$pixels])
   out
 
   if (interactive())
@@ -525,24 +522,14 @@ test_that("spread2 tests", {
 
   origSpreadIterationsNeighs <- function(a, quick, n, sp, neighProbs, exactSize) {
     sams <- sample(innerCells, n)
-    out <-
-      spread(a, spreadProb = sp, neighProbs = neighProbs,
-             iterations = 1,
-             loci = sams,
-             exactSizes = TRUE,
-             returnIndices = TRUE, maxSize = exactSize)
+    out <- spread(a, spreadProb = sp, neighProbs = neighProbs, iterations = 1,
+                  loci = sams, exactSizes = TRUE, returnIndices = TRUE, maxSize = exactSize)
     stillActive <- TRUE
     while (stillActive) {
       stillActive <- any(out$active)
-      out <-
-        spread(
-          a, spreadProb = sp,
-          iterations = 1, neighProbs = neighProbs,
-          spreadState = out, maxSize = exactSize,
-          exactSizes = TRUE,
-          returnIndices = TRUE,
-          quick = quick
-        )
+      out <- spread(a, spreadProb = sp, iterations = 1, neighProbs = neighProbs,
+                    spreadState = out, maxSize = exactSize, exactSizes = TRUE,
+                    returnIndices = TRUE, quick = quick)
     }
     out
   }
