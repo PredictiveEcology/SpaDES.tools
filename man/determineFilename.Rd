@@ -28,11 +28,11 @@ with likely important arguments such as \code{method = "bilinear"}.}
 }
 \description{
 If \code{postProcessedFilename} is \code{logical}, then the cropped/masked
- raster will be written to disk with the original \code{targetFile} name, with
- \code{"Small"} prefixed to the basename(\code{targetFilename}).
- If a character string, it will be the path of the saved raster.
- It will be tested whether it is an absolute or relative path and used as is
- if absolute or prepended with \code{destinationPath} if relative.
+raster will be written to disk with the original \code{targetFile} name, with
+\code{"Small"} prefixed to the basename(\code{targetFilename}).
+If a character string, it will be the path of the saved raster.
+It will be tested whether it is an absolute or relative path and used as is
+if absolute or prepended with \code{destinationPath} if relative.
 }
 \details{
 If \code{postProcessedFilename} is \code{logical}, then the output

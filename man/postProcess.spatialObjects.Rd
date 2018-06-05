@@ -40,7 +40,7 @@ If \code{TRUE}, it will be taken from \code{studyArea}.}
 \item{useCache}{Passed to Cache in various places. Default \code{FALSE}}
 
 \item{postProcessedFilename}{Character string. If provided, then it is passed to
-\code{determineFilename} and then \code{writeOutputs}}
+\code{determineFilename} and then \code{writeOutputs}.}
 
 \item{...}{Additonal arguments passed to \code{\link{cropInputs}},
 \code{\link{projectInputs}}, \code{\link{maskInputs}},

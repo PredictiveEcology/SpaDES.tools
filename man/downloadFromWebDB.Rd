@@ -25,8 +25,7 @@ less robust checking of inputs. See the respective functions.}
 even if they pass the checksums or the files are all there.}
 }
 \description{
-This function can be used to download a file from a web database listed in
-\link[webDatabases]{webDatabases}.
+Download file from web databases
 }
 \author{
 Jean Marchal
