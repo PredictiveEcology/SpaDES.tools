@@ -1087,7 +1087,7 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
         message("    cropping ...")
         numFails <- 0L
 
-        while (numFails >= 0)
+        while (numFails >= 0) {
           xTry <- try(raster::crop(x = x, y = cropExtent))
           if (is(xTry, "try-error")) {
 
@@ -1098,6 +1098,7 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
             }
 
             x <- fixErrors(x, useCache = useCache, ...)
+            next
 
           } else {
             x <- xTry
