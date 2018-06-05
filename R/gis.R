@@ -8,7 +8,7 @@
 #' @importFrom rgdal getGDALVersionInfo
 #'
 getGDALVersion <-  function() {
-  vers <- tryCatch(getGDALVersionInfo(), error = function(x) NA_real_)
+  vers <- tryCatch(getGDALVersionInfo(), error = function(e) NA_real_)
   if (!is.na(vers)) {
     vers <- strsplit(vers, split = ",")[[1]][1] %>%
       strsplit(., split = " ") %>%
@@ -331,7 +331,7 @@ fastRasterize <- function(polygon, ras, field, filename, useGDAL, datatype) {
       names(a) <- field
     }
 
-    if (isTRUE(tryCatch(minValue(a), warning = function(x) TRUE)))
+    if (isTRUE(tryCatch(minValue(a), warning = function(e) TRUE)))
       a <- setMinMax(a)
 
     hasNA <- if (anyNA(a[])) 1 else 0

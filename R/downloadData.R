@@ -215,7 +215,7 @@ setMethod(
 
       return(results.df)
     }
-  })
+})
 
 #' @rdname checksums
 setMethod(
@@ -235,7 +235,7 @@ setMethod(
   definition = function(module, path, write, quickCheck, checksumFile, files, ...) {
     checksums(module = character(), path = path, write = write,
               quickCheck = quickCheck, checksumFile = checksumFile, files = files, ...)
-  })
+})
 
 writeChecksumsTable <- function(out, checksumFile, dots) {
   do.call(write.table,
@@ -284,7 +284,7 @@ appendChecksumsTable <- function(checkSumFilePath, filesToChecksum, destinationP
 remoteFileSize <- function(url) {
   contentLength <- vapply(url, function(u) {
     header <- RCurl::url.exists(u, .header = TRUE)
-    status <- tryCatch(as.numeric(header[["status"]]), error = function(x) 0)
+    status <- tryCatch(as.numeric(header[["status"]]), error = function(e) 0)
     if (status == 200) {
       as.numeric(header[["Content-Length"]])
     } else {
@@ -545,7 +545,6 @@ setMethod(
             }
             if (needNewDownload) {
               copied <- file.copy(from = tmpFile, to = destfile, overwrite = overwrite)
-
             }
             destfile
           }
@@ -617,7 +616,7 @@ setMethod(
     }
 
     return(bind_rows(chksums, chksums2))
-  })
+})
 
 #' @rdname downloadData
 setMethod(
@@ -628,7 +627,7 @@ setMethod(
     downloadData(module = module, path = getOption("spades.modulePath"), quiet = FALSE,
                  quickCheck = quickCheck, overwrite = overwrite, files = files,
                  checked = checked, urls = urls, children = children)
-  })
+})
 
 #' @rdname downloadData
 setMethod(
@@ -639,7 +638,7 @@ setMethod(
     downloadData(module = module, path = getOption("spades.modulePath"), quiet = quiet,
                  quickCheck = quickCheck, overwrite = overwrite, files = files,
                  checked = checked, urls = urls, children = children)
-  })
+})
 
 #' @rdname downloadData
 setMethod(
@@ -650,10 +649,8 @@ setMethod(
     downloadData(module = module, path = path, quiet = FALSE,
                  quickCheck = quickCheck, overwrite = overwrite, files = files,
                  checked = checked, urls = urls, children = children)
-  })
+})
 
-
-################################################################################
 #' Calculate the hashes of multiple files
 #'
 #' Internal function. Wrapper for \code{\link[digest]{digest}} using \code{xxhash64}.
@@ -686,5 +683,4 @@ setMethod(
         digest::digest(object = f, file = TRUE, algo = algo, ...)
       }) %>% unlist() %>% unname() %>% as.character() # need as.character for empty case # nolint
     }
-  })
-
+})

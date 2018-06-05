@@ -16,7 +16,8 @@ test_that("downloadData downloads and unzips module data", {
   on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
 
   filenames <- c("DEM.tif", "habitatQuality.tif")
-  if (paste0(R.version$major, ".", R.version$minor) > "3.4.2") {
+  Rversion <- numeric_version(paste0(R.version$major, ".", R.version$minor))
+  if (Rversion > "3.4.2") { ## TODO: need o test on earlier versions too!
     chksums <- structure(
       list(
         file = structure(1:2, .Label = c("DEM.tif", "habitatQuality.tif"), class = "factor"),

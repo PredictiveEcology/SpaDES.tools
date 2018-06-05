@@ -217,8 +217,7 @@ new set of conditions arise due to a change in weather.
 so that it can deal with a \code{RasterLayer} of \code{asymmetryAngle}.
 Here, the \code{spreadProb} values of a given set of neighbours around each active pixel
 are adjusted to create \code{adjustedSpreadProb} which is calculated maintain the
-following
-two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
+following two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
 \deqn{max(spreadProb)/min(spreadProb) = asymmetry} along the axis of
 \code{asymmetryAngle}. NOTE: this means that the 8 neighbours around an active
 cell may not fulfill the preceeding equality if \code{asymmetryAngle} is not
