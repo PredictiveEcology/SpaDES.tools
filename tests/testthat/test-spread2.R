@@ -611,10 +611,12 @@ test_that("spread2 tests -- asymmetry", {
   innerCells <- which(bb[] %==% 1)
 
   set.seed(123)
+  sams <- sample(innerCells, 2)
+  out <- spread2(a, start = sams, 0.215, asRaster = FALSE, asymmetry = 2,
+                 asymmetryAngle = 90)
   for (i in 1:20) {
-    sams <- sample(innerCells, 2)
     expect_silent(
-      out <- spread2(a, start = sams, 0.215, asRaster = FALSE, asymmetry = 2,
+      out <- spread2(a, start = out, 0.215, asRaster = FALSE, asymmetry = 2,
                      asymmetryAngle = 90)
     )
   }
