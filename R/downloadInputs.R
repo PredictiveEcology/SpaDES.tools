@@ -1007,7 +1007,7 @@ cropInputs.default <- function(x, studyArea, rasterToMatch, ...) {
 #' @param extentCRS     Optional. Can pass a \code{crs} here with an extent to
 #'                      \code{extentTomatch} instead of \code{rasterToMatch}
 cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extentToMatch = NULL,
-                                      extentCRS = NULL, ...) {
+                                      extentCRS = NULL, useCache = useCache, ...) {
 
 
   if (!is.null(studyArea) ||
@@ -1049,17 +1049,14 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
         while (numFails >= 0) {
           xTry <- try(raster::crop(x = x, y = cropExtent))
           if (is(xTry, "try-error")) {
+
             numFails <- numFails + 1
             if (numFails >= 2) {
               print(xTry)
               stop("The original SpatialPolygon has errors that can't be solved here. Please correct them.")
             }
 
-            #objectName <- if (is.null(inputFilePath)) NULL else basename(inputFilePath)
-            #mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
-                                   x <- fixErrors(x, #objectName = objectName,
-                                                  useCache = useCache, ...)
-            #.groupedMessage(mess, omitPattern = skipCacheMess)
+            x <- fixErrors(x, useCache = useCache, ...)
 
           } else {
             x <- xTry
