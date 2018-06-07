@@ -480,7 +480,7 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
 
         # Try to correct using buffer:
         if(attempt==1){
-            x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE)) #, useCache = useCache)
+            x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
           if (is(x1, "try-error")) {
             message("There are errors with ", objectName,
                     ". Couldn't fix them with raster::buffer(..., width = 0)")
@@ -502,8 +502,8 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
           }
 
           if (requireNamespace("lwgeom")) { # Fix using lwgeom
-            x1 <- try(Cache(lwgeom::st_make_valid, x)) #, useCache = useCache)
-            if (is(x1, "try-error")) {
+            x1 <- try(Cache(lwgeom::st_make_valid, x, useCache = useCache)) # Testing using st_is_valid() doesn't work for big files.
+            if (is(x1, "try-error")) {                                      # Maybe converting back and retesting using rgeos::gIsValid works? Didn't test.
             message("There are errors with ", objectName,
                     ". Couldn't fix them with lwgeom::st_make_valid()")
             attempt <- attempt + 1
