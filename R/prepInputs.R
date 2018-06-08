@@ -317,7 +317,8 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     }
 
   } else {
-    checkSums <- try(checksums(path = destinationPath, write = FALSE)#, checksumFile = checkSumFilePath)
+    checkSums <- try(checksums(path = destinationPath,
+                               write = FALSE) #checksumFile = checkSumFilePath)
                      , silent = TRUE)
     if (is(checkSums, "try-error")) {
       needChecksums <- 1
@@ -328,9 +329,14 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   neededFiles <- c(targetFile, if (!is.null(alsoExtract)) basename(alsoExtract))
 
   # Stage 1 -- Download
-  downloadFileResult <- downloadFile(archive, targetFile, neededFiles = neededFiles,
-                                     destinationPath, quick, checkSums, url, needChecksums = needChecksums,
-                                     overwrite = overwrite, moduleName = moduleName, modulePath = modulePath)
+  downloadFileResult <- downloadFile(archive, targetFile,
+                                     neededFiles = neededFiles,
+                                     destinationPath, quick,
+                                     checkSums, url,
+                                     needChecksums = needChecksums,
+                                     overwrite = overwrite,
+                                     moduleName = moduleName,
+                                     modulePath = modulePath)
   needChecksums <- downloadFileResult$needChecksums
   neededFiles <- downloadFileResult$neededFiles
   if (is.null(archive)) archive <- downloadFileResult$archive
@@ -362,8 +368,8 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
   # Stage 1 - Extract from archive
 
   filesExtracted <- extractFromArchive(archive = archive, destinationPath = destinationPath,
-                                         neededFiles = neededFiles,
-                                         checkSums = checkSums, needChecksums = needChecksums)
+                                       neededFiles = neededFiles,
+                                       checkSums = checkSums, needChecksums = needChecksums)
 
   filesToChecksum <- unique(c(filesToChecksum, targetFile, alsoExtract,
                               basename(filesExtracted$filesExtracted)))
@@ -391,8 +397,10 @@ prepInputs <- function(targetFile, url = NULL, archive = NULL, alsoExtract = NUL
     fun <- get(fun)
   }
 
-  # dots will contain too many things for some functions -- need to remove those that are known going
+  # dots will contain too many things for some functions
+  #-- need to remove those that are known going
   #   into prepInputs
+
   argsToRemove <- unique(c(names(formals(prepInputs)),
                            names(formals(fixErrors)),
                            names(formals(writeRaster)),
@@ -462,24 +470,68 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
                                       attemptErrorFixes = TRUE,
                                       useCache = getOption("reproducible.useCache", FALSE), ...) {
   if (attemptErrorFixes) {
-    if (is.null(objectName)) objectName = "SpatialPolygon"
+    if (is.null(objectName))
+      objectName <- "SpatialPolygon"
     if (is(x, "SpatialPolygons")) {
       message("Checking for errors in ", objectName)
-      if (suppressWarnings(any(!rgeos::gIsValid(x, byid = TRUE)))) {
-        message("Found errors in ", objectName, ". Attempting to correct.")
-        x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
-        if (is(x1, "try-error")) {
-          message("There are errors with ", objectName,
-                  ". Couldn't fix them with raster::buffer(..., width = 0)")
-        } else {
-          x <- x1
-          message("  Some or all of the errors fixed.")
+
+      attempt <- 1L
+      while (suppressWarnings(any(!rgeos::gIsValid(x, byid = TRUE)))) {
+        if (attempt == 1L){
+          message("Found errors in ", objectName,
+                  ". Attempting to correct using raster::buffer(..., width = 0).")
+          }
+        # if(attempt == 2L){
+        #   message("Found more errors in ", objectName, ". Attempting to correct using lwgeom::st_make_valid()")
+        #   }
+        if(attempt > 1L){
+          stop("Errors in ", objectName,
+               "can't be automatically fixed. Please correct them and try again.")
+          }
+
+        # Try to correct using buffer:
+        if (attempt == 1){
+            x1 <- try(Cache(raster::buffer, x, width = 0, dissolve = FALSE, useCache = useCache))
+          if (is(x1, "try-error")) {
+            message("There are errors with ", objectName,
+                    ". Couldn't fix them with raster::buffer(..., width = 0)")
+            attempt <- attempt + 1
+          } else {
+            x <- x1
+            message("  Some or all of the errors fixed with raster::buffer(..., width = 0).")
+            attempt <- attempt + 1
+            next
+          }
         }
 
-      } else {
-        message("  Found no errors.")
+        # Try to correct using lwgeom::st_make_valid():
+        # if (attempt==2){
+        #   if (requireNamespace("sf")) { # Transform to sf object
+        #     xTrans <- sf::st_as_sf(x) # flexible to errors? Return messages of errors?
+        #   } else {
+        #     stop("Please install sf package: https://github.com/r-spatial/sf")
+        #   }
+        #
+        #   if (requireNamespace("lwgeom")) { # Fix using lwgeom
+        #     x1 <- try(Cache(lwgeom::st_make_valid, x, useCache = useCache)) # Testing using st_is_valid() doesn't work for big files.
+        #     if (is(x1, "try-error")) {                                      # Maybe converting
+        #     message("There are errors with ", objectName,                   # back and retesting
+        #             ". Couldn't fix them with lwgeom::st_make_valid()")  # using rgeos::gIsValid
+        #     attempt <- attempt + 1                                         # works? Didn't test.
+        #     } else {
+        #       x2 <- sf::as(x1, "Spatial") #Make it flexible to errors? Does it return messages of errors?
+        #       message("  Some or all of the errors fixed with lwgeom::st_make_valid().")
+        #       x <- x2
+        #       attempt <- attempt + 1
+        #       next
+        #     }
+        #   } else {
+        #     stop("Please install sf package: lwgeom")
+        #   }
+
       }
     }
+      message("  Found no (more) errors.")
   }
   return(x)
 }
@@ -531,8 +583,8 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
 
       filesInArchive <- funWArgs$fun(archive[1], list = TRUE)
 
-      if ("Name" %in% names(filesInArchive)) {
-        filesInArchive <- filesInArchive[filesInArchive$Length != 0,]$Name # for zips, rm directories (length = 0)
+      if ("Name" %in% names(filesInArchive)) { # for zips, rm directories (length = 0)
+        filesInArchive <- filesInArchive[filesInArchive$Length != 0, ]$Name
       }
 
       # recheck, now that we have the whole file liast
@@ -548,9 +600,12 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
                               .unzipOrUnTar(funWArgs$fun, funWArgs$args, files = basename(archive[2])))
           # recursion, removing one archive
           extractedObjs <- extractFromArchive(archive[-1], destinationPath = destinationPath,
-                                              neededFiles = neededFiles, extractedArchives = extractedArchives,
-                                              checkSums, needChecksums, filesExtracted = filesExtracted)
-        } else if (any(neededFiles %in% basename(filesInArchive)) || is.null(neededFiles)) {
+                                              neededFiles = neededFiles,
+                                              extractedArchives = extractedArchives,
+                                              checkSums, needChecksums,
+                                              filesExtracted = filesExtracted)
+        } else if (any(neededFiles %in% basename(filesInArchive)) ||
+                   is.null(neededFiles)) {
           extractingTheseFiles <- paste(basename(filesInArchive[basename(filesInArchive) %in% neededFiles]),
                                         collapse = ", ")
           if (!nzchar(extractingTheseFiles))
@@ -613,7 +668,7 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
   isShapefile <- grepl("shp", file_ext(possibleFiles))
   isRaster <- file_ext(possibleFiles) %in% c("tif", "grd")
   if (is.null(fun)) { #i.e., the default
-    fun <-if (any(isShapefile)) {
+    fun <- if (any(isShapefile)) {
       "raster::shapefile"
     } else {
       "raster::raster"
@@ -633,7 +688,7 @@ extractFromArchive <- function(archive, destinationPath = dirname(archive),
         paste(possibleFiles, collapse = "\n"))
     })
 
-    targetFilePath <- if (endsWith(suffix = "shapefile", fun )) {
+    targetFilePath <- if (endsWith(suffix = "shapefile", fun)) {
       possibleFiles[isShapefile]
     } else {
       if (any(isRaster)) {
@@ -827,10 +882,12 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
     # cropInputs may have returned NULL if they don't overlap
     if (!is.null(x)) {
       objectName <- if (is.null(inputFilePath)) NULL else basename(inputFilePath)
-      mess <- capture.output(type = "message", # no Cache at the method level because may be just passed through if raster
+# no Cache at the method level because may be just passed through if raster
+      mess <- capture.output(type = "message",
                              x <- fixErrors(x, objectName = objectName,
                                             useCache = useCache, ...))
       .groupedMessage(mess, omitPattern = skipCacheMess)
+
 
       # projectInputs
       targetCRS <- getTargetCRS(useSAcrs, studyArea, rasterToMatch)
@@ -858,7 +915,7 @@ postProcess.spatialObjects <- function(x, inputFilePath = NULL,
       if (!is.null(list(...)$filename)) stop("Can't pass filename; use postProcessedFilename")
 
       # writeOutputs
-      x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ... )
+      x <- writeOutputs(x = x, filename = newFilename, overwrite = overwrite, ...)
     }
   }
   return(x)
@@ -910,6 +967,7 @@ cropInputs.default <- function(x, studyArea, rasterToMatch, ...) {
 #'                      passed.
 #' @param extentCRS     Optional. Can pass a \code{crs} here with an extent to
 #'                      \code{extentTomatch} instead of \code{rasterToMatch}
+#'
 cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extentToMatch = NULL,
                                       extentCRS = NULL, ...) {
 
@@ -945,9 +1003,30 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
 
     if (!is.null(cropExtent)) {
       # crop it
+
       if (!identical(cropExtent, extent(x))) {
         message("    cropping ...")
-        x <- raster::crop(x = x, y = cropExtent)
+        numFails <- 0L
+
+        while (numFails >= 0) {
+          xTry <- try(raster::crop(x = x, y = cropExtent))
+          if (is(xTry, "try-error")) {
+
+            numFails <- numFails + 1
+            if (numFails >= 2) {
+              print(xTry)
+              stop("The original SpatialPolygon has errors that can't be solved here.
+                   Please correct them.")
+            }
+            x <- fixErrors(x, ...)
+            next
+
+          } else {
+            x <- xTry
+          }
+          break
+        }
+
         if (is.null(x)) {
           message("    polygons do not intersect.")
         }
@@ -1086,12 +1165,14 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
     studyArea <- raster::aggregate(studyArea, dissolve = TRUE)
     studyArea <- spTransform(studyArea, CRSobj = crs(x))
     suppressWarnings(studyArea <- fixErrors(studyArea, "studyArea"))
-    x <- tryCatch(raster::intersect(x, studyArea), error = function(e) {
-          warning("  Could not mask with studyArea, for unknown reasons.",
-                  " Returning object without masking.")
-          return(x)
-        }
-      )
+    x <- tryCatch(raster::intersect(x, studyArea),
+      error = function(e) {
+        warning("  Could not mask with studyArea, for unknown reasons.",
+          " Returning object without masking."
+        )
+        return(x)
+      }
+    )
     return(x)
   } else {
     message("studyArea not provided, skipping masking.")
@@ -1116,8 +1197,8 @@ maskInputs.Spatial <- function(x, studyArea, ...) {
 #'                       \code{postProcessedFilename} is \code{TRUE}, in which case,
 #'                       this is used to help name the output.
 #'
-#' @param destinationPath Optional. If \code{postProcessedFilename} is a relative file path, then this
-#'                        will be the directory of the resulting absolute file path.
+#' @param destinationPath Optional. If \code{postProcessedFilename} is a relative file path,
+#'                        then this will be the directory of the resulting absolute file path.
 #'
 #' @include helpers.R
 #'
@@ -1147,7 +1228,7 @@ determineFilename <- function(postProcessedFilename = TRUE, inputFilePath = NULL
   }
 
   newFilename <- if (!identical(postProcessedFilename, FALSE)) { # allow TRUE or path
-    if (isTRUE(postProcessedFilename) ) {
+    if (isTRUE(postProcessedFilename)) {
       .prefix(inputFilePath, "Small")
     } else {
       if (isAbsolutePath(postProcessedFilename)) {
@@ -1195,9 +1276,12 @@ writeOutputs.Raster <- function(x, filename, overwrite = FALSE, ...) {
     xTmp <- writeRaster(x = x, filename = filename, overwrite = overwrite, ...)
 
     # This is a bug in writeRaster was spotted with crs of xTmp became
-    # +proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
+    # +proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0
+    #       +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
     # should have stayed at
-    # +proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0
+    # +proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0
+    #       +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0
+
     if (!identical(crs(xTmp), crs(x)))
       crs(xTmp) <- crs(x)
 
@@ -1275,7 +1359,7 @@ writeOutputs.default <- function(x, filename, ...) {
 .checkSumsMem <- memoise::memoise(.checkSums)
 
 .isArchive <- function(filename) {
-  archive = if (file_ext(filename) %in% c("zip", "tar")) {
+  archive <- if (file_ext(filename) %in% c("zip", "tar")) {
     filename
   } else {
     NULL
@@ -1297,7 +1381,8 @@ writeOutputs.default <- function(x, filename, ...) {
 #' @param modulePath Character string of the path where the \code{moduleName} is located.
 #' @author Eliot McIntire
 downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quick,
-                         checkSums, url, needChecksums, overwrite = TRUE, moduleName, modulePath, ...) {
+                         checkSums, url, needChecksums,
+                         overwrite = TRUE, moduleName, modulePath, ...) {
 
   if (!is.null(neededFiles)) {
     if ("shp" %in% file_ext(neededFiles)) { # if user wants .shp file, needs other anciliary files
@@ -1320,7 +1405,8 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
   } else {
     result <- unique(checkSums$result)
   }
-  missingNeededFiles <- (!(all(compareNA(result, "OK")) && all(neededFiles %in% checkSums$expectedFile)) ||
+  missingNeededFiles <- (!(all(compareNA(result, "OK")) &&
+                             all(neededFiles %in% checkSums$expectedFile)) ||
                            is.null(targetFile) || is.null(neededFiles))
   if (missingNeededFiles) {
     if (needChecksums == 0) needChecksums <- 2 # use binary addition -- 1 is new file, 2 is append
@@ -1343,7 +1429,7 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
     # The download step
     if (!is.null(moduleName)) { # means it is inside a SpaDES module
       if (!is.null(fileToDownload)) {
-        parsedModule <- parse(file = file.path(modulePath, moduleName, paste0(moduleName, '.R')))
+        parsedModule <- parse(file = file.path(modulePath, moduleName, paste0(moduleName, ".R")))
         urls <- .getSourceURL(pattern = fileToDownload, x = parsedModule)
         downloadData(moduleName, modulePath, files = fileToDownload,
                      checked = checkSums, quickCheck = quick, overwrite = overwrite,
@@ -1351,7 +1437,7 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
       }
     } else {
       # The ad hoc case
-      if (!is.null(fileToDownload) ) {#|| is.null(targetFile)) {
+      if (!is.null(fileToDownload)) {#|| is.null(targetFile)) {
         if (!is.null(url)) {
           if (grepl("drive.google.com", url)) {
             googledrive::drive_auth() ## neededFiles for use on e.g., rstudio-server
@@ -1371,7 +1457,7 @@ downloadFile <- function(archive, targetFile, neededFiles, destinationPath, quic
               downloadFilename <- archive
             }
             destFile <- file.path(tempdir(), basename(downloadFilename))
-            if (!isTRUE(checkSums[ checkSums$expectedFile ==  basename(destFile), ]$result == "OK")) {
+            if (!isTRUE(checkSums[checkSums$expectedFile == basename(destFile), ]$result == "OK")) {
               message("  Downloading from Google Drive.")
               googledrive::drive_download(googledrive::as_id(url), path = destFile,
                                           overwrite = overwrite, verbose = TRUE)
