@@ -471,10 +471,10 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
         if(attempt == 1L){
           message("Found errors in ", objectName, ". Attempting to correct using raster::buffer(..., width = 0).")
           }
-        if(attempt == 2L){
-          message("Found more errors in ", objectName, ". Attempting to correct using lwgeom::st_make_valid()")
-          }
-        if(attempt > 2L){
+        # if(attempt == 2L){
+        #   message("Found more errors in ", objectName, ". Attempting to correct using lwgeom::st_make_valid()")
+        #   }
+        if(attempt > 1L){
           stop("Errors in ", objectName, "can't be automatically fixed. Please correct them and try again.")
           }
 
@@ -494,30 +494,30 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
         }
 
         # Try to correct using lwgeom::st_make_valid():
-        if(attempt==2){
-          if (requireNamespace("sf")) { # Transform to sf object
-            xTrans <- sf::st_as_sf(x) #Make it flexible to errors? Does it return messages of errors?
-          } else {
-            stop("Please install sf package: https://github.com/r-spatial/sf")
-          }
+        # if(attempt==2){
+        #   if (requireNamespace("sf")) { # Transform to sf object
+        #     xTrans <- sf::st_as_sf(x) #Make it flexible to errors? Does it return messages of errors?
+        #   } else {
+        #     stop("Please install sf package: https://github.com/r-spatial/sf")
+        #   }
+        #
+        #   if (requireNamespace("lwgeom")) { # Fix using lwgeom
+        #     x1 <- try(Cache(lwgeom::st_make_valid, x, useCache = useCache)) # Testing using st_is_valid() doesn't work for big files.
+        #     if (is(x1, "try-error")) {                                      # Maybe converting back and retesting using rgeos::gIsValid works? Didn't test.
+        #     message("There are errors with ", objectName,
+        #             ". Couldn't fix them with lwgeom::st_make_valid()")
+        #     attempt <- attempt + 1
+        #     } else {
+        #       x2 <- sf::as(x1, "Spatial") #Make it flexible to errors? Does it return messages of errors?
+        #       message("  Some or all of the errors fixed with lwgeom::st_make_valid().")
+        #       x <- x2
+        #       attempt <- attempt + 1
+        #       next
+        #     }
+        #   } else {
+        #     stop("Please install sf package: lwgeom")
+        #   }
 
-          if (requireNamespace("lwgeom")) { # Fix using lwgeom
-            x1 <- try(Cache(lwgeom::st_make_valid, x, useCache = useCache)) # Testing using st_is_valid() doesn't work for big files.
-            if (is(x1, "try-error")) {                                      # Maybe converting back and retesting using rgeos::gIsValid works? Didn't test.
-            message("There are errors with ", objectName,
-                    ". Couldn't fix them with lwgeom::st_make_valid()")
-            attempt <- attempt + 1
-            } else {
-              x2 <- sf::as(x1, "Spatial") #Make it flexible to errors? Does it return messages of errors?
-              message("  Some or all of the errors fixed with lwgeom::st_make_valid().")
-              x <- x2
-              attempt <- attempt + 1
-              next
-            }
-          } else {
-            stop("Please install sf package: lwgeom")
-          }
-        }
       }
     }
       message("  Found no (more) errors.")
@@ -996,8 +996,9 @@ cropInputs.default <- function(x, studyArea, rasterToMatch, ...) {
 #'                      passed.
 #' @param extentCRS     Optional. Can pass a \code{crs} here with an extent to
 #'                      \code{extentTomatch} instead of \code{rasterToMatch}
+#'
 cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extentToMatch = NULL,
-                                      extentCRS = NULL, useCache = TRUE, ...) {
+                                      extentCRS = NULL, ...) {
 
 
   if (!is.null(studyArea) ||
@@ -1045,7 +1046,7 @@ cropInputs.spatialObjects <- function(x, studyArea, rasterToMatch = NULL, extent
               print(xTry)
               stop("The original SpatialPolygon has errors that can't be solved here. Please correct them.")
             }
-            x <- fixErrors(x, useCache = useCache, ...)
+            x <- fixErrors(x, ...)
             next
 
           } else {
