@@ -484,51 +484,6 @@ fixErrors.SpatialPolygons <- function(x, objectName = NULL,
   return(x)
 }
 
-#' Download file from web databases
-#'
-#' @param filename Character string naming the file to be downloaded.
-#'
-#' @param filepath Character string giving the path where the file will be written.
-#'
-#' @param dataset Optional character string representing the dataset of interest
-#' for download. Allows for restricting the lookup for the url to a dataset,
-#' thus avoiding filename collision.
-#'
-#' @inheritParams prepInputs
-#'
-#' @author Jean Marchal
-#' @importFrom httr authenticate GET http_error progress write_disk
-#' @importFrom stats runif
-#' @include webDatabases.R
-#'
-downloadFromWebDB <- function(filename, filepath, dataset = NULL, quick = FALSE, overwrite = TRUE) {
-  urls <- webDatabases(local = quick)
-
-  if (!is.null(set <- dataset))
-    urls <- urls[grepl(dataset, pattern = set, fixed = TRUE)]
-
-  if (any(wh <- filename == urls$files)) {
-    authenticate <- if (!is.na(urls$password[wh])) {
-      split <- strsplit(urls$password[wh], split = "[:]")[[1]]
-      httr::authenticate(split[1L], split[2L])
-    }
-
-    url <- urls$url[wh]
-
-    if (httr::http_error(url))
-      stop("Can not access url ", url)
-
-    message("  Downloading ", filename, " ...")
-
-    httr::GET(
-      url = paste0(url, filename),
-      authenticate,
-      httr::progress(),
-      httr::write_disk(filepath, overwrite = overwrite)
-    )
-  }
-}
-
 #' Extract files from archive.
 #'
 #' Extract zip or tar archive files, possibly nested in other zip or tar

@@ -89,10 +89,9 @@ Collate:
     'SELES.R'
     'distanceFromEachPoint.R'
     'downloadData.R'
-    'helpers.R'
-    'webDatabases.R'
     'environment.R'
     'gis.R'
+    'helpers.R'
     'initialize.R'
     'mapReduce.R'
     'mergeRaster.R'
@@ -106,5 +105,6 @@ Collate:
     'splitRaster.R'
     'spread.R'
     'spread2.R'
+    'webDatabases.R'
     'zzz.R'
 RoxygenNote: 6.0.1
