@@ -852,7 +852,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         # 3 reasons why potentials are not selected
         whSuccNoDupsCurItAndAll <- seq_along(spreadProbSuccess)[spreadProbSuccess][
           !dupsWithinDtPotential][!potentialNotAvailable]
-        notAvailable[successCells[!potentialNotAvailable]] <- TRUE
+
+        # next line is a fix with data.table 1.11.4 or so, can't pass length 0 vector?
+        if (length(successCells[!potentialNotAvailable]) > 0)
+          notAvailable[successCells[!potentialNotAvailable]] <- TRUE
         dtPotential <- dtPotential[whSuccNoDupsCurItAndAll]
 
         dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
