@@ -115,13 +115,12 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   return(div[x %% div == 0L])
 }
 
-################################################################################
 #' randomPolygons
 #'
 #' Produces a raster of random polygons.
 #' These are built with the \code{\link{spread}} function internally.
 #'
-#' @param ras A raster that whose extent will be used for the randomPolygons
+#' @param ras A raster that whose extent will be used for the randomPolygons.
 #'
 #' @param numTypes Numeric value. The number of unique polygon types to use.
 #'
@@ -174,8 +173,6 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
   return(a)
 }
 
-
-################################################################################
 #' Create a single random polygon object
 #'
 #' Produces a \code{SpatialPolygons} object with 1 feature that will have approximately
@@ -185,26 +182,26 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #'          with the approximate centre of the new random polygon to create. If
 #'          matrix, then longitude and latitude are assumed (epsg:4326)
 #'
-#' @param hectares A numeric, the approximate area in hectares of the random polygon
+#' @param hectares A numeric, the approximate area in \code{hectares} of the random polygon.
 #'
 #' @return A \code{SpatialPolygons} object, with approximately the area request,
-#'         centred approximately at the coordinates requested
+#'         centred approximately at the coordinates requested.
 #'
 #' @seealso \code{\link{gaussMap}} and \code{\link{randomPolygons}}
 #'
+#' @importFrom raster crs crs<-
 #' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
 #' @importFrom stats rbeta runif
-#' @importFrom raster crs crs<-
 #' @export
 #' @docType methods
 #' @rdname randomPolygons
 #'
 #' @examples
 #' library(sp)
-#' b <- SpatialPoints(cbind(-110, 59));
-#' a <- randomPolygon(b, 1e4);
-#' plot(a);
-#' points(b, pch=19)
+#' b <- SpatialPoints(cbind(-110, 59))
+#' a <- randomPolygon(b, 1e4)
+#' plot(a)
+#' points(b, pch = 19)
 #'
 randomPolygon <- function(x, hectares) {
   latLong <-   sp::CRS("+init=epsg:4326")
