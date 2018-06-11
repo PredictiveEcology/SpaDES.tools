@@ -72,14 +72,14 @@ if (interactive()) {
 agentsRas <- initiateAgents(map, 30, pr, asSpatialPoints = FALSE)
 if (interactive()) Plot(agentsRas)
 
-library("dplyr")
-# Check that the agents are more often at the higher probability areas based on pr
-out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) \%>\%
-   dplyr::mutate(selectionRatio = Freq/Freq.1) \%>\%
-   dplyr::select(-Var1, -Var1.1) \%>\%
-   dplyr::rename(Present = Freq, Avail = Freq.1, Type = Var2)
-out
-
+if (require(dplyr)) {
+  # Check that the agents are more often at the higher probability areas based on pr
+  out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) \%>\%
+     dplyr::mutate(selectionRatio = Freq/Freq.1) \%>\%
+     dplyr::select(-Var1, -Var1.1) \%>\%
+     dplyr::rename(Present = Freq, Avail = Freq.1, Type = Var2)
+  out
+}
 
 }
 \author{
