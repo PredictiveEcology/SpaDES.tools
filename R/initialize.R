@@ -192,8 +192,8 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #'
 #' @seealso \code{\link{gaussMap}} and \code{\link{randomPolygons}}
 #'
-#' @importFrom sp SpatialPoints spTransform Polygon Polygons SpatialPolygons CRS
-#' @importFrom stats rbeta
+#' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
+#' @importFrom stats rbeta runif
 #' @importFrom raster crs crs<-
 #' @export
 #' @docType methods
@@ -207,7 +207,6 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' points(b, pch=19)
 #'
 randomPolygon <- function(x, hectares) {
-
   latLong <-   sp::CRS("+init=epsg:4326")
   if (is(x, "SpatialPoints")) {
     if (is.na(crs(x))) crs(x) <- latLong
@@ -217,9 +216,8 @@ randomPolygon <- function(x, hectares) {
   }
 
   areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
-                 #       paste0("+proj=lcc +lat_1=49 +lat_2=77
-                " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
-                " +units=m +no_defs"))
+                        " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
+                        " +units=m +no_defs"))
 
   areaM2 <- hectares * 1e4 * 1.304 # rescale so mean area is close to hectares
   y <- spTransform(x, areaCRS)
