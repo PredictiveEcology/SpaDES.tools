@@ -33,7 +33,16 @@ We have removed that "suggests" package.
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs or NOTES
+There were no ERRORs or WARNINGs.
+
+There was 1 NOTE:
+
+1. spell check reports false positives:
+
+    Possibly mis-spelled words in DESCRIPTION:
+      SpaDES (4:27)
+      automata (6:25)
+
 
 ## Downstream dependencies
 
