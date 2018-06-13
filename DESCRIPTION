@@ -79,6 +79,7 @@ Collate:
     'movement.R'
     'neighbourhood.R'
     'numerical-comparisons.R'
+    'probability.R'
     'resample.R'
     'rings.R'
     'spades-tools-package.R'
