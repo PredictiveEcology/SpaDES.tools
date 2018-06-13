@@ -12,7 +12,7 @@ randomPolygons(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
 randomPolygon(x, hectares)
 }
 \arguments{
-\item{ras}{A raster that whose extent will be used for the randomPolygons}
+\item{ras}{A raster that whose extent will be used for the randomPolygons.}
 
 \item{numTypes}{Numeric value. The number of unique polygon types to use.}
 
@@ -22,13 +22,13 @@ randomPolygon(x, hectares)
 with the approximate centre of the new random polygon to create. If
 matrix, then longitude and latitude are assumed (epsg:4326)}
 
-\item{hectares}{A numeric, the approximate area in hectares of the random polygon}
+\item{hectares}{A numeric, the approximate area in \code{hectares} of the random polygon.}
 }
 \value{
 A map of extent \code{ext} with random polygons.
 
 A \code{SpatialPolygons} object, with approximately the area request,
-        centred approximately at the coordinates requested
+        centred approximately at the coordinates requested.
 }
 \description{
 Produces a raster of random polygons.
@@ -61,10 +61,10 @@ if (interactive()) {
 }
 
 library(sp)
-b <- SpatialPoints(cbind(-110, 59));
-a <- randomPolygon(b, 1e4);
-plot(a);
-points(b, pch=19)
+b <- SpatialPoints(cbind(-110, 59))
+a <- randomPolygon(b, 1e4)
+plot(a)
+points(b, pch = 19)
 
 }
 \seealso{

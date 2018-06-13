@@ -10,7 +10,7 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-06-05
+Date: 2018-06-11
 Version: 0.1.1.9010
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
@@ -33,47 +33,31 @@ Imports:
     checkmate (>= 1.8.2),
     CircStats (>= 0.2-4),
     compiler,
-    crayon,
     data.table (>= 1.10.4),
-    digest,
-    dplyr (>= 0.5.0),
-    fastdigest,
-    fasterize,
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
     fpCompare (>= 0.2.1),
-    gdalUtils,
-    googledrive (>= 0.1.1),
-    httr,
     magrittr,
     methods,
-    plyr,
+    parallel,
     quickPlot,
-    R.utils (>= 2.6.0),
     RandomFields (>= 3.1.24),
     raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
-    RCurl (>= 1.95-4.8),
-    rgdal,
-    rgeos (>= 0.3-26), 
     reproducible (>= 0.1.4.9011),
-    sf,
     sp (>= 1.2-4),
-    stats,
-    tools,
-    utils,
-    velox,
-    XML
+    stats
 Suggests:
     DEoptim (>= 2.2-4),
+    dplyr,
     hunspell,
     knitr,
     mgcv,
     microbenchmark,
-    parallel,
     profvis,
     RColorBrewer (>= 1.1-2),
+    rgeos,
     rmarkdown,
     testthat (>= 1.0.2)
 Remotes:
@@ -88,23 +72,19 @@ Collate:
     'heading.R'
     'SELES.R'
     'distanceFromEachPoint.R'
-    'downloadData.R'
     'environment.R'
-    'gis.R'
-    'helpers.R'
     'initialize.R'
     'mapReduce.R'
     'mergeRaster.R'
     'movement.R'
     'neighbourhood.R'
     'numerical-comparisons.R'
-    'prepInputs.R'
+    'probability.R'
     'resample.R'
     'rings.R'
     'spades-tools-package.R'
     'splitRaster.R'
     'spread.R'
     'spread2.R'
-    'webDatabases.R'
     'zzz.R'
 RoxygenNote: 6.0.1

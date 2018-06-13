@@ -1,7 +1,8 @@
 ## Resubmission
 
-This is an update to an existing package. We introduce several new functions, and update previous functions. We submitted this package 3 days ago with an external package "suggests" that was not allowed by CRAN policies. We have removed that "suggests" package.
-
+This is an update to an existing package. We introduce several new functions, and update previous functions.
+We submitted this package 3 days ago with an external package "suggests" that was not allowed by CRAN policies.
+We have removed that "suggests" package.
 
 ## Test environments
 
@@ -25,19 +26,18 @@ This is an update to an existing package. We introduce several new functions, an
 * Windows 7            (local), R 3.5.0
 
 ### Development R version
-* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-08 r74873)
+* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-11 r74885)
 * Ubuntu 18.04         (local), R 3.6.0 (2018-06-05 r74852)
-* Windows           (appveyor), R 3.6.0 (2018-06-07 r74868)
+* Windows           (appveyor), R 3.6.0 (2018-06-10 r74877)
 * Windows        (win-builder), R 3.6.0 (2018-06-07 r74865)
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs or NOTES
 
-
 ## Downstream dependencies
 
 We have run R CMD check on downstream dependencies, and all have passed except those noted below.
 Summary at https://github.com/PredictiveEcology/SpaDES.tools/blob/master/revdep/README.md.
 
-* `SpaDES.core` produces an error due to a non-CRAN package in Suggests, but passes once that dependency is installed.
+* `SpaDES` and `SpaDES.core` produce an error due to a non-CRAN package in Suggests, but passes once that dependency is installed.

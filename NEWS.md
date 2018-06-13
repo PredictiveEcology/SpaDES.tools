@@ -3,11 +3,6 @@ Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 version 0.1.1.9000
 =============
 
-## New features
-
-* new function `prepInputs` and its internal modular pieces to aid in common GIS problems.
-* `prepInputs` gets a logical `overwrite` argument.
-* `downloadData` moved from `SpaDES.core` to here.
 * new options added to `gaussMap` (#20, @ianmseddy).
 
 ## Dependency changes
