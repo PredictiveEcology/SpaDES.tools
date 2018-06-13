@@ -3,16 +3,16 @@ Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 version 0.1.1.9000
 =============
 
-* new options added to `gaussMap` (#20, @ianmseddy).
+* minor bugfixes (`spread2`)
+* minor test fixes
+* new arguments added to `gaussMap` (#20, @ianmseddy).
+* move `fastMask` to `reproducible` package
+* remove `fastRasterize` as `fasterize::fasterize` is better and on CRAN, and `fastCrop` as `raster::crop` is faster than `velox` `crop` under many tests
 
 ## Dependency changes
 
-* add `fasterize` and `sf` to Imports.
-* add `mgcv` to Suggests because it's used in tests.
+* add `mgcv`, `dplyr` to Suggests because it's used in tests.
 
-## Bug fixes
-
-* `prepInputs` does more checking for data types and provides more meaningful messages (#41, @tati-micheletti)
 
 version 0.1.1
 =============
