@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Identify outward radiating spokes from initial points � spokes • SpaDES.tools</title>
+<title>Identify outward radiating spokes from initial points — spokes • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,19 +18,35 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
+
+
+<meta property="og:title" content="Identify outward radiating spokes from initial points — spokes" />
+
+<meta property="og:description" content="This is a generalized version of a notion of a viewshed.
+The main difference is that there can be many &quot;viewpoints&quot;." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -44,15 +60,25 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">SpaDES.tools</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">SpaDES.tools</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.0</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -64,6 +90,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -71,18 +98,22 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Identify outward radiating spokes from initial points</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/R/neighbourhood.R'><code>R/neighbourhood.R</code></a></small>
+    <div class="hidden name"><code>spokes.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>This is a generalized version of a notion of a viewshed.
 The main difference is that there can be many "viewpoints".</p>
     
+    </div>
 
-    <pre><span class='fu'>spokes</span>(<span class='no'>landscape</span>, <span class='no'>coords</span>, <span class='no'>loci</span>, <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fu'>ncol</span>(<span class='no'>landscape</span>)/<span class='fl'>4</span>,
+    <pre class="usage"><span class='fu'>spokes</span>(<span class='no'>landscape</span>, <span class='no'>coords</span>, <span class='no'>loci</span>, <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fu'>ncol</span>(<span class='no'>landscape</span>)/<span class='fl'>4</span>,
   <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='no'>maxRadius</span>, <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>includeBehavior</span> <span class='kw'>=</span> <span class='st'>"includePixels"</span>, <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>angles</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>nAngles</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>returnAngles</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -95,64 +126,93 @@ The main difference is that there can be many "viewpoints".</p>
   <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>angles</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>nAngles</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
   <span class='kw'>returnAngles</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>landscape</dt>
-      <dd><p>Raster on which the circles are built.</p></dd>
-      <dt>coords</dt>
-      <dd><p>Either a matrix with 2 (or 3) columns, x and y (and id), representing the
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>landscape</th>
+      <td><p>Raster on which the circles are built.</p></td>
+    </tr>
+    <tr>
+      <th>coords</th>
+      <td><p>Either a matrix with 2 (or 3) columns, x and y (and id), representing the
 coordinates (and an associated id, like cell index),
 or a <code>SpatialPoints*</code> object around which to make circles. Must be same
 coordinate system as the <code>landscape</code> argument. Default is missing,
-meaning it uses the default to <code>loci</code></p></dd>
-      <dt>loci</dt>
-      <dd><p>Numeric. An alternative to <code>coords</code>. These are the indices on
+meaning it uses the default to <code>loci</code></p></td>
+    </tr>
+    <tr>
+      <th>loci</th>
+      <td><p>Numeric. An alternative to <code>coords</code>. These are the indices on
 <code>landscape</code> to initiate this function. See <code>coords</code>. Default is one
-point in centre of <code>landscape</code>..</p></dd>
-      <dt>maxRadius</dt>
-      <dd><p>Numeric vector of length 1 or same length as coords</p></dd>
-      <dt>minRadius</dt>
-      <dd><p>Numeric vector of length 1 or same length as <code>coords</code>. Default is
+point in centre of <code>landscape</code>..</p></td>
+    </tr>
+    <tr>
+      <th>maxRadius</th>
+      <td><p>Numeric vector of length 1 or same length as coords</p></td>
+    </tr>
+    <tr>
+      <th>minRadius</th>
+      <td><p>Numeric vector of length 1 or same length as <code>coords</code>. Default is
 <code>maxRadius</code>, meaning return all cells that are touched
 by the narrow ring at that exact radius. If smaller than <code>maxRadius</code>,
-then this will create a buffer or donut or ring.</p></dd>
-      <dt>allowOverlap</dt>
-      <dd><p>Logical. Should duplicates across id be removed or kept. Default TRUE.</p></dd>
-      <dt>stopRule</dt>
-      <dd><p>A function. If the spokes are to stop. This can be a function
+then this will create a buffer or donut or ring.</p></td>
+    </tr>
+    <tr>
+      <th>allowOverlap</th>
+      <td><p>Logical. Should duplicates across id be removed or kept. Default TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>stopRule</th>
+      <td><p>A function. If the spokes are to stop. This can be a function
 of <code>landscape</code>, <code>fromCell</code>, <code>toCell</code>, <code>x</code>
 (distance from coords cell), or any other named argument passed
-into the <code>...</code> of this function. See examples.</p></dd>
-      <dt>includeBehavior</dt>
-      <dd><p>Character string. Currently accepts only "includePixels", the default,
-and "excludePixels". See details.</p></dd>
-      <dt>returnDistances</dt>
-      <dd><p>Logical. If TRUE, then a column will be added to the returned
+into the <code>...</code> of this function. See examples.</p></td>
+    </tr>
+    <tr>
+      <th>includeBehavior</th>
+      <td><p>Character string. Currently accepts only "includePixels", the default,
+and "excludePixels". See details.</p></td>
+    </tr>
+    <tr>
+      <th>returnDistances</th>
+      <td><p>Logical. If TRUE, then a column will be added to the returned
 data.table that reports the distance from <code>coords</code> to every
 point that was in the circle/donut surrounding <code>coords</code>. Default
-FALSE, which is faster.</p></dd>
-      <dt>angles</dt>
-      <dd><p>Numeric. Optional vector of angles, in radians, to use. This will create
+FALSE, which is faster.</p></td>
+    </tr>
+    <tr>
+      <th>angles</th>
+      <td><p>Numeric. Optional vector of angles, in radians, to use. This will create
 "spokes" outward from coords. Default is NA, meaning, use internally
-derived angles that will "fill" the circle.</p></dd>
-      <dt>nAngles</dt>
-      <dd><p>Numeric, length one. Alternative to angles. If provided, the function
+derived angles that will "fill" the circle.</p></td>
+    </tr>
+    <tr>
+      <th>nAngles</th>
+      <td><p>Numeric, length one. Alternative to angles. If provided, the function
 will create a sequence of angles from <code>0</code> to <code>2*pi</code>,
 with a length <code>nAngles</code>, and not including <code>2*pi</code>.
 Will not be used if <code>angles</code> is provided, and will show
-warning of both are given.</p></dd>
-      <dt>returnAngles</dt>
-      <dd><p>Logical. If TRUE, then a column will be added to the returned
+warning of both are given.</p></td>
+    </tr>
+    <tr>
+      <th>returnAngles</th>
+      <td><p>Logical. If TRUE, then a column will be added to the returned
 data.table that reports the angle from <code>coords</code> to every
 point that was in the circle/donut surrounding <code>coords</code>. Default
-FALSE.</p></dd>
-      <dt>returnIndices</dt>
-      <dd><p>Logical. Should the function return a <code>data.table</code>
+FALSE.</p></td>
+    </tr>
+    <tr>
+      <th>returnIndices</th>
+      <td><p>Logical. Should the function return a <code>data.table</code>
 with indices and values of successful spread events, or
-return a raster with values. See Details.</p></dd>
-      <dt>...</dt>
-      <dd><p>Objects to be used by <code>stopRule()</code>. See examples.</p></dd>
-    </dl>
+return a raster with values. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Objects to be used by <code>stopRule()</code>. See examples.</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -171,15 +231,15 @@ going outwards due to <code>stopRule</code>.</p>
 
 <span class='fu'>set.seed</span>(<span class='fl'>1234</span>)
 
-<span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'>raster</span>(<span class='fu'>extent</span>(<span class='fl'>0</span>, <span class='fl'>10</span>, <span class='fl'>0</span>, <span class='fl'>10</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>val</span> <span class='kw'>=</span> <span class='fl'>0</span>)
+<span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>10</span>, <span class='fl'>0</span>, <span class='fl'>10</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>val</span> <span class='kw'>=</span> <span class='fl'>0</span>)
 <span class='no'>rp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='randomPolygons.html'>randomPolygons</a></span>(<span class='no'>ras</span>, <span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>10</span>)
 
-<span class='fu'>clearPlot</span>()</div><div class='input'><span class='fu'>Plot</span>(<span class='no'>rp</span>)</div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>rp</span>)</div><div class='input'>
 <span class='no'>angles</span> <span class='kw'>&lt;-</span> <span class='fu'>seq</span>(<span class='fl'>0</span>, <span class='no'>pi</span> * <span class='fl'>2</span>, <span class='kw'>length.out</span> <span class='kw'>=</span> <span class='fl'>17</span>)
 <span class='no'>angles</span> <span class='kw'>&lt;-</span> <span class='no'>angles</span>[-<span class='fu'>length</span>(<span class='no'>angles</span>)]
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>
-<span class='no'>loci</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span>(<span class='fu'>ncell</span>(<span class='no'>rp</span>), <span class='no'>n</span>)
-<span class='no'>coords</span> <span class='kw'>&lt;-</span> <span class='fu'>SpatialPoints</span>(<span class='fu'>xyFromCell</span>(<span class='no'>rp</span>, <span class='no'>loci</span>))
+<span class='no'>loci</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/ncell'>ncell</a></span>(<span class='no'>rp</span>), <span class='no'>n</span>)
+<span class='no'>coords</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/xyFromCell'>xyFromCell</a></span>(<span class='no'>rp</span>, <span class='no'>loci</span>))
 <span class='no'>stopRule</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>landscape</span>) <span class='no'>landscape</span> <span class='kw'>&lt;</span> <span class='fl'>3</span>
 <span class='no'>d2</span> <span class='kw'>&lt;-</span> <span class='fu'>spokes</span>(<span class='no'>rp</span>, <span class='kw'>coords</span> <span class='kw'>=</span> <span class='no'>coords</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule</span>,
              <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>50</span>,
@@ -187,16 +247,16 @@ going outwards due to <code>stopRule</code>.</p>
              <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>angles</span> <span class='kw'>=</span> <span class='no'>angles</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='co'># Assign values to the "patches" that were in the viewshed of a ray</span>
-<span class='no'>rasB</span> <span class='kw'>&lt;-</span> <span class='fu'>raster</span>(<span class='no'>ras</span>)
+<span class='no'>rasB</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='no'>ras</span>)
 <span class='no'>rasB</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 <span class='no'>rasB</span>[<span class='no'>d2</span>[<span class='no'>d2</span>[, <span class='st'>"stop"</span>] <span class='kw'>==</span> <span class='fl'>1</span>, <span class='st'>"indices"</span>]] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
 
-<span class='fu'>Plot</span>(<span class='no'>rasB</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"transparent"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"red"</span>)</div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>rasB</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"transparent"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"red"</span>)</div><div class='input'>
 <span class='kw'>if</span> (<span class='fu'>NROW</span>(<span class='no'>d2</span>) <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
-  <span class='no'>sp1</span> <span class='kw'>&lt;-</span> <span class='fu'>SpatialPoints</span>(<span class='no'>d2</span>[, <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)])
-  <span class='fu'>Plot</span>(<span class='no'>sp1</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
-}</div><div class='input'><span class='fu'>Plot</span>(<span class='no'>coords</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"blue"</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)</div><img src='spokes-6.png' alt='' width='540' height='400' /><div class='input'>
-<span class='fu'>clearPlot</span>()</div><img src='spokes-8.png' alt='' width='540' height='400' /></pre>
+  <span class='no'>sp1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='no'>d2</span>[, <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)])
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>sp1</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
+}</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>coords</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rp"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"blue"</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)</div><div class='img'><img src='spokes-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='img'><img src='spokes-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -221,11 +281,14 @@ Eliot McIntire
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

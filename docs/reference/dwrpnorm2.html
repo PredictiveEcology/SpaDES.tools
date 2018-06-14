@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Adapted directly from the <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code> help file. — resample • SpaDES.tools</title>
+<title>Vectorized wrapped normal density function — dwrpnorm2 • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,12 +30,10 @@
 
 
 
-<meta property="og:title" content="Adapted directly from the <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code> help file. — resample" />
+<meta property="og:title" content="Vectorized wrapped normal density function — dwrpnorm2" />
 
-<meta property="og:description" content="Adapted directly from the sample help file.
-resampleZeroProof is a version that works even if sum of all probabilities passed to
-sample.int is zero. This causes an error in sample.int. This function is
-intended for internal use only." />
+<meta property="og:description" content="This is a modified version of dwrpnorm found in CircStats
+ to allow for multiple angles at once (i.e., vectorized on theta and mu)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,59 +101,75 @@ intended for internal use only." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Adapted directly from the <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code> help file.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/R/resample.R'><code>R/resample.R</code></a></small>
-    <div class="hidden name"><code>resample.Rd</code></div>
+    <h1>Vectorized wrapped normal density function</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/R/probability.R'><code>R/probability.R</code></a></small>
+    <div class="hidden name"><code>dwrpnorm2.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Adapted directly from the <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code> help file.</p>
-<p><code>resampleZeroProof</code> is a version that works even if sum of all probabilities passed to
-<code>sample.int</code> is zero. This causes an error in <code>sample.int</code>. This function is
-intended for internal use only.</p>
+    <p>This is a modified version of <code>dwrpnorm</code> found in <code>CircStats</code>
+ to allow for multiple angles at once (i.e., vectorized on theta and mu).</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>resample</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='fu'>resampleZeroProof</span>(<span class='no'>spreadProbHas0</span>, <span class='no'>x</span>, <span class='no'>n</span>, <span class='no'>prob</span>)</pre>
+    <pre class="usage"><span class='fu'>dwrpnorm2</span>(<span class='no'>theta</span>, <span class='no'>mu</span>, <span class='no'>rho</span>, <span class='kw'>sd</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>acc</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>, <span class='kw'>tol</span> <span class='kw'>=</span> <span class='no'>acc</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>either a vector of one or more elements from which to choose,
-    or a positive integer.  See &#8216;Details.&#8217;</p></td>
+      <th>theta</th>
+      <td><p>value at which to evaluate the density function, measured in radians.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Passed to <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code></p></td>
+      <th>mu</th>
+      <td><p>mean direction of distribution, measured in radians.</p></td>
     </tr>
     <tr>
-      <th>spreadProbHas0</th>
-      <td><p>/ogical. Does <code>spreadProb</code> have any zeros on it.</p></td>
+      <th>rho</th>
+      <td><p>mean resultant length of distribution.</p></td>
     </tr>
     <tr>
-      <th>n</th>
-      <td><p>a positive number, the number of items to choose from.  See
-    &#8216;Details.&#8217;</p></td>
+      <th>sd</th>
+      <td><p>different way of select <code>rho</code>, see details below.</p></td>
     </tr>
     <tr>
-      <th>prob</th>
-      <td><p>a vector of probability weights for obtaining the elements
-    of the vector being sampled.</p></td>
+      <th>acc</th>
+      <td><p>parameter defining the accuracy of the estimation of the
+  density.  Terms are added to the infinite summation that defines the
+  density function until successive estimates are within <code>acc</code> of each
+  other.</p></td>
+    </tr>
+    <tr>
+      <th>tol</th>
+      <td><p>the same as <code>acc</code>.</p></td>
     </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Values for which to evaluate density</span>
+<span class='no'>theta</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>1</span>:<span class='fl'>500</span>) * <span class='fl'>2</span> * <span class='no'>pi</span> / <span class='fl'>500</span>
+<span class='co'># Compute wrapped normal density function</span>
+<span class='no'>density</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>1</span>:<span class='fl'>500</span>)
+<span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>500</span>) <span class='no'>density</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='fu'>dwrpnorm2</span>(<span class='no'>theta</span>[<span class='no'>i</span>], <span class='no'>pi</span>, <span class='fl'>.75</span>)
+<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'>plot</span>(<span class='no'>theta</span>, <span class='no'>density</span>)
+<span class='co'># Approximate area under density curve</span>
+<span class='fu'>sum</span>(<span class='no'>density</span> * <span class='fl'>2</span> * <span class='no'>pi</span> / <span class='fl'>500</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    
+Eliot McIntire
 
   </div>
 </div>
