@@ -25,7 +25,7 @@ from left to right and from top to bottom.}
 \item{directions}{the number of directions in which cells should be connected:
 4 (rook's case), 8 (queen's case), or \code{"bishop"} to connect
 cells with one-cell diagonal moves.
-Or a neigborhood matrix (see Details).}
+Or a neighbourhood matrix (see Details).}
 
 \item{sort}{logical. Whether the outputs should be sorted or not, using cell ids
 of the \code{from} cells (and \code{to} cells, if \code{match.adjacent}
@@ -76,7 +76,7 @@ and/or \code{id} is provided), a vector (if only one column), or a \code{data.ta
 \code{returnDT} is \code{TRUE}.
 To get a consistent output, say a matrix, it would be wise to test the output
 for its class.
-The variable output is done to minimize coersion to maintain speed.
+The variable output is done to minimize coercion to maintain speed.
 The columns will be one or more of \code{id}, \code{from}, \code{to}.
 }
 \description{

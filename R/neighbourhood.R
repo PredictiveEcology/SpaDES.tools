@@ -38,7 +38,7 @@ if (getRversion() >= "3.1.0") {
 #' @param directions the number of directions in which cells should be connected:
 #'                   4 (rook's case), 8 (queen's case), or \code{"bishop"} to connect
 #'                   cells with one-cell diagonal moves.
-#'                   Or a neigborhood matrix (see Details).
+#'                   Or a neighbourhood matrix (see Details).
 #'
 #' @param sort logical. Whether the outputs should be sorted or not, using cell ids
 #'             of the \code{from} cells (and \code{to} cells, if \code{match.adjacent}
@@ -87,7 +87,7 @@ if (getRversion() >= "3.1.0") {
 #' \code{returnDT} is \code{TRUE}.
 #' To get a consistent output, say a matrix, it would be wise to test the output
 #' for its class.
-#' The variable output is done to minimize coersion to maintain speed.
+#' The variable output is done to minimize coercion to maintain speed.
 #' The columns will be one or more of \code{id}, \code{from}, \code{to}.
 #'
 #' @seealso \code{\link[raster]{adjacent}}
@@ -412,7 +412,7 @@ adj <- compiler::cmpfun(adj.raw)
 #'
 #' @param closest Logical. When determining non-overlapping circles, should the function
 #'                give preference to the closest \code{loci} or the first one (much faster).
-#'                Default is FALSE, meaning the faster, though maybe not desired behavior.
+#'                Default is FALSE, meaning the faster, though maybe not desired behaviour.
 #'
 #' @param simplify logical. If TRUE, then all duplicate pixels are removed. This means
 #' that some x, y combinations will disappear.
@@ -1028,7 +1028,7 @@ setMethod(
 })
 
 #' This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
-#' returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
+#' returnIndices = TRUE, returnDistances = TRUE, and includeBehavior = "excludePixels".
 #' It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
 #' just once, then add to the xy coordinates of every locus
 #' @name cirSpecialQuick

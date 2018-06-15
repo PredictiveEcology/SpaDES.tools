@@ -1,3 +1,4 @@
+^\.httr-oauth$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .*\.tar\.gz$
@@ -8,9 +9,10 @@
 ^\.travis\.yml$
 ^_pkgdown\.yml$
 ^appveyor\.yml$
-CONTRIBUTING\.md
-cran-comments\.md
+^CONTRIBUTING\.md$
+^cran-comments\.md$
 ^docs$
 ^LICENSE$
+^revdep$
 vignettes/.*_cache$
 vignettes/.*\.log$

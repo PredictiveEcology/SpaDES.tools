@@ -17,9 +17,18 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param var      Spatial variance.
 #'
+#' @param method   The type of model used to produce the Gaussian pattern.
+#'                 Should be one of \code{"RMgauss"} (Gaussian covariance model),
+#'                 \code{"RMstable"} (the stable powered exponential model),
+#'                 or the default, \code{"RMexp"} (exponential covariance model).
+#'
 #' @param speedup  An numeric value indicating how much faster than 'normal'
 #'                 to generate maps. It may be necessary to give a value larger
 #'                 than 1 for large maps. Default is 1.
+#'
+#' @param alpha    A required parameter of the 'RMstable' model.
+#'                 Should be in the interval [0,2] to provide a valid covariance function.
+#'                 Default is 1.
 #'
 #' @param inMemory Should the RasterLayer be forced to be in memory?
 #'                 Default \code{FALSE}.
@@ -30,7 +39,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @seealso \code{\link{RFsimulate}} and \code{\link{extent}}
 #'
-#' @importFrom RandomFields RFoptions RFsimulate RMexp round
+#' @importFrom RandomFields RFoptions RFsimulate RMexp round RMgauss RMstable
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
 #' @rdname gaussmap
@@ -44,9 +53,13 @@ if (getRversion() >= "3.1.0") {
 #' speedup <- max(1, nx/5e2)
 #' map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
 #' Plot(map1)
+#'
+#' # with non-default method
+#' map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
 #' }
 #'
-gaussMap <- function(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...) {
+gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
+                     alpha = 1, inMemory = FALSE, ...) {
   RFoptions(spConform = FALSE)
   ext <- extent(x)
   resol <- res(x)
@@ -58,8 +71,19 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...)
   nrSpeedup <- wholeNumsRow[which.min(abs(wholeNumsRow - nr / speedup))]
   speedupEffectiveCol <- nc / ncSpeedup
   speedupEffectiveRow <- nr / nrSpeedup
-
-  model <- RMexp(scale = scale, var = var)
+  if (method == "RMgauss") {
+    model <- RMgauss(scale = scale, var = var, ...)
+  } else if (method == "RMstable") {
+    if (!inRange(alpha, 0, 2)) {
+      stop("alpha must be between 0 and 2")
+    }
+    model <- RMstable(scale = scale, var = var, alpha = alpha)
+  } else {
+    if ( method != "RMexp") {
+      message("method is not yet implemented, defaulting to RMexp.")
+    }
+    model <- RMexp(scale = scale, var = var, ...)
+  }
   map <- raster(RFsimulate(model, y = 1:ncSpeedup, x = 1:nrSpeedup, grid = TRUE, ...))
 
   if (inMemory) map <- setValues(map, getValues(map))
@@ -91,13 +115,12 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...)
   return(div[x %% div == 0L])
 }
 
-################################################################################
 #' randomPolygons
 #'
 #' Produces a raster of random polygons.
 #' These are built with the \code{\link{spread}} function internally.
 #'
-#' @param ras A raster that whose extent will be used for the randomPolygons
+#' @param ras A raster that whose extent will be used for the randomPolygons.
 #'
 #' @param numTypes Numeric value. The number of unique polygon types to use.
 #'
@@ -150,8 +173,6 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
   return(a)
 }
 
-
-################################################################################
 #' Create a single random polygon object
 #'
 #' Produces a \code{SpatialPolygons} object with 1 feature that will have approximately
@@ -161,29 +182,28 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #'          with the approximate centre of the new random polygon to create. If
 #'          matrix, then longitude and latitude are assumed (epsg:4326)
 #'
-#' @param hectares A numeric, the approximate area in hectares of the random polygon
+#' @param hectares A numeric, the approximate area in \code{hectares} of the random polygon.
 #'
 #' @return A \code{SpatialPolygons} object, with approximately the area request,
-#'         centred approximately at the coordinates requested
+#'         centred approximately at the coordinates requested.
 #'
 #' @seealso \code{\link{gaussMap}} and \code{\link{randomPolygons}}
 #'
-#' @importFrom sp SpatialPoints spTransform Polygon Polygons SpatialPolygons CRS
-#' @importFrom stats rbeta
 #' @importFrom raster crs crs<-
+#' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
+#' @importFrom stats rbeta runif
 #' @export
 #' @docType methods
 #' @rdname randomPolygons
 #'
 #' @examples
 #' library(sp)
-#' b <- SpatialPoints(cbind(-110, 59));
-#' a <- randomPolygon(b, 1e4);
-#' plot(a);
-#' points(b, pch=19)
+#' b <- SpatialPoints(cbind(-110, 59))
+#' a <- randomPolygon(b, 1e4)
+#' plot(a)
+#' points(b, pch = 19)
 #'
 randomPolygon <- function(x, hectares) {
-
   latLong <-   sp::CRS("+init=epsg:4326")
   if (is(x, "SpatialPoints")) {
     if (is.na(crs(x))) crs(x) <- latLong
@@ -193,9 +213,8 @@ randomPolygon <- function(x, hectares) {
   }
 
   areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
-                 #       paste0("+proj=lcc +lat_1=49 +lat_2=77
-                " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
-                " +units=m +no_defs"))
+                        " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
+                        " +units=m +no_defs"))
 
   areaM2 <- hectares * 1e4 * 1.304 # rescale so mean area is close to hectares
   y <- spTransform(x, areaCRS)

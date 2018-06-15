@@ -1,6 +1,6 @@
 #
 #  SpaDES.tools/R/spades-tools-package.R by Alex M Chubaty and Eliot J B McIntire
-#  Copyright (C) 2015-2017 Her Majesty the Queen in Right of Canada,
+#  Copyright (C) 2015-2018 Her Majesty the Queen in Right of Canada,
 #   as represented by the Minister of Natural Resources Canada
 #
 
@@ -83,7 +83,7 @@
 #'   \code{\link{agentLocation}} \tab Agent location\cr
 #'   \code{\link{initiateAgents}} \tab Initiate agents into a \code{SpatialPointsDataFrame}\cr
 #'   \code{\link{numAgents}} \tab Number of agents\cr
-#'   \code{\link{probInit}} \tab Probability of intiating an agent or event\cr
+#'   \code{\link{probInit}} \tab Probability of initiating an agent or event\cr
 #'   \code{\link{transitions}} \tab Transition probability\cr
 #' }
 #'

@@ -2,18 +2,18 @@ Package: SpaDES.tools
 Type: Package
 Title: Additional Tools for Developing Spatially Explicit Discrete Event Simulation (SpaDES) Models
 Description: Provides GIS and map utilities, plus additional modeling tools for
-    developing cellular automata, dynamic raster models, 
-    and agent based models in 'SpaDES'.
+    developing cellular automata, dynamic raster models,  and agent based models
+    in 'SpaDES'.
     Included are various methods for spatial spreading, spatial agents, GIS
     operations, random map generation, and others.
     See '?SpaDES.tools' for an categorized overview of these additional tools.
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-01-29
-Version: 0.1.1
+Date: 2018-06-15
+Version: 0.2.0
 Authors@R: c(
-    person("Alex M", "Chubaty", email = "alexander.chubaty@canada.ca",
+    person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
     role = c("aut", "cre")),
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
     role = c("aut")),
@@ -34,37 +34,36 @@ Imports:
     CircStats (>= 0.2-4),
     compiler,
     data.table (>= 1.10.4),
-    digest,
-    fastdigest,
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
     fpCompare (>= 0.2.1),
-    httr,
     magrittr,
     methods,
+    parallel,
     quickPlot,
     RandomFields (>= 3.1.24),
-    Rcpp (>= 0.12.12),
-    reproducible,
     raster (>= 2.5-8),
+    Rcpp (>= 0.12.12),
+    reproducible (>= 0.1.4.9011),
     sp (>= 1.2-4),
-    stats,
-    utils
+    stats
 Suggests:
     DEoptim (>= 2.2-4),
-    dplyr (>= 0.5.0),
+    dplyr,
     hunspell,
     knitr,
+    mgcv,
     microbenchmark,
-    parallel,
     profvis,
     RColorBrewer (>= 1.1-2),
     rgeos,
     rmarkdown,
-    sf,
-    testthat (>= 1.0.2),
-    velox
+    testthat (>= 1.0.2)
+Remotes:
+    PredictiveEcology/quickPlot@development,
+    PredictiveEcology/reproducible@development
+Language: en-CA
 LinkingTo: Rcpp
 License: GPL-3
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
@@ -74,15 +73,14 @@ Collate:
     'heading.R'
     'SELES.R'
     'distanceFromEachPoint.R'
-    'downloadInputs.R'
     'environment.R'
-    'gis.R'
     'initialize.R'
     'mapReduce.R'
     'mergeRaster.R'
     'movement.R'
     'neighbourhood.R'
     'numerical-comparisons.R'
+    'probability.R'
     'resample.R'
     'rings.R'
     'spades-tools-package.R'

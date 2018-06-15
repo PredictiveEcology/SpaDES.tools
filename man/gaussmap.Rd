@@ -4,7 +4,8 @@
 \alias{gaussMap}
 \title{Produce a \code{raster} of a random Gaussian process.}
 \usage{
-gaussMap(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...)
+gaussMap(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
+  alpha = 1, inMemory = FALSE, ...)
 }
 \arguments{
 \item{x}{A spatial object (e.g., a \code{RasterLayer}).}
@@ -16,6 +17,15 @@ gaussMap(x, scale = 10, var = 1, speedup = 1, inMemory = FALSE, ...)
 \item{speedup}{An numeric value indicating how much faster than 'normal'
 to generate maps. It may be necessary to give a value larger
 than 1 for large maps. Default is 1.}
+
+\item{method}{The type of model used to produce the Gaussian pattern.
+Should be one of \code{"RMgauss"} (Gaussian covariance model),
+\code{"RMstable"} (the stable powered exponential model),
+or the default, \code{"RMexp"} (exponential covariance model).}
+
+\item{alpha}{A required parameter of the 'RMstable' model.
+Should be in the interval [0,2] to provide a valid covariance function.
+Default is 1.}
 
 \item{inMemory}{Should the RasterLayer be forced to be in memory?
 Default \code{FALSE}.}
@@ -41,6 +51,9 @@ r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = 
 speedup <- max(1, nx/5e2)
 map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
 Plot(map1)
+
+# with non-default method
+map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
 }
 
 }

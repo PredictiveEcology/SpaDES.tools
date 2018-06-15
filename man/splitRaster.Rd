@@ -13,10 +13,10 @@ mergeRaster(x)
 \S4method{mergeRaster}{list}(x)
 
 splitRaster(r, nx = 1, ny = 1, buffer = c(0, 0),
-  path = file.path(getwd(), names(r)), cl)
+  path = file.path(getwd(), names(r)), cl, rType = "FLT4S")
 
 \S4method{splitRaster}{RasterLayer}(r, nx = 1, ny = 1, buffer = c(0, 0),
-  path = file.path(getwd(), names(r)), cl)
+  path = file.path(getwd(), names(r)), cl, rType = "FLT4S")
 }
 \arguments{
 \item{x}{A list of split raster tiles (i.e., from \code{splitRaster}).}
@@ -42,6 +42,8 @@ working directory based on the raster's name (i.e., using \code{names(x)}).}
 parallel::makeCluster or equivalent. This is an alternative way, instead
 of \code{beginCluster()}, to use parallelism for this function, allowing for
 more control over cluster use.}
+
+\item{rType}{Datatype of the split rasters. Defaults to FLT4S.}
 }
 \value{
 \code{mergeRaster} returns a \code{RasterLayer} object.

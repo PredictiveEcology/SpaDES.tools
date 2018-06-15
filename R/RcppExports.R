@@ -60,6 +60,7 @@ pointDistance3 <- function(fromX, toX, fromY, toY, maxDistance) {
 #' Slightly faster than runif, and used a lot
 #'
 #' @param N Integer Vector
+#' @export
 #' @return
 #' A vector of uniform random numbers as per \code{runif}
 #'
