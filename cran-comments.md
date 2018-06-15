@@ -2,7 +2,9 @@
 
 This release fixes CRAN concerns about package declarations for tests and vignettes.
 
-The maintainer email address has changed, about which I notified CRAN on March 28, 2018 and sent followup on June 12, 2018 (in response to `fpCompare` submission).
+**This update depends on the latest version of `reproducible` (v0.2.0) which we have just submitted to CRAN.**
+
+The maintainer email address has changed, about which I notified CRAN on March 28, 2018 and sent followup on June 12, 2018 (in response to `fpCompare` submission) and again on June 15, 2018 (in response to `SpaDES` submission).
 
 We also introduce several new functions, and update previous functions (see NEWS.md).
 
@@ -25,10 +27,10 @@ We also introduce several new functions, and update previous functions (see NEWS
 * Windows 7            (local), R 3.5.0
 
 ### Development R version
-* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-11 r74885)
-* Ubuntu 18.04         (local), R 3.6.0 (2018-06-11 r74889)
+* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-15 r74903)
+* Ubuntu 18.04         (local), R 3.6.0 (2018-06-15 r74903)
 * Windows           (appveyor), R 3.6.0 (2018-06-11 r74889)
-* Windows        (win-builder), R 3.6.0 (2018-06-11 r74889)
+* Windows        (win-builder), R 3.6.0 (2018-06-13 r74894)
 
 ## R CMD check results
 
@@ -36,7 +38,7 @@ There were no ERRORs or WARNINGs.
 
 There were 2 NOTEs:
 
-1. Maintainer's email address has changed (notified CRAN 2018-05-28 and 2018-06-12).
+1. Maintainer's email address has changed (notified CRAN 2018-05-28, 2018-06-12, and 2018-06-15).
 
     * checking CRAN incoming feasibility ... NOTE
     Maintainer: 'Alex M Chubaty <alex.chubaty@gmail.com>'

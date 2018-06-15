@@ -9,13 +9,13 @@
 |language |en_CA:en                     |
 |collate  |en_CA.UTF-8                  |
 |tz       |America/Edmonton             |
-|date     |2018-06-13                   |
+|date     |2018-06-15                   |
 
 # Dependencies
 
 |package      |old   |new        |Δ  |
 |:------------|:-----|:----------|:--|
-|SpaDES.tools |0.1.1 |0.1.1.9010 |*  |
+|SpaDES.tools |0.1.1 |0.2.0      |*  |
 |fastshp      |NA    |0.1-2      |*  |
 |quickPlot    |NA    |0.1.3.9002 |*  |
 |reproducible |NA    |0.2.0      |*  |
