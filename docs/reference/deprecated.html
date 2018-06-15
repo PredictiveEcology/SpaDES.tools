@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Adapted directly from the <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code> help file. — resample • SpaDES.tools</title>
+<title>Deprecated functions — checkGDALVersion • SpaDES.tools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,12 +30,11 @@
 
 
 
-<meta property="og:title" content="Adapted directly from the <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code> help file. — resample" />
+<meta property="og:title" content="Deprecated functions — checkGDALVersion" />
 
-<meta property="og:description" content="Adapted directly from the sample help file.
-resampleZeroProof is a version that works even if sum of all probabilities passed to
-sample.int is zero. This causes an error in sample.int. This function is
-intended for internal use only." />
+<meta property="og:description" content="These will be removed in a future release.
+fastCrop is a wrapper around velox::VeloxRaster_crop, though
+raster::crop is faster under many tests." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,51 +102,47 @@ intended for internal use only." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Adapted directly from the <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code> help file.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/R/resample.R'><code>R/resample.R</code></a></small>
-    <div class="hidden name"><code>resample.Rd</code></div>
+    <h1>Deprecated functions</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/R/spades-tools-deprecated.R'><code>R/spades-tools-deprecated.R</code></a></small>
+    <div class="hidden name"><code>deprecated.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Adapted directly from the <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code> help file.</p>
-<p><code>resampleZeroProof</code> is a version that works even if sum of all probabilities passed to
-<code>sample.int</code> is zero. This causes an error in <code>sample.int</code>. This function is
-intended for internal use only.</p>
+    <p>These will be removed in a future release.</p>
+<p><code>fastCrop</code> is a wrapper around <code><a href='http://www.rdocumentation.org/packages/velox/topics/VeloxRaster_crop'>velox::VeloxRaster_crop</a></code>, though
+<code><a href='http://www.rdocumentation.org/packages/raster/topics/crop'>raster::crop</a></code> is faster under many tests.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>resample</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>checkGDALVersion</span>()
 
-<span class='fu'>resampleZeroProof</span>(<span class='no'>spreadProbHas0</span>, <span class='no'>x</span>, <span class='no'>n</span>, <span class='no'>prob</span>)</pre>
+<span class='fu'>fastCrop</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='fu'>fastMask</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+
+<span class='fu'>getGDALVersion</span>()</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>either a vector of one or more elements from which to choose,
-    or a positive integer.  See &#8216;Details.&#8217;</p></td>
+      <td><p>Raster to crop</p></td>
+    </tr>
+    <tr>
+      <th>y</th>
+      <td><p>Extent object, or any object from which an Extent object can be extracted (see Details)</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Passed to <code><a href='http://www.rdocumentation.org/packages/base/topics/sample'>sample</a></code></p></td>
-    </tr>
-    <tr>
-      <th>spreadProbHas0</th>
-      <td><p>logical. Does <code>spreadProb</code> have any zeros on it.</p></td>
-    </tr>
-    <tr>
-      <th>n</th>
-      <td><p>a positive number, the number of items to choose from.  See
-    &#8216;Details.&#8217;</p></td>
-    </tr>
-    <tr>
-      <th>prob</th>
-      <td><p>a vector of probability weights for obtaining the elements
-    of the vector being sampled.</p></td>
+      <td><p>Additional arguments as for <code>writeRaster</code></p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='http://www.rdocumentation.org/packages/velox/topics/VeloxRaster_crop'>velox::VeloxRaster_crop</a></code></p></div>
     
 
   </div>
@@ -155,7 +150,9 @@ intended for internal use only.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>
