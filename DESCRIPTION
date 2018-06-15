@@ -47,11 +47,12 @@ Imports:
     Rcpp (>= 0.12.12),
     reproducible (>= 0.2.0),
     sp (>= 1.2-4),
-    stats
+    stats,
+    velox
 Suggests:
     DEoptim (>= 2.2-4),
     dplyr,
-    hunspell,
+    gdalUtils,
     knitr,
     mgcv,
     microbenchmark,
@@ -83,6 +84,7 @@ Collate:
     'probability.R'
     'resample.R'
     'rings.R'
+    'spades-tools-deprecated.R'
     'spades-tools-package.R'
     'splitRaster.R'
     'spread.R'
