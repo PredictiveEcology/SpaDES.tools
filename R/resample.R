@@ -22,7 +22,7 @@ resample <- function(x, ...) x[sample.int(length(x), ...)]
 #' \code{sample.int} is zero. This causes an error in \code{sample.int}. This function is
 #' intended for internal use only.
 #' @rdname resample
-#' @param spreadProbHas0 /ogical. Does \code{spreadProb} have any zeros on it.
+#' @param spreadProbHas0 logical. Does \code{spreadProb} have any zeros on it.
 #' @inheritParams base::sample
 resampleZeroProof <- function(spreadProbHas0, x, n, prob) {
   if (spreadProbHas0) {

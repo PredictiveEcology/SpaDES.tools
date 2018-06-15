@@ -15,7 +15,7 @@ resampleZeroProof(spreadProbHas0, x, n, prob)
 
 \item{...}{Passed to \code{\link[base]{sample}}}
 
-\item{spreadProbHas0}{/ogical. Does \code{spreadProb} have any zeros on it.}
+\item{spreadProbHas0}{logical. Does \code{spreadProb} have any zeros on it.}
 
 \item{n}{a positive number, the number of items to choose from.  See
     \sQuote{Details.}}
