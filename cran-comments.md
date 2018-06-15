@@ -27,10 +27,10 @@ We also introduce several new functions, and update previous functions (see NEWS
 * Windows 7            (local), R 3.5.0
 
 ### Development R version
-* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-11 r74885)
-* Ubuntu 18.04         (local), R 3.6.0 (2018-06-11 r74889)
+* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-15 r74903)
+* Ubuntu 18.04         (local), R 3.6.0 (2018-06-15 r74903)
 * Windows           (appveyor), R 3.6.0 (2018-06-11 r74889)
-* Windows        (win-builder), R 3.6.0 (2018-06-11 r74889)
+* Windows        (win-builder), R 3.6.0 (2018-06-13 r74894)
 
 ## R CMD check results
 
