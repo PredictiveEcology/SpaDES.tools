@@ -7,9 +7,9 @@
 numAgents(N, probInit)
 }
 \arguments{
-\item{N}{Number of agents to intitate (integer scalar).}
+\item{N}{Number of agents to initiate (integer scalar).}
 
-\item{probInit}{Probability of initalizing an agent at the location.}
+\item{probInit}{Probability of initializing an agent at the location.}
 }
 \value{
 A numeric, indicating number of agents to start

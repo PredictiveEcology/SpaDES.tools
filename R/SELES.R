@@ -40,8 +40,8 @@ transitions <- function(p, agent) {
 #'
 #' You must know how to use SELES for these to be useful.
 #'
-#' @param N         Number of agents to intitate (integer scalar).
-#' @param probInit  Probability of initalizing an agent at the location.
+#' @param N         Number of agents to initiate (integer scalar).
+#' @param probInit  Probability of initializing an agent at the location.
 #'
 #' @return A numeric, indicating number of agents to start
 #'
@@ -192,7 +192,7 @@ setMethod(
 #' \code{SELES} - Agent Location at initiation
 #'
 #' @description
-#' Sets the the location of the intiating agents. NOT YET FULLY IMPLEMENTED.
+#' Sets the the location of the initiating agents. NOT YET FULLY IMPLEMENTED.
 #'
 #' A \code{SELES}-like function to maintain conceptual backwards compatibility
 #' with that simulation tool. This is intended to ease transitions from

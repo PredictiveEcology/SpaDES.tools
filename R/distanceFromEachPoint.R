@@ -67,7 +67,7 @@
 #' @details
 #'
 #' If the user requires an id (indicating the \code{from} cell for each \code{to} cell)
-#' to be returned with the fuction, the user must add an identifier to the
+#' to be returned with the function, the user must add an identifier to the
 #' \code{from} matrix, such as \code{"id"}.
 #' Otherwise, the function will only return the coordinates and distances.
 #'

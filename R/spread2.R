@@ -103,7 +103,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param spreadProb  Numeric of length 1 or \code{RasterLayer}.
 #'                    If numeric of length 1, then this is the global (absolute)
-#'                    probability of spreading into each cell from a neighbor.
+#'                    probability of spreading into each cell from a neighbour.
 #'                    If a raster then this must be the cell-specific (absolute)
 #'                    probability of a "receiving" potential cell.
 #'                    Default is \code{0.23}.
@@ -174,7 +174,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param skipChecks Logical. If TRUE, the argument checking (i.e., assertions) will be
 #'              skipped. This should likely only be used once it is clear that the function
-#'              arguments are well understood and function speed is of the primary improtance.
+#'              arguments are well understood and function speed is of the primary importance.
 #'              This is likely most useful in repeated iteration cases i.e., if this call
 #'              is using the previous output from this same function.
 #'
@@ -202,7 +202,7 @@ if (getRversion() >= "3.1.0") {
 #'                     and also itself. This would be, perhaps, useful for dispersal of,
 #'                     say, insect swarms.
 #'
-#' @param plot.it  If TRUE, then plot the raster at every iteraction,
+#' @param plot.it  If TRUE, then plot the raster at every iteration,
 #'                   so one can watch the spread2 event grow.
 #'
 #' @inheritParams spread
@@ -318,7 +318,7 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom raster ncell raster res ncol pointDistance
 #' @importFrom stats runif
 #'
-#' @seealso \code{\link{spread}} for a different implementation of the same alogorithm.
+#' @seealso \code{\link{spread}} for a different implementation of the same algorithm.
 #' \code{spread} is less robust but it is often slightly faster.
 #'
 #' @example inst/examples/example_spread2.R
@@ -642,7 +642,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
 
         # This is a very fast version with allowOverlap = TRUE, allowDuplicates = FALSE,
-        #   returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels"
+        #   returnIndices = TRUE, returnDistances = TRUE, and includeBehavior = "excludePixels"
         pureCircle <- .cirSpecialQuick(landscape,
                                        loci = lociHere,
                                        maxRadius = totalIterations,

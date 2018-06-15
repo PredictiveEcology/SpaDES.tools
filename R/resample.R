@@ -4,7 +4,7 @@
 #' Vectorized version of \code{sample} using \code{Vectorize}
 #'
 #' Intended for internal use only. \code{size} is vectorized.
-#' @return A random perumtation, as in \code{sample}, but with \code{size} vectorized.
+#' @return A random permutation, as in \code{sample}, but with \code{size} vectorized.
 #' @keywords internal
 #' @inheritParams base::sample
 #'

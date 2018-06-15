@@ -83,7 +83,7 @@
 #'   \code{\link{agentLocation}} \tab Agent location\cr
 #'   \code{\link{initiateAgents}} \tab Initiate agents into a \code{SpatialPointsDataFrame}\cr
 #'   \code{\link{numAgents}} \tab Number of agents\cr
-#'   \code{\link{probInit}} \tab Probability of intiating an agent or event\cr
+#'   \code{\link{probInit}} \tab Probability of initiating an agent or event\cr
 #'   \code{\link{transitions}} \tab Transition probability\cr
 #' }
 #'
