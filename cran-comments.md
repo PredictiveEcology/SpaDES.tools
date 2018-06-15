@@ -2,6 +2,8 @@
 
 This release fixes CRAN concerns about package declarations for tests and vignettes.
 
+**This update depends on the latest version of `reproducible` (v0.2.0) which we have just submitted to CRAN.**
+
 The maintainer email address has changed, about which I notified CRAN on March 28, 2018 and sent followup on June 12, 2018 (in response to `fpCompare` submission).
 
 We also introduce several new functions, and update previous functions (see NEWS.md).
