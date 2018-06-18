@@ -2,9 +2,25 @@
 
 This release fixes CRAN concerns about package declarations for tests and vignettes.
 
-**This update depends on the latest version of `reproducible` (v0.2.0) which we have just submitted to CRAN.**
-
 The maintainer email address has changed, about which I notified CRAN on March 28, 2018 and sent followup on June 12, 2018 (in response to `fpCompare` submission) and again on June 15, 2018 (in response to `SpaDES` submission).
+
+> Chubaty, Alexander (NRCan/RNCan)
+> Fri, Jun 15, 8:42 AM (3 days ago)
+> to me, CRAN
+>
+> Hello CRAN maintainers,
+>
+> Please note the change in my maintainer email for the following packages:
+>
+> - fpCompare
+> - SpaDES
+> - SpaDES.core
+> - SpaDES.tools
+>
+> My new email is alex.chubaty@gmail.com.
+>
+> Thank you,
+> Alex
 
 We also introduce several new functions, and update previous functions (see NEWS.md).
 
@@ -30,7 +46,7 @@ We also introduce several new functions, and update previous functions (see NEWS
 * Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-15 r74903)
 * Ubuntu 18.04         (local), R 3.6.0 (2018-06-15 r74903)
 * Windows           (appveyor), R 3.6.0 (2018-06-11 r74889)
-* Windows        (win-builder), R 3.6.0 (2018-06-13 r74894)
+* Windows        (win-builder), R 3.6.0 (2018-06-15 r74904)
 
 ## R CMD check results
 
