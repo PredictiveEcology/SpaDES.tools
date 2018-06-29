@@ -24,7 +24,7 @@ If user has x and y coordinates, these can be converted with
 
 \item{spreadProb}{Numeric of length 1 or \code{RasterLayer}.
 If numeric of length 1, then this is the global (absolute)
-probability of spreading into each cell from a neighbor.
+probability of spreading into each cell from a neighbour.
 If a raster then this must be the cell-specific (absolute)
 probability of a "receiving" potential cell.
 Default is \code{0.23}.
@@ -87,7 +87,7 @@ If absolute \code{spreadProb} is not desired,
 \emph{be sure to set} \code{spreadProb = 1}.
 Ignored if \code{neighProbs} is not provided.}
 
-\item{plot.it}{If TRUE, then plot the raster at every iteraction,
+\item{plot.it}{If TRUE, then plot the raster at every iteration,
 so one can watch the spread2 event grow.}
 
 \item{circle}{Logical. If TRUE, then outward spread2 will be by equidistant rings,
@@ -123,7 +123,7 @@ NA), \code{circle} and \code{returnDistances} will not work currently.}
 
 \item{skipChecks}{Logical. If TRUE, the argument checking (i.e., assertions) will be
 skipped. This should likely only be used once it is clear that the function
-arguments are well understood and function speed is of the primary improtance.
+arguments are well understood and function speed is of the primary importance.
 This is likely most useful in repeated iteration cases i.e., if this call
 is using the previous output from this same function.}
 }
@@ -217,8 +217,7 @@ new set of conditions arise due to a change in weather.
 so that it can deal with a \code{RasterLayer} of \code{asymmetryAngle}.
 Here, the \code{spreadProb} values of a given set of neighbours around each active pixel
 are adjusted to create \code{adjustedSpreadProb} which is calculated maintain the
-following
-two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
+following two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
 \deqn{max(spreadProb)/min(spreadProb) = asymmetry} along the axis of
 \code{asymmetryAngle}. NOTE: this means that the 8 neighbours around an active
 cell may not fulfill the preceeding equality if \code{asymmetryAngle} is not
@@ -443,7 +442,7 @@ if (interactive()) {
 }
 }
 \seealso{
-\code{\link{spread}} for a different implementation of the same alogorithm.
+\code{\link{spread}} for a different implementation of the same algorithm.
 \code{spread} is less robust but it is often slightly faster.
 }
 \author{

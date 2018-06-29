@@ -29,6 +29,26 @@ matrix:
     - rgdal
   - os: linux
     dist: trusty
+    r: 3.4.0
+    addons:
+      apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
+        packages:
+        - libgdal-dev
+        - libgdal1-dev
+        - libgeos-dev
+        - libnlopt-dev
+        - libproj-dev
+        - libudunits2-dev
+        - gdal-bin
+    before_install:
+    - export DISPLAY=:99.0
+    - sh -e /etc/init.d/xvfb start
+    r_packages:
+    - rgdal
+  - os: linux
+    dist: trusty
     r: oldrel
     addons:
       apt:
@@ -68,6 +88,8 @@ matrix:
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
     r_packages:
+    - devtools
+    - ggplot2
     - rgdal
     after_success:
     - Rscript -e 'covr::coveralls(package_coverage(type = "all", quiet = FALSE)))'
@@ -112,8 +134,3 @@ notifications:
     - jean.d.marchal@gmail.com
     on_success: change
     on_failure: change
-branches:
-  only:
-  - master
-  - development
-  - testing

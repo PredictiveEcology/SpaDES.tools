@@ -45,8 +45,7 @@ if (getRversion() >= "3.1.0") {
 #' so that it can deal with a \code{RasterLayer} of \code{asymmetryAngle}.
 #' Here, the \code{spreadProb} values of a given set of neighbours around each active pixel
 #' are adjusted to create \code{adjustedSpreadProb} which is calculated maintain the
-#' following
-#' two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
+#' following two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
 #' \deqn{max(spreadProb)/min(spreadProb) = asymmetry} along the axis of
 #' \code{asymmetryAngle}. NOTE: this means that the 8 neighbours around an active
 #' cell may not fulfill the preceeding equality if \code{asymmetryAngle} is not
@@ -104,7 +103,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param spreadProb  Numeric of length 1 or \code{RasterLayer}.
 #'                    If numeric of length 1, then this is the global (absolute)
-#'                    probability of spreading into each cell from a neighbor.
+#'                    probability of spreading into each cell from a neighbour.
 #'                    If a raster then this must be the cell-specific (absolute)
 #'                    probability of a "receiving" potential cell.
 #'                    Default is \code{0.23}.
@@ -175,7 +174,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param skipChecks Logical. If TRUE, the argument checking (i.e., assertions) will be
 #'              skipped. This should likely only be used once it is clear that the function
-#'              arguments are well understood and function speed is of the primary improtance.
+#'              arguments are well understood and function speed is of the primary importance.
 #'              This is likely most useful in repeated iteration cases i.e., if this call
 #'              is using the previous output from this same function.
 #'
@@ -203,7 +202,7 @@ if (getRversion() >= "3.1.0") {
 #'                     and also itself. This would be, perhaps, useful for dispersal of,
 #'                     say, insect swarms.
 #'
-#' @param plot.it  If TRUE, then plot the raster at every iteraction,
+#' @param plot.it  If TRUE, then plot the raster at every iteration,
 #'                   so one can watch the spread2 event grow.
 #'
 #' @inheritParams spread
@@ -306,26 +305,21 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
-#' @importFrom raster ncell raster res ncol pointDistance
 #' @importFrom bit bit
-#' @importFrom data.table := alloc.col as.data.table data.table is.data.table
-#' @importFrom data.table rbindlist setcolorder setattr set setkeyv setnames uniqueN
 #' @importFrom checkmate assert assertClass assertNumeric
 #' @importFrom checkmate checkClass checkDataTable checkLogical checkNumeric checkScalarNA
 #' @importFrom checkmate qassert
-#' @importFrom stats runif
+#' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
+#' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
+#' @importFrom ff ff
 #' @importFrom fpCompare %<=% %>>%
-#'
-#' @seealso \code{\link{spread}} for a different implementation of the same alogorithm.
-#' \code{spread} is less robust but it is often slightly faster.
-#'
-#' @aliases spread2
-#' @export
-#' @importFrom data.table copy
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot
-#' @name spread2
-#' @rdname spread2
+#' @importFrom raster ncell raster res ncol pointDistance
+#' @importFrom stats runif
+#'
+#' @seealso \code{\link{spread}} for a different implementation of the same algorithm.
+#' \code{spread} is less robust but it is often slightly faster.
 #'
 #' @example inst/examples/example_spread2.R
 #'
@@ -408,11 +402,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   smallRaster <- ncells < 4e7 # should use bit vector (RAM) or ff raster (Disk)
   canUseAvailable <- !(isTRUE(allowOverlap) | is.na(allowOverlap))
   if (missing(maxSize)) {
-    maxSize <- NA
+    maxSize <- NA_real_
   }
 
   if (missing(exactSize)) {
-    exactSize <- NA
+    exactSize <- NA_real_
   } else {
     maxSize <- exactSize
   }
@@ -450,32 +444,31 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     whInactive <- integer()
     dt <- data.table(initialPixels = start)
     if (returnFrom) {
-      set(dt, , "from", NA_integer_)
+      set(dt, NULL, "from", NA_integer_)
     }
-    set(dt, , "pixels", start)
-    set(dt, , "state", "activeSource")
+    set(dt, NULL, "pixels", start)
+    set(dt, NULL, "state", "activeSource")
 
     clusterDT <- data.table(id = whActive, initialPixels = start,
                             numRetries = 0L, size = as.integer(iterations > 0))
 
     if (!anyNA(maxSize)) {
-      set(clusterDT, , "maxSize", maxSize)
+      set(clusterDT, NULL, "maxSize", maxSize)
 
       # de-activate ones that are 1 cell
       set(dt, which(clusterDT$maxSize == 1), "state", "inactive")
     }
     if (!anyNA(exactSize)) {
-      set(clusterDT, , "exactSize", TRUE)
+      set(clusterDT, NULL, "exactSize", TRUE)
     }
 
     setkeyv(clusterDT, "initialPixels")
-    if (needDistance) set(dt, , "distance", 0) # it is zero distance to self
+    if (needDistance) set(dt, NULL, "distance", 0) # it is zero distance to self
     if (usingAsymmetry) {
-      set(dt, , "effectiveDistance", 0) # it is zero distance to self
-      set(dt, , "distClass", 0) # it is zero distance to self
+      set(dt, NULL, "effectiveDistance", 0) # it is zero distance to self
+      set(dt, NULL, "distClass", 0) # it is zero distance to self
     }
     totalIterations <- 0
-
   } else {
     # a "return" entry into spread2
     dt <- start
@@ -512,11 +505,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       unIP <- unique(dt$initialPixels)
       clusterDT <- data.table(id = seq_along(unIP), initialPixels = unIP, numRetries = 0L)
       if (!anyNA(maxSize)) {
-        set(clusterDT, , "maxSize", maxSize)
+        set(clusterDT, NULL, "maxSize", maxSize)
         if (!anyNA(exactSize)) {
-          set(clusterDT, , "exactSize", TRUE)
+          set(clusterDT, NULL, "exactSize", TRUE)
         }
-        set(clusterDT, , "size", dt[, .N, by = "initialPixels"]$N)
+        set(clusterDT, NULL, "size", dt[, .N, by = "initialPixels"]$N)
         setkeyv(clusterDT, "initialPixels")
       }
     }
@@ -539,10 +532,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # cir
       ## get slightly further neighbours
       dtRetry <- dt[whTooSmall]
-      set(dtRetry, , "state", NULL)
+      set(dtRetry, NULL, "state", NULL)
       whNeedJump <- which(((clusterDT$numRetries + 1) %% 10) == 0)
       if (length(whNeedJump)) {
-        # jump every 10, starting at 4
+        # jump every 10, starting at 20
         resCur <- res(landscape)[1]
         dtRetryJump <- dtRetry[clusterDT[whNeedJump], nomatch = 0]
         fromPixels <- dtRetryJump$pixels
@@ -550,7 +543,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           cbind(id = fp, cir(landscape, loci = fromPixels[fp],
                              includeBehavior = "excludePixels",
                              minRadius = resCur,
-                             maxRadius = 4 * resCur)[, "indices"])
+                             maxRadius = 20 * resCur)[, "indices"]) # 20 pixels
         }) %>%
           do.call(what = rbind)
 
@@ -592,7 +585,8 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         directions = directions,
         id = dt$initialPixels[whActive],
         cells = dt$pixels[whActive], cutoff.for.data.table = 5e2,
-        returnDT = TRUE)
+        returnDT = TRUE
+      )
 
       # only iterate if it is not a Retry situation
       its <- its + 1
@@ -606,7 +600,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     if (!is.data.table(dtPotential)) {
       dtPotential <- as.data.table(dtPotential)
     }
-    for (x in colnames(dtPotential)) set(dtPotential, , x, dtPotential[[x]][i])
+    for (x in colnames(dtPotential)) set(dtPotential, NULL, x, dtPotential[[x]][i])
 
     # Step 3 -- if required -- calculate distances, if required ... attach to dt
     if (needDistance) {
@@ -648,7 +642,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
 
         # This is a very fast version with allowOverlap = TRUE, allowDuplicates = FALSE,
-        #   returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels"
+        #   returnIndices = TRUE, returnDistances = TRUE, and includeBehavior = "excludePixels"
         pureCircle <- .cirSpecialQuick(landscape,
                                        loci = lociHere,
                                        maxRadius = totalIterations,
@@ -671,7 +665,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         pureCircle <- cbind(pureCircle, proportion = pc)
         pureCircle <- as.data.table(pureCircle)
         pureCircle[, proportion := proportion / sum(proportion), by = "id"]
-        set(pureCircle, , "dists", NULL)
+        set(pureCircle, NULL, "dists", NULL)
         setkeyv(pureCircle, c("id", "to"))
         pureCirclePrev <- attr(dt, "spreadState")$pureCircle
         if (!is.null(pureCirclePrev)) {
@@ -688,18 +682,17 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           dtPotentialAsymmetry <- dtPotential[!distKeepers]
           if (sum(distKeepers) == 0) {
             # all failed
-            set(dt, , "state", "successful")
+            set(dt, NULL, "state", "successful")
           } else {
             unDTPotAssym <- unique(dtPotentialAsymmetry$from)
             if (length(unDTPotAssym) == length(unique(dt$pixel))) {
-              set(dt, , "state", "successful")
+              set(dt, NULL, "state", "successful")
             } else {
               dt[pixels %in% unDTPotAssym, state := "successful"]
             }
           }
         } else {
-          distKeepers <- dists %<=% totalIterations & dists %>>%
-            (totalIterations - 1)
+          distKeepers <- dists %<=% totalIterations & dists %>>% (totalIterations - 1)
         }
 
         dtPotentialAllNeighs <- copy(dtPotential)
@@ -707,9 +700,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         dtPotential <- dtPotential[distKeepers]
         dists <- dists[distKeepers]
       }
-      set(dtPotential, , "distance", dists)
+
+      set(dtPotential, NULL, "distance", dists)
       if (usingAsymmetry) {
-        set(dtPotential, , "effectiveDistance", effDists[distKeepers])
+        set(dtPotential, NULL, "effectiveDistance", effDists[distKeepers])
         if (circle) {
           dtPotential <- dtPotential[pureCircle, nomatch = 0, on = c("id", "to")][
             , proportion := proportion / .N, by = c("id", "to")]
@@ -718,7 +712,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     }
 
     # Step 4 -- assign "successful" to all dtPotentials --
-    set(dtPotential, , "state", "successful")
+    set(dtPotential, NULL, "state", "successful")
 
     # Step 5 -- optional -- Algorithm neighProbs - uses a specific number of neighbours
     if (!anyNA(neighProbs)) {
@@ -731,13 +725,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         } else {
           neighProbs1 <- neighProbs
         }
-        set(numNeighsByPixel, , "numNeighs", unlist(lapply(
+        set(numNeighsByPixel, NULL, "numNeighs", unlist(lapply(
           neighProbs1, function(np) {
             sample.int(size = 1, n = length(np), replace = TRUE, prob = np)
           }))
         )
       } else {
-        set(numNeighsByPixel, , "numNeighs",
+        set(numNeighsByPixel, NULL, "numNeighs",
             sample.int(size = NROW(numNeighsByPixel), n = length(neighProbs),
                        replace = TRUE, prob = neighProbs))
       }
@@ -754,9 +748,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
       if (NROW(dtPotential)) {
         if (is(spreadProbRel, "RasterLayer")) {
-          set(dtPotential, , "spreadProbRel", spreadProbRel[][dtPotential$to])
+          set(dtPotential, NULL, "spreadProbRel", spreadProbRel[][dtPotential$to])
         } else {
-          set(dtPotential, , "spreadProbRel", 1)
+          set(dtPotential, NULL, "spreadProbRel", 1)
         }
         spreadProbNA <- is.na(dtPotential$spreadProbRel) # This is where a mask enters
         if (any(spreadProbNA)) {
@@ -772,13 +766,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           # If it is a corner or has had pixels removed bc of duplicates,
           # it may not have enough neighbours
           numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
-          set(numNeighsByPixel, , "numNeighs",
+          set(numNeighsByPixel, NULL, "numNeighs",
               pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
           dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
                                                                    .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
                                                                    by = "from"]$V1]
         }
-        set(dtPotential, , "spreadProbRel", NULL)
+        set(dtPotential, NULL, "spreadProbRel", NULL)
       }
     } # end of neighProbs -- should now have only dtPotentials that match number neighbours req'd
 
@@ -797,7 +791,6 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       }
     }
 
-
     # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle
     #  -- circle asymmetry happens elsewhere
     # modify actualSpreadProb if there is asymmetry
@@ -807,6 +800,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       } else {
         asymmetry[dtPotential$to]
       }
+
       actualAsymmetryAngle <- if (length(asymmetryAngle) == 1) {
         asymmetryAngle
       } else {
@@ -825,7 +819,6 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 7 <- calculate spread success based on actualSpreadProb
     spreadProbSuccess <- runifC(NROW(dtPotential)) <= actualSpreadProb
 
-
     # Step 8 - Remove duplicates & bind dt and dtPotential
     if (anyNA(neighProbs)) {
       if (isTRUE(allowOverlap) | is.na(allowOverlap) | !canUseAvailable) {
@@ -838,7 +831,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         if (!is.na(allowOverlap)) {
           dt[, `:=`(dups = duplicatedInt(pixels)), by = initialPixels]
           dupes <- dt$dups
-          set(dt, , "dups", NULL)
+          set(dt, NULL, "dups", NULL)
           dt <- dt[!dupes]
         }
 
@@ -859,7 +852,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         # 3 reasons why potentials are not selected
         whSuccNoDupsCurItAndAll <- seq_along(spreadProbSuccess)[spreadProbSuccess][
           !dupsWithinDtPotential][!potentialNotAvailable]
-        notAvailable[successCells[!potentialNotAvailable]] <- TRUE
+
+        # next line is a fix with data.table 1.11.4 or so, can't pass length 0 vector?
+        if (length(successCells[!potentialNotAvailable]) > 0)
+          notAvailable[successCells[!potentialNotAvailable]] <- TRUE
         dtPotential <- dtPotential[whSuccNoDupsCurItAndAll]
 
         dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
@@ -878,28 +874,29 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       if (NROW(dtPotential)) notAvailable[dtPotential$pixels] <- TRUE
     }
 
-    # Step 9 - Size issues -- i.e., if too big (remove extras) or too small (make sure keeps going) # nolint
+    # Step 9 -- Size issues: i.e., if too big (remove extras) or too small (make sure keeps going)
     if (!anyNA(maxSize) | !(anyNA(exactSize))) {
       # Too big first
       setkeyv(dt, "initialPixels") # must sort because maxSize is sorted
       setkeyv(dtPotential, "initialPixels")
       dtPotClusterDT <- dtPotential[, list(size = as.integer(.N)), by = "initialPixels"]
       clusterDT[dtPotClusterDT, size := size + i.size]
+
       # This next line is a work around for a problem that doesn't make sense:
       # See: https://stackoverflow.com/q/29615181/1380598
       alloc.col(clusterDT, 7)
-      set(clusterDT, , "tooBigByNCells", clusterDT$size - as.integer(clusterDT$maxSize))
+      set(clusterDT, NULL, "tooBigByNCells", clusterDT$size - as.integer(clusterDT$maxSize))
 
       currentSizetooBigByNCells <- clusterDT[tooBigByNCells > 0]
       if (NROW(currentSizetooBigByNCells) > 0) {
         # sort them so join works between dt1 and currentSizetooBigByNCells
         setkeyv(currentSizetooBigByNCells, "initialPixels")
-        set(dt, , "origIndex", seq_len(NROW(dt)))
+        set(dt, NULL, "origIndex", seq_len(NROW(dt)))
         dt1 <- dt[state == "successful"]
         dt1b <- dt1[currentSizetooBigByNCells] # attach tooBigByNCells
         dt1a <- tryCatch(dt1b[, list(omit = origIndex[sample.int(.N, tooBigByNCells)]),
                               by = "initialPixels"],
-                         error = function(x) TRUE)
+                         error = function(e) TRUE)
 
         dt <- dt[-dt1a$omit][, list(initialPixels, pixels, state)]
         dt[dt1a, state := "inactive"]
@@ -919,16 +916,16 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
             ]
         }
         # if the ones that are too small are unsuccessful, make them "tooSmall"
-        set(dt, , "ind", seq_len(NROW(dt)))
+        set(dt, NULL, "ind", seq_len(NROW(dt)))
         whTooSmall <- dt[!(state %in% c("successful", "inactive"))][
           currentSizeTooSmall, nomatch = 0]$ind
-        set(dt, , "ind", NULL)
+        set(dt, NULL, "ind", NULL)
 
         if (length(whTooSmall)) {
           # add index column -- like doing a 'which( )'
-          set(clusterDT, , "indClDT", seq_len(NROW(clusterDT)))
+          set(clusterDT, NULL, "indClDT", seq_len(NROW(clusterDT)))
           whNeedRetryClusterDT <- clusterDT[dt[whTooSmall]]$indClDT
-          set(clusterDT, , "indClDT", NULL)
+          set(clusterDT, NULL, "indClDT", NULL)
           tooManyRetries <- clusterDT[whNeedRetryClusterDT, numRetries > maxRetriesPerID]
           if (sum(tooManyRetries) > 0) {
             whNeedRetryClusterDT <- whNeedRetryClusterDT[!tooManyRetries]
@@ -939,7 +936,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
               clusterDT$numRetries[whNeedRetryClusterDT] + 1L)
         }
       }
-      set(clusterDT, , "tooBigByNCells", NULL)
+      set(clusterDT, NULL, "tooBigByNCells", NULL)
     } # end size-based assessments
 
     # Step 10 - Change states of cells
@@ -1004,11 +1001,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         spread2Ras[dt$pixels] <- dt$distance
         newPlot <- TRUE # need to rescale legend each time
       } else {
-        set(dt, , "order", seq_along(dt$initialPixels))
+        set(dt, NULL, "order", seq_along(dt$initialPixels))
         setkeyv(dt, "initialPixels")
         spread2Ras[dt$pixels] <- dt[clusterDT]$id # get id column from clusterDT
         setkeyv(dt, "order")
-        set(dt, , "order", NULL)
+        set(dt, NULL, "order", NULL)
       }
       Plot(spread2Ras, new = newPlot)
     }
@@ -1022,6 +1019,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   if (canUseAvailable) {
     attrList <- append(attrList, list(notAvailable = notAvailable))
   }
+
   if (usingAsymmetry) {
     if (exists("pureCircle", inherits = FALSE))
       attrList <- append(attrList, list(pureCircle = pureCircle))
@@ -1036,6 +1034,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     setattr(ras, "pixel", dt)
     return(ras)
   }
+
   return(dt)
 }
 
@@ -1058,8 +1057,8 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
   reorderColsWDistance(needDistance, dtPotential, dtPotentialColNames)
 
   if (!returnFrom) {
-    set(dtPotential, , "from", dtPotential$id)
-    set(dtPotential, , "id", NULL)
+    set(dtPotential, NULL, "from", dtPotential$id)
+    set(dtPotential, NULL, "id", NULL)
     setnames(dtPotential, old = c("from", "to"), new = c("initialPixels", "pixels"))
   } else {
     setnames(dtPotential, old = c("id", "to"), new = c("initialPixels", "pixels"))
@@ -1069,9 +1068,9 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
   if (NROW(dtPotential)) {
     # need fill = TRUE if user has passed extra columns
     dt <- rbindlist(list(dt, dtPotential), fill = TRUE)
-  } else {
-    dt
   }
+
+  return(dt)
 }
 
 #' Internal helpers for \code{spread2}
@@ -1126,8 +1125,9 @@ asymmetryAdjust <- function(angleQualities, quantity, actualAsymmetry) {
       minQuantity <- 0
       maxQuantity <- max(2 * quantity)
       aaMinus1 <- actualAsymmetry - 1
-      par2 <- aaMinus1 * sum(quantityAdj) / (length(quantityAdj) * (maxQuantity - minQuantity) +
-                                               aaMinus1 * sum(quantityAdj - minQuantity))
+      par2 <- aaMinus1 * sum(quantityAdj) /
+        (length(quantityAdj) * (maxQuantity - minQuantity) +
+           aaMinus1 * sum(quantityAdj - minQuantity))
       par1 <- par2 / aaMinus1 * (maxQuantity - minQuantity)
       (quantityAdj2 - minQuantity) * par2 + par1
     }, by = "id"]
