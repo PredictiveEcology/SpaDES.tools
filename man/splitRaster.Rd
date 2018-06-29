@@ -12,11 +12,11 @@ mergeRaster(x)
 
 \S4method{mergeRaster}{list}(x)
 
-splitRaster(r, nx = 1, ny = 1, buffer = c(0, 0),
-  path = file.path(getwd(), names(r)), cl, rType = "FLT4S")
+splitRaster(r, nx = 1, ny = 1, buffer = c(0, 0), path, cl,
+  rType = "FLT4S")
 
 \S4method{splitRaster}{RasterLayer}(r, nx = 1, ny = 1, buffer = c(0, 0),
-  path = file.path(getwd(), names(r)), cl, rType = "FLT4S")
+  path, cl, rType = "FLT4S")
 }
 \arguments{
 \item{x}{A list of split raster tiles (i.e., from \code{splitRaster}).}
@@ -35,8 +35,7 @@ of the number of pixels in each tile (rounded up to an integer value).
 Default is \code{c(0, 0)}, which means no buffer.}
 
 \item{path}{Character specifying the directory to which the split tiles will be saved.
-If missing, the function creates a subdirectory in the current
-working directory based on the raster's name (i.e., using \code{names(x)}).}
+If missing, the function will write to memory.}
 
 \item{cl}{A cluster object. Optional. This would generally be created using
 parallel::makeCluster or equivalent. This is an alternative way, instead

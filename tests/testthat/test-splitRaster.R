@@ -22,7 +22,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   extent(r) <- extent(xmin(r) - 30, xmax(r) - 30, ymin(r) - 20, ymax(r) - 20)
 
   # no buffer
-  y0 <- splitRaster(r, nx, ny)
+  y0 <- splitRaster(r, nx, ny, path = file.path(getwd(), "red"))
   expect_equal(class(y0), "list")
   expect_true(unique(unlist(lapply(y0, fromDisk))))
 
@@ -79,6 +79,14 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   expect_equal(res(m1), res(r))
   expect_equal(max(values(m1)), max(values(r)))
   expect_equal(min(values(m1)), min(values(r)))
+
+  # with no path specified, file is in memory
+  y1 <- splitRaster(r, nx, ny, c(3L, 4L))
+
+  for (i in 1:12) {
+    expect_false(file.exists(file.path(y0[[i]]$red@file@name)))
+  }
+
 
   # with buffer (proportion of cells)
   y2 <- splitRaster(r, nx, ny, c(0.5, 0.3), path = file.path(tmpdir, "red2"))
