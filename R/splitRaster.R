@@ -47,7 +47,7 @@
 #'
 setGeneric(
   "splitRaster",
-  function(r, nx = 1, ny = 1, buffer = c(0, 0), path, cl, rType = "FLT4S") {
+  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rType = "FLT4S") {
   standardGeneric("splitRaster")
 })
 
@@ -100,9 +100,9 @@ setMethod(
       }
     }
 
-    croppy <- function(i, e, r, path, rType = "FLT4S") {
+    croppy <- function(i, e, r, path, rType) {
 
-      ri <- crop(r, e[[i]])
+      ri <- crop(r, e[[i]], datatype = rType)
       crs(ri) <- crs(r)
       if (is.na(path)){
         return(ri)

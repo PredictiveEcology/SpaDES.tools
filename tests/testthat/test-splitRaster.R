@@ -84,7 +84,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   y1 <- splitRaster(r, nx, ny, c(3L, 4L))
 
   for (i in 1:12) {
-    expect_false(file.exists(file.path(y0[[i]]$red@file@name)))
+    expect_false(file.exists(file.path(y1[[i]]$red@file@name)))
   }
 
 
@@ -146,10 +146,12 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   #compatible with different raster datatypes
   y4 <- splitRaster(r, nx, ny, rType = "INT1U")
   expect_identical(dataType(y4[[1]]),"INT1U")
+  #INT now defaults to INT4S, FLT defaults to FLT4S
+  y5 <- splitRaster(r, nx, ny, rType = "INT")
+  expect_identical(dataType(y5[[1]]), "INT4S")
   #defaults to FLT4S
-  expect_warning(y5 <- splitRaster(r, nx, ny, rType = "INT"))
-  y5 <- splitRaster(r, nx, ny)
-  expect_true(dataType(y5[[1]]) == "FLT4S")
+  y6 <- splitRaster(r, nx, ny)
+  expect_true(dataType(y6[[1]]) == "FLT4S")
 })
 
 test_that("splitRaster works in parallel", {
