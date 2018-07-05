@@ -1,5 +1,11 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
+version 0.2.0.9000
+=============
+
+## New features
+* `splitRaster` defaults to in-memory rasters when no file path specified (#47, @ianmseddy).
+
 version 0.2.0
 =============
 
