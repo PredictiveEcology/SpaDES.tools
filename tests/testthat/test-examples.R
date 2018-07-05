@@ -1,6 +1,7 @@
 test_that("all exported functions have examples", {
-  if (grepl("VIC-", Sys.info()["nodename"]))  {
-    # for debugging only
+  debug <- grepl("VIC-", Sys.info()["nodename"]) & grepl("emcintir", Sys.info()["user"])
+
+  if (isTRUE(debug))  {
     tmpExFile <- "C:/Eliot/tmp/examplesSpaDES.tools.txt"
     cat("#START##############\n", file = tmpExFile, append = FALSE)
   }
@@ -15,18 +16,16 @@ test_that("all exported functions have examples", {
     setwd(owd)
   } , add = TRUE)
 
-  if (grepl("VIC-", Sys.info()["nodename"])) {
-    # for debugging only
+  if (isTRUE(debug)) {
     cat(paste("All files exist: ", isTRUE(all(file.exists(exFiles))), "\n"),
         file = tmpExFile, append = TRUE)
   }
 
   for (file in exFiles) {
-    if (grepl("VIC-", Sys.info()["nodename"])) {
-      # for debugging only
+    if (isTRUE(debug)) {
       cat(paste(file, " -- ", "\n"), file = tmpExFile, append = TRUE)
     }
-    # for debugging only
+
     print(file)
     test_example(file)
   }
