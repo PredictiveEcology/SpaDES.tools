@@ -561,7 +561,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         numCell = ncells,
         numCol = numCols,
         id = dtRetry$initialPixels,
-        cells = dtRetry$pixels, cutoff.for.data.table = 5e2,
+        cells = dtRetry$pixels, cutoffForDataTable = 5e2,
         returnDT = TRUE
       )
 
@@ -585,7 +585,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         numCol = numCols,
         directions = directions,
         id = dt$initialPixels[whActive],
-        cells = dt$pixels[whActive], cutoff.for.data.table = 5e2,
+        cells = dt$pixels[whActive], cutoffForDataTable = 5e2,
         returnDT = TRUE
       )
 

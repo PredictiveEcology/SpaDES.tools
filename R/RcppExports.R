@@ -65,6 +65,7 @@ pointDistance3 <- function(fromX, toX, fromY, toY, maxDistance) {
 #' A vector of uniform random numbers as per \code{runif}
 #'
 #' @rdname rcpp-extras
-runifC <- function(N) { #nolint
+runifC <- function(N) {
     .Call(`_SpaDES_tools_runifC`, N)
 }
+

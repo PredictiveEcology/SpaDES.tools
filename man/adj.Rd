@@ -7,12 +7,12 @@
 \usage{
 adj.raw(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
   include = FALSE, target = NULL, numCol = NULL, numCell = NULL,
-  match.adjacent = FALSE, cutoff.for.data.table = 2000, torus = FALSE,
+  matchAdjacent = FALSE, cutoffForDataTable = 2000, torus = FALSE,
   id = NULL, numNeighs = NULL, returnDT = FALSE)
 
 adj(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
   include = FALSE, target = NULL, numCol = NULL, numCell = NULL,
-  match.adjacent = FALSE, cutoff.for.data.table = 2000, torus = FALSE,
+  matchAdjacent = FALSE, cutoffForDataTable = 2000, torus = FALSE,
   id = NULL, numNeighs = NULL, returnDT = FALSE)
 }
 \arguments{
@@ -28,7 +28,7 @@ cells with one-cell diagonal moves.
 Or a neighbourhood matrix (see Details).}
 
 \item{sort}{logical. Whether the outputs should be sorted or not, using cell ids
-of the \code{from} cells (and \code{to} cells, if \code{match.adjacent}
+of the \code{from} cells (and \code{to} cells, if \code{matchAdjacent}
 is \code{TRUE}).}
 
 \item{pairs}{logical. If \code{TRUE}, a matrix of pairs of adjacent cells is returned.
@@ -44,11 +44,11 @@ Using this with \code{numCell} is a bit faster execution time.}
 \item{numCell}{numeric indicating number of cells in the raster.
 Using this with \code{numCol} is a bit faster execution time.}
 
-\item{match.adjacent}{logical. Should the returned object be the same as
+\item{matchAdjacent}{logical. Should the returned object be the same as
 \code{raster::adjacent}.
 Default \code{FALSE}, which is faster.}
 
-\item{cutoff.for.data.table}{numeric. If the number of cells is above this value,
+\item{cutoffForDataTable}{numeric. If the number of cells is above this value,
 the function uses data.table which is faster with
 large numbers of cells. Default is 5000, which appears
 to be the turning point where data.table becomes faster.}
@@ -64,15 +64,15 @@ with equal probabilities.}
 
 \item{returnDT}{A logical. If TRUE, then the function will return the result
 as a \code{data.table}, if the internals used \code{data.table},
-i.e., if number of cells is greater than \code{cutoff.for.data.table}.
+i.e., if number of cells is greater than \code{cutoffForDataTable}.
 User should be warned that this will therefore cause the output
-format to change depending \code{cutoff.for.data.table}.
-This will be faster for situations where \code{cutoff.for.data.table = TRUE}.}
+format to change depending \code{cutoffForDataTable}.
+This will be faster for situations where \code{cutoffForDataTable = TRUE}.}
 }
 \value{
 Either a matrix (if more than 1 column, i.e., \code{pairs = TRUE},
 and/or \code{id} is provided), a vector (if only one column), or a \code{data.table}
-(if \code{cutoff.for.data.table} is less than \code{length(cells)} \emph{and}
+(if \code{cutoffForDataTable} is less than \code{length(cells)} \emph{and}
 \code{returnDT} is \code{TRUE}.
 To get a consistent output, say a matrix, it would be wise to test the output
 for its class.

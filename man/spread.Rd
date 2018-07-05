@@ -263,7 +263,7 @@ asymmetric spreadProbs is always equal to spreadProb at every iteration:
 
 There are 4 ways for the spread to "stop" spreading. Here, each "event" is defined as
 all cells that are spawned from a single starting loci. So, one spread call can have
-multiple spreading "events". The ways outlines below are all acting at all times,
+multiple spreading "events". The ways outlined below are all acting at all times,
 i.e., they are not mutually exclusive. Therefore, it is the user's
 responsibility to make sure the different rules are interacting with
 each other correctly. Using \code{spreadProb} or \code{maxSize} are computationally

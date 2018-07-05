@@ -4,10 +4,10 @@
 \alias{numAgents}
 \title{SELES - Number of Agents to initiate}
 \usage{
-numAgents(N, probInit)
+numAgents(n, probInit)
 }
 \arguments{
-\item{N}{Number of agents to initiate (integer scalar).}
+\item{n}{Number of agents to initiate (integer scalar).}
 
 \item{probInit}{Probability of initializing an agent at the location.}
 }
