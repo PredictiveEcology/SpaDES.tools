@@ -64,7 +64,7 @@ setMethod(
     if (!is.integer(ny)) ny <- as.integer(ny)
     if (is.integer(buffer)) buffer <- as.numeric(buffer)
 
-    if(!is.na(path)){
+    if (!is.na(path)) {
       checkPath(path, create = TRUE)
     }
 
@@ -104,7 +104,7 @@ setMethod(
 
       ri <- crop(r, e[[i]], datatype = rType)
       crs(ri) <- crs(r)
-      if (is.na(path)){
+      if (is.na(path)) {
         return(ri)
       } else {
         filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
