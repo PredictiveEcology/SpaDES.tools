@@ -145,7 +145,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   }
   #compatible with different raster datatypes
   y4 <- splitRaster(r, nx, ny, rType = "INT1U")
-  expect_identical(dataType(y4[[1]]),"INT1U")
+  expect_identical(dataType(y4[[1]]), "INT1U")
   #INT now defaults to INT4S, FLT defaults to FLT4S
   y5 <- splitRaster(r, nx, ny, rType = "INT")
   expect_identical(dataType(y5[[1]]), "INT4S")
@@ -162,7 +162,8 @@ test_that("splitRaster works in parallel", {
   if (interactive()) {
     library(raster); on.exit(detach("package:raster"), add = TRUE)
 
-    tmpdir <- file.path(tempdir(), "splitRaster-test-parallel") %>% reproducible::checkPath(create = TRUE)
+    tmpdir <- file.path(tempdir(), "splitRaster-test-parallel") %>%
+      reproducible::checkPath(create = TRUE)
 
     on.exit({
       #detach("package:raster")
@@ -223,7 +224,8 @@ test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   skip_on_appveyor()
   skip("This is very big.")
 
-  tmpdir <- file.path(tempdir(), "splitRaster-test-large") %>% reproducible::checkPath(create = TRUE)
+  tmpdir <- file.path(tempdir(), "splitRaster-test-large") %>%
+    reproducible::checkPath(create = TRUE)
   library(magrittr)
   library(raster); on.exit(detach("package:raster"), add = TRUE)
 

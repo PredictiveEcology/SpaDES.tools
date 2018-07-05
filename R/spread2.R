@@ -2,7 +2,8 @@ if (getRversion() >= "3.1.0") {
   utils::globalVariables(c("distance",
                            "from", "i.size", "ind", "indClDT", "initialPixels",
                            "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
-                           "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
+                           "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells",
+                           "V1", "proportion"
   ))
 }
 
@@ -769,7 +770,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           set(numNeighsByPixel, NULL, "numNeighs",
               pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
           dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
-                                                                   .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
+                                                                   .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)], #nolint
                                                                    by = "from"]$V1]
         }
         set(dtPotential, NULL, "spreadProbRel", NULL)
@@ -784,10 +785,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     } else {
       actualSpreadProb <- spreadProb[dtPotential$to]
       # remove NA values that may come from a spreadProb raster
-      NAaSP <- !is.na(actualSpreadProb)
-      if (any(NAaSP)) {
-        dtPotential <- dtPotential[NAaSP,]
-        actualSpreadProb <- actualSpreadProb[NAaSP]
+      naSp <- !is.na(actualSpreadProb)
+      if (any(naSp)) {
+        dtPotential <- dtPotential[naSp, ]
+        actualSpreadProb <- actualSpreadProb[naSp]
       }
     }
 
@@ -827,7 +828,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         dtNROW <- NROW(dt)
         dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
-        # this is to prevent overlap within an event... in some cases, overlap within event is desired, so skip this block
+        # prevents overlap within an event... if overlap within event is desired, skip this block
         if (!is.na(allowOverlap)) {
           dt[, `:=`(dups = duplicatedInt(pixels)), by = initialPixels]
           dupes <- dt$dups
@@ -845,7 +846,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         successCells <- dtPotential$to[spreadProbSuccess]
         dupsWithinDtPotential <- duplicatedInt(successCells)
 
-        #successCells <- na.omit(successCells[!dupsWithinDtPotential]) # remove the dupsWithinDtPotential
+        #successCells <- na.omit(successCells[!dupsWithinDtPotential]) # rm dupsWithinDtPotential
         successCells <- successCells[!dupsWithinDtPotential] # remove the dupsWithinDtPotential
         potentialNotAvailable <- notAvailable[successCells]
 

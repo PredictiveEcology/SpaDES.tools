@@ -206,7 +206,8 @@ test_that("spread stopRule does not work correctly", {
       expect_true(all(c(0, whCirc) %in%
                         circs[as.vector(adj(hab2, cells[pd == maxRadius], pairs = FALSE))]))
     }
-    if (interactive()) Plot(circEdge, addTo = "circs", cols = c("transparent", rainbow(numCircs)[whCirc]))
+    if (interactive()) Plot(circEdge, addTo = "circs",
+                            cols = c("transparent", rainbow(numCircs)[whCirc]))
   }
 
   # Test complex functions

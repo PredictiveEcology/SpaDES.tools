@@ -22,7 +22,7 @@ test_that("randomPolygon: does not work properly", {
 
   ## check that polygon area approkimately matches that given by hectares
   polyArea <- rgeos::gArea(spTransform(poly1, areaCRS)) / 1e4
-  expect_true(base::abs(base::abs(polyArea - area)) <  area/4) ## TODO: why is this area/4?
+  expect_true(base::abs(base::abs(polyArea - area)) <  area / 4) ## TODO: why is this area/4?
 
   ## check that polygon center is approximately centered on x
   centerSP <- SpatialPoints(center, proj4string = areaCRS)

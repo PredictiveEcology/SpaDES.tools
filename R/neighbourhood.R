@@ -41,7 +41,7 @@ if (getRversion() >= "3.1.0") {
 #'                   Or a neighbourhood matrix (see Details).
 #'
 #' @param sort logical. Whether the outputs should be sorted or not, using cell ids
-#'             of the \code{from} cells (and \code{to} cells, if \code{match.adjacent}
+#'             of the \code{from} cells (and \code{to} cells, if \code{matchAdjacent}
 #'             is \code{TRUE}).
 #'
 #' @param pairs logical. If \code{TRUE}, a matrix of pairs of adjacent cells is returned.
@@ -57,11 +57,11 @@ if (getRversion() >= "3.1.0") {
 #' @param numCell numeric indicating number of cells in the raster.
 #'                Using this with \code{numCol} is a bit faster execution time.
 #'
-#' @param match.adjacent logical. Should the returned object be the same as
+#' @param matchAdjacent logical. Should the returned object be the same as
 #'                       \code{raster::adjacent}.
 #'                       Default \code{FALSE}, which is faster.
 #'
-#' @param cutoff.for.data.table numeric. If the number of cells is above this value,
+#' @param cutoffForDataTable numeric. If the number of cells is above this value,
 #'                              the function uses data.table which is faster with
 #'                              large numbers of cells. Default is 5000, which appears
 #'                              to be the turning point where data.table becomes faster.
@@ -76,14 +76,14 @@ if (getRversion() >= "3.1.0") {
 #'                  with equal probabilities.
 #' @param returnDT A logical. If TRUE, then the function will return the result
 #'                 as a \code{data.table}, if the internals used \code{data.table},
-#'                 i.e., if number of cells is greater than \code{cutoff.for.data.table}.
+#'                 i.e., if number of cells is greater than \code{cutoffForDataTable}.
 #'                 User should be warned that this will therefore cause the output
-#'                 format to change depending \code{cutoff.for.data.table}.
-#'                 This will be faster for situations where \code{cutoff.for.data.table = TRUE}.
+#'                 format to change depending \code{cutoffForDataTable}.
+#'                 This will be faster for situations where \code{cutoffForDataTable = TRUE}.
 #'
 #' @return Either a matrix (if more than 1 column, i.e., \code{pairs = TRUE},
 #' and/or \code{id} is provided), a vector (if only one column), or a \code{data.table}
-#' (if \code{cutoff.for.data.table} is less than \code{length(cells)} \emph{and}
+#' (if \code{cutoffForDataTable} is less than \code{length(cells)} \emph{and}
 #' \code{returnDT} is \code{TRUE}.
 #' To get a consistent output, say a matrix, it would be wise to test the output
 #' for its class.
@@ -109,9 +109,9 @@ if (getRversion() >= "3.1.0") {
 #' adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8,
 #'                include = TRUE)
 #'
-adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
+adj.Raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
                     include = FALSE, target = NULL, numCol = NULL, numCell = NULL,
-                    match.adjacent = FALSE, cutoff.for.data.table = 2e3,
+                    matchAdjacent = FALSE, cutoffForDataTable = 2e3,
                     torus = FALSE, id = NULL, numNeighs = NULL, returnDT = FALSE) {
   to <- NULL
   J <- NULL # nolint
@@ -149,7 +149,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 
   toCells <- if (directions == 8) {
 
-    if (match.adjacent)
+    if (matchAdjacent)
       if (include)
         c(cells, topl, lef, botl, topr, rig, botr, top, bot)
       else
@@ -160,7 +160,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
       else
         c(topl, top, topr, lef, rig, botl, bot, botr)
   } else if (directions == 4) {
-    if (match.adjacent)
+    if (matchAdjacent)
       if (include)
         c(cells, lef, rig, top, bot)
       else
@@ -171,7 +171,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
       else
         c(top, lef, rig, bot)
   } else if (directions == "bishop") {
-    if (match.adjacent)
+    if (matchAdjacent)
       if (include)
         c(cells, topl, botl, topr, botr)
       else
@@ -196,7 +196,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     fromCells <- fromCells[indFull2]
   }
 
-  useMatrix <- (length(cells) < cutoff.for.data.table)
+  useMatrix <- (length(cells) < cutoffForDataTable)
   if (useMatrix) {
     adj <- cbind(from = fromCells, to = toCells)
     if (!is.null(id)) adj <- cbind(adj, id = rep.int(id, times = numToCells))
@@ -213,7 +213,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 
     if (sort) {
       if (pairs) {
-        if (match.adjacent) {
+        if (matchAdjacent) {
           adj <- adj[order(adj[, "from"], adj[, "to"]), , drop = FALSE]
         } else {
           adj <- adj[order(adj[, "from"]), , drop = FALSE]
@@ -230,14 +230,14 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
       if (pairs) {
         return(adj[
           !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
-              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
-          , , drop = FALSE])
+              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) #| right & left edge cells,
+          , , drop = FALSE]) # with neighbours wrapped
       } else {
         adj <- adj[
           !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
-              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
-          , keepCols, drop = FALSE]
-        if (match.adjacent) {
+              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells,
+          , keepCols, drop = FALSE] # with neighbours wrapped
+        if (matchAdjacent) {
           adj <- unique(adj[, "to"])
         }
         return(adj)
@@ -252,7 +252,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
       if (pairs) {
         return(adj)
       } else {
-        if (match.adjacent) {
+        if (matchAdjacent) {
           adj <- unique(adj[, "to", drop = TRUE])
         } else {
           adj <- adj[, keepCols, drop = FALSE]
@@ -274,7 +274,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 
     if (sort) {
       if (pairs) {
-        if (match.adjacent) {
+        if (matchAdjacent) {
           setkeyv(adj, c("from", "to"))
         } else {
           setkeyv(adj, "from")
@@ -294,9 +294,9 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
       if (!pairs) {
         adj <- adj[
           !((((to - 1) %% numCell + 1) != to) |  #top or bottom of raster
-              ((from %% numCol + to %% numCol) == 1))# | #right & left edge cells, with neighbours wrapped
+              ((from %% numCol + to %% numCol) == 1))#right & left edge cells, w/ nghbrs wrapped
           ]
-        if (match.adjacent) {
+        if (matchAdjacent) {
           if (returnDT)
             return(unique(adj[, list(to)]))
           else
@@ -329,7 +329,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
         set(adj, which(whBotTop), "to", toWhBotTop +
               as.integer(sign(from[whBotTop] - toWhBotTop) * numCell))
 
-        if (match.adjacent) {
+        if (matchAdjacent) {
           if (returnDT)
             return(unique(adj[, list(to)]))
           else
@@ -355,7 +355,7 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' @importFrom compiler cmpfun
 #' @export
 #' @rdname adj
-adj <- compiler::cmpfun(adj.raw)
+adj <- compiler::cmpfun(adj.Raw)
 
 ##############################################################
 #' Identify pixels in a circle or ring (donut) around an object.
@@ -810,7 +810,7 @@ cir <- function(landscape, coords, loci,
 #'                stddev = sd, lonlat = FALSE, torus = TRUE)
 #'   if (interactive()) Plot(agent, addTo = "hab", axes = TRUE)
 #' }
-setGeneric("wrap", function(X, bounds, withHeading) {
+setGeneric("wrap", function(X, bounds, withHeading) { #nolint
   standardGeneric("wrap")
 })
 
@@ -819,7 +819,7 @@ setGeneric("wrap", function(X, bounds, withHeading) {
 setMethod(
   "wrap",
   signature(X = "matrix", bounds = "Extent", withHeading = "missing"),
-  definition = function(X, bounds) {
+  definition = function(X, bounds) { #nolint
     if (identical(colnames(X), c("x", "y"))) {
       return(cbind(
         x = (X[, "x"] - bounds@xmin) %% (bounds@xmax - bounds@xmin) + bounds@xmin,
@@ -835,8 +835,8 @@ setMethod(
 #' @rdname wrap
 setMethod(
   "wrap",
-  signature(X = "SpatialPoints", bounds = "ANY", withHeading = "missing"),
-  definition = function(X, bounds) {
+  signature(X = "SpatialPoints", bounds = "ANY", withHeading = "missing"), #nolint
+  definition = function(X, bounds) { #nolint
     X@coords <- wrap(X@coords, bounds = bounds)
     return(X)
 })
@@ -846,8 +846,8 @@ setMethod(
 setMethod(
   "wrap",
   signature(X = "matrix", bounds = "Raster", withHeading = "missing"),
-  definition = function(X, bounds) {
-    X <- wrap(X, bounds = extent(bounds))
+  definition = function(X, bounds) { #nolint
+    X <- wrap(X, bounds = extent(bounds)) #nolint
     return(X)
 })
 
@@ -856,8 +856,8 @@ setMethod(
 setMethod(
   "wrap",
   signature(X = "matrix", bounds = "Raster", withHeading = "missing"),
-  definition = function(X, bounds) {
-    X <- wrap(X, bounds = extent(bounds))
+  definition = function(X, bounds) { #nolint
+    X <- wrap(X, bounds = extent(bounds)) #nolint
     return(X)
 })
 
@@ -866,10 +866,10 @@ setMethod(
 setMethod(
   "wrap",
   signature(X = "matrix", bounds = "matrix", withHeading = "missing"),
-  definition = function(X, bounds) {
+  definition = function(X, bounds) { #nolint
     if (identical(colnames(bounds), c("min", "max")) &
          (identical(rownames(bounds), c("s1", "s2")))) {
-      X <- wrap(X, bounds = extent(bounds))
+      X <- wrap(X, bounds = extent(bounds)) #nolint
       return(X)
     } else {
       stop("Must use either a bbox, Raster*, or Extent for 'bounds'")
@@ -881,7 +881,7 @@ setMethod(
 setMethod(
   "wrap",
   signature(X = "SpatialPointsDataFrame", bounds = "Extent", withHeading = "logical"),
-  definition = function(X, bounds, withHeading) {
+  definition = function(X, bounds, withHeading) { #nolint
     if (withHeading) {
       # This requires that previous points be "moved" as if they are
       #  off the bounds, so that the heading is correct
@@ -906,8 +906,8 @@ setMethod(
 setMethod(
   "wrap",
   signature(X = "SpatialPointsDataFrame", bounds = "Raster", withHeading = "logical"),
-  definition = function(X, bounds, withHeading) {
-      X <- wrap(X, bounds = extent(bounds), withHeading = withHeading)
+  definition = function(X, bounds, withHeading) { #nolint
+      X <- wrap(X, bounds = extent(bounds), withHeading = withHeading) #nolint
       return(X)
 })
 
@@ -916,10 +916,10 @@ setMethod(
 setMethod(
   "wrap",
   signature(X = "SpatialPointsDataFrame", bounds = "matrix", withHeading = "logical"),
-  definition = function(X, bounds, withHeading) {
+  definition = function(X, bounds, withHeading) { #nolint
     if (identical(colnames(bounds), c("min", "max")) &
         identical(rownames(bounds), c("s1", "s2"))) {
-      X <- wrap(X, bounds = extent(bounds), withHeading = withHeading)
+      X <- wrap(X, bounds = extent(bounds), withHeading = withHeading) #nolint
       return(X)
     } else {
       stop("Must use either a bbox, Raster*, or Extent for 'bounds'")
@@ -1056,7 +1056,7 @@ setMethod(
                      returnDistances = TRUE,
                      includeBehavior = "excludePixels")
   pureCircle2 <- pureCircle2[order(pureCircle2[, "indices"]), ]
-  cc <- cbind(pureCircle2[, "x"] - xy[,"x"], pureCircle2[, "y"] - xy[, "y"])
+  cc <- cbind(pureCircle2[, "x"] - xy[, "x"], pureCircle2[, "y"] - xy[, "y"])
   dd <- cbind(x = rep(bb[, "x"], each = NROW(pureCircle2)),
               y = rep(bb[, "y"], each = NROW(pureCircle2))) +
     matrix(rep(t(cc), NROW(bb)), ncol = 2, byrow = TRUE)

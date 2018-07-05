@@ -64,7 +64,7 @@ setMethod(
     if (!is.integer(ny)) ny <- as.integer(ny)
     if (is.integer(buffer)) buffer <- as.numeric(buffer)
 
-    if(!is.na(path)){
+    if (!is.na(path)){
       checkPath(path, create = TRUE)
     }
 
@@ -113,7 +113,8 @@ setMethod(
       }
     }
     tiles <- if (!is.null(cl)) {
-      clusterApplyLB(cl = cl, x = seq_along(extents), fun = croppy, e = extents, r = r, path = path, rType = rType)
+      clusterApplyLB(cl = cl, x = seq_along(extents),
+                     fun = croppy, e = extents, r = r, path = path, rType = rType)
     } else {
       lapply(X = seq_along(extents), FUN = croppy, e = extents, r = r, path = path, rType = rType)
     }

@@ -50,4 +50,3 @@ getGDALVersion <- function() {
   .Deprecated("reproducible::getGDALVersion")
   reproducible::getGDALVersion()
 }
-

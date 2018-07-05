@@ -470,11 +470,11 @@ test_that("spread2 tests", {
     origSpreadIterations(ras, FALSE, n, sp)
   )
   ## Unit: milliseconds
-  ##                                    expr       min        lq      mean   median        uq       max neval
-  ##         iterativeFun(ras, FALSE, n, sp)  3.096979 12.642477  73.02248 35.17520  91.10528  764.4073   300
-  ##      nonIterativeFun(ras, FALSE, n, sp)  1.509484  6.555565  31.18444 14.91066  42.78317  158.5237   300
-  ##           origSpread(ras, FALSE, n, sp)  5.154006  7.555631  14.87158 11.49005  17.50599  231.5487   300
-  ## origSpreadIterations(ras, FALSE, n, sp) 10.754669 51.524368 141.48620 93.61996 169.10808 2110.2683   300
+  ##                                    expr       min        lq      mean   median        uq       max neval #nolint
+  ##         iterativeFun(ras, FALSE, n, sp)  3.096979 12.642477  73.02248 35.17520  91.10528  764.4073   300 #nolint
+  ##      nonIterativeFun(ras, FALSE, n, sp)  1.509484  6.555565  31.18444 14.91066  42.78317  158.5237   300 #nolint
+  ##           origSpread(ras, FALSE, n, sp)  5.154006  7.555631  14.87158 11.49005  17.50599  231.5487   300 #nolint
+  ## origSpreadIterations(ras, FALSE, n, sp) 10.754669 51.524368 141.48620 93.61996 169.10808 2110.2683   300 #nolint
   ##
   profvis::profvis({
     set.seed(3451)
@@ -685,7 +685,7 @@ test_that("spread2 tests -- asymmetry", {
   # Create a raster with one point at the centre
   ciCentre <- raster(hab)
   ciCentre <- setValues(ciCentre, 1)
-  ciCentre[seq_len(ncell(ciCentre))[-(ncell(ciCentre) / 2 - ncol(ciCentre) / 2)]] <- NA_integer_
+  ciCentre[seq_len(ncell(ciCentre))[- (ncell(ciCentre) / 2 - ncol(ciCentre) / 2)]] <- NA_integer_
   # create a direction raster with all points leading to that point
   directionRas <- direction(ciCentre)
   directionRas[] <- deg(directionRas[])
@@ -881,26 +881,28 @@ test_that("spread2 tests -- persistence", {
   ## test the effect of persistence as a single numeric value
   set.seed(5)
   noPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
-                       spreadProb = 0.23, persistProb = 0, iterations = 10, directions = 8L, plot.it = FALSE)
+                       spreadProb = 0.23, persistProb = 0, iterations = 10,
+                       directions = 8L, plot.it = FALSE)
   wPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
-                      spreadProb = 0.23, persistProb = 0.8, iterations = 10, directions = 8L, plot.it = FALSE)
+                      spreadProb = 0.23, persistProb = 0.8, iterations = 10,
+                      directions = 8L, plot.it = FALSE)
 
   expect_true(sum(noPersist$state == "activeSource") < sum(wPersist$state == "activeSource"))
 
   ## test the effect of persistence as a raster layer
-  M <- matrix(0.8, nrow = 50, ncol = 50)
-  M[upper.tri(M)] <- 0
+  m <- matrix(0.8, nrow = 50, ncol = 50)
+  m[upper.tri(m)] <- 0
   persistRas <- raster::raster(nrows = 50, ncols = 50)
-  persistRas[] <- as.vector(M)
+  persistRas[] <- as.vector(m)
 
   ## first fire in high persistence area,
   ## second fire in low persistence area:
-  start <- c(50, length(landscape)-49)
+  start <- c(50, length(landscape) - 49)
 
   set.seed(5)
   wRasPersist <- spread2(landscape = landscape, start = start,
-                        spreadProb = 0.23, persistProb = persistRas, iterations = 10, directions = 8L,
-                        asRaster = TRUE, plot.it = FALSE)
+                        spreadProb = 0.23, persistProb = persistRas, iterations = 10,
+                        directions = 8L, asRaster = TRUE, plot.it = FALSE)
 
   expect_true(sum(wRasPersist[] == 1, na.rm = TRUE) > sum(wRasPersist[] == 2, na.rm = TRUE))
 
@@ -913,9 +915,9 @@ test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   landscape[] <- 1
   landscape[51:55] <- NA
   start <- 1:5
-  spreadProb = landscape
+  spreadProb <- landscape
   spreadProb[!is.na(landscape[])] <- runif(sum(!is.na(landscape[])))
-  expect_silent(spread2(landscape = landscape, spreadProb = spreadProb,start = start,
+  expect_silent(spread2(landscape = landscape, spreadProb = spreadProb, start = start,
           plot.it = FALSE))
 
 })
