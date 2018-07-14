@@ -61,9 +61,6 @@ Suggests:
     rgeos,
     rmarkdown,
     testthat (>= 1.0.2)
-Remotes:
-    PredictiveEcology/quickPlot@development,
-    PredictiveEcology/reproducible@development
 Language: en-CA
 LinkingTo: Rcpp
 License: GPL-3
