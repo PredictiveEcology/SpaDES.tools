@@ -63,7 +63,7 @@ linked by a column in that table called pops." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
       </span>
     </div>
 
@@ -161,8 +161,12 @@ agents following the numbers above.</p>
 <span class='no'>rasAgents</span> <span class='kw'>&lt;-</span> <span class='fu'>specificNumPerPatch</span>(<span class='no'>ras</span>, <span class='no'>patchDT</span>)
 <span class='no'>rasAgents</span>[<span class='fu'>is.na</span>(<span class='no'>rasAgents</span>)] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 
-<span class='fu'>library</span>(<span class='no'>testthat</span>)
-<span class='fu'><a href='http://www.rdocumentation.org/packages/testthat/topics/logical-expectations'>expect_true</a></span>(<span class='fu'>all</span>(<span class='fu'>unname</span>(<span class='fu'>table</span>(<span class='no'>ras</span>[<span class='no'>rasAgents</span>])) <span class='kw'>==</span> <span class='no'>patchDT</span>$<span class='no'>num.in.pop</span>))
+<span class='fu'>library</span>(<span class='no'>testthat</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘testthat’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:dplyr’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    matches</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:magrittr’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    equals, is_less_than, not</span></div><div class='input'><span class='fu'><a href='http://www.rdocumentation.org/packages/testthat/topics/logical-expectations'>expect_true</a></span>(<span class='fu'>all</span>(<span class='fu'>unname</span>(<span class='fu'>table</span>(<span class='no'>ras</span>[<span class='no'>rasAgents</span>])) <span class='kw'>==</span> <span class='no'>patchDT</span>$<span class='no'>num.in.pop</span>))
 
 <span class='co'># Use numPerPatchMap</span>
 <span class='no'>rasPatches</span> <span class='kw'>&lt;-</span> <span class='no'>ras</span>

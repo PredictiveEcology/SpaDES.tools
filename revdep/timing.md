@@ -1,9 +1,9 @@
 # Check times
 
-|package     |version | check_time|
-|:-----------|:-------|----------:|
-|NetLogoR    |0.3.3   |      203.6|
-|SpaDES.core |0.1.1   |        9.8|
-|SpaDES      |2.0.1   |        7.8|
+|   |package     |version | check_time|
+|:--|:-----------|:-------|----------:|
+|2  |SpaDES.core |0.2.0   |      383.9|
+|1  |NetLogoR    |0.3.3   |      253.7|
+|3  |SpaDES      |2.0.2   |      197.5|
 
 
