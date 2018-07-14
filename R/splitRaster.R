@@ -23,8 +23,7 @@
 #'                Default is \code{c(0, 0)}, which means no buffer.
 #'
 #' @param path    Character specifying the directory to which the split tiles will be saved.
-#'                If missing, the function creates a subdirectory in the current
-#'                working directory based on the raster's name (i.e., using \code{names(x)}).
+#'                If missing, the function will write to memory.
 #' @param cl      A cluster object. Optional. This would generally be created using
 #'                parallel::makeCluster or equivalent. This is an alternative way, instead
 #'                of \code{beginCluster()}, to use parallelism for this function, allowing for
@@ -48,7 +47,7 @@
 #'
 setGeneric(
   "splitRaster",
-  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = file.path(getwd(), names(r)), cl, rType = "FLT4S") {
+  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rType = "FLT4S") {
   standardGeneric("splitRaster")
 })
 
@@ -65,7 +64,9 @@ setMethod(
     if (!is.integer(ny)) ny <- as.integer(ny)
     if (is.integer(buffer)) buffer <- as.numeric(buffer)
 
-    checkPath(path, create = TRUE)
+    if (!is.na(path)) {
+      checkPath(path, create = TRUE)
+    }
 
     if (missing(cl)) {
       cl <- tryCatch(getCluster(), error = function(e) NULL)
@@ -99,14 +100,18 @@ setMethod(
       }
     }
 
-    croppy <- function(i, e, r, path, rType = "FLT4S") {
-      filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
-      ri <- crop(r, e[[i]])
-      crs(ri) <- crs(r)
-      writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
-      return(raster(filename))
-    }
+    croppy <- function(i, e, r, path, rType) {
 
+      ri <- crop(r, e[[i]], datatype = rType)
+      crs(ri) <- crs(r)
+      if (is.na(path)) {
+        return(ri)
+      } else {
+        filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
+        writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
+        return(raster(filename))
+      }
+    }
     tiles <- if (!is.null(cl)) {
       clusterApplyLB(cl = cl, x = seq_along(extents), fun = croppy, e = extents, r = r, path = path, rType = rType)
     } else {

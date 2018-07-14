@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
       </span>
     </div>
 
@@ -101,13 +101,33 @@
       <small>Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="version-0-2-0" class="section level1">
+    <div id="version-0-3-0" class="section level1">
 <h1 class="page-header">
-<a href="#version-0-2-0" class="anchor"></a>version 0.2.0<small> Unreleased </small>
+<a href="#version-0-3-0" class="anchor"></a>version 0.3.0<small> Unreleased </small>
 </h1>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features" class="anchor"></a>New features</h2>
+<ul>
+<li>
+<code>splitRaster</code> defaults to in-memory rasters when no file path specified (<a href='https://github.com/PredictiveEcology/SpaDES.tools/issues/47'>#47</a>, <a href='http://github.com/ianmseddy'>@ianmseddy</a>).</li>
+</ul>
+</div>
+<div id="removed-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#removed-features" class="anchor"></a>Removed features</h2>
+<ul>
+<li>Previously deprecated functions removed to fix CRAN check WARNINGs. These are now located in the <code>reproducible</code> package.</li>
+</ul>
+</div>
+</div>
+    <div id="version-0-2-0" class="section level1">
+<h1 class="page-header">
+<a href="#version-0-2-0" class="anchor"></a>version 0.2.0<small> 2018-06-18 </small>
+</h1>
+<div id="new-features-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features-1" class="anchor"></a>New features</h2>
 <ul>
 <li>new arguments added to <code>gaussMap</code> (<a href='https://github.com/PredictiveEcology/SpaDES.tools/issues/20'>#20</a>, <a href='http://github.com/ianmseddy'>@ianmseddy</a>).</li>
 <li>move <code>fastMask</code> to <code>reproducible</code> package</li>
@@ -120,7 +140,7 @@
 <li>
 <code><a href="../reference/deprecated.html">fastCrop()</a></code>: <code><a href="http://www.rdocumentation.org/packages/raster/topics/crop">raster::crop</a></code> is faster than <code>velox::crop</code> under many tests.</li>
 <li>
-<code><a href="../reference/deprecated.html">fastMask()</a></code>: moved to the <code>reproducible</code> package.</li>
+<code>fastMask()</code>: moved to the <code>reproducible</code> package.</li>
 </ul>
 </div>
 <div id="bug-fixes" class="section level2">
@@ -170,6 +190,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#version-0-3-0">0.3.0</a></li>
         <li><a href="#version-0-2-0">0.2.0</a></li>
         <li><a href="#version-0-1-1">0.1.1</a></li>
         <li><a href="#version-0-1-0">0.1.0</a></li>

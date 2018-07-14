@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
       </span>
     </div>
 
@@ -175,9 +175,10 @@ just once, then add to the xy coordinates of every locus</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="deprecated.html">checkGDALVersion()</a></code> <code><a href="deprecated.html">fastCrop()</a></code> <code><a href="deprecated.html">fastMask()</a></code> <code><a href="deprecated.html">getGDALVersion()</a></code> </p>
+          <p><code><a href="deprecated.html">fastCrop()</a></code> </p>
         </td>
-        <td><p>Deprecated functions</p></td>
+        <td><p><code>fastCrop</code> is a wrapper around <code>velox::VeloxRaster_crop</code>, though
+<code>raster::crop</code> is faster under many tests.</p></td>
       </tr><tr>
         
         <td>
