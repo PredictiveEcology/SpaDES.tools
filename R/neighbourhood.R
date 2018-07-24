@@ -109,7 +109,7 @@ if (getRversion() >= "3.1.0") {
 #' adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8,
 #'                include = TRUE)
 #'
-adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
+adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
                     include = FALSE, target = NULL, numCol = NULL, numCell = NULL,
                     match.adjacent = FALSE, cutoff.for.data.table = 2e3,
                     torus = FALSE, id = NULL, numNeighs = NULL, returnDT = FALSE) {
@@ -351,11 +351,6 @@ adj.raw <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     }
   }
 }
-
-#' @importFrom compiler cmpfun
-#' @export
-#' @rdname adj
-adj <- compiler::cmpfun(adj.raw)
 
 ##############################################################
 #' Identify pixels in a circle or ring (donut) around an object.

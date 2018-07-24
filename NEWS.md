@@ -8,6 +8,7 @@ version 0.3.0
 
 ## Removed features
 * Previously deprecated functions removed to fix CRAN check WARNINGs. These are now located in the `reproducible` package.
+* `compiler` package no longer used; is automatic in R >= 3.5
 
 version 0.2.0
 =============

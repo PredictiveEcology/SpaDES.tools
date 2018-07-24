@@ -32,7 +32,6 @@ Imports:
     bit (>= 1.1-12),
     checkmate (>= 1.8.2),
     CircStats (>= 0.2-4),
-    compiler,
     data.table (>= 1.10.4),
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
