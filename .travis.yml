@@ -121,8 +121,10 @@ matrix:
     latex: false
     r_build_args: "--no-build-vignettes"
     r_check_args: "--as-cran --ignore-vignettes --no-examples"
-    before_script:
-    - Rscript -e "install.packages('rgdal', type = 'source')"
+    before_install:
+    - brew update
+    - brew install glpk
+    - Rscript -e 'install.packages(c("digest", "igraph", "rgdal"), type = "source")'
 r_build_args: " "
 r_check_args: "--as-cran"
 warnings_are_errors: true
