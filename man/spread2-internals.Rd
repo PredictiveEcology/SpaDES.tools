@@ -7,7 +7,8 @@
 \alias{asymmetryAdjust}
 \title{Internal helper}
 \usage{
-rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
+rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance,
+  dtPotentialColNames)
 
 reorderColsWDistance(needDistance, dtPotential, dtPotentialColNames)
 
@@ -43,7 +44,5 @@ vector \code{NROW(dtPotential)}.}
 }
 \description{
 Not for users. A function to setnames and rbindlist that is used 3 places in spread2.
-
-Internal helpers for \code{spread2}
 }
 \keyword{internal}
