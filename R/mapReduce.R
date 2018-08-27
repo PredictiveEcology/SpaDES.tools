@@ -62,11 +62,11 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
   if (length(newRasterCols) > 1) {
     ras <- list()
     for (i in newRasterCols) {
-      ras[[i]] <- raster(res = res(fullRaster), ext = extent(fullRaster),
+      ras[[i]] <- raster(res = res(fullRaster), ext = extent(fullRaster), crs = crs(fullRaster),
                          vals = BsumVec[[i]])
     }
   } else {
-    ras <- raster(res = res(fullRaster), ext = extent(fullRaster),
+    ras <- raster(res = res(fullRaster), ext = extent(fullRaster), crs = crs(fullRaster),
                   vals = BsumVec[[newRasterCols]])
 
   }
