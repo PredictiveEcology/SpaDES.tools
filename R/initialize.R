@@ -37,63 +37,67 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @return A raster map with same extent as \code{x}, with a Gaussian random pattern.
 #'
-#' @seealso \code{\link{RFsimulate}} and \code{\link{extent}}
+#' @seealso \code{RFsimulate} and \code{\link{extent}}
 #'
-#' @importFrom RandomFields RFoptions RFsimulate RMexp round RMgauss RMstable
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
 #' @rdname gaussmap
 #'
 #' @examples
 #' \dontrun{
-#' library(RandomFields)
-#' library(raster)
-#' nx <- ny <- 100L
-#' r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
-#' speedup <- max(1, nx/5e2)
-#' map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
-#' Plot(map1)
+#' if (require(RandomFields)) {
+#'   library(raster)
+#'   nx <- ny <- 100L
+#'   r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+#'   speedup <- max(1, nx/5e2)
+#'   map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
+#'   Plot(map1)
 #'
-#' # with non-default method
-#' map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
+#'   # with non-default method
+#'   map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
+#' }
 #' }
 #'
 gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
                      alpha = 1, inMemory = FALSE, ...) {
-  RFoptions(spConform = FALSE)
-  ext <- extent(x)
-  resol <- res(x)
-  nc <- (ext@xmax - ext@xmin) / resol[1]
-  nr <- (ext@ymax - ext@ymin) / resol[2]
-  wholeNumsCol <- .findFactors(nc)
-  wholeNumsRow <- .findFactors(nr)
-  ncSpeedup <- wholeNumsCol[which.min(abs(wholeNumsCol - nc / speedup))]
-  nrSpeedup <- wholeNumsRow[which.min(abs(wholeNumsRow - nr / speedup))]
-  speedupEffectiveCol <- nc / ncSpeedup
-  speedupEffectiveRow <- nr / nrSpeedup
-  if (method == "RMgauss") {
-    model <- RMgauss(scale = scale, var = var, ...)
-  } else if (method == "RMstable") {
-    if (!inRange(alpha, 0, 2)) {
-      stop("alpha must be between 0 and 2")
+  if (requireNamespace("RandomFields", quietly = FALSE)) {
+    RandomFields::RFoptions(spConform = FALSE)
+    ext <- extent(x)
+    resol <- res(x)
+    nc <- (ext@xmax - ext@xmin) / resol[1]
+    nr <- (ext@ymax - ext@ymin) / resol[2]
+    wholeNumsCol <- .findFactors(nc)
+    wholeNumsRow <- .findFactors(nr)
+    ncSpeedup <- wholeNumsCol[which.min(abs(wholeNumsCol - nc / speedup))]
+    nrSpeedup <- wholeNumsRow[which.min(abs(wholeNumsRow - nr / speedup))]
+    speedupEffectiveCol <- nc / ncSpeedup
+    speedupEffectiveRow <- nr / nrSpeedup
+    if (method == "RMgauss") {
+      model <- RandomFields::RMgauss(scale = scale, var = var, ...)
+    } else if (method == "RMstable") {
+      if (!inRange(alpha, 0, 2)) {
+        stop("alpha must be between 0 and 2")
+      }
+      model <- RandomFields::RMstable(scale = scale, var = var, alpha = alpha)
+    } else {
+      if ( method != "RMexp") {
+        message("method is not yet implemented, defaulting to RMexp.")
+      }
+      model <- RandomFields::RMexp(scale = scale, var = var, ...)
     }
-    model <- RMstable(scale = scale, var = var, alpha = alpha)
+    map <- raster(RandomFields::RFsimulate(model, y = 1:ncSpeedup, x = 1:nrSpeedup, grid = TRUE, ...))
+
+    if (inMemory) map <- setValues(map, getValues(map))
+
+    map <- map - cellStats(map, "min")
+    extent(map) <- ext
+    if (speedup > 1)
+      return(disaggregate(map, c(speedupEffectiveCol, speedupEffectiveRow)))
+    else
+      return(invisible(map))
   } else {
-    if ( method != "RMexp") {
-      message("method is not yet implemented, defaulting to RMexp.")
-    }
-    model <- RMexp(scale = scale, var = var, ...)
+    stop("The 'RandomFields' package is required but not installed.")
   }
-  map <- raster(RFsimulate(model, y = 1:ncSpeedup, x = 1:nrSpeedup, grid = TRUE, ...))
-
-  if (inMemory) map <- setValues(map, getValues(map))
-
-  map <- map - cellStats(map, "min")
-  extent(map) <- ext
-  if (speedup > 1)
-    return(disaggregate(map, c(speedupEffectiveCol, speedupEffectiveRow)))
-  else
-    return(invisible(map))
 }
 
 ################################################################################
