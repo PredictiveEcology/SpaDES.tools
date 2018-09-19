@@ -1,5 +1,11 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
+version 0.3.0.9000
+=============
+
+## Dependency changes
+* `RandomFields` moved to Suggests to prevent clashes with `data.table` multithreading
+
 version 0.3.0
 =============
 
