@@ -63,7 +63,7 @@ where y &amp;lt;- splitRaster(x)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
       </span>
     </div>
 
@@ -120,12 +120,12 @@ where <code>y &lt;- splitRaster(x)</code>.</p>
 <span class='co'># S4 method for list</span>
 <span class='fu'>mergeRaster</span>(<span class='no'>x</span>)
 
-<span class='fu'>splitRaster</span>(<span class='no'>r</span>, <span class='kw'>nx</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>ny</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
-  <span class='kw'>path</span> <span class='kw'>=</span> <span class='fu'>file.path</span>(<span class='fu'>getwd</span>(), <span class='fu'>names</span>(<span class='no'>r</span>)), <span class='no'>cl</span>, <span class='kw'>rType</span> <span class='kw'>=</span> <span class='st'>"FLT4S"</span>)
+<span class='fu'>splitRaster</span>(<span class='no'>r</span>, <span class='kw'>nx</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>ny</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0</span>, <span class='fl'>0</span>), <span class='kw'>path</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='no'>cl</span>,
+  <span class='kw'>rType</span> <span class='kw'>=</span> <span class='st'>"FLT4S"</span>)
 
 <span class='co'># S4 method for RasterLayer</span>
 <span class='fu'>splitRaster</span>(<span class='no'>r</span>, <span class='kw'>nx</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>ny</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
-  <span class='kw'>path</span> <span class='kw'>=</span> <span class='fu'>file.path</span>(<span class='fu'>getwd</span>(), <span class='fu'>names</span>(<span class='no'>r</span>)), <span class='no'>cl</span>, <span class='kw'>rType</span> <span class='kw'>=</span> <span class='st'>"FLT4S"</span>)</pre>
+  <span class='kw'>path</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='no'>cl</span>, <span class='kw'>rType</span> <span class='kw'>=</span> <span class='st'>"FLT4S"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,8 +158,7 @@ Default is <code>c(0, 0)</code>, which means no buffer.</p></td>
     <tr>
       <th>path</th>
       <td><p>Character specifying the directory to which the split tiles will be saved.
-If missing, the function creates a subdirectory in the current
-working directory based on the raster's name (i.e., using <code>names(x)</code>).</p></td>
+If missing, the function will write to memory.</p></td>
     </tr>
     <tr>
       <th>cl</th>

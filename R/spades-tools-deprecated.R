@@ -1,14 +1,3 @@
-#' Deprecated functions
-#'
-#' These will be removed in a future release.
-#'
-#' @export
-#' @rdname deprecated
-checkGDALVersion <- function() {
-  .Deprecated("reproducible::checkGDALVersion")
-  reproducible::checkGDALVersion()
-}
-
 #' \code{fastCrop} is a wrapper around \code{velox::VeloxRaster_crop}, though
 #' \code{raster::crop} is faster under many tests.
 #'
@@ -35,18 +24,4 @@ fastCrop <- function(x, y, ...) {
     a <- v1$as.RasterLayer(band = 1)
   }
   a
-}
-
-#' @export
-#' @rdname deprecated
-fastMask <- function(x, y) {
-  .Deprecated("reproducible::fastMask")
-  reproducible::fastMask(x, y)
-}
-
-#' @export
-#' @rdname deprecated
-getGDALVersion <- function() {
-  .Deprecated("reproducible::getGDALVersion")
-  reproducible::getGDALVersion()
 }

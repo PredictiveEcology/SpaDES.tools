@@ -15,8 +15,8 @@ mergeRaster(x)
 splitRaster(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl,
   rType = "FLT4S")
 
-\S4method{splitRaster}{RasterLayer}(r, nx = 1, ny = 1, buffer = c(0, 0),
-  path = NA, cl, rType = "FLT4S")
+\S4method{splitRaster}{RasterLayer}(r, nx = 1, ny = 1, buffer = c(0,
+  0), path = NA, cl, rType = "FLT4S")
 }
 \arguments{
 \item{x}{A list of split raster tiles (i.e., from \code{splitRaster}).}

@@ -1,10 +1,20 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
-version 0.2.0.9000
+version 0.3.0.9000
+=============
+
+## Dependency changes
+* `RandomFields` moved to Suggests to prevent clashes with `data.table` multithreading
+
+version 0.3.0
 =============
 
 ## New features
 * `splitRaster` defaults to in-memory rasters when no file path specified (#47, @ianmseddy).
+
+## Removed features
+* Previously deprecated functions removed to fix CRAN check WARNINGs. These are now located in the `reproducible` package.
+* `compiler` package no longer used; is automatic in R >= 3.5
 
 version 0.2.0
 =============
