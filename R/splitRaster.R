@@ -28,7 +28,7 @@
 #'                parallel::makeCluster or equivalent. This is an alternative way, instead
 #'                of \code{beginCluster()}, to use parallelism for this function, allowing for
 #'                more control over cluster use.
-#' @param rType   Datatype of the split rasters. Defaults to FLT4S.
+#' @param ...     Any other argument passed to \code{writeRaster}
 #'
 #' @return \code{splitRaster} returns a list (length \code{nx*ny}) of cropped raster tiles.
 #'
@@ -47,7 +47,7 @@
 #'
 setGeneric(
   "splitRaster",
-  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rType = "FLT4S") {
+  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, ...) {
   standardGeneric("splitRaster")
 })
 
@@ -56,7 +56,7 @@ setGeneric(
 setMethod(
   "splitRaster",
   signature = signature(r = "RasterLayer"),
-  definition = function(r, nx, ny, buffer, path, cl, rType) {
+  definition = function(r, nx, ny, buffer, path, cl, ...) {
     if (!is.numeric(nx) | !is.numeric(ny) | !is.numeric(buffer)) {
       stop("nx, ny, and buffer must be numeric")
     }
@@ -100,22 +100,24 @@ setMethod(
       }
     }
 
-    croppy <- function(i, e, r, path, rType) {
+    croppy <- function(i, e, r, path, ...) {
 
-      ri <- crop(r, e[[i]], datatype = rType)
+      ri <- crop(r, e[[i]])
       crs(ri) <- crs(r)
       if (is.na(path)) {
         return(ri)
       } else {
-        filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
-        writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
+        filename <- file.path(path, paste0(names(r), "_tile", i))
+        output <- writeRaster(ri, filename, overwrite = TRUE, ...)
+        filename <- output@file@name
         return(raster(filename))
       }
     }
     tiles <- if (!is.null(cl)) {
-      clusterApplyLB(cl = cl, x = seq_along(extents), fun = croppy, e = extents, r = r, path = path, rType = rType)
+      clusterApplyLB(cl = cl, x = seq_along(extents),
+                     fun = croppy, e = extents, r = r, path = path, ...)
     } else {
-      lapply(X = seq_along(extents), FUN = croppy, e = extents, r = r, path = path, rType = rType)
+      lapply(X = seq_along(extents), FUN = croppy, e = extents, r = r, path = path)
     }
 
     return(tiles)

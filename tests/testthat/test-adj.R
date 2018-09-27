@@ -119,42 +119,42 @@ test_that("adj.R: torus does not work as expected", {
   for (i in c(100, 1)) {
     # a corner
     s <- 4
-    newCells <- adj(a, s, directions = 4, sort = TRUE, cutoff.for.data.table = i,
+    newCells <- adj(a, s, directions = 4, sort = TRUE, cutoffForDataTable = i,
                     match.adjacent = TRUE, pairs = FALSE, torus = TRUE)
     expect_identical(sort(as.numeric(newCells)), c(1, 3, 8, 16))
     expect_equal(adj(a, s, directions = "bishop"), raster::adjacent(a, s, directions = "bishop"))
 
     # a corner
     s <- 1
-    newCells <- adj(a, s, directions = 4, sort = TRUE, cutoff.for.data.table = i,
+    newCells <- adj(a, s, directions = 4, sort = TRUE, cutoffForDataTable = i,
                     match.adjacent = TRUE, pairs = FALSE, torus = TRUE)
     expect_identical(sort(as.numeric(newCells)), c(2, 4, 5, 13))
     expect_equal(adj(a, s, directions = "bishop"), raster::adjacent(a, s, directions = "bishop"))
 
     # a side
     s <- 12
-    newCells <- adj(a, s, directions = 4, sort = TRUE, cutoff.for.data.table = i,
+    newCells <- adj(a, s, directions = 4, sort = TRUE, cutoffForDataTable = i,
                     match.adjacent = TRUE, pairs = FALSE, torus = TRUE)
     expect_identical(sort(as.numeric(newCells)), c(8, 9, 11, 16))
     expect_equal(adj(a, s, directions = "bishop"), raster::adjacent(a, s, directions = "bishop"))
 
     # a corner
     s <- 16
-    newCells <- adj(a, s, directions = 4, sort = TRUE, cutoff.for.data.table = i,
+    newCells <- adj(a, s, directions = 4, sort = TRUE, cutoffForDataTable = i,
                     match.adjacent = TRUE, pairs = FALSE, torus = TRUE)
     expect_identical(sort(as.numeric(newCells)), c(4, 12, 13, 15))
     expect_equal(adj(a, s, directions = "bishop"), raster::adjacent(a, s, directions = "bishop"))
 
     # a corner with 8 neighbours
     s <- 16
-    newCells <- adj(a, s, directions = 8, sort = TRUE, cutoff.for.data.table = i,
+    newCells <- adj(a, s, directions = 8, sort = TRUE, cutoffForDataTable = i,
                     match.adjacent = TRUE, pairs = FALSE, torus = TRUE)
     expect_identical(sort(as.numeric(newCells)), c(1, 3, 4, 9, 11, 12, 13, 15))
     expect_equal(adj(a, s, directions = "bishop"), raster::adjacent(a, s, directions = "bishop"))
 
     # a corner with 8 neighbours
     s <- 1
-    newCells <- adj(a, s, directions = 8, sort = TRUE, cutoff.for.data.table = i,
+    newCells <- adj(a, s, directions = 8, sort = TRUE, cutoffForDataTable = i,
                     match.adjacent = TRUE, pairs = FALSE, torus = TRUE)
     expect_identical(sort(as.numeric(newCells)), c(2, 4, 5, 6, 8, 13, 14, 16))
     expect_equal(adj(a, s, directions = "bishop"), raster::adjacent(a, s, directions = "bishop"))

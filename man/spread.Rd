@@ -6,29 +6,26 @@
 \alias{spread,RasterLayer-method}
 \title{Simulate a spread process on a landscape.}
 \usage{
-spread(landscape, loci = NA_real_, spreadProb = 0.23,
-  persistence = 0, mask = NA, maxSize = 100000000L,
-  directions = 8L, iterations = 1000000L,
-  lowMemory = getOption("spades.lowMemory"), returnIndices = FALSE,
-  returnDistances = FALSE, mapID = NULL, id = FALSE,
-  plot.it = FALSE, spreadProbLater = NA_real_, spreadState = NA,
-  circle = FALSE, circleMaxRadius = NA_real_, stopRule = NA,
-  stopRuleBehavior = "includeRing", allowOverlap = FALSE,
+spread(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 0,
+  mask = NA, maxSize = 100000000L, directions = 8L,
+  iterations = 1000000L, lowMemory = getOption("spades.lowMemory"),
+  returnIndices = FALSE, returnDistances = FALSE, mapID = NULL,
+  id = FALSE, plot.it = FALSE, spreadProbLater = NA_real_,
+  spreadState = NA, circle = FALSE, circleMaxRadius = NA_real_,
+  stopRule = NA, stopRuleBehavior = "includeRing", allowOverlap = FALSE,
   asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
-  neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE,
-  ...)
+  neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE, ...)
 
 \S4method{spread}{RasterLayer}(landscape, loci = NA_real_,
-  spreadProb = 0.23, persistence = 0, mask = NA,
-  maxSize = 100000000L, directions = 8L, iterations = 1000000L,
+  spreadProb = 0.23, persistence = 0, mask = NA, maxSize = 100000000L,
+  directions = 8L, iterations = 1000000L,
   lowMemory = getOption("spades.lowMemory"), returnIndices = FALSE,
-  returnDistances = FALSE, mapID = NULL, id = FALSE,
-  plot.it = FALSE, spreadProbLater = NA_real_, spreadState = NA,
-  circle = FALSE, circleMaxRadius = NA_real_, stopRule = NA,
+  returnDistances = FALSE, mapID = NULL, id = FALSE, plot.it = FALSE,
+  spreadProbLater = NA_real_, spreadState = NA, circle = FALSE,
+  circleMaxRadius = NA_real_, stopRule = NA,
   stopRuleBehavior = "includeRing", allowOverlap = FALSE,
   asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
-  neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE,
-  ...)
+  neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE, ...)
 }
 \arguments{
 \item{landscape}{A \code{RasterLayer} object. This defines the possible
@@ -266,7 +263,7 @@ asymmetric spreadProbs is always equal to spreadProb at every iteration:
 
 There are 4 ways for the spread to "stop" spreading. Here, each "event" is defined as
 all cells that are spawned from a single starting loci. So, one spread call can have
-multiple spreading "events". The ways outlines below are all acting at all times,
+multiple spreading "events". The ways outlined below are all acting at all times,
 i.e., they are not mutually exclusive. Therefore, it is the user's
 responsibility to make sure the different rules are interacting with
 each other correctly. Using \code{spreadProb} or \code{maxSize} are computationally

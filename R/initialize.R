@@ -238,15 +238,15 @@ randomPolygon <- function(x, hectares) {
   yAdd <- round(runif(1, radius * 0.8, radius * 1.2))
   nPoints <- 20
   betaPar <- 0.6
-  X <- c(jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX)),
+  a <- c(jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX)),
          jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX, decreasing = TRUE)))
-  Y <- c(jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (maxY - meanY) + meanY)),
+  b <- c(jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (maxY - meanY) + meanY)),
          jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxY - minY) + minY, decreasing = TRUE)),
          jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (meanY - minY) + minY)))
 
-  Sr1 <- Polygon(cbind(X + xAdd, Y + yAdd))
-  Srs1 <- Polygons(list(Sr1), "s1")
-  outPolygon <- SpatialPolygons(list(Srs1), 1L)
+  sr1 <- Polygon(cbind(a + xAdd, b + yAdd))
+  srs1 <- Polygons(list(sr1), "s1")
+  outPolygon <- SpatialPolygons(list(srs1), 1L)
   crs(outPolygon) <- areaCRS
   outPolygon <- spTransform(outPolygon, crs(x))
   outPolygon

@@ -50,15 +50,15 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
   fullRasterVals <- fullRasterVals[, row_number := 1L:.N] # nolint
   setkeyv(fullRasterVals, mapcode)
 
-  BsumVec <- reduced[fullRasterVals] # join
+  bSumVec <- reduced[fullRasterVals] # join
   if (length(newRasterCols) > 1) {
     for (i in seq_along(newRasterCols)) {
-      BsumVec[is.na(get(newRasterCols[i])), c(newRasterCols[i]) := NA]
+      bSumVec[is.na(get(newRasterCols[i])), c(newRasterCols[i]) := NA]
     }
   } else {
-    BsumVec[is.na(get(newRasterCols)), c(newRasterCols) := NA]
+    bSumVec[is.na(get(newRasterCols)), c(newRasterCols) := NA]
   }
-  setkey(BsumVec, row_number)
+  setkey(bSumVec, row_number)
   if (length(newRasterCols) > 1) {
     ras <- list()
     for (i in newRasterCols) {

@@ -40,7 +40,7 @@ transitions <- function(p, agent) {
 #'
 #' You must know how to use SELES for these to be useful.
 #'
-#' @param N         Number of agents to initiate (integer scalar).
+#' @param n         Number of agents to initiate (integer scalar).
 #' @param probInit  Probability of initializing an agent at the location.
 #'
 #' @return A numeric, indicating number of agents to start
@@ -50,9 +50,9 @@ transitions <- function(p, agent) {
 #' @include heading.R
 #' @rdname SELESnumAgents
 #'
-numAgents <- function(N, probInit) {
-  stopifnot(length(N) == 1, is.numeric(N))
-  return(N)
+numAgents <- function(n, probInit) {
+  stopifnot(length(n) == 1, is.numeric(n))
+  return(n)
 }
 
 ##############################################################

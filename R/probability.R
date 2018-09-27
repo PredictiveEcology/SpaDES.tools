@@ -38,20 +38,20 @@ dwrpnorm2 <- function(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc) {
     stop("rho must be between 0 and 1")
   var <- -2 * log(rho)
   term <- function(theta, mu, var, k) {
-    1 / sqrt(var * 2 * pi) * exp(-((theta - mu + 2 * pi * k) ^ 2) / (2 * var))
+    1 / sqrt(var * 2 * pi) * exp(- ((theta - mu + 2 * pi * k) ^ 2) / (2 * var))
   }
   k <- 0
-  Next <- term(theta, mu, var, k)
-  Last <- Next
-  delta <- rep(1, length(Last))
+  nextA <- term(theta, mu, var, k)
+  lastA <- nextA
+  delta <- rep(1, length(lastA))
   while (any(compareNA(delta > tol, TRUE))) {
     keep <- delta > tol
     keep <- reproducible::compareNA(keep, TRUE)
     k <- k + 1
-    Last[keep] <- Next[keep]
-    Next[keep] <- Last[keep] + term(theta[keep], mu[keep], var, k) +
+    lastA[keep] <- nextA[keep]
+    nextA[keep] <- lastA[keep] + term(theta[keep], mu[keep], var, k) +
                   term(theta[keep], mu[keep], var, -k)
-    delta[keep] <- abs(Next[keep] - Last[keep])
+    delta[keep] <- abs(nextA[keep] - lastA[keep])
   }
-  return(Next)
+  return(nextA)
 }

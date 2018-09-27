@@ -12,20 +12,20 @@
 \usage{
 initiateAgents(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
 
-\S4method{initiateAgents}{Raster,missing,missing,ANY,missing}(map,
-  numAgents, probInit, asSpatialPoints)
+\S4method{initiateAgents}{Raster,missing,missing,ANY,missing}(map, numAgents,
+  probInit, asSpatialPoints)
 
 \S4method{initiateAgents}{Raster,missing,Raster,ANY,missing}(map, probInit,
   asSpatialPoints)
 
-\S4method{initiateAgents}{Raster,numeric,missing,ANY,missing}(map,
-  numAgents, probInit, asSpatialPoints = TRUE, indices)
+\S4method{initiateAgents}{Raster,numeric,missing,ANY,missing}(map, numAgents,
+  probInit, asSpatialPoints = TRUE, indices)
 
-\S4method{initiateAgents}{Raster,numeric,Raster,ANY,missing}(map,
-  numAgents, probInit, asSpatialPoints)
+\S4method{initiateAgents}{Raster,numeric,Raster,ANY,missing}(map, numAgents,
+  probInit, asSpatialPoints)
 
-\S4method{initiateAgents}{Raster,missing,missing,ANY,numeric}(map,
-  numAgents, probInit, asSpatialPoints = TRUE, indices)
+\S4method{initiateAgents}{Raster,missing,missing,ANY,numeric}(map, numAgents,
+  probInit, asSpatialPoints = TRUE, indices)
 }
 \arguments{
 \item{map}{RasterLayer with extent and resolution of desired return object}

@@ -5,8 +5,8 @@
 \title{Calculate distances and directions between many points and many grid cells}
 \usage{
 distanceFromEachPoint(from, to = NULL, landscape, angles = NA_real_,
-  maxDistance = NA_real_, cumulativeFn = NULL,
-  distFn = function(dist) 1/(1 + dist), cl, ...)
+  maxDistance = NA_real_, cumulativeFn = NULL, distFn = function(dist)
+  1/(1 + dist), cl, ...)
 }
 \arguments{
 \item{from}{Numeric matrix with 2 or 3 or more columns. They must include x and y,
