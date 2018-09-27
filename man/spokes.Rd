@@ -12,12 +12,11 @@ spokes(landscape, coords, loci, maxRadius = ncol(landscape)/4,
   angles = NA_real_, nAngles = NA_real_, returnAngles = FALSE,
   returnIndices = TRUE, ...)
 
-\S4method{spokes}{RasterLayer,SpatialPoints,missing}(landscape, coords,
-  loci, maxRadius = ncol(landscape)/4, minRadius = maxRadius,
-  allowOverlap = TRUE, stopRule = NULL,
-  includeBehavior = "includePixels", returnDistances = FALSE,
-  angles = NA_real_, nAngles = NA_real_, returnAngles = FALSE,
-  returnIndices = TRUE, ...)
+\S4method{spokes}{RasterLayer,SpatialPoints,missing}(landscape, coords, loci,
+  maxRadius = ncol(landscape)/4, minRadius = maxRadius,
+  allowOverlap = TRUE, stopRule = NULL, includeBehavior = "includePixels",
+  returnDistances = FALSE, angles = NA_real_, nAngles = NA_real_,
+  returnAngles = FALSE, returnIndices = TRUE, ...)
 }
 \arguments{
 \item{landscape}{Raster on which the circles are built.}

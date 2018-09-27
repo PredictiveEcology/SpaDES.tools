@@ -12,11 +12,10 @@ mergeRaster(x)
 
 \S4method{mergeRaster}{list}(x)
 
-splitRaster(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl,
-  rType = "FLT4S")
+splitRaster(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, ...)
 
-\S4method{splitRaster}{RasterLayer}(r, nx = 1, ny = 1, buffer = c(0,
-  0), path = NA, cl, rType = "FLT4S")
+\S4method{splitRaster}{RasterLayer}(r, nx = 1, ny = 1, buffer = c(0, 0),
+  path = NA, cl, ...)
 }
 \arguments{
 \item{x}{A list of split raster tiles (i.e., from \code{splitRaster}).}
@@ -42,7 +41,7 @@ parallel::makeCluster or equivalent. This is an alternative way, instead
 of \code{beginCluster()}, to use parallelism for this function, allowing for
 more control over cluster use.}
 
-\item{rType}{Datatype of the split rasters. Defaults to FLT4S.}
+\item{...}{Any other argument passed to \code{writeRaster}}
 }
 \value{
 \code{mergeRaster} returns a \code{RasterLayer} object.
