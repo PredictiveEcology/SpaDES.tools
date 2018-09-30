@@ -180,16 +180,20 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' Create a single random polygon object
 #'
 #' Produces a \code{SpatialPolygons} object with 1 feature that will have approximately
-#' an area equal to \code{hectares}, and a centre at approximately \code{x}
+#' an area equal to \code{area} (expecting area in hectares),
+#' and a centre at approximately \code{x}
 #'
-#' @param x Either a \code{SpatialPoints} or matrix with 2 dimensions, 1 row, with
+#' @param x Either a \code{SpatialPoints}, \code{SpatialPolygons}  or matrix with
+#'          2 dimensions, 1 row, with
 #'          with the approximate centre of the new random polygon to create. If
 #'          matrix, then longitude and latitude are assumed (epsg:4326)
 #'
-#' @param hectares A numeric, the approximate area in \code{hectares} of the random polygon.
+#' @param area A numeric, the approximate area in \code{meters squared} of the random polygon.
+#'
+#' @param hectares Deprecated. Use \code{area} in meters squared.
 #'
 #' @return A \code{SpatialPolygons} object, with approximately the area request,
-#'         centred approximately at the coordinates requested.
+#'         centred approximately at the coordinates requested, in the projection of \code{x}
 #'
 #' @seealso \code{\link{gaussMap}} and \code{\link{randomPolygons}}
 #'
@@ -207,33 +211,36 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' plot(a)
 #' points(b, pch = 19)
 #'
-randomPolygon <- function(x, hectares) {
+randomPolygon <- function(x, hectares, area) {
   UseMethod("randomPolygon")
 }
 
 #' @export
 #' @rdname randomPolygons
-randomPolygon.SpatialPoints <- function(x, hectares) {
-  latLong <-   sp::CRS("+init=epsg:4326")
-  if (is(x, "SpatialPoints")) {
-    if (is.na(crs(x))) crs(x) <- latLong
-  } else {
-    x <- SpatialPoints(coords = x)
-    crs(x) <- latLong
+randomPolygon.SpatialPoints <- function(x, hectares, area) {
+  if (!missing(hectares)) {
+    message("hectares argument is deprecated; please use area")
+    if (missing(area))
+      area <- hectares * 1e4
   }
 
   units <- gsub(".*units=(.) .*", "\\1", crs(x))
+
+  areaM2 <- area * 1.304 # rescale so mean area is close to hectares
+  radius <- sqrt(areaM2 / pi)
   if (!identical(units, "m")) {
-    stop("please use a crs in meters")
+    origCRS <- raster::crs(x)
+    crsInUTM <- utmCRS(x)
+    x <- spTransform(x, CRSobj = crsInUTM)
+    message("The CRS provided is not in meters; ",
+            ". Converting internally to UTM so area will be approximately correct")
   }
   # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
   #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
   #                       " +units=m +no_defs"))
 
-  areaM2 <- hectares * 1e4 * 1.304 # rescale so mean area is close to hectares
   #y <- spTransform(x, areaCRS)
 
-  radius <- sqrt(areaM2 / pi)
 
   meanX <- mean(coordinates(x)[, 1]) - radius
   meanY <- mean(coordinates(x)[, 2]) - radius
@@ -258,7 +265,9 @@ randomPolygon.SpatialPoints <- function(x, hectares) {
   Srs1 <- Polygons(list(Sr1), "s1")
   outPolygon <- SpatialPolygons(list(Srs1), 1L)
   crs(outPolygon) <- crs(x)
-  #outPolygon <- spTransform(outPolygon, crs(x))
+  if (exists("origCRS", inherits = FALSE)) {
+    outPolygon <- spTransform(outPolygon, origCRS)
+  }
   outPolygon
 }
 
@@ -266,11 +275,33 @@ randomPolygon.SpatialPoints <- function(x, hectares) {
 #' @importFrom rgeos gContains
 #' @rdname randomPolygons
 #' @export
-randomPolygon.SpatialPolygons <- function(x, hectares) {
+randomPolygon.matrix <- function(x, hectares, area) {
+  if (!missing(hectares)) {
+    message("hectares argument is deprecated; please use area")
+    if (missing(area))
+      area <- hectares
+  }
+  latLong <-   sp::CRS("+init=epsg:4326")
+  message("Assuming matrix is in latitude/longitude")
+  x <- SpatialPoints(coords = x)
+  crs(x) <- latLong
+  randomPolygon(x, area = area)
+}
+
+#' @importFrom sp spsample
+#' @importFrom rgeos gContains
+#' @rdname randomPolygons
+#' @export
+randomPolygon.SpatialPolygons <- function(x, hectares, area) {
+  if (!missing(hectares)) {
+    message("hectares argument is deprecated; please use area")
+    if (missing(area))
+      area <- hectares
+  }
   need <- TRUE
   while(need) {
     sp1 <- spsample(x, 1, "random")
-    sp2 <- randomPolygon(sp1, hectares)
+    sp2 <- randomPolygon(sp1, area)
     contain <- gContains(sp2, sp1)
     if (isTRUE(contain))
       need <- FALSE
@@ -468,3 +499,12 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #
 #   return(.Object)
 # })
+
+utmCRS <- function(x) {
+  zone <- long2UTM(mean(c(xmax(x), xmin(x))))
+  CRS(paste("+proj=utm +zone=",zone," ellps=WGS84",sep=''))
+}
+
+long2UTM <- function(long) {
+  (floor((long + 180)/6) %% 60) + 1
+}

@@ -3,6 +3,9 @@ Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 version 0.3.0.9000
 =============
 
+## Enhancements
+* `randomPolygon` now has `area` argument, instead of `hectares` (deprecated), and it now succeeds for more cases.
+
 ## Dependency changes
 * `RandomFields` moved to Suggests to prevent clashes with `data.table` multithreading
 

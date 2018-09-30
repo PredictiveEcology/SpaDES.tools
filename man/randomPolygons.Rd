@@ -5,17 +5,20 @@
 \alias{randomPolygons}
 \alias{randomPolygon}
 \alias{randomPolygon.SpatialPoints}
+\alias{randomPolygon.matrix}
 \alias{randomPolygon.SpatialPolygons}
 \title{randomPolygons}
 \usage{
 randomPolygons(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
   numTypes = 2, ...)
 
-randomPolygon(x, hectares)
+randomPolygon(x, hectares, area)
 
-\method{randomPolygon}{SpatialPoints}(x, hectares)
+\method{randomPolygon}{SpatialPoints}(x, hectares, area)
 
-\method{randomPolygon}{SpatialPolygons}(x, hectares)
+\method{randomPolygon}{matrix}(x, hectares, area)
+
+\method{randomPolygon}{SpatialPolygons}(x, hectares, area)
 }
 \arguments{
 \item{ras}{A raster that whose extent will be used for the randomPolygons.}
@@ -24,24 +27,28 @@ randomPolygon(x, hectares)
 
 \item{...}{Other arguments passed to spread. No known uses currently.}
 
-\item{x}{Either a \code{SpatialPoints} or matrix with 2 dimensions, 1 row, with
+\item{x}{Either a \code{SpatialPoints}, \code{SpatialPolygons}  or matrix with
+2 dimensions, 1 row, with
 with the approximate centre of the new random polygon to create. If
 matrix, then longitude and latitude are assumed (epsg:4326)}
 
-\item{hectares}{A numeric, the approximate area in \code{hectares} of the random polygon.}
+\item{hectares}{Deprecated. Use \code{area} in meters squared.}
+
+\item{area}{A numeric, the approximate area in \code{meters squared} of the random polygon.}
 }
 \value{
 A map of extent \code{ext} with random polygons.
 
 A \code{SpatialPolygons} object, with approximately the area request,
-        centred approximately at the coordinates requested.
+        centred approximately at the coordinates requested, in the projection of \code{x}
 }
 \description{
 Produces a raster of random polygons.
 These are built with the \code{\link{spread}} function internally.
 
 Produces a \code{SpatialPolygons} object with 1 feature that will have approximately
-an area equal to \code{hectares}, and a centre at approximately \code{x}
+an area equal to \code{area} (expecting area in hectares),
+and a centre at approximately \code{x}
 }
 \examples{
 library(quickPlot)

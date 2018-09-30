@@ -2,6 +2,7 @@
 
 S3method(randomPolygon,SpatialPoints)
 S3method(randomPolygon,SpatialPolygons)
+S3method(randomPolygon,matrix)
 export("%fin%")
 export(adj)
 export(agentLocation)
