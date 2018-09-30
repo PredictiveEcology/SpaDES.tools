@@ -205,9 +205,10 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' @rdname randomPolygons
 #'
 #' @examples
-#' library(sp)
+#' library(raster)
 #' b <- SpatialPoints(cbind(-110, 59))
-#' a <- randomPolygon(b, 1e4)
+#' crs(b) <- sp::CRS("+init=epsg:4326")
+#' a <- randomPolygon(b, area = 1e6)
 #' plot(a)
 #' points(b, pch = 19)
 #'
@@ -231,6 +232,8 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
   if (!identical(units, "m")) {
     origCRS <- raster::crs(x)
     crsInUTM <- utmCRS(x)
+    if (is.na(crsInUTM))
+      stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
     x <- spTransform(x, CRSobj = crsInUTM)
     message("The CRS provided is not in meters; ",
             ". Converting internally to UTM so area will be approximately correct")
