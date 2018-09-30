@@ -204,6 +204,12 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' points(b, pch = 19)
 #'
 randomPolygon <- function(x, hectares) {
+  UseMethod("randomPolygon")
+}
+
+#' @export
+#' @rdname randomPolygons
+randomPolygon.SpatialPoints <- function(x, hectares) {
   latLong <-   sp::CRS("+init=epsg:4326")
   if (is(x, "SpatialPoints")) {
     if (is.na(crs(x))) crs(x) <- latLong
@@ -212,17 +218,21 @@ randomPolygon <- function(x, hectares) {
     crs(x) <- latLong
   }
 
-  areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
-                        " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
-                        " +units=m +no_defs"))
+  units <- gsub(".*units=(.) .*", "\\1", crs(x))
+  if (!identical(units, "m")) {
+    stop("please use a crs in meters")
+  }
+  # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
+  #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
+  #                       " +units=m +no_defs"))
 
   areaM2 <- hectares * 1e4 * 1.304 # rescale so mean area is close to hectares
-  y <- spTransform(x, areaCRS)
+  #y <- spTransform(x, areaCRS)
 
   radius <- sqrt(areaM2 / pi)
 
-  meanX <- mean(coordinates(y)[, 1]) - radius
-  meanY <- mean(coordinates(y)[, 2]) - radius
+  meanX <- mean(coordinates(x)[, 1]) - radius
+  meanY <- mean(coordinates(x)[, 2]) - radius
 
   minX <- meanX - radius
   maxX <- meanX + radius
@@ -243,9 +253,25 @@ randomPolygon <- function(x, hectares) {
   Sr1 <- Polygon(cbind(X + xAdd, Y + yAdd))
   Srs1 <- Polygons(list(Sr1), "s1")
   outPolygon <- SpatialPolygons(list(Srs1), 1L)
-  crs(outPolygon) <- areaCRS
-  outPolygon <- spTransform(outPolygon, crs(x))
+  crs(outPolygon) <- crs(x)
+  #outPolygon <- spTransform(outPolygon, crs(x))
   outPolygon
+}
+
+#' @importFrom sp spsample
+#' @importFrom rgeos gContains
+#' @rdname randomPolygons
+#' @export
+randomPolygon.SpatialPolygons <- function(x, hectares) {
+  need <- TRUE
+  while(need) {
+    sp1 <- spsample(x, 1, "random")
+    sp2 <- randomPolygon(sp1, hectares)
+    contain <- gContains(sp2, sp1)
+    if (isTRUE(contain))
+      need <- FALSE
+  }
+  sp2
 }
 
 ################################################################################
