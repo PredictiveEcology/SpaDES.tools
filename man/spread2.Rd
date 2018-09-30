@@ -5,12 +5,12 @@
 \title{Simulate a contagious spread process on a landscape, with data.table internals}
 \usage{
 spread2(landscape, start = ncell(landscape)/2 - ncol(landscape)/2,
-  spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE, maxSize,
-  exactSize, directions = 8L, iterations = 1000000L,
-  returnDistances = FALSE, returnFrom = FALSE, spreadProbRel = NA_real_,
-  plot.it = FALSE, circle = FALSE, asymmetry = NA_real_,
-  asymmetryAngle = NA_real_, allowOverlap = FALSE, neighProbs = NA_real_,
-  skipChecks = FALSE)
+  spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE,
+  maxSize, exactSize, directions = 8L, iterations = 1000000L,
+  returnDistances = FALSE, returnFrom = FALSE,
+  spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
+  asymmetry = NA_real_, asymmetryAngle = NA_real_,
+  allowOverlap = FALSE, neighProbs = NA_real_, skipChecks = FALSE)
 }
 \arguments{
 \item{landscape}{Required. A \code{RasterLayer} object. This defines the possible

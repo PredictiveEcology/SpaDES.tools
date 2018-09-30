@@ -4,12 +4,18 @@
 \name{randomPolygons}
 \alias{randomPolygons}
 \alias{randomPolygon}
+\alias{randomPolygon.SpatialPoints}
+\alias{randomPolygon.SpatialPolygons}
 \title{randomPolygons}
 \usage{
 randomPolygons(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
   numTypes = 2, ...)
 
 randomPolygon(x, hectares)
+
+\method{randomPolygon}{SpatialPoints}(x, hectares)
+
+\method{randomPolygon}{SpatialPolygons}(x, hectares)
 }
 \arguments{
 \item{ras}{A raster that whose extent will be used for the randomPolygons.}
