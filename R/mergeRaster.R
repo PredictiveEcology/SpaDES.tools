@@ -87,4 +87,4 @@ setMethod(
     }
     names(y) <- gsub("_tile[0-9].*$", "", names(x[[1]]))
     return(y)
-  })
+})
