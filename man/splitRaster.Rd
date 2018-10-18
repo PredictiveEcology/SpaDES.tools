@@ -64,6 +64,15 @@ over the values in any buffered regions. This is useful for reducing edge
 effects when performing raster operations involving contagious processes.
 To use the average of cell values, or do another computation, use
 \code{\link[raster]{mosaic}}.
+\code{mergeRaster} is also faster than \code{merge}. \code{mergeRaster} also
+differs from \code{\link[raster]{mosaic}} in speed and hability to take a
+raster list. It can, however, use the average of cell values, or do other
+computations. At last, \code{mergeRaster} can also merge tiles of a split
+raster that were resampled and, therefore, could have had different changes
+in the buffer sizes on each side of the raster. If the user resamples the
+tiles and the new resolution is not a multiple of the original one,
+\code{mergeRaster} will use mosaic with the max function to merge the tiles
+with a message.
 
 This function is parallel-aware, using the same mechanism as used in the \code{raster}
 package. Specifically, if you start a cluster using \code{\link{beginCluster}}, then
@@ -137,7 +146,7 @@ unlink(tmpdir, recursive = TRUE)
 \code{\link{do.call}}, \code{\link[raster]{merge}}.
 }
 \author{
-Yong Luo and Alex Chubaty
+Yong Luo, Alex Chubaty, Tati Micheletti & Ian Eddy
 
 Alex Chubaty and Yong Luo
 }
