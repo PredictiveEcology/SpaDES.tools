@@ -45,7 +45,6 @@ setMethod(
     ymaxExtent <- sapply(x, ymax) %>% unique() %>% sort() # nolint
     xBuffer <- unique((xmaxExtent[-length(xmaxExtent)] - xminExtent[-1]) / 2) # nolint
     yBuffer <- unique((ymaxExtent[-length(ymaxExtent)] - yminExtent[-1]) / 2) # nolint
-    browser()
     if (any(length(xBuffer) > 1, length(yBuffer) > 1)){
       message(paste0("The tiles present different buffers (likely due to resampling).",
                      " mergeRaster() will use raster::mosaic()."))
