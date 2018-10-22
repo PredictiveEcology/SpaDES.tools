@@ -9,7 +9,7 @@ test_that("mergeRaster will return a message if tiles are resampled", {
                    crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
                    vals = round(runif(n = 14400 , min = 1, max = 10)))
   splitted <- SpaDES.tools::splitRaster(r = ras, nx = nx, ny = ny, buffer = c(100, 100))
-  checkmate::expect_class(splitted, "list")
+  expect_is(splitted, "list")
   expect_length(splitted, nx*ny)
   splitted <- lapply(X = 1:length(splitted), FUN = function(tiles){
      y <- raster::raster(xmn = raster::xmin(splitted[[tiles]]),
@@ -22,9 +22,9 @@ test_that("mergeRaster will return a message if tiles are resampled", {
     r <- raster::resample(x = ras, y = y)
     return(r)
   })
-  checkmate::expect_class(splitted, "list")
+  expect_is(splitted, "list")
   expect_message(merged <- mergeRaster(x = splitted))
-  checkmate::expect_class(merged, "RasterLayer")
+  expect_is(merged, "RasterLayer")
 })
 
 test_that("mergeRaster will produce a raster layer", {
@@ -38,9 +38,10 @@ test_that("mergeRaster will produce a raster layer", {
                         crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
                         vals = round(runif(n = 14400 , min = 1, max = 10)))
   splitted <- SpaDES.tools::splitRaster(r = ras, nx = nx, ny = ny, buffer = c(100, 100))
-  checkmate::expect_class(splitted, "list")
+  expect_is(splitted, "list")
   expect_length(splitted, nx*ny)
-  checkmate::expect_class(merged, "RasterLayer")
+  merged <- mergeRaster(x = splitted)
+  expect_is(merged, "RasterLayer")
 })
 
 test_that("mergeRaster will produce error if only one raster passed", {
