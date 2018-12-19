@@ -7,6 +7,15 @@
 #' effects when performing raster operations involving contagious processes.
 #' To use the average of cell values, or do another computation, use
 #' \code{\link[raster]{mosaic}}.
+#' \code{mergeRaster} is also faster than \code{merge}. \code{mergeRaster} also
+#' differs from \code{\link[raster]{mosaic}} in speed and hability to take a
+#' raster list. It can, however, use the average of cell values, or do other
+#' computations. At last, \code{mergeRaster} can also merge tiles of a split
+#' raster that were resampled and, therefore, could have had different changes
+#' in the buffer sizes on each side of the raster. If the user resamples the
+#' tiles and the new resolution is not a multiple of the original one,
+#' \code{mergeRaster} will use mosaic with the max function to merge the tiles
+#' with a message.
 #'
 #' @param x    A list of split raster tiles (i.e., from \code{splitRaster}).
 #'
@@ -14,10 +23,10 @@
 #'
 #' @seealso \code{\link[raster]{merge}}, \code{\link[raster]{mosaic}}
 #'
-#' @author Yong Luo and Alex Chubaty
+#' @author Yong Luo, Alex Chubaty, Tati Micheletti & Ian Eddy
 #' @export
 #' @importFrom magrittr %>%
-#' @importFrom raster crop extent merge
+#' @importFrom raster crop extent merge mosaic alignExtent extent
 #' @rdname splitRaster
 #'
 setGeneric("mergeRaster", function(x) {
@@ -36,32 +45,46 @@ setMethod(
     ymaxExtent <- sapply(x, ymax) %>% unique() %>% sort() # nolint
     xBuffer <- unique((xmaxExtent[-length(xmaxExtent)] - xminExtent[-1]) / 2) # nolint
     yBuffer <- unique((ymaxExtent[-length(ymaxExtent)] - yminExtent[-1]) / 2) # nolint
-
-    for (i in seq_along(x)) {
-      r <- x[[i]]
-      if (xmin(r) != min(xminExtent)) {
-        xminCut <- xmin(r) + xBuffer
-      } else {
-        xminCut <- xmin(r)
+    if (any(length(xBuffer) > 1, length(yBuffer) > 1)){
+      message(paste0("The tiles present different buffers (likely due to resampling).",
+                     " mergeRaster() will use raster::mosaic()."))
+      for (i in seq_along(x)) {
+        if (i == 1) next
+        rTemplate <- x[[1]]
+        raster::extent(x[[i]]) <- raster::alignExtent(extent = raster::extent(x[[i]]),
+                                                      object = rTemplate,
+                                                      snap = "near")
       }
-      if (xmax(r) != max(xmaxExtent)) {
-        xmaxCut <- xmax(r) - xBuffer
-      } else {
-        xmaxCut <- xmax(r)
+      rasMosaicArgs <- x
+      rasMosaicArgs$fun <- mean
+      y <- do.call(what = raster::mosaic, args = rasMosaicArgs)
+    } else {
+      for (i in seq_along(x)) {
+        r <- x[[i]]
+        if (xmin(r) != min(xminExtent)) {
+          xminCut <- xmin(r) + xBuffer
+        } else {
+          xminCut <- xmin(r)
+        }
+        if (xmax(r) != max(xmaxExtent)) {
+          xmaxCut <- xmax(r) - xBuffer
+        } else {
+          xmaxCut <- xmax(r)
+        }
+        if (ymin(r) != min(yminExtent)) {
+          yminCut <- ymin(r) + yBuffer
+        } else {
+          yminCut <- ymin(r)
+        }
+        if (ymax(r) != max(ymaxExtent)) {
+          ymaxCut <- ymax(r) - yBuffer
+        } else {
+          ymaxCut <- ymax(r)
+        }
+        x[[i]] <- crop(r, extent(xminCut, xmaxCut, yminCut, ymaxCut))
       }
-      if (ymin(r) != min(yminExtent)) {
-        yminCut <- ymin(r) + yBuffer
-      } else {
-        yminCut <- ymin(r)
-      }
-      if (ymax(r) != max(ymaxExtent)) {
-        ymaxCut <- ymax(r) - yBuffer
-      } else {
-        ymaxCut <- ymax(r)
-      }
-      x[[i]] <- crop(r, extent(xminCut, xmaxCut, yminCut, ymaxCut))
+      y <- do.call(raster::merge, x)
     }
-    y <- do.call(raster::merge, x)
     names(y) <- gsub("_tile[0-9].*$", "", names(x[[1]]))
     return(y)
 })
