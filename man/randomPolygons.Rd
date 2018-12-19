@@ -77,8 +77,10 @@ library(raster)
 b <- SpatialPoints(cbind(-110, 59))
 crs(b) <- sp::CRS("+init=epsg:4326")
 a <- randomPolygon(b, area = 1e6)
-plot(a)
-points(b, pch = 19)
+if (interactive()) {
+  plot(a)
+  points(b, pch = 19)
+}
 
 }
 \seealso{

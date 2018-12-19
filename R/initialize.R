@@ -51,7 +51,7 @@ if (getRversion() >= "3.1.0") {
 #'   r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
 #'   speedup <- max(1, nx/5e2)
 #'   map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
-#'   Plot(map1)
+#'   if (interactive()) Plot(map1)
 #'
 #'   # with non-default method
 #'   map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
@@ -209,8 +209,10 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' b <- SpatialPoints(cbind(-110, 59))
 #' crs(b) <- sp::CRS("+init=epsg:4326")
 #' a <- randomPolygon(b, area = 1e6)
-#' plot(a)
-#' points(b, pch = 19)
+#' if (interactive()) {
+#'   plot(a)
+#'   points(b, pch = 19)
+#' }
 #'
 randomPolygon <- function(x, hectares, area) {
   UseMethod("randomPolygon")
