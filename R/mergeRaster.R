@@ -15,9 +15,12 @@
 #' in the buffer sizes on each side of the raster. If the user resamples the
 #' tiles and the new resolution is not a multiple of the original one,
 #' \code{mergeRaster} will use mosaic with the max function to merge the tiles
-#' with a message.
+#' with a message. The user can also pass the function to be used when mosaic
+#' is triggered.
 #'
 #' @param x    A list of split raster tiles (i.e., from \code{splitRaster}).
+#' @param fun  Function. E.g. mean, min, or max. Must be a function that
+#'             accepts a 'na.rm' argument. The default is mean.
 #'
 #' @return \code{mergeRaster} returns a \code{RasterLayer} object.
 #'
@@ -29,7 +32,7 @@
 #' @importFrom raster crop extent merge mosaic alignExtent extent
 #' @rdname splitRaster
 #'
-setGeneric("mergeRaster", function(x) {
+setGeneric("mergeRaster", function(x, fun = NULL) {
   standardGeneric("mergeRaster")
 })
 
@@ -38,7 +41,7 @@ setGeneric("mergeRaster", function(x) {
 setMethod(
   "mergeRaster",
   signature = signature(x = "list"),
-  definition = function(x) {
+  definition = function(x, fun) {
     xminExtent <- sapply(x, xmin) %>% unique() %>% sort() # nolint
     xmaxExtent <- sapply(x, xmax) %>% unique() %>% sort() # nolint
     yminExtent <- sapply(x, ymin) %>% unique() %>% sort() # nolint
@@ -56,7 +59,11 @@ setMethod(
                                                       snap = "near")
       }
       rasMosaicArgs <- x
-      rasMosaicArgs$fun <- mean
+      if (!is.null(fun)) {
+        rasMosaicArgs$fun <- fun
+      } else {
+        rasMosaicArgs$fun <- mean
+      }
       y <- do.call(what = raster::mosaic, args = rasMosaicArgs)
     } else {
       for (i in seq_along(x)) {
