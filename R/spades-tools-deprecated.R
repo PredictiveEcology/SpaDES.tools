@@ -7,21 +7,10 @@
 #'
 #' @export
 #' @importFrom raster crop extent
-#' @importFrom velox velox
 #' @seealso \code{velox::VeloxRaster_crop}
 #'
 #' @rdname deprecated
 fastCrop <- function(x, y, ...) {
   .Deprecated("raster::crop")
 
-  a <- crop(x, y)
-  v1 <- velox::velox(x)
-  if (is(y, "Raster")) y <- extent(y)
-  v1$crop(y)
-  if (length(names(x)) > 1) {
-    a <- v1$as.RasterStack()
-  } else {
-    a <- v1$as.RasterLayer(band = 1)
-  }
-  a
 }

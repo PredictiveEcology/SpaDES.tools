@@ -46,8 +46,7 @@ Imports:
     reproducible (>= 0.2.0),
     rgeos,
     sp (>= 1.2-4),
-    stats,
-    velox
+    stats
 Suggests:
     DEoptim (>= 2.2-4),
     dplyr,
