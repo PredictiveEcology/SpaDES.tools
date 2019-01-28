@@ -8,9 +8,9 @@
 \alias{splitRaster,RasterLayer-method}
 \title{Split and re-merge RasterLayer(s)}
 \usage{
-mergeRaster(x)
+mergeRaster(x, fun = NULL)
 
-\S4method{mergeRaster}{list}(x)
+\S4method{mergeRaster}{list}(x, fun = NULL)
 
 splitRaster(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl,
   rType = "FLT4S")
@@ -20,6 +20,9 @@ splitRaster(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl,
 }
 \arguments{
 \item{x}{A list of split raster tiles (i.e., from \code{splitRaster}).}
+
+\item{fun}{Function. E.g. mean, min, or max. Must be a function that
+accepts a 'na.rm' argument. The default is mean.}
 
 \item{r}{The raster to be split.}
 
@@ -72,7 +75,8 @@ raster that were resampled and, therefore, could have had different changes
 in the buffer sizes on each side of the raster. If the user resamples the
 tiles and the new resolution is not a multiple of the original one,
 \code{mergeRaster} will use mosaic with the max function to merge the tiles
-with a message.
+with a message. The user can also pass the function to be used when mosaic
+is triggered.
 
 This function is parallel-aware, using the same mechanism as used in the \code{raster}
 package. Specifically, if you start a cluster using \code{\link{beginCluster}}, then
