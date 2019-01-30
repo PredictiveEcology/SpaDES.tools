@@ -3,12 +3,13 @@ Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 version 0.3.0.9000
 =============
 
+## Dependency changes
+* `RandomFields` moved to Suggests to prevent clashes with `data.table` multithreading
+
 ## Enhancements
 * `randomPolygon` now has `area` argument, instead of `hectares` (deprecated), and it now succeeds for more cases.
 * `mergeRaster` now accepts a function passed by the user when `mosaic` is triggered (#55, @tati-micheletti)
-
-## Dependency changes
-* `RandomFields` moved to Suggests to prevent clashes with `data.table` multithreading
+* `initiateAgents` example fixed to work with newer `raster` package versions (Robert J. Hijmans)
 
 version 0.3.0
 =============
