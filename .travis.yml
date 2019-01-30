@@ -128,9 +128,6 @@ matrix:
       - devtools
       - ggplot2
       - rgdal
-    after_success:
-      - Rscript -e 'covr::coveralls(package_coverage(type = "all", quiet = FALSE)))'
-      - Rscript -e 'lintr::lint_package()'
   - os: linux
     dist: trusty
     r: devel
