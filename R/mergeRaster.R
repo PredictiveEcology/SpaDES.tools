@@ -8,7 +8,7 @@
 #' To use the average of cell values, or do another computation, use
 #' \code{\link[raster]{mosaic}}.
 #' \code{mergeRaster} is also faster than \code{merge}. \code{mergeRaster} also
-#' differs from \code{\link[raster]{mosaic}} in speed and hability to take a
+#' differs from \code{\link[raster]{mosaic}} in speed and ability to take a
 #' raster list. It can, however, use the average of cell values, or do other
 #' computations. At last, \code{mergeRaster} can also merge tiles of a split
 #' raster that were resampled and, therefore, could have had different changes
@@ -19,8 +19,8 @@
 #' is triggered.
 #'
 #' @param x    A list of split raster tiles (i.e., from \code{splitRaster}).
-#' @param fun  Function. E.g. mean, min, or max. Must be a function that
-#'             accepts a 'na.rm' argument. The default is mean.
+#' @param fun  Function (e.g. \code{mean}, \code{min}, or \code{max} that
+#'             accepts a \code{na.rm} argument. The default is \code{mean}.
 #'
 #' @return \code{mergeRaster} returns a \code{RasterLayer} object.
 #'

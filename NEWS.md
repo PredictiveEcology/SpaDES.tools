@@ -1,6 +1,6 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
-version 0.3.0.9000
+version 0.3.1
 =============
 
 ## Dependency changes
@@ -9,7 +9,7 @@ version 0.3.0.9000
 ## Enhancements
 * `randomPolygon` now has `area` argument, instead of `hectares` (deprecated), and it now succeeds for more cases.
 * `mergeRaster` now accepts a function passed by the user when `mosaic` is triggered (#55, @tati-micheletti)
-* `initiateAgents` example fixed to work with newer `raster` package versions (Robert J. Hijmans)
+* `initiateAgents` example fixed to work with newer `raster` package versions (@rhijmans)
 
 version 0.3.0
 =============
@@ -33,7 +33,7 @@ version 0.2.0
 * `fastMask()`: moved to the `reproducible` package.
 
 ## Bug fixes
-* minor bugfixes (`spread2`)
+* minor bug fixes (`spread2`)
 * minor test fixes.
 
 ## Dependency changes
@@ -45,11 +45,11 @@ version 0.1.1
 * add more detailed information to package Description, per CRAN.
 * add `randomPolygon` function for single random polygon.
 * speed improvements with `spread2` when `asymmetry` used.
-* minor bugfixes.
+* minor bug fixes.
 
 version 0.1.0
 =============
 
-* A new package, which takes all auxillary modelling functions out of the `SpaDES` package:
+* A new package, which takes all auxiliary modelling functions out of the `SpaDES` package:
 
     - see `?SpaDES.tools::SpaDES.tools` for an overview of included functionality.
