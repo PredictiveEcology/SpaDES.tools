@@ -10,13 +10,13 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2018-07-13
-Version: 0.3.0
+Date: 2019-01-29
+Version: 0.3.1
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
-    role = c("aut", "cre")),
+    role = c("aut", "cre"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
-    role = c("aut")),
+    role = c("aut"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
     person("Yong", "Luo", email = "yluo1@lakeheadu.ca",
     role = c("ctb")),
     person("Steve", "Cumming", email = "Steve.Cumming@sbf.ulaval.ca",
@@ -32,7 +32,6 @@ Imports:
     bit (>= 1.1-12),
     checkmate (>= 1.8.2),
     CircStats (>= 0.2-4),
-    compiler,
     data.table (>= 1.10.4),
     fastmatch (>= 1.1-0),
     ff (>= 2.2-13),
@@ -42,13 +41,12 @@ Imports:
     methods,
     parallel,
     quickPlot,
-    RandomFields (>= 3.1.24),
     raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
     reproducible (>= 0.2.0),
+    rgeos,
     sp (>= 1.2-4),
-    stats,
-    velox
+    stats
 Suggests:
     DEoptim (>= 2.2-4),
     dplyr,
@@ -57,10 +55,11 @@ Suggests:
     mgcv,
     microbenchmark,
     profvis,
+    RandomFields (>= 3.1.24),
     RColorBrewer (>= 1.1-2),
-    rgeos,
     rmarkdown,
     testthat (>= 1.0.2)
+Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
 License: GPL-3
@@ -87,4 +86,4 @@ Collate:
     'spread.R'
     'spread2.R'
     'zzz.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

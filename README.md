@@ -1,4 +1,3 @@
-
 [![Build Status](https://travis-ci.org/PredictiveEcology/SpaDES.tools.svg?branch=master)](https://travis-ci.org/PredictiveEcology/SpaDES.tools)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/2fxqhgk6miv2fytd/branch/master?svg=true)](https://ci.appveyor.com/project/achubaty/spades-tools/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/PredictiveEcology/SpaDES.tools/badge.svg?branch=master)](https://coveralls.io/github/PredictiveEcology/SpaDES.tools?branch=master)
@@ -11,7 +10,7 @@
 
 Additional modelling tools for Spatial Discrete Event Simulation (`SpaDES`) module development.
 
-Provides GIS/map utilites and additional modeling tools for developing cellular automata and agent based models in `SpaDES`.
+Provides GIS/map utilities and additional modeling tools for developing cellular automata and agent based models in `SpaDES`.
 
 **Website:** [http://SpaDES.PredictiveEcology.org](http://SpaDES.PredictiveEcology.org)
 
