@@ -10,6 +10,7 @@
 ^_pkgdown\.yml$
 ^appveyor\.yml$
 ^CONTRIBUTING\.md$
+^CRAN-RELEASE$
 ^cran-comments\.md$
 ^docs$
 ^LICENSE$

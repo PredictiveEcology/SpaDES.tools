@@ -24,7 +24,7 @@ This release updates an example to work with the latest version of `raster`.
 * Ubuntu 14.04       (travis-ci), R 3.6.0 (2019-01-29 r76025)
 * Ubuntu 18.04           (local), R 3.6.0 (2019-01-25 r76014)
 * Windows             (appveyor), R 3.6.0 (2019-01-26 r76018)
-* Windows          (win-builder), R 3.6.0 (2019-01-27 r76018)
+* Windows          (win-builder), R 3.6.0 (2019-01-31 r76038)
 
 ## R CMD check results
 
@@ -41,6 +41,7 @@ There was 1 NOTEs:
 ## Downstream dependencies
 
 We have run R CMD check on downstream dependencies, and all have passed except those noted below.
-Summary at https://github.com/PredictiveEcology/SpaDES.tools/blob/master/revdep/README.md.
 
-* `SpaDES` and `SpaDES.core` produce a WARNING due to no `DISPLAY` variable being set during headless checks.
+* Current CRAN versions of `SpaDES` and `SpaDES.core` produce an ERROR due to a recent change in the dependency package `reproducible`, which has just been updated on CRAN (v0.2.6). These errors are fixed in the soon to be submitted version of `SpaDES.core`.
+
+Summary at https://github.com/PredictiveEcology/SpaDES.tools/blob/master/revdep/README.md.

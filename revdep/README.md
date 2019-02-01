@@ -10,29 +10,28 @@
 |collate  |en_CA.UTF-8                  |
 |ctype    |en_CA.UTF-8                  |
 |tz       |America/Edmonton             |
-|date     |2019-01-29                   |
+|date     |2019-02-01                   |
 
 # Dependencies
 
 |package      |old   |new   |Δ  |
 |:------------|:-----|:-----|:--|
 |SpaDES.tools |0.3.0 |0.3.1 |*  |
-|reproducible |NA    |0.2.6 |*  |
 
 # Revdeps
 
 ## Couldn't check (2)
 
-|package                               |version |error  |warning |note |
-|:-------------------------------------|:-------|:------|:-------|:----|
-|[SpaDES](problems.md#spades)          |2.0.2   |__+1__ |        |     |
-|[SpaDES.core](problems.md#spadescore) |0.2.3   |__+1__ |-1      |     |
+|package                               |version |error |warning |note |
+|:-------------------------------------|:-------|:-----|:-------|:----|
+|[SpaDES](problems.md#spades)          |2.0.2   |1     |        |     |
+|[SpaDES.core](problems.md#spadescore) |0.2.3   |1     |        |     |
 
 ## All (3)
 
-|package                               |version |error  |warning |note |
-|:-------------------------------------|:-------|:------|:-------|:----|
-|NetLogoR                              |0.3.5   |       |        |     |
-|[SpaDES](problems.md#spades)          |2.0.2   |__+1__ |        |     |
-|[SpaDES.core](problems.md#spadescore) |0.2.3   |__+1__ |-1      |     |
+|package                               |version |error |warning |note |
+|:-------------------------------------|:-------|:-----|:-------|:----|
+|NetLogoR                              |0.3.5   |      |        |     |
+|[SpaDES](problems.md#spades)          |2.0.2   |1     |        |     |
+|[SpaDES.core](problems.md#spadescore) |0.2.3   |1     |        |     |
 
