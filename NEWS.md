@@ -1,5 +1,14 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
+
+version 0.3.2
+=============
+
+## Enhancements
+* `spread2` now takes a numeric for `allowOverlap`, to allow for 1 more scenario of overlapping, namely, allow between event overlapping, and within event overlapping only if the overlap occurs in the same iteration, otherwise, do not allow overlap within event.
+* `pointDistance` is now exported
+
+
 version 0.3.1
 =============
 
