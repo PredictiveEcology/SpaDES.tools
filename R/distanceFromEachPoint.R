@@ -246,11 +246,12 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   return(out)
 }
 
+#' @param otherFromCols TODO: description needed
+#'
 #' @aliases pointDistance
-#' @keywords internal
+#' @export
 #' @name .pointDistance
 #' @rdname distances
-#' @export
 .pointDistance <- function(from, to, angles = NA, maxDistance = NA_real_,
                            otherFromCols = FALSE) {
   if (!is.na(maxDistance)) {

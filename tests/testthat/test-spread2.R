@@ -230,7 +230,7 @@ test_that("spread2 tests", {
                  returnFrom = TRUE, neighProbs = c(0.3, 0.7), exactSize = 30)
 
   set(out, NULL, "relProb", bProb[][out$pixels])
-  out
+  if (interactive()) out
 
   if (interactive())
     print("check wide range of spreadProbs and that it makes a RasterLayer")
