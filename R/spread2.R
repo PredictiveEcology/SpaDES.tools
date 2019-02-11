@@ -1,5 +1,5 @@
 if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("distance",
+  utils::globalVariables(c("distance", "dups",
                            "from", "i.size", "ind", "indClDT", "initialPixels",
                            "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
                            "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
@@ -163,6 +163,10 @@ if (getRversion() >= "3.1.0") {
 #'                      individual cell distances from the locus where that event
 #'                      started. Default is FALSE. See Details.
 #'
+#' @param returnDirections Logical. Should the function include a column with the
+#'                      individual directions (in radians) from the locus where
+#'                      that event started. Default is FALSE.
+#'
 #' @param returnFrom Logical. Should the function return a column with the
 #'                      source, i.e, the lag 1 "from" pixel, for each iteration.
 #'
@@ -195,12 +199,8 @@ if (getRversion() >= "3.1.0") {
 #' @param asymmetryAngle A numeric or \code{RasterLayer} indicating the angle in degrees
 #'                      (0 is "up", as in North on a map),
 #'                      that describes which way the \code{asymmetry} is.
-#' @param allowOverlap Logical. If TRUE, then individual events can overlap with one another,
-#'                     i.e., they do not interact (this is slower than if
-#'                     allowOverlap = FALSE). Default is FALSE. This can also be \code{NA},
-#'                     which means that the event can overlap with other events,
-#'                     and also itself. This would be, perhaps, useful for dispersal of,
-#'                     say, insect swarms.
+#' @param allowOverlap \code{numeric} (\code{logical} will work for backwards compatibility).
+#'                     See details.  Default is 0, i.e., no overlapping.
 #'
 #' @param plot.it  If TRUE, then plot the raster at every iteration,
 #'                   so one can watch the spread2 event grow.
@@ -250,6 +250,24 @@ if (getRversion() >= "3.1.0") {
 #'
 #' \bold{NOTE}: the \code{data.table} or \code{RasterLayer} should not use be altered
 #' when passed back into \code{spread2}.
+#'
+#' @section \code{allowOverlap}:
+#' If \code{1} (or \code{TRUE}),
+#'  then individual events can overlap with one another, i.e., allow
+#'  overlap between events. If \code{2} (or \code{NA}), then each pixel
+#'  is essentially indepependent, allowing overlap between and within
+#'  events. This likely requires a user to intervene as it is possible
+#'  to spread back onto itself. If \code{3} (did not exist previously),
+#'  individual events can overlap, and there can be overlap within an
+#'  event, but only within an interation, i.e., once an iteration is
+#'  finished, and a pixel was activated, then the spreading will not
+#'  return onto these pixels. If \code{0} (or \code{FALSE}), then once a
+#'  pixel is activated, it cannot be re-activated, within or between event.
+#'  This allows events to not interfere with one another i.e.,
+#'  they do not interact (this is slower than if
+#'  allowOverlap = FALSE). Default is 0. In the case of 2 or 3,
+#'  this would be, perhaps, useful for dispersal of,
+#'  say, insect swarms.
 #'
 #' @return
 #' Either a \code{data.table} (\code{asRaster=FALSE}) or a \code{RasterLayer}
@@ -326,10 +344,11 @@ if (getRversion() >= "3.1.0") {
 spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 2,
                     spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE,
                     maxSize, exactSize, directions = 8L, iterations = 1e6L,
-                    returnDistances = FALSE, returnFrom = FALSE,
+                    returnDistances = FALSE, returnDirections = FALSE,
+                    returnFrom = FALSE,
                     spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
                     asymmetry = NA_real_, asymmetryAngle = NA_real_,
-                    allowOverlap = FALSE, neighProbs = NA_real_, skipChecks = FALSE) {
+                    allowOverlap = 0, neighProbs = NA_real_, skipChecks = FALSE) {
 
   #### assertions ###############
   assertClass(landscape, "Raster")
@@ -400,7 +419,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   # Step 0 - set up objects -- main ones: dt, clusterDT -- get them from attributes
   ## on start or initiate them
   smallRaster <- ncells < 4e7 # should use bit vector (RAM) or ff raster (Disk)
-  canUseAvailable <- !(isTRUE(allowOverlap) | is.na(allowOverlap))
+  canUseAvailable <- !(isTRUE(allowOverlap > 0) | is.na(allowOverlap))
   if (missing(maxSize)) {
     maxSize <- NA_real_
   }
@@ -412,7 +431,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   }
 
   # returnDistances = TRUE and circle = TRUE both require distance calculations
-  needDistance <- returnDistances | circle
+  needDistance <- returnDistances | circle | returnDirections
   usingAsymmetry <- !is.na(asymmetry)
 
   # This means that if an event can not spread any more, it will try 10 times, incl. 2 jumps
@@ -607,6 +626,8 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       fromPts <- xyFromCell(landscape, dtPotential$id)
       toPts <- xyFromCell(landscape, dtPotential$to)
       dists <- pointDistance(p1 = fromPts, p2 = toPts, lonlat = FALSE)
+      if (isTRUE(returnDirections))
+        dirs <- .pointDirection(fromPts, toPts)
       if (usingAsymmetry) {
         actualAsymmetry <- if (length(asymmetry) == 1) {
           asymmetry
@@ -692,16 +713,22 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
             }
           }
         } else {
-          distKeepers <- dists %<=% totalIterations & dists %>>% (totalIterations - 1)
+          distKeepers <- dists %<=% (totalIterations * res(landscape)[1]) &
+            dists %>>% ((totalIterations - 1) * res(landscape)[1])
         }
 
         dtPotentialAllNeighs <- copy(dtPotential)
         setkeyv(dtPotentialAllNeighs, "from")
         dtPotential <- dtPotential[distKeepers]
         dists <- dists[distKeepers]
+        if (isTRUE(returnDirections))
+          dirs <- dirs[distKeepers, , drop = FALSE]
       }
 
       set(dtPotential, NULL, "distance", dists)
+      if (isTRUE(returnDirections))
+        set(dtPotential, NULL, "direction", dirs[, "angles"])
+
       if (usingAsymmetry) {
         set(dtPotential, NULL, "effectiveDistance", effDists[distKeepers])
         if (circle) {
@@ -821,15 +848,25 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # Step 8 - Remove duplicates & bind dt and dtPotential
     if (anyNA(neighProbs)) {
-      if (isTRUE(allowOverlap) | is.na(allowOverlap) | !canUseAvailable) {
+      if (isTRUE(allowOverlap > 0) | is.na(allowOverlap) | !canUseAvailable) {
         # overlapping allowed
         dtPotential <- dtPotential[spreadProbSuccess]
         dtNROW <- NROW(dt)
         dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
         # this is to prevent overlap within an event... in some cases, overlap within event is desired, so skip this block
-        if (!is.na(allowOverlap)) {
-          dt[, `:=`(dups = duplicatedInt(pixels)), by = initialPixels]
+        if (!is.na(allowOverlap) && (any(allowOverlap %in% c(1,3) ) || isTRUE(allowOverlap))) {
+          if (identical(allowOverlap, 1) || isTRUE(allowOverlap)) {
+            dt[, `:=`(dups = duplicatedInt(pixels)), by = "initialPixels"]
+          } else {
+            dt[, dups := {
+              successes <- state == "successful"
+              c(rep(FALSE, length.out = sum(!successes)),
+              pixels[successes] %in% pixels[!successes])
+              },
+                     by = "initialPixels"]
+            #dt[!successes, dups := FALSE]
+          }
           dupes <- dt$dups
           set(dt, NULL, "dups", NULL)
           dt <- dt[!dupes]
@@ -941,7 +978,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # Step 10 - Change states of cells
     if (usingAsymmetry) {
-      if (!(isTRUE(allowOverlap) | is.na(allowOverlap))) {
+      if (!(isTRUE(allowOverlap > 0) | is.na(allowOverlap))) {
         if (circle) {
           if (length(saturated)) {
             set(dt, which(dt$pixels %in% saturated), "state", "activeSource")

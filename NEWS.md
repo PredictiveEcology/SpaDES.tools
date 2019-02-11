@@ -1,5 +1,21 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
+
+version 0.3.1.9000
+=============
+
+## Dependency changes
+* Added `animation`, `fasterize`, and `sf` to suggests (used in examples)
+
+## Bugfixes
+* lorem ipsum
+
+## Enhancements
+* `spread2` now takes a numeric for `allowOverlap`, to allow for 1 more scenario of overlapping, namely, allow between event overlapping, and within event overlapping only if the overlap occurs in the same iteration, otherwise, do not allow overlap within event.
+* new function `spread3` for simulating *e.g.*, insect spread
+* `pointDistance` is now exported
+
+
 version 0.3.1
 =============
 
