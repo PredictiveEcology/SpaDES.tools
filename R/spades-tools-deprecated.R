@@ -12,5 +12,4 @@
 #' @rdname deprecated
 fastCrop <- function(x, y, ...) {
   .Deprecated("raster::crop")
-
 }
