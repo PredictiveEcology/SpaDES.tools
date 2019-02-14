@@ -186,12 +186,14 @@ if (getRversion() >= "3.1.0") {
 #'                meanDist = 2600, verbose = 2,
 #'                plot.it = 0, saveStack = tmpStack)
 #'
-#' if (require(animation)) {
-#'   out2 <- raster::stack(tmpStack)
-#'   gifName <- file.path(tempdir(), "animation.gif")
-#'   saveGIF(interval = 0.1, movie.name = gifName, expr = {
-#'     for (i in seq(numLayers(out2))) plot(out2[[i]])
-#'   })
+#' \dontrun{
+#'   if (require(animation)) {
+#'     out2 <- raster::stack(tmpStack)
+#'     gifName <- file.path(tempdir(), "animation.gif")
+#'     saveGIF(interval = 0.1, movie.name = gifName, expr = {
+#'       for (i in seq(numLayers(out2))) plot(out2[[i]])
+#'     })
+#'   }
 #' }
 spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
                     advectionMag, meanDist, plot.it = 2,
