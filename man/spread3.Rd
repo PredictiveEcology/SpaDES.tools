@@ -86,13 +86,23 @@ if (interactive()) {
                  plot.it = 2)
 
   # Test the dispersal kernel
-  out[, disGroup:=round(distance/100)*100]
-  freqs <- out[, .N, by = "disGroup"]
-  freqs[, cumSum := cumsum(N)]
-  #plot(freqs$disGroup, freqs$cumSum) # can plot the distance X number
-  #abline(v = advectionMag + meanDist)
+  plotDispersalKernel <- function(out, meanAdvectionMag) {
+    out[, disGroup:=round(distance/100)*100]
+    freqs <- out[, .N, by = "disGroup"]
+    freqs[, `:=`(cumSum = cumsum(N), N = N)]
+    Plot(freqs$disGroup, freqs$cumSum, addTo = "CumulativeNumberSettled",
+         title = "Cumulative Number Settled") # can plot the distance X number
+    abline(v = meanAdvectionMag + meanDist)
+    newTitle <- "Number Settled By Distance"
+    Plot(freqs$disGroup, freqs$N, addTo = gsub(" ", "", newTitle),
+         title = newTitle) # can plot the distance X number
+    abline(v = meanAdvectionMag + meanDist)
   # should be 0.63:
-  freqs[disGroup == advectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
+    freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
+    mtext(side = 3, paste("Average habitat quality: ", round(mean(rasQuality[], na.rm = TRUE),2)),
+          outer = TRUE, line = -2, cex = 2)
+  }
+  plotDispersalKernel(out, advectionMag)
 }
 
 #########################################################
@@ -107,20 +117,22 @@ if (require(sf) && require(fasterize)) {
   crs(rasQuality) <- crs(a)
   rasQuality[is.na(mask)] <- NA
   # rescale so min is 0.75 and max is 1
-  rasQuality[] <- rasQuality[] / (maxValue(rasQuality) * 4 ) + 3/4
+  rasQuality[] <- rasQuality[] / (maxValue(rasQuality) * 4 ) + 1/4
   rasAbundance <- raster(rasQuality)
   rasAbundance[] <- 0
   startPixel <- sample(seq(ncell(rasAbundance)), 300)
   rasAbundance[startPixel] <- 1000
-  advectionDir <- 90
+  advectionDir <- 75
   advectionMag <- 4 * res(rasAbundance)[1]
+  meanDist <- 2600
   clearPlot()
   out <- spread3(rasAbundance = rasAbundance,
                  rasQuality = rasQuality,
                  advectionDir = advectionDir,
                  advectionMag = advectionMag,
-                 meanDist = 600, verbose = 2,
+                 meanDist = meanDist, verbose = 2,
                  plot.it = 1)
+  plotDispersalKernel(out, advectionMag)
 }
 
 ###############################################################################
@@ -160,8 +172,9 @@ if (interactive()) {
                  rasQuality = rasQuality,
                  advectionDir = advectionDir,
                  advectionMag = advectionMag,
-                 meanDist = 2600, verbose = 2,
+                 meanDist = meanDist, verbose = 2,
                  plot.it = 1)
+  plotDispersalKernel(out, mean(advectionMag[]))
   Plot(rasAbundance, addTo = "rasAbundance", cols = "black", title = "")
 }
 
