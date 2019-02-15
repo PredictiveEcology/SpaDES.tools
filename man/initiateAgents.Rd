@@ -84,7 +84,7 @@ if (interactive())
 agentsRas <- initiateAgents(map, 30, pr, asSpatialPoints = FALSE)
 if (interactive()) Plot(agentsRas)
 
-if (require(dplyr)) {
+if (require(dplyr) && getRversion() >= 3.4) {
   # Check that the agents are more often at the higher probability areas based on pr
   if (utils::packageVersion("raster") >= "2.8-11") {
     out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) \%>\%
