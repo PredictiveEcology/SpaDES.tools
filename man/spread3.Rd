@@ -76,6 +76,23 @@ advectionMag <- 4 * res(rasAbundance)[1]
 meanDist <- 2600
 
 if (interactive()) {
+   # Test the dispersal kernel -- create a function
+   plotDispersalKernel <- function(out, meanAdvectionMag) {
+     out[, disGroup:=round(distance/100)*100]
+     freqs <- out[, .N, by = "disGroup"]
+     freqs[, `:=`(cumSum = cumsum(N), N = N)]
+     Plot(freqs$disGroup, freqs$cumSum, addTo = "CumulativeNumberSettled",
+          title = "Cumulative Number Settled") # can plot the distance X number
+     abline(v = meanAdvectionMag + meanDist)
+     newTitle <- "Number Settled By Distance"
+     Plot(freqs$disGroup, freqs$N, addTo = gsub(" ", "", newTitle),
+          title = newTitle) # can plot the distance X number
+     abline(v = meanAdvectionMag + meanDist)
+   # should be 0.63:
+     freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
+     mtext(side = 3, paste("Average habitat quality: ", round(mean(rasQuality[], na.rm = TRUE),2)),
+           outer = TRUE, line = -2, cex = 2)
+}
   dev() # don't use Rstudio windows, which is very slow
   clearPlot()
   out <- spread3(rasAbundance = rasAbundance,
@@ -85,23 +102,6 @@ if (interactive()) {
                  meanDist = meanDist, verbose = 2,
                  plot.it = 2)
 
-  # Test the dispersal kernel
-  plotDispersalKernel <- function(out, meanAdvectionMag) {
-    out[, disGroup:=round(distance/100)*100]
-    freqs <- out[, .N, by = "disGroup"]
-    freqs[, `:=`(cumSum = cumsum(N), N = N)]
-    Plot(freqs$disGroup, freqs$cumSum, addTo = "CumulativeNumberSettled",
-         title = "Cumulative Number Settled") # can plot the distance X number
-    abline(v = meanAdvectionMag + meanDist)
-    newTitle <- "Number Settled By Distance"
-    Plot(freqs$disGroup, freqs$N, addTo = gsub(" ", "", newTitle),
-         title = newTitle) # can plot the distance X number
-    abline(v = meanAdvectionMag + meanDist)
-  # should be 0.63:
-    freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
-    mtext(side = 3, paste("Average habitat quality: ", round(mean(rasQuality[], na.rm = TRUE),2)),
-          outer = TRUE, line = -2, cex = 2)
-  }
   plotDispersalKernel(out, advectionMag)
 }
 
@@ -132,7 +132,9 @@ if (require(sf) && require(fasterize)) {
                  advectionMag = advectionMag,
                  meanDist = meanDist, verbose = 2,
                  plot.it = 1)
-  plotDispersalKernel(out, advectionMag)
+  if (interactive()) {
+    plotDispersalKernel(out, advectionMag)
+  }
 }
 
 ###############################################################################
@@ -163,17 +165,17 @@ crs(advectionMag) <- crs(rasQuality)
 # rescale so min is 0.75 and max is 1
 advectionMag[] <- advectionMag[] / (maxValue(advectionMag)) * 600
 
+out <- spread3(rasAbundance = rasAbundance,
+               rasQuality = rasQuality,
+               advectionDir = advectionDir,
+               advectionMag = advectionMag,
+               meanDist = meanDist, verbose = 2,
+               plot.it = 1)
 if (interactive()) {
   dev() # don't use Rstudio windows, which is very slow
   clearPlot()
   Plot(advectionDir, title = "Wind direction", cols = "Reds")
   Plot(advectionMag, title = "Wind speed", cols = "Blues")
-  out <- spread3(rasAbundance = rasAbundance,
-                 rasQuality = rasQuality,
-                 advectionDir = advectionDir,
-                 advectionMag = advectionMag,
-                 meanDist = meanDist, verbose = 2,
-                 plot.it = 1)
   plotDispersalKernel(out, mean(advectionMag[]))
   Plot(rasAbundance, addTo = "rasAbundance", cols = "black", title = "")
 }
@@ -189,7 +191,7 @@ out <- spread3(rasAbundance = rasAbundance,
                meanDist = 2600, verbose = 2,
                plot.it = 0, saveStack = tmpStack)
 
-\dontrun{
+\dontrun{ # This animates the series of images into an animated GIF
   if (require(animation)) {
     out2 <- raster::stack(tmpStack)
     gifName <- file.path(tempdir(), "animation.gif")
