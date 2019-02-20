@@ -391,16 +391,23 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     start <- b
   }
   if (!is.null(saveStack)) {
-    b[, distGrp := floor(distance/100)]
-    ras <- raster(rasAbundance)
-    out1 <- lapply(unique(b$distGrp), function(x)  {
-      r <- raster(ras)
-      x1 <- b[distGrp <= x, sum(abundSettled), by = "pixels"]
-      r[x1$pixels] <- ceiling(x1$V1)
-      r
-    })
-    writeRaster(raster::stack(out1), filename = saveStack, overwrite = TRUE)
-    message("stack saved to ", saveStack)
+    saveStackFALSE <- isFALSE(saveStack) # allow TRUE or character
+    if (!saveStackFALSE) {
+      if (isTRUE(saveStack))
+        saveStack <- raster::rasterTmpFile()
+      # make 30 maps
+      b[, distGrp := floor(distance/(diff(range(b$distance))/30))]
+      ras <- raster(rasAbundance)
+      out1 <- lapply(unique(b$distGrp), function(x)  {
+        r <- raster(ras)
+        x1 <- b[distGrp <= x, sum(abundSettled), by = "pixels"]
+        r[x1$pixels] <- ceiling(x1$V1)
+        r <- writeRaster(r, raster::rasterTmpFile())
+        r
+      })
+      writeRaster(raster::stack(out1), filename = saveStack, overwrite = TRUE)
+      message("stack saved to ", saveStack)
+    }
   }
 
   return(start)
