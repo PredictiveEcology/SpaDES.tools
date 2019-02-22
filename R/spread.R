@@ -176,7 +176,7 @@ if (getRversion() >= "3.1.0") {
 #' @param mask          non-\code{NULL}, a \code{RasterLayer} object congruent with
 #'                      \code{landscape} whose elements are \code{0,1}, where
 #'                      \code{1} indicates "cannot spread to".
-#'                      Currently not implemented, but identical behavior can be
+#'                      Currently not implemented, but identical behaviour can be
 #'                      achieved if \code{spreadProb} has zeros in all unspreadable
 #'                      locations.
 #'
@@ -329,7 +329,7 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom stats runif
 #' @rdname spread
 #'
-#' @seealso \code{\link{spread2}} for a different implementation of the same alogorithm.
+#' @seealso \code{\link{spread2}} for a different implementation of the same algorithm.
 #' It is more robust, meaning, there will be fewer unexplainable errors, and the behaviour
 #' has been better tested, so it is more likely to be exactly as described under all
 #' argument combinations.
@@ -352,7 +352,7 @@ setGeneric(
     standardGeneric("spread")
 })
 
-#' @param plot.it  If \code{TRUE}, then plot the raster at every iteraction,
+#' @param plot.it  If \code{TRUE}, then plot the raster at every iteration,
 #'                 so one can watch the spread event grow.
 #'
 #' @param mapID    Deprecated. Use \code{id}.
@@ -1137,7 +1137,7 @@ setMethod(
     }
 
     landscape[] <- 0
-    landscape@legend@colortable <- logical(0) # remove color table
+    landscape@legend@colortable <- logical(0) # remove colour table
     if (allowOverlap | returnDistances) {
       if (returnDistances & !allowOverlap) {
         landscape[spreads[, "indices"]] <- spreads[, "dists"]

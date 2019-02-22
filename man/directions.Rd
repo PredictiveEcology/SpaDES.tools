@@ -20,16 +20,16 @@ optional \code{id} which will be matched with \code{id} from \code{from}.
 It makes no sense to have \code{id} column here with no \code{id} column
 in \code{from}.}
 
-\item{landscape}{(opional) \code{RasterLayer}.
-This is only used if \code{to = NULL}, in which case all cells
-are considered \code{to}.}
+\item{landscape}{(optional) \code{RasterLayer}. This is only used if \code{to = NULL},
+in which case all cells are considered \code{to}.}
 }
 \value{
 A sorted matrix on \code{id} with same number of rows as \code{to},
-        but with one extra column, \code{angles}
-        indicating the angle in radians between from and to. For speed, this
-        angle will be between -pi/2 and 3*pi/2. If the user wants this between
-        say, 0 and 2*pi, then \code{angles \%\% (2*pi)} will do the trick. See example.
+        but with one extra column, \code{angles} indicating the angle in radians
+        between from and to. For speed, this angle will be between \code{-pi/2}
+        and \code{3*pi/2}.
+        If the user wants this between say, \code{0} and \code{2*pi},
+        then \code{angles \%\% (2*pi)} will do the trick. See example.
 }
 \description{
 This is a modification of \code{\link[raster]{distanceFromPoints}} for the case
@@ -81,7 +81,7 @@ if (interactive()) {
 }
 \seealso{
 \code{\link{distanceFromEachPoint}}, which will also return directions
-if \code{angles = TRUE}.
+         if \code{angles = TRUE}.
 }
 \author{
 Eliot McIntire

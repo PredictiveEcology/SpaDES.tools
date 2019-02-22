@@ -40,8 +40,8 @@ transitions <- function(p, agent) {
 #'
 #' You must know how to use SELES for these to be useful.
 #'
-#' @param N         Number of agents to intitate (integer scalar).
-#' @param probInit  Probability of initalizing an agent at the location.
+#' @param N         Number of agents to initiate (integer scalar).
+#' @param probInit  Probability of initializing an agent at the location.
 #'
 #' @return A numeric, indicating number of agents to start
 #'
@@ -102,6 +102,18 @@ numAgents <- function(N, probInit) {
 #'   Plot(map)
 #'   Plot(agents, addTo = "map")
 #' }
+#' # Test that they are indeed selecting according to probabilities in pr
+#' library(data.table)
+#' dt1 <- data.table(table(round(map[agents], 0)))
+#' setnames(dt1, old = "N", new = "count")
+#' dt2 <- data.table(table(round(map[], 0)))
+#' setnames(dt2, old = "N", new = "available")
+#' dt <-dt1[dt2, on = "V1"]  # join the counts and available data.tables
+#' setnames(dt, old = "V1", new = "mapValue")
+#' dt[, selection := count/available]
+#' dt[is.na(selection), selection := 0]
+#' if (interactive())
+#'   with(dt, {plot(mapValue, selection)})
 #'
 #' # Note, can also produce a Raster representing agents,
 #' # then the number of points produced can't be more than
@@ -109,14 +121,21 @@ numAgents <- function(N, probInit) {
 #' agentsRas <- initiateAgents(map, 30, pr, asSpatialPoints = FALSE)
 #' if (interactive()) Plot(agentsRas)
 #'
-#' library("dplyr")
-#' # Check that the agents are more often at the higher probability areas based on pr
-#' out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) %>%
-#'    dplyr::mutate(selectionRatio = Freq/Freq.1) %>%
-#'    dplyr::select(-Var1, -Var1.1) %>%
-#'    dplyr::rename(Present = Freq, Avail = Freq.1, Type = Var2)
-#' out
-#'
+#' if (require(dplyr) && getRversion() >= 3.4) {
+#'   # Check that the agents are more often at the higher probability areas based on pr
+#'   if (utils::packageVersion("raster") >= "2.8-11") {
+#'     out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) %>%
+#'              dplyr::mutate(selectionRatio = Freq / Freq.1) %>%
+#'              dplyr::select(-layer.1, -Var1) %>%
+#'              dplyr::rename(Present = Freq, Avail = Freq.1, Type = layer.2)
+#'   } else {
+#'     out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) %>%
+#'              dplyr::mutate(selectionRatio = Freq/Freq.1) %>%
+#'              dplyr::select(-Var1, -Var1.1) %>%
+#'              dplyr::rename(Present = Freq, Avail = Freq.1, Type = Var2)
+#'   }
+#'   out
+#' }
 #'
 setGeneric(
   "initiateAgents",
@@ -192,7 +211,7 @@ setMethod(
 #' \code{SELES} - Agent Location at initiation
 #'
 #' @description
-#' Sets the the location of the intiating agents. NOT YET FULLY IMPLEMENTED.
+#' Sets the the location of the initiating agents. NOT YET FULLY IMPLEMENTED.
 #'
 #' A \code{SELES}-like function to maintain conceptual backwards compatibility
 #' with that simulation tool. This is intended to ease transitions from

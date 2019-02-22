@@ -10,10 +10,10 @@ test_that("adj.R results not identical to adjacent", {
             for (dirs in list(4, 8, "bishop")) {
               for (prs in c(TRUE, FALSE)) {
                 for (tor in c(TRUE, FALSE)) {
-                  adjDT <- adj.raw(a, sam, directions = dirs, sort = sortTF,
+                  adjDT <- adj(a, sam, directions = dirs, sort = sortTF,
                                    match.adjacent = ma, include = incl, target = targs,
                                    cutoff.for.data.table = 2, id = ids, pairs = prs, torus = tor)
-                  adjMat <- adj.raw(a, sam, directions = dirs, sort = sortTF,
+                  adjMat <- adj(a, sam, directions = dirs, sort = sortTF,
                                     match.adjacent = ma, include = incl,
                                     target = targs, id = ids, pairs = prs, torus = tor)
                   expect_equivalent(adjMat, adjDT)
@@ -85,30 +85,31 @@ test_that("adj benchmarking", {
   tor <- FALSE
 
   microbenchmark::microbenchmark(times = 1e3, {
-    adjDT <- adj.raw(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
+    adjDT <- adj(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
                      include = incl, cutoff.for.data.table = 2, id = ids,
                      pairs = prs, torus = tor)
   })
 
-  ## Unit: milliseconds
+  ## Unit: microseconds
   ##     min       lq     mean   median       uq      max neval
-  ## 1.31649 1.399192 1.895637 1.455207 1.705074 6.158969  1000
+  ## 626.464  708.509 896.7076  811.339 967.0435  7876.73  1000
 
-  microbenchmark::microbenchmark(times = 1e3, {
-    adjDT <- adj.raw(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
+  microbenchmark::microbenchmark(times = 1e5, {
+    adjDT <- adj(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
                      include = incl, cutoff.for.data.table = 5, id = ids,
                      pairs = prs, torus = tor)
+
   })
 
   ## Unit: microseconds
   ##     min     lq     mean  median     uq      max neval
-  ##  65.986 69.212 111.4826 73.7575 87.981 15844.22  1000
+  ##  28.443  31.36 40.35792  32.818 44.123 9290.465 1e+05
 })
 
 test_that("errors in adj are not correct", {
   a <- raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1)
   sam <- sample(1:length(a), 4)
-  expect_error(adj.raw(a, sam, directions = 5), "directions must be 4 or 8 or \'bishop\'")
+  expect_error(adj(a, sam, directions = 5), "directions must be 4 or 8 or \'bishop\'")
 })
 
 test_that("adj.R: torus does not work as expected", {

@@ -37,63 +37,67 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @return A raster map with same extent as \code{x}, with a Gaussian random pattern.
 #'
-#' @seealso \code{\link{RFsimulate}} and \code{\link{extent}}
+#' @seealso \code{RFsimulate} and \code{\link{extent}}
 #'
-#' @importFrom RandomFields RFoptions RFsimulate RMexp round RMgauss RMstable
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
 #' @rdname gaussmap
 #'
 #' @examples
 #' \dontrun{
-#' library(RandomFields)
-#' library(raster)
-#' nx <- ny <- 100L
-#' r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
-#' speedup <- max(1, nx/5e2)
-#' map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
-#' Plot(map1)
+#' if (require(RandomFields)) {
+#'   library(raster)
+#'   nx <- ny <- 100L
+#'   r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+#'   speedup <- max(1, nx/5e2)
+#'   map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
+#'   if (interactive()) Plot(map1)
 #'
-#' # with non-default method
-#' map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
+#'   # with non-default method
+#'   map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
+#' }
 #' }
 #'
 gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
                      alpha = 1, inMemory = FALSE, ...) {
-  RFoptions(spConform = FALSE)
-  ext <- extent(x)
-  resol <- res(x)
-  nc <- (ext@xmax - ext@xmin) / resol[1]
-  nr <- (ext@ymax - ext@ymin) / resol[2]
-  wholeNumsCol <- .findFactors(nc)
-  wholeNumsRow <- .findFactors(nr)
-  ncSpeedup <- wholeNumsCol[which.min(abs(wholeNumsCol - nc / speedup))]
-  nrSpeedup <- wholeNumsRow[which.min(abs(wholeNumsRow - nr / speedup))]
-  speedupEffectiveCol <- nc / ncSpeedup
-  speedupEffectiveRow <- nr / nrSpeedup
-  if (method == "RMgauss") {
-    model <- RMgauss(scale = scale, var = var, ...)
-  } else if (method == "RMstable") {
-    if (!inRange(alpha, 0, 2)) {
-      stop("alpha must be between 0 and 2")
+  if (requireNamespace("RandomFields", quietly = FALSE)) {
+    RandomFields::RFoptions(spConform = FALSE)
+    ext <- extent(x)
+    resol <- res(x)
+    nc <- (ext@xmax - ext@xmin) / resol[1]
+    nr <- (ext@ymax - ext@ymin) / resol[2]
+    wholeNumsCol <- .findFactors(nc)
+    wholeNumsRow <- .findFactors(nr)
+    ncSpeedup <- wholeNumsCol[which.min(abs(wholeNumsCol - nc / speedup))]
+    nrSpeedup <- wholeNumsRow[which.min(abs(wholeNumsRow - nr / speedup))]
+    speedupEffectiveCol <- nc / ncSpeedup
+    speedupEffectiveRow <- nr / nrSpeedup
+    if (method == "RMgauss") {
+      model <- RandomFields::RMgauss(scale = scale, var = var, ...)
+    } else if (method == "RMstable") {
+      if (!inRange(alpha, 0, 2)) {
+        stop("alpha must be between 0 and 2")
+      }
+      model <- RandomFields::RMstable(scale = scale, var = var, alpha = alpha)
+    } else {
+      if ( method != "RMexp") {
+        message("method is not yet implemented, defaulting to RMexp.")
+      }
+      model <- RandomFields::RMexp(scale = scale, var = var, ...)
     }
-    model <- RMstable(scale = scale, var = var, alpha = alpha)
+    map <- raster(RandomFields::RFsimulate(model, y = 1:ncSpeedup, x = 1:nrSpeedup, grid = TRUE, ...))
+
+    if (inMemory) map <- setValues(map, getValues(map))
+
+    map <- map - cellStats(map, "min")
+    extent(map) <- ext
+    if (speedup > 1)
+      return(disaggregate(map, c(speedupEffectiveCol, speedupEffectiveRow)))
+    else
+      return(invisible(map))
   } else {
-    if ( method != "RMexp") {
-      message("method is not yet implemented, defaulting to RMexp.")
-    }
-    model <- RMexp(scale = scale, var = var, ...)
+    stop("The 'RandomFields' package is required but not installed.")
   }
-  map <- raster(RFsimulate(model, y = 1:ncSpeedup, x = 1:nrSpeedup, grid = TRUE, ...))
-
-  if (inMemory) map <- setValues(map, getValues(map))
-
-  map <- map - cellStats(map, "min")
-  extent(map) <- ext
-  if (speedup > 1)
-    return(disaggregate(map, c(speedupEffectiveCol, speedupEffectiveRow)))
-  else
-    return(invisible(map))
 }
 
 ################################################################################
@@ -115,13 +119,12 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   return(div[x %% div == 0L])
 }
 
-################################################################################
 #' randomPolygons
 #'
 #' Produces a raster of random polygons.
 #' These are built with the \code{\link{spread}} function internally.
 #'
-#' @param ras A raster that whose extent will be used for the randomPolygons
+#' @param ras A raster that whose extent will be used for the randomPolygons.
 #'
 #' @param numTypes Numeric value. The number of unique polygon types to use.
 #'
@@ -168,66 +171,84 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
   }
 
   starts <- SpatialPoints(coords = cbind(x = stats::runif(numTypes, xmin(ras), xmax(ras)),
-                                         y = stats::runif(numTypes, xmin(ras), xmax(ras))))
+                                         y = stats::runif(numTypes, ymin(ras), ymax(ras))))
   loci <- raster::cellFromXY(starts, object = ras)
   a <- spread(landscape = ras, spreadProb = 1, loci, allowOverlap = FALSE, id = TRUE, ...)
   return(a)
 }
 
-
-################################################################################
 #' Create a single random polygon object
 #'
 #' Produces a \code{SpatialPolygons} object with 1 feature that will have approximately
-#' an area equal to \code{hectares}, and a centre at approximately \code{x}
+#' an area equal to \code{area} (expecting area in hectares),
+#' and a centre at approximately \code{x}
 #'
-#' @param x Either a \code{SpatialPoints} or matrix with 2 dimensions, 1 row, with
+#' @param x Either a \code{SpatialPoints}, \code{SpatialPolygons}  or matrix with
+#'          2 dimensions, 1 row, with
 #'          with the approximate centre of the new random polygon to create. If
 #'          matrix, then longitude and latitude are assumed (epsg:4326)
 #'
-#' @param hectares A numeric, the approximate area in hectares of the random polygon
+#' @param area A numeric, the approximate area in \code{meters squared} of the random polygon.
+#'
+#' @param hectares Deprecated. Use \code{area} in meters squared.
 #'
 #' @return A \code{SpatialPolygons} object, with approximately the area request,
-#'         centred approximately at the coordinates requested
+#'         centred approximately at the coordinates requested, in the projection of \code{x}
 #'
 #' @seealso \code{\link{gaussMap}} and \code{\link{randomPolygons}}
 #'
-#' @importFrom sp SpatialPoints spTransform Polygon Polygons SpatialPolygons CRS
-#' @importFrom stats rbeta
 #' @importFrom raster crs crs<-
+#' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
+#' @importFrom stats rbeta runif
 #' @export
 #' @docType methods
 #' @rdname randomPolygons
 #'
 #' @examples
-#' library(sp)
-#' b <- SpatialPoints(cbind(-110, 59));
-#' a <- randomPolygon(b, 1e4);
-#' plot(a);
-#' points(b, pch=19)
+#' library(raster)
+#' b <- SpatialPoints(cbind(-110, 59))
+#' crs(b) <- sp::CRS("+init=epsg:4326")
+#' a <- randomPolygon(b, area = 1e6)
+#' if (interactive()) {
+#'   plot(a)
+#'   points(b, pch = 19)
+#' }
 #'
-randomPolygon <- function(x, hectares) {
+randomPolygon <- function(x, hectares, area) {
+  UseMethod("randomPolygon")
+}
 
-  latLong <-   sp::CRS("+init=epsg:4326")
-  if (is(x, "SpatialPoints")) {
-    if (is.na(crs(x))) crs(x) <- latLong
-  } else {
-    x <- SpatialPoints(coords = x)
-    crs(x) <- latLong
+#' @export
+#' @rdname randomPolygons
+randomPolygon.SpatialPoints <- function(x, hectares, area) {
+  if (!missing(hectares)) {
+    message("hectares argument is deprecated; please use area")
+    if (missing(area))
+      area <- hectares * 1e4
   }
 
-  areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
-                 #       paste0("+proj=lcc +lat_1=49 +lat_2=77
-                " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
-                " +units=m +no_defs"))
+  units <- gsub(".*units=(.) .*", "\\1", crs(x))
 
-  areaM2 <- hectares * 1e4 * 1.304 # rescale so mean area is close to hectares
-  y <- spTransform(x, areaCRS)
-
+  areaM2 <- area * 1.304 # rescale so mean area is close to hectares
   radius <- sqrt(areaM2 / pi)
+  if (!identical(units, "m")) {
+    origCRS <- raster::crs(x)
+    crsInUTM <- utmCRS(x)
+    if (is.na(crsInUTM))
+      stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
+    x <- spTransform(x, CRSobj = crsInUTM)
+    message("The CRS provided is not in meters; ",
+            ". Converting internally to UTM so area will be approximately correct")
+  }
+  # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
+  #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
+  #                       " +units=m +no_defs"))
 
-  meanX <- mean(coordinates(y)[, 1]) - radius
-  meanY <- mean(coordinates(y)[, 2]) - radius
+  #y <- spTransform(x, areaCRS)
+
+
+  meanX <- mean(coordinates(x)[, 1]) - radius
+  meanY <- mean(coordinates(x)[, 2]) - radius
 
   minX <- meanX - radius
   maxX <- meanX + radius
@@ -248,9 +269,49 @@ randomPolygon <- function(x, hectares) {
   Sr1 <- Polygon(cbind(X + xAdd, Y + yAdd))
   Srs1 <- Polygons(list(Sr1), "s1")
   outPolygon <- SpatialPolygons(list(Srs1), 1L)
-  crs(outPolygon) <- areaCRS
-  outPolygon <- spTransform(outPolygon, crs(x))
+  crs(outPolygon) <- crs(x)
+  if (exists("origCRS", inherits = FALSE)) {
+    outPolygon <- spTransform(outPolygon, origCRS)
+  }
   outPolygon
+}
+
+#' @importFrom sp spsample
+#' @importFrom rgeos gContains
+#' @rdname randomPolygons
+#' @export
+randomPolygon.matrix <- function(x, hectares, area) {
+  if (!missing(hectares)) {
+    message("hectares argument is deprecated; please use area")
+    if (missing(area))
+      area <- hectares
+  }
+  latLong <-   sp::CRS("+init=epsg:4326")
+  message("Assuming matrix is in latitude/longitude")
+  x <- SpatialPoints(coords = x)
+  crs(x) <- latLong
+  randomPolygon(x, area = area)
+}
+
+#' @importFrom sp spsample
+#' @importFrom rgeos gContains
+#' @rdname randomPolygons
+#' @export
+randomPolygon.SpatialPolygons <- function(x, hectares, area) {
+  if (!missing(hectares)) {
+    message("hectares argument is deprecated; please use area")
+    if (missing(area))
+      area <- hectares
+  }
+  need <- TRUE
+  while(need) {
+    sp1 <- spsample(x, 1, "random")
+    sp2 <- randomPolygon(sp1, area)
+    contain <- gContains(sp2, sp1)
+    if (isTRUE(contain))
+      need <- FALSE
+  }
+  sp2
 }
 
 ################################################################################
@@ -443,3 +504,12 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #
 #   return(.Object)
 # })
+
+utmCRS <- function(x) {
+  zone <- long2UTM(mean(c(xmax(x), xmin(x))))
+  CRS(paste("+proj=utm +zone=",zone," ellps=WGS84",sep=''))
+}
+
+long2UTM <- function(long) {
+  (floor((long + 180)/6) %% 60) + 1
+}

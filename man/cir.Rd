@@ -5,10 +5,10 @@
 \title{Identify pixels in a circle or ring (donut) around an object.}
 \usage{
 cir(landscape, coords, loci, maxRadius = ncol(landscape)/4,
-  minRadius = maxRadius, allowOverlap = TRUE, allowDuplicates = FALSE,
-  includeBehavior = "includePixels", returnDistances = FALSE,
-  angles = NA_real_, returnAngles = FALSE, returnIndices = TRUE,
-  closest = FALSE, simplify = TRUE)
+  minRadius = maxRadius, allowOverlap = TRUE,
+  allowDuplicates = FALSE, includeBehavior = "includePixels",
+  returnDistances = FALSE, angles = NA_real_, returnAngles = FALSE,
+  returnIndices = TRUE, closest = FALSE, simplify = TRUE)
 }
 \arguments{
 \item{landscape}{Raster on which the circles are built.}
@@ -60,7 +60,7 @@ return a raster with values. See Details.}
 
 \item{closest}{Logical. When determining non-overlapping circles, should the function
 give preference to the closest \code{loci} or the first one (much faster).
-Default is FALSE, meaning the faster, though maybe not desired behavior.}
+Default is FALSE, meaning the faster, though maybe not desired behaviour.}
 
 \item{simplify}{logical. If TRUE, then all duplicate pixels are removed. This means
 that some x, y combinations will disappear.}

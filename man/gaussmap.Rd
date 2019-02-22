@@ -44,19 +44,20 @@ pixel resolution of the pattern generated.
 }
 \examples{
 \dontrun{
-library(RandomFields)
-library(raster)
-nx <- ny <- 100L
-r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
-speedup <- max(1, nx/5e2)
-map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
-Plot(map1)
+if (require(RandomFields)) {
+  library(raster)
+  nx <- ny <- 100L
+  r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+  speedup <- max(1, nx/5e2)
+  map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
+  if (interactive()) Plot(map1)
 
-# with non-default method
-map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
+  # with non-default method
+  map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
+}
 }
 
 }
 \seealso{
-\code{\link{RFsimulate}} and \code{\link{extent}}
+\code{RFsimulate} and \code{\link{extent}}
 }

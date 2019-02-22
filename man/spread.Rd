@@ -6,26 +6,29 @@
 \alias{spread,RasterLayer-method}
 \title{Simulate a spread process on a landscape.}
 \usage{
-spread(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 0,
-  mask = NA, maxSize = 100000000L, directions = 8L,
-  iterations = 1000000L, lowMemory = getOption("spades.lowMemory"),
-  returnIndices = FALSE, returnDistances = FALSE, mapID = NULL,
-  id = FALSE, plot.it = FALSE, spreadProbLater = NA_real_,
-  spreadState = NA, circle = FALSE, circleMaxRadius = NA_real_,
-  stopRule = NA, stopRuleBehavior = "includeRing", allowOverlap = FALSE,
-  asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
-  neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE, ...)
-
-\S4method{spread}{RasterLayer}(landscape, loci = NA_real_,
-  spreadProb = 0.23, persistence = 0, mask = NA, maxSize = 100000000L,
+spread(landscape, loci = NA_real_, spreadProb = 0.23,
+  persistence = 0, mask = NA, maxSize = 100000000L,
   directions = 8L, iterations = 1000000L,
   lowMemory = getOption("spades.lowMemory"), returnIndices = FALSE,
-  returnDistances = FALSE, mapID = NULL, id = FALSE, plot.it = FALSE,
-  spreadProbLater = NA_real_, spreadState = NA, circle = FALSE,
-  circleMaxRadius = NA_real_, stopRule = NA,
+  returnDistances = FALSE, mapID = NULL, id = FALSE,
+  plot.it = FALSE, spreadProbLater = NA_real_, spreadState = NA,
+  circle = FALSE, circleMaxRadius = NA_real_, stopRule = NA,
   stopRuleBehavior = "includeRing", allowOverlap = FALSE,
   asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
-  neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE, ...)
+  neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE,
+  ...)
+
+\S4method{spread}{RasterLayer}(landscape, loci = NA_real_,
+  spreadProb = 0.23, persistence = 0, mask = NA,
+  maxSize = 100000000L, directions = 8L, iterations = 1000000L,
+  lowMemory = getOption("spades.lowMemory"), returnIndices = FALSE,
+  returnDistances = FALSE, mapID = NULL, id = FALSE,
+  plot.it = FALSE, spreadProbLater = NA_real_, spreadState = NA,
+  circle = FALSE, circleMaxRadius = NA_real_, stopRule = NA,
+  stopRuleBehavior = "includeRing", allowOverlap = FALSE,
+  asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
+  neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE,
+  ...)
 }
 \arguments{
 \item{landscape}{A \code{RasterLayer} object. This defines the possible
@@ -53,7 +56,7 @@ to burn, per time step.}
 \item{mask}{non-\code{NULL}, a \code{RasterLayer} object congruent with
 \code{landscape} whose elements are \code{0,1}, where
 \code{1} indicates "cannot spread to".
-Currently not implemented, but identical behavior can be
+Currently not implemented, but identical behaviour can be
 achieved if \code{spreadProb} has zeros in all unspreadable
 locations.}
 
@@ -87,7 +90,7 @@ If \code{FALSE}, returns a raster of iteration numbers,
 i.e., the spread history of one or more events.
 NOTE: this is overridden if \code{returnIndices} is \code{TRUE}.}
 
-\item{plot.it}{If \code{TRUE}, then plot the raster at every iteraction,
+\item{plot.it}{If \code{TRUE}, then plot the raster at every iteration,
 so one can watch the spread event grow.}
 
 \item{spreadProbLater}{Numeric, or \code{RasterLayer}. If provided, then this
@@ -355,7 +358,7 @@ numCol <- ncol(emptyRas)
 numCell <- ncell(emptyRas)
 directions <- 8
 
-# Can use transparent as a color
+# Can use transparent as a colour
 setColors(hab) <- paste(c("transparent", brewer.pal(8, "Greys")))
 
 # note speedup is equivalent to making pyramids, so, some details are lost
@@ -367,17 +370,17 @@ startCells <- as.integer(sample(1:ncell(emptyRas), 100))
 fires <- spread(hab, loci = startCells, 0.235, persistence = 0, numNeighs = 2,
                 mask = NULL, maxSize = 1e8, directions = 8, iterations = 1e6, id = TRUE)
 
-#set colors of raster, including a transparent layer for zeros
+#set colours of raster, including a transparent layer for zeros
 setColors(fires, 10) <- c("transparent", brewer.pal(8, "Reds")[5:8])
 Plot(fires)
 Plot(fires, addTo = "hab")
 
-#alternatively, set colors using cols= in the Plot function
+#alternatively, set colours using cols= in the Plot function
 clearPlot()
 Plot(hab)
-Plot(fires) # default color range makes zero transparent.
+Plot(fires) # default colour range makes zero transparent.
 
-# Instead, to give a color to the zero values, use \\code{zero.color=}
+# Instead, to give a colour to the zero values, use \\code{zero.color=}
 Plot(fires, addTo = "hab",
      cols = colorRampPalette(c("orange", "darkred"))(10), zero.color = "transparent")
 
@@ -617,7 +620,7 @@ hab3[events2[] > 0]
 sum(hab3[events1[] > 0]) >= sum(hab3[events2[] > 0]) ## should be usually TRUE
 }
 \seealso{
-\code{\link{spread2}} for a different implementation of the same alogorithm.
+\code{\link{spread2}} for a different implementation of the same algorithm.
 It is more robust, meaning, there will be fewer unexplainable errors, and the behaviour
 has been better tested, so it is more likely to be exactly as described under all
 argument combinations.

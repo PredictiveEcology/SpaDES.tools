@@ -22,12 +22,12 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   extent(r) <- extent(xmin(r) - 30, xmax(r) - 30, ymin(r) - 20, ymax(r) - 20)
 
   # no buffer
-  y0 <- splitRaster(r, nx, ny)
+  y0 <- splitRaster(r, nx, ny, path = file.path(tmpdir, "red"))
   expect_equal(class(y0), "list")
   expect_true(unique(unlist(lapply(y0, fromDisk))))
 
   for (i in 1:12) {
-    expect_true(file.exists(file.path(getwd(), "red", paste0("red_tile", i, ".grd"))))
+    expect_true(file.exists(file.path(tmpdir, "red", paste0("red_tile", i, ".grd"))))
   }
 
   xextents <- c()
@@ -79,6 +79,14 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   expect_equal(res(m1), res(r))
   expect_equal(max(values(m1)), max(values(r)))
   expect_equal(min(values(m1)), min(values(r)))
+
+  # with no path specified, file is in memory
+  y1 <- splitRaster(r, nx, ny, c(3L, 4L))
+
+  for (i in 1:12) {
+    expect_false(file.exists(file.path(y1[[i]]$red@file@name)))
+  }
+
 
   # with buffer (proportion of cells)
   y2 <- splitRaster(r, nx, ny, c(0.5, 0.3), path = file.path(tmpdir, "red2"))
@@ -138,10 +146,12 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   #compatible with different raster datatypes
   y4 <- splitRaster(r, nx, ny, rType = "INT1U")
   expect_identical(dataType(y4[[1]]),"INT1U")
+  #INT now defaults to INT4S, FLT defaults to FLT4S
+  y5 <- splitRaster(r, nx, ny, rType = "INT")
+  expect_identical(dataType(y5[[1]]), "INT4S")
   #defaults to FLT4S
-  expect_warning(y5 <- splitRaster(r, nx, ny, rType = "INT"))
-  y5 <- splitRaster(r, nx, ny)
-  expect_true(dataType(y5[[1]]) == "FLT4S")
+  y6 <- splitRaster(r, nx, ny)
+  expect_true(dataType(y6[[1]]) == "FLT4S")
 })
 
 test_that("splitRaster works in parallel", {

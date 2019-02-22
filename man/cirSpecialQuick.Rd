@@ -4,7 +4,7 @@
 \alias{cirSpecialQuick}
 \alias{.cirSpecialQuick}
 \title{This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
-returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
+returnIndices = TRUE, returnDistances = TRUE, and includeBehavior = "excludePixels".
 It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
 just once, then add to the xy coordinates of every locus}
 \usage{
@@ -26,7 +26,7 @@ then this will create a buffer or donut or ring.}
 }
 \description{
 This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
-returnIndices = TRUE, returnDistancse = TRUE, and includeBehaviour = "excludePixels".
+returnIndices = TRUE, returnDistances = TRUE, and includeBehavior = "excludePixels".
 It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
 just once, then add to the xy coordinates of every locus
 }

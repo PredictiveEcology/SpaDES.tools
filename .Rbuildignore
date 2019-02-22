@@ -1,3 +1,4 @@
+^\.httr-oauth$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .*\.tar\.gz$
@@ -12,5 +13,6 @@
 ^cran-comments\.md$
 ^docs$
 ^LICENSE$
+^revdep$
 vignettes/.*_cache$
 vignettes/.*\.log$

@@ -15,7 +15,7 @@ resampleZeroProof(spreadProbHas0, x, n, prob)
 
 \item{...}{Passed to \code{\link[base]{sample}}}
 
-\item{spreadProbHas0}{/ogical. Does \code{spreadProb} have any zeros on it.}
+\item{spreadProbHas0}{logical. Does \code{spreadProb} have any zeros on it.}
 
 \item{n}{a positive number, the number of items to choose from.  See
     \sQuote{Details.}}
@@ -26,7 +26,11 @@ resampleZeroProof(spreadProbHas0, x, n, prob)
 \description{
 Adapted directly from the \code{\link[base]{sample}} help file.
 
-\code{resampleZeroProof} is a version that works even if sum of all probabilities passed to
-\code{sample.int} is zero. This causes an error in \code{sample.int}. This function is
-intended for internal use only.
+\code{resampleZeroProof} is a version that works even if sum of all
+probabilities passed to \code{sample.int} is zero.
+This causes an error in \code{sample.int}.
 }
+\note{
+Intended for internal use only.
+}
+\keyword{internal}

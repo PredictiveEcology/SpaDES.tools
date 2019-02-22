@@ -18,7 +18,7 @@ sampleV(x, size, replace = FALSE, prob = NULL)
     of the vector being sampled.}
 }
 \value{
-A random perumtation, as in \code{sample}, but with \code{size} vectorized.
+A random permutation, as in \code{sample}, but with \code{size} vectorized.
 }
 \description{
 A version of sample that doesn't have awkward behaviour when \code{length(x) == 1}.

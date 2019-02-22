@@ -4,10 +4,12 @@
 #' Vectorized version of \code{sample} using \code{Vectorize}
 #'
 #' Intended for internal use only. \code{size} is vectorized.
-#' @return A random perumtation, as in \code{sample}, but with \code{size} vectorized.
-#' @keywords internal
+#'
 #' @inheritParams base::sample
 #'
+#' @return A random permutation, as in \code{sample}, but with \code{size} vectorized.
+#'
+#' @keywords internal
 sampleV <- Vectorize("sample", "size", SIMPLIFY = FALSE)
 
 #' Adapted directly from the \code{\link[base]{sample}} help file.
@@ -16,14 +18,22 @@ sampleV <- Vectorize("sample", "size", SIMPLIFY = FALSE)
 #'
 #' @param ... Passed to \code{\link[base]{sample}}
 #'
+#' @keywords internal
+#' @rdname resample
 resample <- function(x, ...) x[sample.int(length(x), ...)]
 
-#' \code{resampleZeroProof} is a version that works even if sum of all probabilities passed to
-#' \code{sample.int} is zero. This causes an error in \code{sample.int}. This function is
-#' intended for internal use only.
-#' @rdname resample
-#' @param spreadProbHas0 /ogical. Does \code{spreadProb} have any zeros on it.
+#' \code{resampleZeroProof} is a version that works even if sum of all
+#' probabilities passed to \code{sample.int} is zero.
+#' This causes an error in \code{sample.int}.
+#'
+#' @note Intended for internal use only.
+#'
 #' @inheritParams base::sample
+#'
+#' @param spreadProbHas0 logical. Does \code{spreadProb} have any zeros on it.
+#'
+#' @keywords internal
+#' @rdname resample
 resampleZeroProof <- function(spreadProbHas0, x, n, prob) {
   if (spreadProbHas0) {
     sm <- sum(prob, na.rm = TRUE)
