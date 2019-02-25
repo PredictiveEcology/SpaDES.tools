@@ -75,7 +75,7 @@ if (getRversion() >= "3.1.0") {
 #' if (interactive()) {
 #'    # Test the dispersal kernel -- create a function
 #'    plotDispersalKernel <- function(out, meanAdvectionMag) {
-#'      out[, disGroup:=round(distance/100)*100]
+#'      out[, disGroup := round(distance / 100) * 100]
 #'      freqs <- out[, .N, by = "disGroup"]
 #'      freqs[, `:=`(cumSum = cumsum(N), N = N)]
 #'      Plot(freqs$disGroup, freqs$cumSum, addTo = "CumulativeNumberSettled",
@@ -87,7 +87,7 @@ if (getRversion() >= "3.1.0") {
 #'      abline(v = meanAdvectionMag + meanDist)
 #'    # should be 0.63:
 #'      freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
-#'      mtext(side = 3, paste("Average habitat quality: ", round(mean(rasQuality[], na.rm = TRUE),2)),
+#'      mtext(side = 3, paste("Average habitat quality: ", round(mean(rasQuality[], na.rm = TRUE), 2)),
 #'            outer = TRUE, line = -2, cex = 2)
 #' }
 #'   dev() # don't use Rstudio windows, which is very slow
@@ -351,8 +351,8 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     } else {
       advectionMag
     }
-    b[active, abundSettled :=
-        pexp(q = distance, rate = pi/(meanDist+advectionMagTmp)^1.5) * sumAbund] # kernel is 1 dimensional,
+    b[active, abundSettled := pexp(q = distance,
+                                   rate = pi / (meanDist + advectionMagTmp)^1.5) * sumAbund] # kernel is 1 dimensional,
     # b[active, abundSettled :=
     #     dexp(x = distance, rate = 1/(meanDist+advectionMag)) * sumAbund] # kernel is 1 dimensional,
     # but spreading is dropping agents in 2 dimensions
@@ -396,7 +396,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
       if (isTRUE(saveStack))
         saveStack <- raster::rasterTmpFile()
       # make 30 maps
-      b[, distGrp := floor(distance/(diff(range(b$distance))/30))]
+      b[, distGrp := floor(distance / (diff(range(b$distance)) / 30))]
       ras <- raster(rasAbundance)
       out1 <- lapply(unique(b$distGrp), function(x)  {
         r <- raster(ras)
