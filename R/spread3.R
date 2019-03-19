@@ -88,7 +88,8 @@ if (getRversion() >= "3.1.0") {
 #'        abline(v = meanAdvectionMag + meanDist)
 #'        # should be 0.63:
 #'        freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
-#'        mtext(side = 3, paste("Average habitat quality: ", round(mean(rasQuality[], na.rm = TRUE), 2)),
+#'        mtext(side = 3, paste("Average habitat quality: ",
+#'              round(mean(rasQuality[], na.rm = TRUE), 2)),
 #'              outer = TRUE, line = -2, cex = 2)
 #'     }
 #'     dev() # don't use Rstudio windows, which is very slow
