@@ -317,11 +317,11 @@ when passed back into \code{spread2}.
 If \code{1} (or \code{TRUE}),
  then individual events can overlap with one another, i.e., allow
  overlap between events. If \code{2} (or \code{NA}), then each pixel
- is essentially indepependent, allowing overlap between and within
+ is essentially independent, allowing overlap between and within
  events. This likely requires a user to intervene as it is possible
  to spread back onto itself. If \code{3} (did not exist previously),
  individual events can overlap, and there can be overlap within an
- event, but only within an interation, i.e., once an iteration is
+ event, but only within an iteration, i.e., once an iteration is
  finished, and a pixel was activated, then the spreading will not
  return onto these pixels. If \code{0} (or \code{FALSE}), then once a
  pixel is activated, it cannot be re-activated, within or between event.

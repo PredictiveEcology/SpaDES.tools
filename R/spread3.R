@@ -34,9 +34,9 @@ if (getRversion() >= "3.1.0") {
 #'    dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
 #'    settled at this \code{meanDist} (still experimental)
 #' @param verbose Numeric. With increasing numbers above 0, there will be more
-#'     messages produced. Currently, only 0, 1, or 2+ are discinct.
+#'     messages produced. Currently, only 0, 1, or 2+ are distinct.
 #' @param plot.it Numeric. With increasing numbers above 0, there will be plots
-#'     produced during iterations. Currently, only 0, 1, or 2+ are discinct.
+#'     produced during iterations. Currently, only 0, 1, or 2+ are distinct.
 #' @param minNumAgents Single numeric indicating the minimum number of agents
 #'    to consider all dispersing finished. Default is 50
 #' @param saveStack If provided as a character string, it will save each iteration

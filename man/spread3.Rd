@@ -36,13 +36,13 @@ dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will hav
 settled at this \code{meanDist} (still experimental)}
 
 \item{plot.it}{Numeric. With increasing numbers above 0, there will be plots
-produced during iterations. Currently, only 0, 1, or 2+ are discinct.}
+produced during iterations. Currently, only 0, 1, or 2+ are distinct.}
 
 \item{minNumAgents}{Single numeric indicating the minimum number of agents
 to consider all dispersing finished. Default is 50}
 
 \item{verbose}{Numeric. With increasing numbers above 0, there will be more
-messages produced. Currently, only 0, 1, or 2+ are discinct.}
+messages produced. Currently, only 0, 1, or 2+ are distinct.}
 
 \item{saveStack}{If provided as a character string, it will save each iteration
 as part of a \code{rasterStack} to disk upon exit.}
