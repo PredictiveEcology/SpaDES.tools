@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -156,22 +156,22 @@
 <span class='co'># using SpatialPoints</span>
 <span class='no'>prev</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cbind'>cbind</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>y1</span>))
 <span class='no'>curr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cbind'>cbind</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x0</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>y0</span>))
-<span class='fu'>heading</span>(<span class='no'>prev</span>, <span class='no'>curr</span>)</div><div class='output co'>#&gt;  [1] 134.966074  76.404123   3.865539 281.727773 316.915898 324.598216
-#&gt;  [7] 226.947345 309.777891 237.550413 343.233212</div><div class='input'>
+<span class='fu'>heading</span>(<span class='no'>prev</span>, <span class='no'>curr</span>)</div><div class='output co'>#&gt;  [1] 178.16233  74.35775 221.32319 178.96102 112.51804 334.03398 186.37028
+#&gt;  [8] 316.83382 238.71162 311.97261</div><div class='input'>
 <span class='co'># using matrix</span>
 <span class='no'>prev</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='no'>x1</span>, <span class='no'>y1</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>dimnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>NULL</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"x"</span>,<span class='st'>"y"</span>)))
 <span class='no'>curr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='no'>x0</span>, <span class='no'>y0</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>dimnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>NULL</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"x"</span>,<span class='st'>"y"</span>)))
-<span class='fu'>heading</span>(<span class='no'>prev</span>, <span class='no'>curr</span>)</div><div class='output co'>#&gt;  [1] 134.966074  76.404123   3.865539 281.727773 316.915898 324.598216
-#&gt;  [7] 226.947345 309.777891 237.550413 343.233212</div><div class='input'>
+<span class='fu'>heading</span>(<span class='no'>prev</span>, <span class='no'>curr</span>)</div><div class='output co'>#&gt;  [1] 178.16233  74.35775 221.32319 178.96102 112.51804 334.03398 186.37028
+#&gt;  [8] 316.83382 238.71162 311.97261</div><div class='input'>
 <span class='co'>#using both</span>
 <span class='no'>prev</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cbind'>cbind</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>y1</span>))
 <span class='no'>curr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='no'>x0</span>, <span class='no'>y0</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>dimnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>NULL</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"x"</span>,<span class='st'>"y"</span>)))
-<span class='fu'>heading</span>(<span class='no'>prev</span>, <span class='no'>curr</span>)</div><div class='output co'>#&gt;  [1] 134.966074  76.404123   3.865539 281.727773 316.915898 324.598216
-#&gt;  [7] 226.947345 309.777891 237.550413 343.233212</div><div class='input'>
+<span class='fu'>heading</span>(<span class='no'>prev</span>, <span class='no'>curr</span>)</div><div class='output co'>#&gt;  [1] 178.16233  74.35775 221.32319 178.96102 112.51804 334.03398 186.37028
+#&gt;  [8] 316.83382 238.71162 311.97261</div><div class='input'>
 <span class='no'>prev</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='no'>x1</span>, <span class='no'>y1</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>dimnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>NULL</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"x"</span>,<span class='st'>"y"</span>)))
 <span class='no'>curr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cbind'>cbind</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x0</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>y0</span>))
-<span class='fu'>heading</span>(<span class='no'>prev</span>, <span class='no'>curr</span>)</div><div class='output co'>#&gt;  [1] 134.966074  76.404123   3.865539 281.727773 316.915898 324.598216
-#&gt;  [7] 226.947345 309.777891 237.550413 343.233212</div><div class='input'>
+<span class='fu'>heading</span>(<span class='no'>prev</span>, <span class='no'>curr</span>)</div><div class='output co'>#&gt;  [1] 178.16233  74.35775 221.32319 178.96102 112.51804 334.03398 186.37028
+#&gt;  [8] 316.83382 238.71162 311.97261</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -70,6 +70,9 @@
     <loc>http://spades-tools.predictiveecology.org/reference/matchedPointDirection.html</loc>
   </url>
   <url>
+    <loc>http://spades-tools.predictiveecology.org/reference/middlePixel.html</loc>
+  </url>
+  <url>
     <loc>http://spades-tools.predictiveecology.org/reference/patchSize.html</loc>
   </url>
   <url>
@@ -77,6 +80,9 @@
   </url>
   <url>
     <loc>http://spades-tools.predictiveecology.org/reference/randomPolygons.html</loc>
+  </url>
+  <url>
+    <loc>http://spades-tools.predictiveecology.org/reference/randomStudyArea.html</loc>
   </url>
   <url>
     <loc>http://spades-tools.predictiveecology.org/reference/rasterizeReduce.html</loc>
@@ -110,6 +116,12 @@
   </url>
   <url>
     <loc>http://spades-tools.predictiveecology.org/reference/spread2.html</loc>
+  </url>
+  <url>
+    <loc>http://spades-tools.predictiveecology.org/reference/spread3.html</loc>
+  </url>
+  <url>
+    <loc>http://spades-tools.predictiveecology.org/reference/testEquivalentMetadata.html</loc>
   </url>
   <url>
     <loc>http://spades-tools.predictiveecology.org/reference/wrap.html</loc>
