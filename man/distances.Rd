@@ -37,6 +37,8 @@ All other columns will be included in the return value of the function.}
 
 \item{angles}{Logical. If \code{TRUE}, then the function will return angles in radians,
 as well as distances.}
+
+\item{otherFromCols}{TODO: description needed}
 }
 \value{
 \code{pointDistance2}: a matrix with all the \code{to} columns plus one extra
@@ -59,4 +61,3 @@ It does not \code{cbind} extra columns from \code{to}.
 \details{
 A slightly faster way to calculate distances.
 }
-\keyword{internal}

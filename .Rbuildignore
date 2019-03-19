@@ -9,6 +9,7 @@
 ^\.travis\.yml$
 ^_pkgdown\.yml$
 ^appveyor\.yml$
+^appveyor_cache\.txt$
 ^CONTRIBUTING\.md$
 ^CRAN-RELEASE$
 ^cran-comments\.md$

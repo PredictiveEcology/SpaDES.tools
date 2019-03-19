@@ -1,6 +1,7 @@
 ## Updated release
 
-This release updates an example to work with the latest version of `raster`.
+This is a maintenance release to address problems identified during CRAN checks.
+See NEWS.md for a full list of changes.
 
 ## Test environments
 
@@ -12,19 +13,19 @@ This release updates an example to work with the latest version of `raster`.
 * Windows 7               (local), R 3.4.4
 
 ### Current R versions
-* macOS Mojave       (travis-ci), R 3.5.2
-* macOS Mojave           (local), R 3.5.2
-* Ubuntu 14.04       (travis-ci), R 3.5.2
-* Ubuntu 18.04           (local), R 3.5.2
-* Windows             (appveyor), R 3.5.2
-* Windows          (win-builder), R 3.5.2
+* macOS Mojave       (travis-ci), R 3.5.3
+* macOS Mojave           (local), R 3.5.3
+* Ubuntu 14.04       (travis-ci), R 3.5.3
+* Ubuntu 18.04           (local), R 3.5.3
+* Windows             (appveyor), R 3.5.3
+* Windows          (win-builder), R 3.5.3
 * Windows 7              (local), R 3.5.2
 
 ### Development R version
-* Ubuntu 14.04       (travis-ci), R 3.6.0 (2019-01-29 r76025)
-* Ubuntu 18.04           (local), R 3.6.0 (2019-01-25 r76014)
-* Windows             (appveyor), R 3.6.0 (2019-01-26 r76018)
-* Windows          (win-builder), R 3.6.0 (2019-01-31 r76038)
+* Ubuntu 14.04       (travis-ci), R 3.6.0 (2019-03-15 r76244)
+* Ubuntu 18.04           (local), R 3.6.0 (2019-03-18 r76245)
+* Windows             (appveyor), R 3.6.0 (2019-03-15 r76239)
+* Windows          (win-builder), R 3.6.0 (2019-03-15 r76244)
 
 ## R CMD check results
 
@@ -40,8 +41,5 @@ There was 1 NOTEs:
 
 ## Downstream dependencies
 
-We have run R CMD check on downstream dependencies, and all have passed except those noted below.
-
-* Current CRAN versions of `SpaDES` and `SpaDES.core` produce an ERROR due to a recent change in the dependency package `reproducible`, which has just been updated on CRAN (v0.2.6). These errors are fixed in the soon to be submitted version of `SpaDES.core`.
-
+We have run R CMD check on downstream dependencies, and all have passed.
 Summary at https://github.com/PredictiveEcology/SpaDES.tools/blob/master/revdep/README.md.

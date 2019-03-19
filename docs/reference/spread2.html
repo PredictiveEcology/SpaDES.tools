@@ -69,7 +69,7 @@ robust, and more difficult to use iteratively." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -128,10 +128,10 @@ robust, and more difficult to use iteratively.</p>
     <pre class="usage"><span class='fu'>spread2</span>(<span class='no'>landscape</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>ncell</span>(<span class='no'>landscape</span>)/<span class='fl'>2</span> - <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>landscape</span>)/<span class='fl'>2</span>,
   <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.23</span>, <span class='kw'>persistProb</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='no'>maxSize</span>, <span class='no'>exactSize</span>, <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8L</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1000000L</span>,
-  <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnFrom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>spreadProbRel</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>skipChecks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>returnDirections</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>returnFrom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>spreadProbRel</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
+  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>skipChecks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -214,6 +214,12 @@ individual cell distances from the locus where that event
 started. Default is FALSE. See Details.</p></td>
     </tr>
     <tr>
+      <th>returnDirections</th>
+      <td><p>Logical. Should the function include a column with the
+individual directions (in radians) from the locus where
+that event started. Default is FALSE.</p></td>
+    </tr>
+    <tr>
       <th>returnFrom</th>
       <td><p>Logical. Should the function return a column with the
 source, i.e, the lag 1 "from" pixel, for each iteration.</p></td>
@@ -265,12 +271,8 @@ that describes which way the <code>asymmetry</code> is.</p></td>
     </tr>
     <tr>
       <th>allowOverlap</th>
-      <td><p>Logical. If TRUE, then individual events can overlap with one another,
-i.e., they do not interact (this is slower than if
-allowOverlap = FALSE). Default is FALSE. This can also be <code>NA</code>,
-which means that the event can overlap with other events,
-and also itself. This would be, perhaps, useful for dispersal of,
-say, insect swarms.</p></td>
+      <td><p><code>numeric</code> (<code>logical</code> will work for backwards compatibility).
+See details.  Default is 0, i.e., no overlapping.</p></td>
     </tr>
     <tr>
       <th>neighProbs</th>
@@ -476,6 +478,26 @@ Then, of course, sorting any vectorized arguments (e.g., <code>maxSize</code>) a
 <p><b>NOTE</b>: the <code>data.table</code> or <code>RasterLayer</code> should not use be altered
 when passed back into <code>spread2</code>.</p>
     
+    <h2 class="hasAnchor" id="allowoverlap"><a class="anchor" href="#allowoverlap"></a><code>allowOverlap</code></h2>
+
+    
+    <p>If <code>1</code> (or <code>TRUE</code>),
+ then individual events can overlap with one another, i.e., allow
+ overlap between events. If <code>2</code> (or <code>NA</code>), then each pixel
+ is essentially indepependent, allowing overlap between and within
+ events. This likely requires a user to intervene as it is possible
+ to spread back onto itself. If <code>3</code> (did not exist previously),
+ individual events can overlap, and there can be overlap within an
+ event, but only within an interation, i.e., once an iteration is
+ finished, and a pixel was activated, then the spreading will not
+ return onto these pixels. If <code>0</code> (or <code>FALSE</code>), then once a
+ pixel is activated, it cannot be re-activated, within or between event.
+ This allows events to not interfere with one another i.e.,
+ they do not interact (this is slower than if
+ allowOverlap = FALSE). Default is 0. In the case of 2 or 3,
+ this would be, perhaps, useful for dispersal of,
+ say, insect swarms.</p>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='spread.html'>spread</a></code> for a different implementation of the same algorithm.
@@ -628,6 +650,8 @@ when passed back into <code>spread2</code>.</p>
       <li><a href="#breaking-out-of-spread-events">Breaking out of spread2 events</a></li>
 
       <li><a href="#building-custom-spreading-events">Building custom spreading events</a></li>
+
+      <li><a href="#allowoverlap"><code>allowOverlap</code></a></li>
 
       <li><a href="#see-also">See also</a></li>
       

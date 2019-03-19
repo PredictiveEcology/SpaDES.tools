@@ -67,7 +67,7 @@ You must know how to use SELES for these to be useful." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -192,6 +192,36 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>map</span>)
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agents</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"map"</span>)
 }
+<span class='co'># Test that they are indeed selecting according to probabilities in pr</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>data.table</span>)
+<span class='no'>dt1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/data.table/topics/data.table'>data.table</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/table'>table</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Round'>round</a></span>(<span class='no'>map</span>[<span class='no'>agents</span>], <span class='fl'>0</span>)))
+<span class='fu'><a href='https://www.rdocumentation.org/packages/data.table/topics/setattr'>setnames</a></span>(<span class='no'>dt1</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"N"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"count"</span>)
+<span class='no'>dt2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/data.table/topics/data.table'>data.table</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/table'>table</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Round'>round</a></span>(<span class='no'>map</span>[], <span class='fl'>0</span>)))
+<span class='fu'><a href='https://www.rdocumentation.org/packages/data.table/topics/setattr'>setnames</a></span>(<span class='no'>dt2</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"N"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"available"</span>)
+<span class='no'>dt</span> <span class='kw'>&lt;-</span><span class='no'>dt1</span>[<span class='no'>dt2</span>, <span class='kw'>on</span> <span class='kw'>=</span> <span class='st'>"V1"</span>]  <span class='co'># join the counts and available data.tables</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/data.table/topics/setattr'>setnames</a></span>(<span class='no'>dt</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"V1"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"mapValue"</span>)
+<span class='no'>dt</span>[, <span class='no'>selection</span> <span class='kw'>:=</span> <span class='no'>count</span>/<span class='no'>available</span>]</div><div class='output co'>#&gt;     mapValue count available selection
+#&gt;  1:        0    NA         2        NA
+#&gt;  2:        1    NA         3        NA
+#&gt;  3:        2    NA         7        NA
+#&gt;  4:        3    11        24 0.4583333
+#&gt;  5:        4     6        16 0.3750000
+#&gt;  6:        5    29        20 1.4500000
+#&gt;  7:        6    15        13 1.1538462
+#&gt;  8:        7    17         5 3.4000000
+#&gt;  9:        8    20         9 2.2222222
+#&gt; 10:       10     2         1 2.0000000</div><div class='input'><span class='no'>dt</span>[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/NA'>is.na</a></span>(<span class='no'>selection</span>), <span class='no'>selection</span> <span class='kw'>:=</span> <span class='fl'>0</span>]</div><div class='output co'>#&gt;     mapValue count available selection
+#&gt;  1:        0    NA         2 0.0000000
+#&gt;  2:        1    NA         3 0.0000000
+#&gt;  3:        2    NA         7 0.0000000
+#&gt;  4:        3    11        24 0.4583333
+#&gt;  5:        4     6        16 0.3750000
+#&gt;  6:        5    29        20 1.4500000
+#&gt;  7:        6    15        13 1.1538462
+#&gt;  8:        7    17         5 3.4000000
+#&gt;  9:        8    20         9 2.2222222
+#&gt; 10:       10     2         1 2.0000000</div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>())
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/with'>with</a></span>(<span class='no'>dt</span>, {<span class='fu'><a href='https://www.rdocumentation.org/packages/raster/topics/plot'>plot</a></span>(<span class='no'>mapValue</span>, <span class='no'>selection</span>)})
 
 <span class='co'># Note, can also produce a Raster representing agents,</span>
 <span class='co'># then the number of points produced can't be more than</span>
@@ -199,7 +229,7 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
 <span class='no'>agentsRas</span> <span class='kw'>&lt;-</span> <span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='fl'>30</span>, <span class='no'>pr</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 <span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()) <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agentsRas</span>)
 
-<span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='no'>dplyr</span>)) {
+<span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='no'>dplyr</span>) <span class='kw'>&amp;&amp;</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/numeric_version'>getRversion</a></span>() <span class='kw'>&gt;=</span> <span class='fl'>3.4</span>) {
   <span class='co'># Check that the agents are more often at the higher probability areas based on pr</span>
   <span class='kw'>if</span> (<span class='kw pkg'>utils</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/packageDescription'>packageVersion</a></span>(<span class='st'>"raster"</span>) <span class='kw'>&gt;=</span> <span class='st'>"2.8-11"</span>) {
     <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/na.fail'>na.omit</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/raster/topics/crosstab'>crosstab</a></span>(<span class='no'>agentsRas</span>, <span class='no'>map</span>)), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/table'>table</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Round'>round</a></span>(<span class='no'>map</span>[]))) <span class='kw'>%&gt;%</span>
@@ -227,28 +257,26 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
 #&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='output co'>#&gt;    Type Present Avail selectionRatio
-#&gt; 1     0       1     1     1.00000000
-#&gt; 2     0       0     3     0.00000000
-#&gt; 3     1       3     6     0.50000000
-#&gt; 4     1       0    10     0.00000000
-#&gt; 5     2       6    11     0.54545455
-#&gt; 6     2       0    29     0.00000000
-#&gt; 7     3       9    20     0.45000000
-#&gt; 8     3       1    11     0.09090909
-#&gt; 9     4       6     4     1.50000000
-#&gt; 10    4       5     4     1.25000000
-#&gt; 11    5      21     1    21.00000000
-#&gt; 12    5       8     1     8.00000000
-#&gt; 13    6      16     3     5.33333333
-#&gt; 14    6       4     6     0.66666667
-#&gt; 15    7       5    10     0.50000000
-#&gt; 16    7       6    11     0.54545455
-#&gt; 17    8       2    29     0.06896552
-#&gt; 18    8       2    20     0.10000000
-#&gt; 19    9       1    11     0.09090909
-#&gt; 20    9       3     4     0.75000000
-#&gt; 21   10       0     4     0.00000000
-#&gt; 22   10       1     1     1.00000000</div><div class='input'>
+#&gt; 1     0       2     2      1.0000000
+#&gt; 2     0       0     3      0.0000000
+#&gt; 3     1       3     7      0.4285714
+#&gt; 4     1       0    24      0.0000000
+#&gt; 5     2       7    16      0.4375000
+#&gt; 6     2       0    20      0.0000000
+#&gt; 7     3      20    13      1.5384615
+#&gt; 8     3       4     5      0.8000000
+#&gt; 9     4      12     9      1.3333333
+#&gt; 10    4       4     1      4.0000000
+#&gt; 11    5      12     2      6.0000000
+#&gt; 12    5       8     3      2.6666667
+#&gt; 13    6       9     7      1.2857143
+#&gt; 14    6       4    24      0.1666667
+#&gt; 15    7       2    16      0.1250000
+#&gt; 16    7       3    20      0.1500000
+#&gt; 17    8       3    13      0.2307692
+#&gt; 18    8       6     5      1.2000000
+#&gt; 19   10       0     9      0.0000000
+#&gt; 20   10       1     1      1.0000000</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

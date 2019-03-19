@@ -7,10 +7,10 @@
 spread2(landscape, start = ncell(landscape)/2 - ncol(landscape)/2,
   spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE,
   maxSize, exactSize, directions = 8L, iterations = 1000000L,
-  returnDistances = FALSE, returnFrom = FALSE,
-  spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
-  asymmetry = NA_real_, asymmetryAngle = NA_real_,
-  allowOverlap = FALSE, neighProbs = NA_real_, skipChecks = FALSE)
+  returnDistances = FALSE, returnDirections = FALSE,
+  returnFrom = FALSE, spreadProbRel = NA_real_, plot.it = FALSE,
+  circle = FALSE, asymmetry = NA_real_, asymmetryAngle = NA_real_,
+  allowOverlap = 0, neighProbs = NA_real_, skipChecks = FALSE)
 }
 \arguments{
 \item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
@@ -70,6 +70,10 @@ until stops spreading itself (i.e., exhausts itself).}
 individual cell distances from the locus where that event
 started. Default is FALSE. See Details.}
 
+\item{returnDirections}{Logical. Should the function include a column with the
+individual directions (in radians) from the locus where
+that event started. Default is FALSE.}
+
 \item{returnFrom}{Logical. Should the function return a column with the
 source, i.e, the lag 1 "from" pixel, for each iteration.}
 
@@ -108,12 +112,8 @@ Use with caution.}
 (0 is "up", as in North on a map),
 that describes which way the \code{asymmetry} is.}
 
-\item{allowOverlap}{Logical. If TRUE, then individual events can overlap with one another,
-i.e., they do not interact (this is slower than if
-allowOverlap = FALSE). Default is FALSE. This can also be \code{NA},
-which means that the event can overlap with other events,
-and also itself. This would be, perhaps, useful for dispersal of,
-say, insect swarms.}
+\item{allowOverlap}{\code{numeric} (\code{logical} will work for backwards compatibility).
+See details.  Default is 0, i.e., no overlapping.}
 
 \item{neighProbs}{An optional numeric vector, whose sum is 1. It indicates the
 probabilities that an individual
@@ -310,6 +310,26 @@ Then, of course, sorting any vectorized arguments (e.g., \code{maxSize}) accordi
 
 \bold{NOTE}: the \code{data.table} or \code{RasterLayer} should not use be altered
 when passed back into \code{spread2}.
+}
+
+\section{\code{allowOverlap}}{
+
+If \code{1} (or \code{TRUE}),
+ then individual events can overlap with one another, i.e., allow
+ overlap between events. If \code{2} (or \code{NA}), then each pixel
+ is essentially independent, allowing overlap between and within
+ events. This likely requires a user to intervene as it is possible
+ to spread back onto itself. If \code{3} (did not exist previously),
+ individual events can overlap, and there can be overlap within an
+ event, but only within an iteration, i.e., once an iteration is
+ finished, and a pixel was activated, then the spreading will not
+ return onto these pixels. If \code{0} (or \code{FALSE}), then once a
+ pixel is activated, it cannot be re-activated, within or between event.
+ This allows events to not interfere with one another i.e.,
+ they do not interact (this is slower than if
+ allowOverlap = FALSE). Default is 0. In the case of 2 or 3,
+ this would be, perhaps, useful for dispersal of,
+ say, insect swarms.
 }
 
 \examples{

@@ -10,8 +10,8 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     http://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2019-01-29
-Version: 0.3.1
+Date: 2019-03-18
+Version: 0.3.2
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
     role = c("aut", "cre"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
@@ -50,6 +50,7 @@ Imports:
 Suggests:
     DEoptim (>= 2.2-4),
     dplyr,
+    fasterize,
     gdalUtils,
     knitr,
     mgcv,
@@ -58,6 +59,7 @@ Suggests:
     RandomFields (>= 3.1.24),
     RColorBrewer (>= 1.1-2),
     rmarkdown,
+    sf,
     testthat (>= 1.0.2)
 Encoding: UTF-8
 Language: en-CA
@@ -85,5 +87,7 @@ Collate:
     'splitRaster.R'
     'spread.R'
     'spread2.R'
+    'spread3.R'
+    'studyArea.R'
     'zzz.R'
 RoxygenNote: 6.1.1
