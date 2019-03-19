@@ -92,7 +92,7 @@ if (interactive()) {
      freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
      mtext(side = 3, paste("Average habitat quality: ", round(mean(rasQuality[], na.rm = TRUE), 2)),
            outer = TRUE, line = -2, cex = 2)
-}
+  }
   dev() # don't use Rstudio windows, which is very slow
   clearPlot()
   out <- spread3(rasAbundance = rasAbundance,
@@ -137,61 +137,65 @@ if (require(sf) && require(fasterize)) {
   }
 }
 
-###############################################################################
-### The case of variable quality raster, raster for advectionDir & advectionMag
-###############################################################################
-library(raster)
-library(quickPlot)
-library(SpaDES.tools)
-maxDim <- 10000
-ras <- raster(extent(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
-rasQuality <- raster(ras)
-rasQuality[] <- 1
-rasAbundance <- raster(rasQuality)
-rasAbundance[] <- NA
-# startPixel <- middlePixel(rasAbundance)
-startPixel <- sample(seq(ncell(rasAbundance)), 25)
-rasAbundance[startPixel] <- 1000
+\dontrun{
+  ###############################################################################
+  ### The case of variable quality raster, raster for advectionDir & advectionMag
+  ###############################################################################
+  library(raster)
+  library(quickPlot)
+  library(SpaDES.tools)
+  maxDim <- 10000
+  ras <- raster(extent(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
+  rasQuality <- raster(ras)
+  rasQuality[] <- 1
+  rasAbundance <- raster(rasQuality)
+  rasAbundance[] <- NA
+  # startPixel <- middlePixel(rasAbundance)
+  startPixel <- sample(seq(ncell(rasAbundance)), 25)
+  rasAbundance[startPixel] <- 1000
 
-# raster for advectionDir
-advectionDir <- gaussMap(ras)
-crs(advectionDir) <- crs(rasQuality)
-# rescale so min is 0.75 and max is 1
-advectionDir[] <- advectionDir[] / (maxValue(advectionDir)) * 180
+  # raster for advectionDir
+  advectionDir <- gaussMap(ras)
+  crs(advectionDir) <- crs(rasQuality)
+  # rescale so min is 0.75 and max is 1
+  advectionDir[] <- advectionDir[] / (maxValue(advectionDir)) * 180
 
-# raster for advectionMag
-advectionMag <- gaussMap(ras)
-crs(advectionMag) <- crs(rasQuality)
-# rescale so min is 0.75 and max is 1
-advectionMag[] <- advectionMag[] / (maxValue(advectionMag)) * 600
+  # raster for advectionMag
+  advectionMag <- gaussMap(ras)
+  crs(advectionMag) <- crs(rasQuality)
+  # rescale so min is 0.75 and max is 1
+  advectionMag[] <- advectionMag[] / (maxValue(advectionMag)) * 600
 
-out <- spread3(rasAbundance = rasAbundance,
-               rasQuality = rasQuality,
-               advectionDir = advectionDir,
-               advectionMag = advectionMag,
-               meanDist = meanDist, verbose = 2,
-               plot.it = 1)
-if (interactive()) {
-  dev() # don't use Rstudio windows, which is very slow
-  clearPlot()
-  Plot(advectionDir, title = "Wind direction", cols = "Reds")
-  Plot(advectionMag, title = "Wind speed", cols = "Blues")
-  plotDispersalKernel(out, mean(advectionMag[]))
-  Plot(rasAbundance, addTo = "rasAbundance", cols = "black", title = "")
+  out <- spread3(rasAbundance = rasAbundance,
+                 rasQuality = rasQuality,
+                 advectionDir = advectionDir,
+                 advectionMag = advectionMag,
+                 meanDist = meanDist, verbose = 2,
+                 plot.it = 1)
+
+  if (interactive()) {
+    dev() # don't use Rstudio windows, which is very slow
+    clearPlot()
+    Plot(advectionDir, title = "Wind direction", cols = "Reds")
+    Plot(advectionMag, title = "Wind speed", cols = "Blues")
+    plotDispersalKernel(out, mean(advectionMag[]))
+    Plot(rasAbundance, addTo = "rasAbundance", cols = "black", title = "")
+  }
 }
 
-#########################################
-# save iterations to a stack to make animated GIF
-########################################
-tmpStack <- raster::rasterTmpFile("stackToAnimate")
-out <- spread3(rasAbundance = rasAbundance,
-               rasQuality = rasQuality,
-               advectionDir = advectionDir,
-               advectionMag = advectionMag,
-               meanDist = 2600, verbose = 2,
-               plot.it = 0, saveStack = tmpStack)
+\dontrun{
+  #########################################
+  # save iterations to a stack to make animated GIF
+  ########################################
+  tmpStack <- raster::rasterTmpFile("stackToAnimate")
+  out <- spread3(rasAbundance = rasAbundance,
+                 rasQuality = rasQuality,
+                 advectionDir = advectionDir,
+                 advectionMag = advectionMag,
+                 meanDist = 2600, verbose = 2,
+                 plot.it = 0, saveStack = tmpStack)
 
-\dontrun{ # This animates the series of images into an animated GIF
+  ## This animates the series of images into an animated GIF
   if (require(animation)) {
     out2 <- raster::stack(tmpStack)
     gifName <- file.path(tempdir(), "animation.gif")
