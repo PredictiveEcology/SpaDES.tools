@@ -11,6 +11,9 @@
   toset <- !(names(opts.spades) %in% names(opts))
   if (any(toset)) options(opts.spades[toset])
 
+  ## import functions using backports:
+  backports::import(pkgname, "isFALSE")
+
   invisible()
 }
 

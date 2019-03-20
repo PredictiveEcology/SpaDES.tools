@@ -1,5 +1,17 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
+version 0.3.2.9000
+=============
+
+## Dependency changes
+* Added `backports` for R-oldrel support
+
+## Bugfixes
+* Lorem ipsum
+
+## Enhancements
+* Lorem ipsum
+
 version 0.3.2
 =============
 
