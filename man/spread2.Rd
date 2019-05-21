@@ -8,9 +8,10 @@ spread2(landscape, start = ncell(landscape)/2 - ncol(landscape)/2,
   spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE,
   maxSize, exactSize, directions = 8L, iterations = 1000000L,
   returnDistances = FALSE, returnDirections = FALSE,
-  returnFrom = FALSE, spreadProbRel = NA_real_, plot.it = FALSE,
-  circle = FALSE, asymmetry = NA_real_, asymmetryAngle = NA_real_,
-  allowOverlap = 0, neighProbs = NA_real_, skipChecks = FALSE)
+  returnFrom = FALSE, maxRetriesPerID = 10, spreadProbRel = NA_real_,
+  plot.it = FALSE, circle = FALSE, asymmetry = NA_real_,
+  asymmetryAngle = NA_real_, allowOverlap = 0, neighProbs = NA_real_,
+  skipChecks = FALSE)
 }
 \arguments{
 \item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
@@ -76,6 +77,11 @@ that event started. Default is FALSE.}
 
 \item{returnFrom}{Logical. Should the function return a column with the
 source, i.e, the lag 1 "from" pixel, for each iteration.}
+
+\item{maxRetriesPerID}{Only active if \code{exactSize} is used. This is the number of attempts
+that will be made per event ID, before abandoning, therefore completing
+the spread2 for that event with a size that is smaller than
+\code{exactSize}. Default 10 times.}
 
 \item{spreadProbRel}{Optional \code{RasterLayer} indicating a surface of relative
 probabilities useful when using \code{neighProbs} (which
@@ -280,9 +286,9 @@ are interacting with each other correctly.
                       on during a spreading event. This will override an event that
                       stops probabilistically via \code{spreadProb}, but forcing
                       its last set of active cells to try again to find neighbours.
-                      It will try 10 times per event, before giving up.
-                      During those 10 times, it will try twice to "jump" up to
-                      4 cells outwards from each of the active cells.\cr
+                      It will try \code{maxRetriesPerID} times per event, before giving up.
+                      During those \code{maxRetriesPerID} times, it will try to "jump" up to
+                      4 cells outwards from each of the active cells, every 5 retries.\cr
   \code{iterations} \tab This is a hard cap on the number of internal iterations to
                          complete before returning the current state of the system
                          as a \code{data.table}.\cr
