@@ -37,7 +37,9 @@ if (getRversion() >= "3.1.0") {
 #'
 rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
                              mapcode = names(fullRaster), ...) {
-  reduced <- data.table(reduced)
+  if (!is.data.table(reduced))
+    reduced <- data.table::setDT(reduced)
+
   if (!is.null(key(reduced))) {
     if (key(reduced) != mapcode) {
       setkeyv(reduced, mapcode)
@@ -45,20 +47,24 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
   } else {
     setkeyv(reduced, mapcode)
   }
-  fullRasterVals <- data.table(getValues(fullRaster))
+  fullRasterVals <- setDT(list(getValues(fullRaster)))
   setnames(fullRasterVals, 1, new = mapcode)
-  fullRasterVals <- fullRasterVals[, row_number := 1L:.N] # nolint
+  set(fullRasterVals, NULL, "row_number", seq(ncell(fullRaster)))
   setkeyv(fullRasterVals, mapcode)
 
-  BsumVec <- reduced[fullRasterVals] # join
-  if (length(newRasterCols) > 1) {
-    for (i in seq_along(newRasterCols)) {
-      BsumVec[is.na(get(newRasterCols[i])), c(newRasterCols[i]) := NA]
-    }
-  } else {
-    BsumVec[is.na(get(newRasterCols)), c(newRasterCols) := NA]
-  }
-  setkey(BsumVec, row_number)
+  colsToKeep <- c("pixelGroup", newRasterCols)
+  BsumVec <- reduced[, ..colsToKeep][fullRasterVals, on = "pixelGroup"] # join
+
+  # This was removed by Eliot May 28, 2019 -- seems redundant -- if there are errors, this may be why
+  # if (length(newRasterCols) > 1) {
+  #   for (i in seq_along(newRasterCols)) {
+  #     BsumVec[is.na(get(newRasterCols[i])), c(newRasterCols[i]) := NA]
+  #   }
+  # } else {
+  #   browser()
+  #   BsumVec[is.na(get(newRasterCols)), c(newRasterCols) := NA]
+  # }
+  setkeyv(BsumVec, "row_number")
   if (length(newRasterCols) > 1) {
     ras <- list()
     for (i in newRasterCols) {
