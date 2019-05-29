@@ -47,7 +47,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
   } else {
     setkeyv(reduced, mapcode)
   }
-  fullRasterVals <- setDT(list(getValues(fullRaster)))
+  fullRasterVals <- as.data.table(list(getValues(fullRaster)))
   setnames(fullRasterVals, 1, new = mapcode)
   set(fullRasterVals, NULL, "row_number", seq(ncell(fullRaster)))
   setkeyv(fullRasterVals, mapcode)
