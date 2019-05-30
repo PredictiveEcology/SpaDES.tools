@@ -358,6 +358,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   assertClass(landscape, "Raster")
   ncells <- ncell(landscape)
   numCols <- ncol(landscape)
+  anyNAneighProbs <- any(is.na(neighProbs))
   if (!skipChecks) {
     assert(
       checkNumeric(start, min.len = 0, max.len = ncells, lower = 1, upper = ncells),
@@ -746,7 +747,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     set(dtPotential, NULL, "state", "successful")
 
     # Step 5 -- optional -- Algorithm neighProbs - uses a specific number of neighbours
-    if (!anyNA(neighProbs)) {
+    if (!anyNAneighProbs) {
       # numNeighs algorithm
       numNeighsByPixel <- unique(dtPotential, by = c("id", "from"))
       if (is.list(neighProbs)) {
@@ -796,12 +797,20 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         if (NROW(dtPotential)) {
           # If it is a corner or has had pixels removed bc of duplicates,
           # it may not have enough neighbours
-          numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
-          set(numNeighsByPixel, NULL, "numNeighs",
-              pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
-          dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
-                                                                   .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
-                                                                   by = "from"]$V1]
+          set(numNeighsByPixel, NULL, c("to", "state"), NULL)
+          dt1 <- dtPotential[numNeighsByPixel, nomatch = 0]
+          dtPotential <- dt1[dt1[, .I[sample.int(.N, size = min(.N, numNeighs), prob = spreadProbRel)], by = c("id", "from")]$V1]
+
+          if (FALSE) { # old algorithm, replaced by 3 lines above May 30 2019, Eliot -- appears to be a bug below
+            #   the by = "from" should be c("id", "from")
+            numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
+            if (any(numNeighsByPixel$numNeighs > numNeighsByPixel$N))
+              set(numNeighsByPixel, NULL, "numNeighs",
+                  pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
+            dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
+                                                                      .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
+                                                                      by = "from"]$V1]
+          }
         }
         set(dtPotential, NULL, "spreadProbRel", NULL)
       }
@@ -851,7 +860,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     spreadProbSuccess <- runifC(NROW(dtPotential)) <= actualSpreadProb
 
     # Step 8 - Remove duplicates & bind dt and dtPotential
-    if (anyNA(neighProbs)) {
+    if (anyNAneighProbs) {
       if (isTRUE(allowOverlap > 0) | is.na(allowOverlap) | !canUseAvailable) {
         # overlapping allowed
         dtPotential <- dtPotential[spreadProbSuccess]
