@@ -802,7 +802,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           dtPotential <- dt1[dt1[, .I[sample.int(.N, size = min(.N, numNeighs), prob = spreadProbRel)], by = c("id", "from")]$V1]
 
           if (FALSE) { # old algorithm, replaced by 3 lines above May 30 2019, Eliot -- appears to be a bug below
-            #   the by = "from" should be c("id", "from")
+            #   the by = "from" should be c("id", "from") -- should sample 1 or more from each fire event, from each front line
             numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
             if (any(numNeighsByPixel$numNeighs > numNeighsByPixel$N))
               set(numNeighsByPixel, NULL, "numNeighs",
@@ -957,17 +957,22 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # Too small second
       if (!(anyNA(exactSize))) {
         # push those that are too small into "tooSmall"
-        currentSizeTooSmall <- clusterDT[tooBigByNCells < 0]
+        currentSizeTooSmall <- clusterDT[tooBigByNCells < 0, "initialPixels"]
+        # dtOrig <- copy(dt)
+        # csts <- copy(currentSizeTooSmall)
+        #dt <- copy(dtOrig)
+        #currentSizeTooSmall <- copy(csts)
         if (NROW(currentSizeTooSmall) > 0) {
           # successful means will become activeSource next iteration,
           # so they don't need any special treatment
           currentSizeTooSmall <- currentSizeTooSmall[
-            !dt[state %in% c("successful", "holding"), nomatch = 0]
+            !dt[dt$state %in% c("successful", "holding"), nomatch = 0]
             ]
+
         }
         # if the ones that are too small are unsuccessful, make them "tooSmall"
         set(dt, NULL, "ind", seq_len(NROW(dt)))
-        whTooSmall <- dt[!(state %in% c("successful", "inactive"))][
+        whTooSmall <- dt[!(dt$state %in% c("successful", "inactive"))][
           currentSizeTooSmall, nomatch = 0]$ind
         set(dt, NULL, "ind", NULL)
 
