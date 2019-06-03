@@ -1,5 +1,5 @@
 if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c(".N", "row_number"))
+  utils::globalVariables(c("..colsToKeep", ".N", "row_number"))
 }
 
 ################################################################################
@@ -52,8 +52,8 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
   set(fullRasterVals, NULL, "row_number", seq(ncell(fullRaster)))
   setkeyv(fullRasterVals, mapcode)
 
-  colsToKeep <- c("pixelGroup", newRasterCols)
-  BsumVec <- reduced[, ..colsToKeep][fullRasterVals, on = "pixelGroup"] # join
+  colsToKeep <- c(mapcode, newRasterCols)
+  BsumVec <- reduced[, ..colsToKeep][fullRasterVals, on = mapcode] # join
 
   # This was removed by Eliot May 28, 2019 -- seems redundant -- if there are errors, this may be why
   # if (length(newRasterCols) > 1) {
@@ -74,7 +74,6 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
   } else {
     ras <- raster(res = res(fullRaster), ext = extent(fullRaster), crs = crs(fullRaster),
                   vals = BsumVec[[newRasterCols]])
-
   }
   return(ras)
 }
