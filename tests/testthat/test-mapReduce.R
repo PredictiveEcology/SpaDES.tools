@@ -13,14 +13,17 @@ test_that("mapReduce: file does not work correctly 1", {
   names(fullRas) <- "mapcodeAll"
   uniqueComms <- raster::unique(fullRas)
   reducedDT <- data.table(
-    mapcodeAll = uniqueComms,
+    mapcodeAll = as.integer(uniqueComms),
     communities = sample(1:1000, length(uniqueComms)),
-    biomass = rnbinom(length(uniqueComms), mu = 4000, 0.4)
+    biomass = as.integer(rnbinom(length(uniqueComms), mu = 4000, 0.4))
   )
   biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
+  expect_equal(sort(unique(getValues(biomass))), sort(reducedDT$biomass))
 
-  expect_gt(sum(sort(unique(getValues(biomass))), na.rm = TRUE), 0)
-  #expect_equal(sort(unique(getValues(biomass))), sort(reducedDT$biomass))
+  communities <- rasterizeReduced(reducedDT, fullRas, "communities")
+  expect_equal(sort(unique(getValues(communities))), sort(reducedDT$communities))
+
+  expect_true(sum(table(sort(fullRas[])) *  reducedDT$communities) == sum(communities[]))
 })
 
 # test_that("mapReduce: file does not work correctly 2", {
