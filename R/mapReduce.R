@@ -52,8 +52,8 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
   set(fullRasterVals, NULL, "row_number", seq(ncell(fullRaster)))
   setkeyv(fullRasterVals, mapcode)
 
-  colsToKeep <- c("pixelGroup", newRasterCols)
-  BsumVec <- reduced[, ..colsToKeep][fullRasterVals, on = "pixelGroup"] # join
+  colsToKeep <- c(mapcode, newRasterCols)
+  BsumVec <- reduced[, ..colsToKeep][fullRasterVals] # join
 
   # This was removed by Eliot May 28, 2019 -- seems redundant -- if there are errors, this may be why
   # if (length(newRasterCols) > 1) {
