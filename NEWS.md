@@ -5,12 +5,12 @@ version 0.3.2.9000
 
 ## Dependency changes
 * Added `backports` for R-oldrel support
+* Requires R >= 3.5
 
 ## Bugfixes
-* Lorem ipsum
 
 ## Enhancements
-* Lorem ipsum
+* `spread2` speed enhancements
 
 version 0.3.2
 =============
