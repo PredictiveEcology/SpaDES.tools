@@ -15,7 +15,6 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom fastmatch fmatch
 #' @name %fin%
 #' @rdname match
-#'
 `%fin%` <- function(x, table) {
   fmatch(x, table, nomatch = 0L) > 0L
 }
