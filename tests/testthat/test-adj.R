@@ -71,40 +71,6 @@ test_that("adj.R results not identical to adjacent", {
   }
 })
 
-test_that("adj benchmarking", {
-  skip("benchmarking only")
-
-  a <- raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1)
-  sam <- sample(1:length(a), 4)
-  dirs <- "bishop"
-  sortTF <- FALSE
-  ma <- FALSE
-  incl <- FALSE
-  ids <- seq_len(length(sam))
-  prs <- FALSE
-  tor <- FALSE
-
-  microbenchmark::microbenchmark(times = 1e3, {
-    adjDT <- adj(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
-                     include = incl, cutoff.for.data.table = 2, id = ids,
-                     pairs = prs, torus = tor)
-  })
-
-  ## Unit: microseconds
-  ##     min       lq     mean   median       uq      max neval
-  ## 626.464  708.509 896.7076  811.339 967.0435  7876.73  1000
-
-  microbenchmark::microbenchmark(times = 1e5, {
-    adjDT <- adj(a, sam, directions = dirs, sort = sortTF, match.adjacent = ma,
-                     include = incl, cutoff.for.data.table = 5, id = ids,
-                     pairs = prs, torus = tor)
-
-  })
-
-  ## Unit: microseconds
-  ##     min     lq     mean  median     uq      max neval
-  ##  28.443  31.36 40.35792  32.818 44.123 9290.465 1e+05
-})
 
 test_that("errors in adj are not correct", {
   a <- raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1)
