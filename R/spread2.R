@@ -333,8 +333,8 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom checkmate qassert
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
-#' @importFrom ff ff
 #' @importFrom fastmatch fmatch
+#' @importFrom ff ff
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot

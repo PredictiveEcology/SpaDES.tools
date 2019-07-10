@@ -1,3 +1,8 @@
+if (interactive()) {
+  library(microbenchmark)
+  library(profvis)
+}
+
 test_that("spread benchmarking", {
   skip("This is just benchmarking, not testing")
 
