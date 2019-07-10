@@ -60,8 +60,6 @@ Suggests:
     rmarkdown,
     sf,
     testthat (>= 1.0.2)
-Remotes:
-    PredictiveEcology/reproducible@development
 Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
