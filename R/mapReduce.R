@@ -35,8 +35,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @example inst/examples/example_mapReduce.R
 #'
-rasterizeReduced <- function(reduced, fullRaster, newRasterCols,
-                             mapcode = names(fullRaster), ...) {
+rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names(fullRaster), ...) {
   if (!is.data.table(reduced))
     reduced <- data.table::setDT(reduced)
 

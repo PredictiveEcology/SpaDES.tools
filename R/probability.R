@@ -37,11 +37,8 @@ dwrpnorm2 <- function(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc) {
   if (rho < 0 | rho > 1)
     stop("rho must be between 0 and 1")
   var <- -2 * log(rho)
-  term <- function(theta, mu, var, k) {
-    1 / sqrt(var * 2 * pi) * exp(-((theta - mu + 2 * pi * k) ^ 2) / (2 * var))
-  }
   k <- 0
-  Next <- term(theta, mu, var, k)
+  Next <- .term(theta, mu, var, k)
   Last <- Next
   delta <- rep(1, length(Last))
   while (any(compareNA(delta > tol, TRUE))) {
@@ -49,9 +46,14 @@ dwrpnorm2 <- function(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc) {
     keep <- reproducible::compareNA(keep, TRUE)
     k <- k + 1
     Last[keep] <- Next[keep]
-    Next[keep] <- Last[keep] + term(theta[keep], mu[keep], var, k) +
-                  term(theta[keep], mu[keep], var, -k)
+    Next[keep] <- Last[keep] + .term(theta[keep], mu[keep], var, k) +
+      .term(theta[keep], mu[keep], var, -k)
     delta[keep] <- abs(Next[keep] - Last[keep])
   }
   return(Next)
+}
+
+#' @keywords internal
+.term <- function(theta, mu, var, k) {
+  1 / sqrt(var * 2 * pi) * exp(-((theta - mu + 2 * pi * k) ^ 2) / (2 * var))
 }

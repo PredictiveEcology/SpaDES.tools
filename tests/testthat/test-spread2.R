@@ -26,7 +26,7 @@ test_that("spread2 tests", {
     expect_true(all(out$active == 0))
   }
 
-  if (interactive()) print("testing maxSize")
+  if (interactive()) message("testing maxSize")
   maxSizes <- 2:3
   for (i in 1:20) {
     seed <- sample(1e6, 1)
@@ -37,7 +37,7 @@ test_that("spread2 tests", {
     expect_true(all(out[, .N, by = "initialPixels"]$N <= maxSizes[order(sams)]))
   }
 
-  if (interactive()) print("testing exactSize")
+  if (interactive()) message("testing exactSize")
   exactSizes <- c(5, 3.1)
   for (i in 1:20) {
     sams <- sample(innerCells, 2)
@@ -58,7 +58,7 @@ test_that("spread2 tests", {
     }
   }
 
-  if (interactive()) print("testing exactSize")
+  if (interactive()) message("testing exactSize")
   exactSizes <- c(5.01, 3.1, 4)
   for (i in 1:20) {
     sams <- sample(innerCells, length(exactSizes))
@@ -73,7 +73,7 @@ test_that("spread2 tests", {
     }
   }
 
-  if (interactive()) print("testing exact maxSize, can't be achieved, allow jumping")
+  if (interactive()) message("testing exact maxSize, can't be achieved, allow jumping")
   exactSizes <- c(154, 111, 134) # too big for landscape, can't achieve it --
                                  #  will hit max numRetries, and will try jumping
   for (i in 1:20) {
@@ -85,7 +85,7 @@ test_that("spread2 tests", {
     expect_true(all(out$numRetries == 11)) # current max
   }
 
-  if (interactive()) print("test circle = TRUE")
+  if (interactive()) message("test circle = TRUE")
   for (i in 1:20) {
     message(i)
     seed <- sample(1e6, 1)
@@ -129,7 +129,7 @@ test_that("spread2 tests", {
     }
   }
 
-  if (interactive()) print("compare spread2 circle with cir circle")
+  if (interactive()) message("compare spread2 circle with cir circle")
   cirOut <- data.table(
     cir(a, allowOverlap = TRUE, loci = sams, minRadius = 0, maxRadius = 15,
         returnDistances = TRUE, simplify = TRUE)
@@ -152,7 +152,7 @@ test_that("spread2 tests", {
   compare <- out[cirOut, on = c(initialPixels = "initialPixels", pixels = "indices")]
   expect_true(sum(abs(compare$dists - compare$distance)) %==% 0)
 
-  if (interactive()) print("Scales with number of starts, not maxSize of raster")
+  if (interactive()) message("Scales with number of starts, not maxSize of raster")
   set.seed(21)
   b <- raster(extent(0, 33000, 0, 33000), res = 1)
   sams <- sample(ncell(b), 2)
@@ -161,7 +161,7 @@ test_that("spread2 tests", {
   })
   expect_lt(st1[1], 1)
 
-  if (interactive()) print("test neighProbs")
+  if (interactive()) message("test neighProbs")
   maxSizes <- 14
   sp <- raster(a)
   spreadProbOptions <- 1:5
@@ -174,7 +174,7 @@ test_that("spread2 tests", {
   expect_true(uniqueN(out) == maxSizes * length(sams))
   expect_true(NROW(out) == maxSizes * length(sams))
 
-  if (interactive()) print("check variable lengths of neighProbs")
+  if (interactive()) message("check variable lengths of neighProbs")
   set.seed(29937)
   sams <- sample(innerCells, 2)
   for (i in 1:8) {
@@ -193,7 +193,7 @@ test_that("spread2 tests", {
   }
 
   if (interactive()) {
-    print(
+    message(
       paste(
         "Test that when using neighProbs & a Raster of spreadProbs,",
         "the spreadProb raster is followed probabilistically.",
@@ -224,7 +224,7 @@ test_that("spread2 tests", {
     expect_false(cht$p.value > 0.05) ## TODO: is this valid/correct test?
   }
 
-  print("Scales with number of starts, not maxSize of raster")
+  message("Scales with number of starts, not maxSize of raster")
   set.seed(21)
   b <- raster(extent(0, 10, 0, 10), res = 1)
   bProb <- gaussMap(b, speedup = 1)
@@ -238,7 +238,7 @@ test_that("spread2 tests", {
   if (interactive()) out
 
   if (interactive())
-    print("check wide range of spreadProbs and that it makes a RasterLayer")
+    message("check wide range of spreadProbs and that it makes a RasterLayer")
   set.seed(654)
   rasts <- list()
   for (i in 1:20) {
@@ -251,7 +251,7 @@ test_that("spread2 tests", {
   }
 
   if (interactive())
-    print("testing iterative calling of spread2")
+    message("testing iterative calling of spread2")
   set.seed(299)
   sams <- sample(innerCells, 2)
   set.seed(299)
@@ -267,7 +267,7 @@ test_that("spread2 tests", {
   expect_equivalent(out2, out)
 
   if (interactive())
-    print("testing iterative calling of spread2, but asRaster = TRUE")
+    message("testing iterative calling of spread2, but asRaster = TRUE")
   set.seed(299)
   sams <- sample(innerCells, 2)
   set.seed(299)
@@ -280,7 +280,7 @@ test_that("spread2 tests", {
   expect_true(identical(out, attr(out1, "pixel")))
 
   if (interactive())
-    print("testing iterative with maxSize")
+    message("testing iterative with maxSize")
   set.seed(299)
   seed <- sample(1e6, 1)
   set.seed(seed)
@@ -294,7 +294,7 @@ test_that("spread2 tests", {
   }
 
   if (interactive())
-    print("testing iterative with maxSize -- where needRetry occurs")
+    message("testing iterative with maxSize -- where needRetry occurs")
   set.seed(299)
   sams <- sample(innerCells, 2)
   exactSizes <- 60:61

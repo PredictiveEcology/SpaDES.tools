@@ -7,7 +7,7 @@
 \code{allowDuplicates = FALSE}, \code{returnIndices = TRUE}, \code{returnDistances = TRUE}, and
 \code{includeBehavior = "excludePixels"}.
 It is used inside \code{spread2}, when asymmetry is active.
-The basic algorithm is to run \code{cir} just once, then add to the xy coordinates of every locus.}
+The basic algorithm is to run \code{cir} just once, then add to the x,y coordinates of every locus.}
 \usage{
 .cirSpecialQuick(landscape, loci, maxRadius, minRadius)
 }
@@ -30,5 +30,5 @@ This is a very fast version of \code{cir} with \code{allowOverlap = TRUE},
 \code{allowDuplicates = FALSE}, \code{returnIndices = TRUE}, \code{returnDistances = TRUE}, and
 \code{includeBehavior = "excludePixels"}.
 It is used inside \code{spread2}, when asymmetry is active.
-The basic algorithm is to run \code{cir} just once, then add to the xy coordinates of every locus.
+The basic algorithm is to run \code{cir} just once, then add to the x,y coordinates of every locus.
 }

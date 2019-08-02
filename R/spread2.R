@@ -1132,9 +1132,8 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
 #' Internal helpers for \code{spread2}
 #'
 #' @inheritParams rbindlistDtDtpot
-#' @rdname spread2-internals
 #' @keywords internal
-#'
+#' @rdname spread2-internals
 reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames) {
   if (needDistance)
     setcolorder(dtPotential,
@@ -1152,7 +1151,6 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
 #'                             vector \code{NROW(dtPotential)}.
 #' @keywords internal
 #' @rdname spread2-internals
-#'
 angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
   from1 <- cbind(id = from, xyFromCell(landscape, from))
   to1 <- cbind(id = from, xyFromCell(landscape, to))

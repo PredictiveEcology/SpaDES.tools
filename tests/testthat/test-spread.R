@@ -552,7 +552,6 @@ test_that("distanceFromPoints does not work correctly", {
   dfep <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
                                 landscape = hab, cumulativeFn = `+`)
   expect_true(sum(idw - dfep[, "val"]) %==% 0)
-
 })
 
 test_that("simple cir does not work correctly", {
