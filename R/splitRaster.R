@@ -100,23 +100,24 @@ setMethod(
       }
     }
 
-    croppy <- function(i, e, r, path, rType) {
-
-      ri <- crop(r, e[[i]], datatype = rType)
-      crs(ri) <- crs(r)
-      if (is.na(path)) {
-        return(ri)
-      } else {
-        filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
-        writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
-        return(raster(filename))
-      }
-    }
     tiles <- if (!is.null(cl)) {
-      clusterApplyLB(cl = cl, x = seq_along(extents), fun = croppy, e = extents, r = r, path = path, rType = rType)
+      clusterApplyLB(cl = cl, x = seq_along(extents), fun = .croppy, e = extents, r = r, path = path, rType = rType)
     } else {
-      lapply(X = seq_along(extents), FUN = croppy, e = extents, r = r, path = path, rType = rType)
+      lapply(X = seq_along(extents), FUN = .croppy, e = extents, r = r, path = path, rType = rType)
     }
 
     return(tiles)
 })
+
+#' @keywords internal
+.croppy <- function(i, e, r, path, rType) {
+  ri <- crop(r, e[[i]], datatype = rType)
+  crs(ri) <- crs(r)
+  if (is.na(path)) {
+    return(ri)
+  } else {
+    filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
+    writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
+    return(raster(filename))
+  }
+}

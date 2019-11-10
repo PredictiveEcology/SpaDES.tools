@@ -6,7 +6,7 @@ if (getRversion() >= "3.1.0") {
   )
 }
 
-#' An alternative spread function -- conceived for insects
+#' An alternative spread function, conceived for insects
 #'
 #' This is built with \code{\link{spread2}} and is still experimental.
 #' This one differs from other attempts in that it treats the advection and
