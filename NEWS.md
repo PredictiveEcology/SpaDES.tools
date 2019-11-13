@@ -1,14 +1,15 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
-version 0.3.2.9000
+version 0.3.3
 =============
 
 ## Dependency changes
-* Added `backports` for R-oldrel support
-* remove `profvis` and `microbenchmark` from Suggests: all benchmarking is removed from automated tests
 * Requires R >= 3.5
+* Added `backports` for R-oldrel support
+* removed `profvis` and `microbenchmark` from Suggests: all benchmarking is removed from automated tests
 
 ## Bugfixes
+* minor bug fixes
 
 ## Enhancements
 * `spread2` speed enhancements

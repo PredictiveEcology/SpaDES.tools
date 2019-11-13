@@ -2,7 +2,7 @@
 % Please edit documentation in R/spread3.R
 \name{spread3}
 \alias{spread3}
-\title{An alternative spread function -- conceived for insects}
+\title{An alternative spread function, conceived for insects}
 \usage{
 spread3(start, rasQuality, rasAbundance, advectionDir, advectionMag,
   meanDist, plot.it = 2, minNumAgents = 50,
