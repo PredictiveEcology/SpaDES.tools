@@ -33,7 +33,7 @@ install.packages("SpaDES.tools")
 ```r
 #install.packages("devtools")
 library("devtools")
-install_github("PredictiveEcology/SpaDES.tools", dependencies = TRUE) # stable
+install_github("PredictiveEcology/SpaDES.tools", dependencies = TRUE) # master
 ```
 
 ### Development version (unstable)
@@ -43,5 +43,9 @@ install_github("PredictiveEcology/SpaDES.tools", dependencies = TRUE) # stable
 ```r
 #install.packages("devtools")
 library("devtools")
-install_github("PredictiveEcology/SpaDES.tools", ref = "development", dependencies = TRUE) # unstable
+install_github("PredictiveEcology/SpaDES.tools", ref = "development", dependencies = TRUE)
 ```
+
+## Contributions
+
+Please see `CONTRIBUTING.md` for information on how to contribute to this project.
