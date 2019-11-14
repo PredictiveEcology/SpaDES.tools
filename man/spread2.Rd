@@ -4,14 +4,29 @@
 \alias{spread2}
 \title{Simulate a contagious spread process on a landscape, with data.table internals}
 \usage{
-spread2(landscape, start = ncell(landscape)/2 - ncol(landscape)/2,
-  spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE,
-  maxSize, exactSize, directions = 8L, iterations = 1000000L,
-  returnDistances = FALSE, returnDirections = FALSE,
-  returnFrom = FALSE, maxRetriesPerID = 10, spreadProbRel = NA_real_,
-  plot.it = FALSE, circle = FALSE, asymmetry = NA_real_,
-  asymmetryAngle = NA_real_, allowOverlap = 0, neighProbs = NA_real_,
-  skipChecks = FALSE)
+spread2(
+  landscape,
+  start = ncell(landscape)/2 - ncol(landscape)/2,
+  spreadProb = 0.23,
+  persistProb = NA_real_,
+  asRaster = TRUE,
+  maxSize,
+  exactSize,
+  directions = 8L,
+  iterations = 1000000L,
+  returnDistances = FALSE,
+  returnDirections = FALSE,
+  returnFrom = FALSE,
+  maxRetriesPerID = 10,
+  spreadProbRel = NA_real_,
+  plot.it = FALSE,
+  circle = FALSE,
+  asymmetry = NA_real_,
+  asymmetryAngle = NA_real_,
+  allowOverlap = 0,
+  neighProbs = NA_real_,
+  skipChecks = FALSE
+)
 }
 \arguments{
 \item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
@@ -301,8 +316,8 @@ are interacting with each other correctly.
 This function can be used iteratively, with relatively little overhead compared to using
 it non-iteratively. In general, this function can be called with arguments set as user
 needs, and with specifying iterations = 1 (say). This means that the function will spread
-outwards 1 iteration, then stop. The returned object will be a data.table or \code{RasterLayer}
-that can be passed immediately back as the start argument into a subsequent
+outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
+\code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
 call to \code{spread2}. This means that every argument can be updated at each iteration.
 
 When using this function iteratively, there are several things to keep in mind.

@@ -209,8 +209,6 @@ if (getRversion() >= "3.1.0") {
 #' @param plot.it  If TRUE, then plot the raster at every iteration,
 #'                   so one can watch the spread2 event grow.
 #'
-#' @inheritParams spread
-#'
 #' @details
 #'
 #' If \code{exactSize} or \code{maxSize} are used, then spreading will continue and stop
@@ -239,8 +237,8 @@ if (getRversion() >= "3.1.0") {
 #' This function can be used iteratively, with relatively little overhead compared to using
 #' it non-iteratively. In general, this function can be called with arguments set as user
 #' needs, and with specifying iterations = 1 (say). This means that the function will spread
-#' outwards 1 iteration, then stop. The returned object will be a data.table or \code{RasterLayer}
-#' that can be passed immediately back as the start argument into a subsequent
+#' outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
+#' \code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
 #' call to \code{spread2}. This means that every argument can be updated at each iteration.
 #'
 #' When using this function iteratively, there are several things to keep in mind.
@@ -1094,19 +1092,19 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   return(dt)
 }
 
-
-#' Internal helper
+#' Internal helpers
 #'
-#' Not for users. A function to setnames and rbindlist that is used 3 places in spread2.
+#' Not for users.
+#' A function to \code{setnames} and \code{rbindlist} that is used in \code{spread2}.
 #'
-#' @param dt Data.table
-#' @param dtPotential Data.table
-#' @param returnFrom Logical
-#' @param needDistance Logical
-#' @param dtPotentialColNames Character Vector.
-#' @rdname spread2-internals
+#' @param dt a \code{data.table} object
+#' @param dtPotential a \code{data.table} object
+#' @param returnFrom logical
+#' @param needDistance logical
+#' @param dtPotentialColNames character vector.
+#'
 #' @keywords internal
-#'
+#' @rdname spread2-internals
 rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames) {
   # distance column is second last, but needs to be last
   # to merge with dt, need: from, to, state in that order
@@ -1131,7 +1129,6 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
 
 #' Internal helpers for \code{spread2}
 #'
-#' @inheritParams rbindlistDtDtpot
 #' @keywords internal
 #' @rdname spread2-internals
 reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames) {
@@ -1147,8 +1144,9 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
 #' @param from vector of cell locations which are the "from" or starting cells
 #' @param to vector of same length as \code{from} which are the "to" or receiving cells
 #' @param landscape \code{RasterLayer} passed from \code{spread2}.
-#' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or
-#'                             vector \code{NROW(dtPotential)}.
+#' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or vector
+#'                             \code{NROW(dtPotential)}.
+#'
 #' @keywords internal
 #' @rdname spread2-internals
 angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
@@ -1163,9 +1161,9 @@ angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
 #' @param angleQualities Matrix. The output from \code{angleQuality}
 #' @param quantity Variable of interest to adjust, e.g., \code{spreadProb}
 #' @param actualAsymmetry Asymmetry intensity. Derived from \code{asymmetry} arg in \code{spread2}
+#'
 #' @keywords internal
 #' @rdname spread2-internals
-#'
 asymmetryAdjust <- function(angleQualities, quantity, actualAsymmetry) {
   if (sum(angleQualities[, "angleQuality"]) %==% 0) {
     # the case where there is no difference in the angles, and they are all zero
