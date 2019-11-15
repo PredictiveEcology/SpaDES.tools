@@ -12,7 +12,7 @@ fastCrop(x, y, ...)
 
 \item{y}{Extent object, or any object from which an Extent object can be extracted (see Details)}
 
-\item{...}{Additional arguments as for \code{\link[raster]{writeRaster}}}
+\item{...}{Additional arguments as for \code{\link{writeRaster}}}
 }
 \description{
 \code{fastCrop} is a wrapper around \code{velox::VeloxRaster_crop}, though

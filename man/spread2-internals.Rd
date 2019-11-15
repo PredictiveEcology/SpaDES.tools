@@ -7,13 +7,8 @@
 \alias{asymmetryAdjust}
 \title{Internal helpers}
 \usage{
-rbindlistDtDtpot(
-  dt,
-  dtPotential,
-  returnFrom,
-  needDistance,
-  dtPotentialColNames
-)
+rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance,
+  dtPotentialColNames)
 
 reorderColsWDistance(needDistance, dtPotential, dtPotentialColNames)
 

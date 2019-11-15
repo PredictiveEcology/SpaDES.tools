@@ -11,13 +11,8 @@ pointDistance2(to, from)
 
 pointDistance3(fromX, toX, fromY, toY, maxDistance)
 
-.pointDistance(
-  from,
-  to,
-  angles = NA,
-  maxDistance = NA_real_,
-  otherFromCols = FALSE
-)
+.pointDistance(from, to, angles = NA, maxDistance = NA_real_,
+  otherFromCols = FALSE)
 }
 \arguments{
 \item{to}{Numeric matrix with 2  or 3 columns (or optionally more, all of which
