@@ -8,7 +8,7 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
     operations, random map generation, and others.
     See '?SpaDES.tools' for an categorized overview of these additional tools.
 URL:
-    http://spades-tools.predictiveecology.org,
+    https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
 Date: 2019-11-15
 Version: 0.3.3
