@@ -374,6 +374,14 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
       checkClass(spreadProb, "RasterLayer")
     )
+
+    if (is(spreadProb, "Raster")) {
+      if (fromDisk(spreadProb)) {
+        warning("spreadProb is a raster layer stored on disk. This may cause spread2 to be",
+                " very slow. We suggest extracting the values to a numeric vector first, ",
+                "then passing this to spreadProb")
+      }
+    }
     assert(checkNumeric(persistProb, 0, 1, min.len = 1, max.len = 1),
            checkClass(persistProb, "RasterLayer"))
     assert(

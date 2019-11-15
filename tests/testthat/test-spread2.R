@@ -26,6 +26,7 @@ test_that("spread2 tests", {
     expect_true(all(out$active == 0))
   }
 
+  # Test numeric vector passed to spreadProb
   sams <- sample(innerCells, 2)
   numNAs <- 25
   sps <- sample(c(rep(NA_real_, numNAs), runif(ncell(a) - numNAs, 0, 1)))
@@ -36,6 +37,13 @@ test_that("spread2 tests", {
   set.seed(123)
   out2 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
   expect_true(identical(out1, out2))
+
+  # Test warning for raster on disk
+  spsRas[] <- sps
+  spsRas <- writeRaster(spsRas, tempfile())
+  warn <- capture_warnings(out1 <- spread2(a, start = sams,
+                                           spreadProb = spsRas, asRaster = FALSE))
+  expect_true(grepl("spreadProb is a raster layer stored on disk", warn))
 
   if (interactive()) message("testing maxSize")
   maxSizes <- 2:3
