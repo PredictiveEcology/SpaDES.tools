@@ -26,6 +26,17 @@ test_that("spread2 tests", {
     expect_true(all(out$active == 0))
   }
 
+  sams <- sample(innerCells, 2)
+  numNAs <- 25
+  sps <- sample(c(rep(NA_real_, numNAs), runif(ncell(a) - numNAs, 0, 1)))
+  spsRas <- raster(a)
+  spsRas[] <- sps
+  set.seed(123)
+  out1 <- spread2(a, start = sams, spreadProb = sps, asRaster = FALSE)
+  set.seed(123)
+  out2 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
+  expect_true(identical(out1, out2))
+
   if (interactive()) message("testing maxSize")
   maxSizes <- 2:3
   for (i in 1:20) {

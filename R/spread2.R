@@ -101,12 +101,14 @@ if (getRversion() >= "3.1.0") {
 #'              If user has x and y coordinates, these can be converted with
 #'              \code{\link[raster]{cellFromXY}}.
 #'
-#' @param spreadProb  Numeric of length 1 or \code{RasterLayer}.
+#' @param spreadProb  Numeric of length 1 or length \code{ncell(landscape)} or
+#'                    a \code{RasterLayer} that is the identical dimensions as
+#'                    \code{landscape}.
 #'                    If numeric of length 1, then this is the global (absolute)
 #'                    probability of spreading into each cell from a neighbour.
-#'                    If a raster then this must be the cell-specific (absolute)
-#'                    probability of a "receiving" potential cell.
-#'                    Default is \code{0.23}.
+#'                    If a numeric of length \code{ncell(landscape)} or a raster,
+#'                    then this must be the cell-specific (absolute)
+#'                    probability of a "receiving" potential cell. Default is \code{0.23}.
 #'                    If relative probabilities are required, use \code{spreadProbRel}.
 #'                    If used together, then the relative probabilities will be
 #'                    re-scaled so that the mean relative probability of potential
@@ -368,6 +370,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     assertNumeric(sum(neighProbs), lower = 1, upper = 1)
 
     assert(
+      checkNumeric(spreadProb, 0, 1, min.len = ncell(landscape), max.len = ncell(landscape)),
       checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
       checkClass(spreadProb, "RasterLayer")
     )
