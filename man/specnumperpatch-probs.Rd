@@ -4,8 +4,7 @@
 \alias{specificNumPerPatch}
 \title{Initiate a specific number of agents in a map of patches}
 \usage{
-specificNumPerPatch(patches, numPerPatchTable = NULL,
-  numPerPatchMap = NULL)
+specificNumPerPatch(patches, numPerPatchTable = NULL, numPerPatchMap = NULL)
 }
 \arguments{
 \item{patches}{\code{RasterLayer} of patches, with some sort of a patch id.}

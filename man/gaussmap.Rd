@@ -4,8 +4,16 @@
 \alias{gaussMap}
 \title{Produce a \code{raster} of a random Gaussian process.}
 \usage{
-gaussMap(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
-  alpha = 1, inMemory = FALSE, ...)
+gaussMap(
+  x,
+  scale = 10,
+  var = 1,
+  speedup = 1,
+  method = "RMexp",
+  alpha = 1,
+  inMemory = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A spatial object (e.g., a \code{RasterLayer}).}

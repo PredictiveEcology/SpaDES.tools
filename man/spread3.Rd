@@ -4,9 +4,18 @@
 \alias{spread3}
 \title{An alternative spread function, conceived for insects}
 \usage{
-spread3(start, rasQuality, rasAbundance, advectionDir, advectionMag,
-  meanDist, plot.it = 2, minNumAgents = 50,
-  verbose = getOption("LandR.verbose", 0), saveStack = NULL)
+spread3(
+  start,
+  rasQuality,
+  rasAbundance,
+  advectionDir,
+  advectionMag,
+  meanDist,
+  plot.it = 2,
+  minNumAgents = 50,
+  verbose = getOption("LandR.verbose", 0),
+  saveStack = NULL
+)
 }
 \arguments{
 \item{start}{Raster indices from which to initiate dispersal}
