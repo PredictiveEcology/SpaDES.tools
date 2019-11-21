@@ -49,6 +49,7 @@ Imports:
     sp (>= 1.2-4),
     stats
 Suggests:
+    animation,
     DEoptim (>= 2.2-4),
     dplyr,
     fasterize,
