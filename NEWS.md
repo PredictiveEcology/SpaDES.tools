@@ -5,8 +5,9 @@ version 0.3.3
 
 ## Dependency changes
 * Requires R >= 3.5
+* Added `animation` since it is used in the `spread3` example.
 * Added `backports` for R-oldrel support
-* removed `profvis` and `microbenchmark` from Suggests: all benchmarking is removed from automated tests
+* Removed `profvis` and `microbenchmark` from Suggests: all benchmarking is removed from automated tests
 
 ## Bugfixes
 * minor bug fixes
