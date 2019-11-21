@@ -18,6 +18,7 @@ matrix:
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
+          - libmagick++-dev
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
@@ -39,6 +40,7 @@ matrix:
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
+          - libmagick++-dev
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
@@ -65,6 +67,7 @@ matrix:
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
+          - libmagick++-dev
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
@@ -94,6 +97,7 @@ matrix:
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
+          - libmagick++-dev
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
@@ -106,7 +110,7 @@ matrix:
     addons:
       homebrew:
         packages:
-        - glpk libgit2    
+        - glpk libgit2
         update: true
     latex: false
     r_build_args: "--no-build-vignettes"
