@@ -338,7 +338,7 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot
-#' @importFrom raster ncell raster res ncol pointDistance
+#' @importFrom raster fromDisk ncell raster res ncol pointDistance
 #' @importFrom stats runif
 #'
 #' @seealso \code{\link{spread}} for a different implementation of the same algorithm.
