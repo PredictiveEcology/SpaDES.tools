@@ -137,7 +137,7 @@ if (interactive()) {
                  plot.it = 0, saveStack = tmpStack)
 
   ## This animates the series of images into an animated GIF
-  if (requireNamespace(animation, quietly = TRUE)) {
+  if (require(animation)) {
     out2 <- raster::stack(tmpStack)
     gifName <- file.path(tempdir(), "animation.gif")
     saveGIF(interval = 0.1, movie.name = gifName, expr = {
