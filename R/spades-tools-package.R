@@ -1,6 +1,5 @@
-#
 #  SpaDES.tools/R/spades-tools-package.R by Alex M Chubaty and Eliot J B McIntire
-#  Copyright (C) 2015-2018 Her Majesty the Queen in Right of Canada,
+#  Copyright (C) 2015-2019 Her Majesty the Queen in Right of Canada,
 #   as represented by the Minister of Natural Resources Canada
 #
 
