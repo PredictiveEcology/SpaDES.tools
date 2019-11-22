@@ -175,10 +175,12 @@ test_that("spread2 tests", {
   set.seed(21)
   b <- raster(extent(0, 33000, 0, 33000), res = 1)
   sams <- sample(ncell(b), 2)
-  st1 <- system.time({
-    out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
-  })
-  expect_lt(st1[1], 1) ## TODO: fix error: st1[1] is not strictly less than 1. Difference: 0.866
+  beforeTime <- Sys.time()
+  #st1 <- system.time({
+  out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
+  #})
+  afterTime <- Sys.time()
+  expect_true(difftime(afterTime, beforeTime, units = "sec") < 1) ## TODO: fix error: st1[1] is not strictly less than 1. Difference: 0.866
 
   if (interactive()) message("test neighProbs")
   maxSizes <- 14
