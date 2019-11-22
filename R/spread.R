@@ -420,13 +420,13 @@ setMethod(
             relativeSpreadProb <- TRUE
           }
       } else {
-        if (!all(inRange(spreadProb))) {
+        if (!all(inRange(na.omit(spreadProb)))) {
           relativeSpreadProb <- TRUE
           stop("spreadProb is not a probability")
         }
         if (spreadProbLaterExists) {
           relativeSpreadProb <- TRUE
-          if (!all(inRange(spreadProbLater))) stop("spreadProbLater is not a probability")
+          if (!all(inRange(na.omit(spreadProbLater)))) stop("spreadProbLater is not a probability")
         }
       }
     }
@@ -667,6 +667,8 @@ setMethod(
 
       # extract spreadProb values from spreadProb argument
       if (is.numeric(spreadProb)) {
+        if (!(length(spreadProb) == 1 || length(spreadProb) == ncell(landscape)))
+          stop("spreadProb must be length 1 or length ncell(landscape), or a raster")
         if (n == 1 & spreadProbLaterExists) {
           # need cell specific values
           spreadProbs <- rep(spreadProb, NROW(potentials))
