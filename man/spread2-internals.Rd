@@ -5,10 +5,15 @@
 \alias{reorderColsWDistance}
 \alias{angleQuality}
 \alias{asymmetryAdjust}
-\title{Internal helper}
+\title{Internal helpers}
 \usage{
-rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance,
-  dtPotentialColNames)
+rbindlistDtDtpot(
+  dt,
+  dtPotential,
+  returnFrom,
+  needDistance,
+  dtPotentialColNames
+)
 
 reorderColsWDistance(needDistance, dtPotential, dtPotentialColNames)
 
@@ -17,15 +22,15 @@ angleQuality(from, to, landscape, actualAsymmetryAngle)
 asymmetryAdjust(angleQualities, quantity, actualAsymmetry)
 }
 \arguments{
-\item{dt}{Data.table}
+\item{dt}{a \code{data.table} object}
 
-\item{dtPotential}{Data.table}
+\item{dtPotential}{a \code{data.table} object}
 
-\item{returnFrom}{Logical}
+\item{returnFrom}{logical}
 
-\item{needDistance}{Logical}
+\item{needDistance}{logical}
 
-\item{dtPotentialColNames}{Character Vector.}
+\item{dtPotentialColNames}{character vector.}
 
 \item{from}{vector of cell locations which are the "from" or starting cells}
 
@@ -33,8 +38,8 @@ asymmetryAdjust(angleQualities, quantity, actualAsymmetry)
 
 \item{landscape}{\code{RasterLayer} passed from \code{spread2}.}
 
-\item{actualAsymmetryAngle}{Angle in degrees, either a vector length 1 or
-vector \code{NROW(dtPotential)}.}
+\item{actualAsymmetryAngle}{Angle in degrees, either a vector length 1 or vector
+\code{NROW(dtPotential)}.}
 
 \item{angleQualities}{Matrix. The output from \code{angleQuality}}
 
@@ -43,6 +48,7 @@ vector \code{NROW(dtPotential)}.}
 \item{actualAsymmetry}{Asymmetry intensity. Derived from \code{asymmetry} arg in \code{spread2}}
 }
 \description{
-Not for users. A function to setnames and rbindlist that is used 3 places in spread2.
+Not for users.
+A function to \code{setnames} and \code{rbindlist} that is used in \code{spread2}.
 }
 \keyword{internal}

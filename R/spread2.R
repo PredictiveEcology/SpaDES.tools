@@ -101,12 +101,14 @@ if (getRversion() >= "3.1.0") {
 #'              If user has x and y coordinates, these can be converted with
 #'              \code{\link[raster]{cellFromXY}}.
 #'
-#' @param spreadProb  Numeric of length 1 or \code{RasterLayer}.
+#' @param spreadProb  Numeric of length 1 or length \code{ncell(landscape)} or
+#'                    a \code{RasterLayer} that is the identical dimensions as
+#'                    \code{landscape}.
 #'                    If numeric of length 1, then this is the global (absolute)
 #'                    probability of spreading into each cell from a neighbour.
-#'                    If a raster then this must be the cell-specific (absolute)
-#'                    probability of a "receiving" potential cell.
-#'                    Default is \code{0.23}.
+#'                    If a numeric of length \code{ncell(landscape)} or a raster,
+#'                    then this must be the cell-specific (absolute)
+#'                    probability of a "receiving" potential cell. Default is \code{0.23}.
 #'                    If relative probabilities are required, use \code{spreadProbRel}.
 #'                    If used together, then the relative probabilities will be
 #'                    re-scaled so that the mean relative probability of potential
@@ -209,8 +211,6 @@ if (getRversion() >= "3.1.0") {
 #' @param plot.it  If TRUE, then plot the raster at every iteration,
 #'                   so one can watch the spread2 event grow.
 #'
-#' @inheritParams spread
-#'
 #' @details
 #'
 #' If \code{exactSize} or \code{maxSize} are used, then spreading will continue and stop
@@ -239,8 +239,8 @@ if (getRversion() >= "3.1.0") {
 #' This function can be used iteratively, with relatively little overhead compared to using
 #' it non-iteratively. In general, this function can be called with arguments set as user
 #' needs, and with specifying iterations = 1 (say). This means that the function will spread
-#' outwards 1 iteration, then stop. The returned object will be a data.table or \code{RasterLayer}
-#' that can be passed immediately back as the start argument into a subsequent
+#' outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
+#' \code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
 #' call to \code{spread2}. This means that every argument can be updated at each iteration.
 #'
 #' When using this function iteratively, there are several things to keep in mind.
@@ -338,7 +338,7 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot
-#' @importFrom raster ncell raster res ncol pointDistance
+#' @importFrom raster fromDisk ncell raster res ncol pointDistance
 #' @importFrom stats runif
 #'
 #' @seealso \code{\link{spread}} for a different implementation of the same algorithm.
@@ -370,9 +370,18 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     assertNumeric(sum(neighProbs), lower = 1, upper = 1)
 
     assert(
+      checkNumeric(spreadProb, 0, 1, min.len = ncell(landscape), max.len = ncell(landscape)),
       checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
       checkClass(spreadProb, "RasterLayer")
     )
+
+    if (is(spreadProb, "Raster")) {
+      if (fromDisk(spreadProb)) {
+        warning("spreadProb is a raster layer stored on disk. This may cause spread2 to be",
+                " very slow. We suggest extracting the values to a numeric vector first, ",
+                "then passing this to spreadProb")
+      }
+    }
     assert(checkNumeric(persistProb, 0, 1, min.len = 1, max.len = 1),
            checkClass(persistProb, "RasterLayer"))
     assert(
@@ -1094,19 +1103,19 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   return(dt)
 }
 
-
-#' Internal helper
+#' Internal helpers
 #'
-#' Not for users. A function to setnames and rbindlist that is used 3 places in spread2.
+#' Not for users.
+#' A function to \code{setnames} and \code{rbindlist} that is used in \code{spread2}.
 #'
-#' @param dt Data.table
-#' @param dtPotential Data.table
-#' @param returnFrom Logical
-#' @param needDistance Logical
-#' @param dtPotentialColNames Character Vector.
-#' @rdname spread2-internals
+#' @param dt a \code{data.table} object
+#' @param dtPotential a \code{data.table} object
+#' @param returnFrom logical
+#' @param needDistance logical
+#' @param dtPotentialColNames character vector.
+#'
 #' @keywords internal
-#'
+#' @rdname spread2-internals
 rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames) {
   # distance column is second last, but needs to be last
   # to merge with dt, need: from, to, state in that order
@@ -1131,7 +1140,6 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
 
 #' Internal helpers for \code{spread2}
 #'
-#' @inheritParams rbindlistDtDtpot
 #' @keywords internal
 #' @rdname spread2-internals
 reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames) {
@@ -1147,8 +1155,9 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
 #' @param from vector of cell locations which are the "from" or starting cells
 #' @param to vector of same length as \code{from} which are the "to" or receiving cells
 #' @param landscape \code{RasterLayer} passed from \code{spread2}.
-#' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or
-#'                             vector \code{NROW(dtPotential)}.
+#' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or vector
+#'                             \code{NROW(dtPotential)}.
+#'
 #' @keywords internal
 #' @rdname spread2-internals
 angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
@@ -1163,9 +1172,9 @@ angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
 #' @param angleQualities Matrix. The output from \code{angleQuality}
 #' @param quantity Variable of interest to adjust, e.g., \code{spreadProb}
 #' @param actualAsymmetry Asymmetry intensity. Derived from \code{asymmetry} arg in \code{spread2}
+#'
 #' @keywords internal
 #' @rdname spread2-internals
-#'
 asymmetryAdjust <- function(angleQualities, quantity, actualAsymmetry) {
   if (sum(angleQualities[, "angleQuality"]) %==% 0) {
     # the case where there is no difference in the angles, and they are all zero

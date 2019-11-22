@@ -4,14 +4,29 @@
 \alias{spread2}
 \title{Simulate a contagious spread process on a landscape, with data.table internals}
 \usage{
-spread2(landscape, start = ncell(landscape)/2 - ncol(landscape)/2,
-  spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE,
-  maxSize, exactSize, directions = 8L, iterations = 1000000L,
-  returnDistances = FALSE, returnDirections = FALSE,
-  returnFrom = FALSE, maxRetriesPerID = 10, spreadProbRel = NA_real_,
-  plot.it = FALSE, circle = FALSE, asymmetry = NA_real_,
-  asymmetryAngle = NA_real_, allowOverlap = 0, neighProbs = NA_real_,
-  skipChecks = FALSE)
+spread2(
+  landscape,
+  start = ncell(landscape)/2 - ncol(landscape)/2,
+  spreadProb = 0.23,
+  persistProb = NA_real_,
+  asRaster = TRUE,
+  maxSize,
+  exactSize,
+  directions = 8L,
+  iterations = 1000000L,
+  returnDistances = FALSE,
+  returnDirections = FALSE,
+  returnFrom = FALSE,
+  maxRetriesPerID = 10,
+  spreadProbRel = NA_real_,
+  plot.it = FALSE,
+  circle = FALSE,
+  asymmetry = NA_real_,
+  asymmetryAngle = NA_real_,
+  allowOverlap = 0,
+  neighProbs = NA_real_,
+  skipChecks = FALSE
+)
 }
 \arguments{
 \item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
@@ -23,12 +38,14 @@ If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
 \code{\link[raster]{cellFromXY}}.}
 
-\item{spreadProb}{Numeric of length 1 or \code{RasterLayer}.
+\item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
+a \code{RasterLayer} that is the identical dimensions as
+\code{landscape}.
 If numeric of length 1, then this is the global (absolute)
 probability of spreading into each cell from a neighbour.
-If a raster then this must be the cell-specific (absolute)
-probability of a "receiving" potential cell.
-Default is \code{0.23}.
+If a numeric of length \code{ncell(landscape)} or a raster,
+then this must be the cell-specific (absolute)
+probability of a "receiving" potential cell. Default is \code{0.23}.
 If relative probabilities are required, use \code{spreadProbRel}.
 If used together, then the relative probabilities will be
 re-scaled so that the mean relative probability of potential
@@ -301,8 +318,8 @@ are interacting with each other correctly.
 This function can be used iteratively, with relatively little overhead compared to using
 it non-iteratively. In general, this function can be called with arguments set as user
 needs, and with specifying iterations = 1 (say). This means that the function will spread
-outwards 1 iteration, then stop. The returned object will be a data.table or \code{RasterLayer}
-that can be passed immediately back as the start argument into a subsequent
+outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
+\code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
 call to \code{spread2}. This means that every argument can be updated at each iteration.
 
 When using this function iteratively, there are several things to keep in mind.

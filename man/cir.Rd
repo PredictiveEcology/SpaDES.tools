@@ -4,11 +4,22 @@
 \alias{cir}
 \title{Identify pixels in a circle or ring (donut) around an object.}
 \usage{
-cir(landscape, coords, loci, maxRadius = ncol(landscape)/4,
-  minRadius = maxRadius, allowOverlap = TRUE,
-  allowDuplicates = FALSE, includeBehavior = "includePixels",
-  returnDistances = FALSE, angles = NA_real_, returnAngles = FALSE,
-  returnIndices = TRUE, closest = FALSE, simplify = TRUE)
+cir(
+  landscape,
+  coords,
+  loci,
+  maxRadius = ncol(landscape)/4,
+  minRadius = maxRadius,
+  allowOverlap = TRUE,
+  allowDuplicates = FALSE,
+  includeBehavior = "includePixels",
+  returnDistances = FALSE,
+  angles = NA_real_,
+  returnAngles = FALSE,
+  returnIndices = TRUE,
+  closest = FALSE,
+  simplify = TRUE
+)
 }
 \arguments{
 \item{landscape}{Raster on which the circles are built.}
@@ -67,8 +78,7 @@ that some x, y combinations will disappear.}
 }
 \value{
 A \code{matrix} with 4 columns, \code{id}, \code{indices},
-\code{x}, \code{y}. The \code{x} and \code{y} indicate the
-exact coordinates of
+\code{x}, \code{y}. The \code{x} and \code{y} indicate the exact coordinates of
 the \code{indices} (i.e., cell number) of the \code{landscape}
 associated with the ring or circle being identified by this function.
 }
@@ -82,10 +92,11 @@ This code is substantially adapted from \code{PlotRegionHighlighter::createCircl
 }
 \details{
 This function identifies all the pixels as defined by a donut
-with inner radius minRadius and outer radius of maxRadius. The includeBehavior defines
-whether the cells that intersect the radii but whose centres are not inside
-the donut are included \code{includePixels} or not \code{excludePixels} in the returned
-pixels identified. If this is \code{excludePixels}, and if a \code{minRadius} and
+with inner radius \code{minRadius} and outer radius of \code{maxRadius}.
+The \code{includeBehavior} defines whether the cells that intersect the radii
+but whose centres are not inside the donut are included \code{includePixels}
+or not \code{excludePixels} in the returned pixels identified.
+If this is \code{excludePixels}, and if a \code{minRadius} and
 \code{maxRadius} are equal, this will return no pixels.
 }
 \examples{

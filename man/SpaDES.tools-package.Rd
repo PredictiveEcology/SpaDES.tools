@@ -110,18 +110,18 @@ You must know how to use SELES for these to be useful:
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://spades-tools.predictiveecology.org}
+  \item \url{https://spades-tools.predictiveecology.org}
   \item \url{https://github.com/PredictiveEcology/SpaDES.tools}
   \item Report bugs at \url{https://github.com/PredictiveEcology/SpaDES.tools/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Alex M Chubaty \email{alex.chubaty@gmail.com} (https://orcid.org/0000-0001-7146-8135)
+\strong{Maintainer}: Alex M Chubaty \email{alex.chubaty@gmail.com} (\href{https://orcid.org/https://orcid.org/0000-0001-7146-8135}{ORCID})
 
 Authors:
 \itemize{
-  \item Eliot J B McIntire \email{eliot.mcintire@canada.ca} (https://orcid.org/0000-0002-6914-8316)
+  \item Eliot J B McIntire \email{eliot.mcintire@canada.ca} (\href{https://orcid.org/https://orcid.org/0000-0002-6914-8316}{ORCID})
 }
 
 Other contributors:
