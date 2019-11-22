@@ -2,6 +2,7 @@ test_that("adj.R results not identical to adjacent", {
   a <- raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1)
   sam <- sample(1:length(a), 4)
 
+  set.seed(123)
   for (incl in c(TRUE, FALSE)) {
     for (ids in list(NULL, seq_len(length(sam)))) {
       for (targs in list(NULL, sam + 1)) {
