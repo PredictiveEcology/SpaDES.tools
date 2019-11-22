@@ -8,21 +8,25 @@
 
 <title>Changelog • SpaDES.tools</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,7 +34,9 @@
 
 
 
+
 <meta property="og:title" content="Changelog" />
+
 
 
 
@@ -42,6 +48,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -60,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -68,7 +75,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -79,11 +86,10 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/PredictiveEcology/SpaDES.tools">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -94,6 +100,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -103,15 +110,18 @@
       <small>Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="version-0-3-2" class="section level1">
+    <div id="version-0-3-3" class="section level1">
 <h1 class="page-header">
-<a href="#version-0-3-2" class="anchor"></a>version 0.3.2<small> Unreleased </small>
+<a href="#version-0-3-3" class="anchor"></a>version 0.3.3<small> Unreleased </small>
 </h1>
 <div id="dependency-changes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dependency-changes" class="anchor"></a>Dependency changes</h2>
 <ul>
-<li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li>
+<li>Requires R &gt;= 3.5</li>
+<li>Added <code>animation</code> since it is used in the <code>spread3</code> example.</li>
+<li>Added <code>backports</code> for R-oldrel support</li>
+<li>Removed <code>profvis</code> and <code>microbenchmark</code> from Suggests: all benchmarking is removed from automated tests</li>
 </ul>
 </div>
 <div id="bugfixes" class="section level2">
@@ -126,6 +136,33 @@
 <a href="#enhancements" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
+<code>spread2</code> speed enhancements</li>
+</ul>
+</div>
+</div>
+    <div id="version-0-3-2" class="section level1">
+<h1 class="page-header">
+<a href="#version-0-3-2" class="anchor"></a>version 0.3.2<small> 2019-03-19 </small>
+</h1>
+<div id="dependency-changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dependency-changes-1" class="anchor"></a>Dependency changes</h2>
+<ul>
+<li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li>
+</ul>
+</div>
+<div id="bugfixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bugfixes-1" class="anchor"></a>Bugfixes</h2>
+<ul>
+<li>minor bug fixes</li>
+</ul>
+</div>
+<div id="enhancements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-1" class="anchor"></a>Enhancements</h2>
+<ul>
+<li>
 <code>spread2</code> now takes a numeric for <code>allowOverlap</code>, to allow for 1 more scenario of overlapping, namely, allow between event overlapping, and within event overlapping only if the overlap occurs in the same iteration, otherwise, do not allow overlap within event.</li>
 <li>new function <code>spread3</code> for simulating <em>e.g.</em>, insect spread</li>
 <li>
@@ -137,17 +174,17 @@
 <h1 class="page-header">
 <a href="#version-0-3-1" class="anchor"></a>version 0.3.1<small> 2019-02-01 </small>
 </h1>
-<div id="dependency-changes-1" class="section level2">
+<div id="dependency-changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-1" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-2" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>
 <code>RandomFields</code> moved to Suggests to prevent clashes with <code>data.table</code> multithreading</li>
 </ul>
 </div>
-<div id="enhancements-1" class="section level2">
+<div id="enhancements-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#enhancements-1" class="anchor"></a>Enhancements</h2>
+<a href="#enhancements-2" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
 <code>randomPolygon</code> now has <code>area</code> argument, instead of <code>hectares</code> (deprecated), and it now succeeds for more cases.</li>
@@ -197,7 +234,7 @@
 <a href="#deprecated-functions" class="anchor"></a>Deprecated functions</h2>
 <ul>
 <li>
-<code><a href="../reference/deprecated.html">fastCrop()</a></code>: <code><a href="https://www.rdocumentation.org/packages/raster/topics/crop">raster::crop</a></code> is faster than <code>velox::crop</code> under many tests.</li>
+<code><a href="../reference/deprecated.html">fastCrop()</a></code>: <code><a href="https://rdrr.io/pkg/raster/man/crop.html">raster::crop</a></code> is faster than <code>velox::crop</code> under many tests.</li>
 <li>
 <code>fastMask()</code>: moved to the <code>reproducible</code> package.</li>
 </ul>
@@ -210,9 +247,9 @@
 <li>minor test fixes.</li>
 </ul>
 </div>
-<div id="dependency-changes-2" class="section level2">
+<div id="dependency-changes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-2" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-3" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>
 <code>dplyr</code> and <code>mgcv</code> added to Suggests because they are used in tests.</li>
@@ -249,6 +286,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#version-0-3-3">0.3.3</a></li>
         <li><a href="#version-0-3-2">0.3.2</a></li>
         <li><a href="#version-0-3-1">0.3.1</a></li>
         <li><a href="#version-0-3-0">0.3.0</a></li>
@@ -261,19 +299,23 @@
 
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
