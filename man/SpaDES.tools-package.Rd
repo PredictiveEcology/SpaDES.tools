@@ -117,11 +117,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Alex M Chubaty \email{alex.chubaty@gmail.com} (\href{https://orcid.org/https://orcid.org/0000-0001-7146-8135}{ORCID})
+\strong{Maintainer}: Alex M Chubaty \email{alex.chubaty@gmail.com} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
 
 Authors:
 \itemize{
-  \item Eliot J B McIntire \email{eliot.mcintire@canada.ca} (\href{https://orcid.org/https://orcid.org/0000-0002-6914-8316}{ORCID})
+  \item Eliot J B McIntire \email{eliot.mcintire@canada.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
 }
 
 Other contributors:
