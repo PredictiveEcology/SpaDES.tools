@@ -576,7 +576,7 @@ when passed back into <code>spread2</code>.</p>
                       <span class='kw'>start</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1</span>,
                       <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>), <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 }
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html'>rbindlist</a></span>(<span class='no'>out</span>)[<span class='no'>pixels</span> <span class='kw'>!=</span> <span class='fl'>5</span>] <span class='co'># remove starting cell</span>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/data.table/man/rbindlist.html'>rbindlist</a></span>(<span class='no'>out</span>)[<span class='no'>pixels</span> <span class='kw'>!=</span> <span class='fl'>5</span>] <span class='co'># remove starting cell</span>
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>sp</span>[<span class='no'>out</span>$<span class='no'>pixels</span>])</div><div class='output co'>#&gt; 
 #&gt;  1  2  3  4  6  7  8  9 
 #&gt;  2  5  4 13 20 10 16 30 </div><div class='input'><span class='co'># should be non-significant -- note no 5 because that was the starting cell</span>
