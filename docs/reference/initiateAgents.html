@@ -174,11 +174,7 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>magrittr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
-<<<<<<< HEAD
 #&gt; <span class='message'>Attaching package: ‘magrittr’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:raster’:</span>
-=======
-#&gt; <span class='message'>Attaching package: 'magrittr'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:raster':</span>
->>>>>>> development
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    extract</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>quickPlot</span>)
@@ -194,7 +190,6 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
 }
 <span class='co'># Test that they are indeed selecting according to probabilities in pr</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>data.table</span>)
-<<<<<<< HEAD
 <span class='no'>dt1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>map</span>[<span class='no'>agents</span>], <span class='fl'>0</span>)))
 <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setnames</a></span>(<span class='no'>dt1</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"N"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"count"</span>)
 <span class='no'>dt2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>map</span>[], <span class='fl'>0</span>)))
@@ -222,31 +217,6 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
 #&gt;  8:        7    17         5 3.4000000
 #&gt;  9:        8    20         9 2.2222222
 #&gt; 10:       10     2         1 2.0000000</div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
-=======
-<span class='no'>dt1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/data.table/man/data.table.html'>data.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>map</span>[<span class='no'>agents</span>], <span class='fl'>0</span>)))
-<span class='fu'><a href='https://rdrr.io/pkg/data.table/man/setattr.html'>setnames</a></span>(<span class='no'>dt1</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"N"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"count"</span>)
-<span class='no'>dt2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/data.table/man/data.table.html'>data.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>map</span>[], <span class='fl'>0</span>)))
-<span class='fu'><a href='https://rdrr.io/pkg/data.table/man/setattr.html'>setnames</a></span>(<span class='no'>dt2</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"N"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"available"</span>)
-<span class='no'>dt</span> <span class='kw'>&lt;-</span><span class='no'>dt1</span>[<span class='no'>dt2</span>, <span class='kw'>on</span> <span class='kw'>=</span> <span class='st'>"V1"</span>]  <span class='co'># join the counts and available data.tables</span>
-<span class='fu'><a href='https://rdrr.io/pkg/data.table/man/setattr.html'>setnames</a></span>(<span class='no'>dt</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"V1"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"mapValue"</span>)
-<span class='no'>dt</span>[, <span class='no'>selection</span> <span class='kw'>:=</span> <span class='no'>count</span>/<span class='no'>available</span>]</div><div class='output co'>#&gt;    mapValue count available selection
-#&gt; 1:        0    NA         7        NA
-#&gt; 2:        1     2        17 0.1176471
-#&gt; 3:        2     5        23 0.2173913
-#&gt; 4:        3    14        19 0.7368421
-#&gt; 5:        4    21        13 1.6153846
-#&gt; 6:        5    22        11 2.0000000
-#&gt; 7:        6    32         8 4.0000000
-#&gt; 8:        7     4         2 2.0000000</div><div class='input'><span class='no'>dt</span>[<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='no'>selection</span>), <span class='no'>selection</span> <span class='kw'>:=</span> <span class='fl'>0</span>]</div><div class='output co'>#&gt;    mapValue count available selection
-#&gt; 1:        0    NA         7 0.0000000
-#&gt; 2:        1     2        17 0.1176471
-#&gt; 3:        2     5        23 0.2173913
-#&gt; 4:        3    14        19 0.7368421
-#&gt; 5:        4    21        13 1.6153846
-#&gt; 6:        5    22        11 2.0000000
-#&gt; 7:        6    32         8 4.0000000
-#&gt; 8:        7     4         2 2.0000000</div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
->>>>>>> development
   <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='no'>dt</span>, {<span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span>(<span class='no'>mapValue</span>, <span class='no'>selection</span>)})
 
 <span class='co'># Note, can also produce a Raster representing agents,</span>
@@ -270,37 +240,37 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
   }
   <span class='no'>out</span>
 }</div><div class='output co'>#&gt; <span class='message'>Loading required package: dplyr</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: 'dplyr'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:MASS':</span>
+#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:MASS’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    select</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:data.table':</span>
+#&gt; <span class='message'>    select</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:data.table’:</span>
 #&gt; <span class='message'></span>
-<<<<<<< HEAD
+#&gt; <span class='message'>    between, first, last</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:raster’:</span>
+#&gt; <span class='message'></span>
 #&gt; <span class='message'>    intersect, select, union</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
-=======
-#&gt; <span class='message'>    between, first, last</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:raster':</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, select, union</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:stats':</span>
->>>>>>> development
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:base':</span>
+#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='output co'>#&gt;    Type Present Avail selectionRatio
-#&gt; 1     0       7     7      1.0000000
-#&gt; 2     0       0    17      0.0000000
-#&gt; 3     1      17    23      0.7391304
-#&gt; 4     1       0    19      0.0000000
-#&gt; 5     2      20    13      1.5384615
-#&gt; 6     2       3    11      0.2727273
-#&gt; 7     3      14     8      1.7500000
-#&gt; 8     3       5     2      2.5000000
-#&gt; 9     4       4     7      0.5714286
-#&gt; 10    4       9    17      0.5294118
-#&gt; 11    5       4    23      0.1739130
-#&gt; 12    5       7    19      0.3684211
-#&gt; 13    6       4    13      0.3076923
-#&gt; 14    6       4    11      0.3636364
-#&gt; 15    7       0     8      0.0000000
-#&gt; 16    7       2     2      1.0000000</div><div class='input'>
+#&gt; 1     0       2     2      1.0000000
+#&gt; 2     0       0     3      0.0000000
+#&gt; 3     1       3     7      0.4285714
+#&gt; 4     1       0    24      0.0000000
+#&gt; 5     2       7    16      0.4375000
+#&gt; 6     2       0    20      0.0000000
+#&gt; 7     3      20    13      1.5384615
+#&gt; 8     3       4     5      0.8000000
+#&gt; 9     4      12     9      1.3333333
+#&gt; 10    4       4     1      4.0000000
+#&gt; 11    5      12     2      6.0000000
+#&gt; 12    5       8     3      2.6666667
+#&gt; 13    6       9     7      1.2857143
+#&gt; 14    6       4    24      0.1666667
+#&gt; 15    7       2    16      0.1250000
+#&gt; 16    7       3    20      0.1500000
+#&gt; 17    8       3    13      0.2307692
+#&gt; 18    8       6     5      1.2000000
+#&gt; 19   10       0     9      0.0000000
+#&gt; 20   10       1     1      1.0000000</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

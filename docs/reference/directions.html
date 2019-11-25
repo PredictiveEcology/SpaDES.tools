@@ -202,11 +202,7 @@ put a column "id" (e.g., starting cell) in the <code>from</code> matrix.</p>
 
 <span class='no'>dirs1</span> <span class='kw'>&lt;-</span> <span class='fu'>directionFromEachPoint</span>(<span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>coords</span>, <span class='kw'>landscape</span> <span class='kw'>=</span> <span class='no'>dirRas</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>CircStats</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: MASS</span></div><div class='output co'>#&gt; <span class='message'></span>
-<<<<<<< HEAD
 #&gt; <span class='message'>Attaching package: ‘MASS’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:raster’:</span>
-=======
-#&gt; <span class='message'>Attaching package: 'MASS'</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:raster':</span>
->>>>>>> development
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    area, select</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: boot</span></div><div class='input'><span class='no'>dirs1</span>[, <span class='st'>"angles"</span>] <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/CircStats/man/deg.html'>deg</a></span>(<span class='no'>dirs1</span>[,<span class='st'>"angles"</span>] <span class='kw'>%%</span> (<span class='fl'>2</span>*<span class='no'>pi</span>))
 <span class='no'>indices</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/cellFrom.html'>cellFromXY</a></span>(<span class='no'>dirRas</span>,<span class='no'>dirs1</span>[, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)])

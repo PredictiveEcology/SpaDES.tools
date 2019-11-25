@@ -366,7 +366,7 @@ includes a <code>data.table</code> with columns:</p><table class='table'>
 spread2. If the user runs <code>spread2</code> iteratively, there will likely be significant
 speed gains if the <code>data.table</code> passed in to <code>start</code> should have the attribute
 attached, or re-attached if it was lost, e.g., via
-<code>setattr(outInput, "spreadState", attr(out, "spreadState"))</code>, where <code>out</code> is the
+<code><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setattr(outInput, "spreadState", attr(out, "spreadState"))</a></code>, where <code>out</code> is the
 returned <code>data.table</code> from the previous call to <code>spread2</code>, and <code>outInput</code> is
 the modified <code>data.table</code>. Currently, the modified <code>data.table</code> <b>must</b> have the
 same order as <code>out</code>.</p>
@@ -515,8 +515,11 @@ when passed back into <code>spread2</code>.</p>
 <code>spread</code> is less robust but it is often slightly faster.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>data.table</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>quickPlot</span>)
+
+<span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/openmp-utils.html'>setDTthreads</a></span>(<span class='fl'>1</span>)
 
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>10</span>, <span class='fl'>0</span>, <span class='fl'>10</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>sams</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>a</span>), <span class='fl'>3</span>))
@@ -576,11 +579,7 @@ when passed back into <code>spread2</code>.</p>
                       <span class='kw'>start</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1</span>,
                       <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>), <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 }
-<<<<<<< HEAD
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html'>rbindlist</a></span>(<span class='no'>out</span>)[<span class='no'>pixels</span> <span class='kw'>!=</span> <span class='fl'>5</span>] <span class='co'># remove starting cell</span>
-=======
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/data.table/man/rbindlist.html'>rbindlist</a></span>(<span class='no'>out</span>)[<span class='no'>pixels</span> <span class='kw'>!=</span> <span class='fl'>5</span>] <span class='co'># remove starting cell</span>
->>>>>>> development
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>sp</span>[<span class='no'>out</span>$<span class='no'>pixels</span>])</div><div class='output co'>#&gt; 
 #&gt;  1  2  3  4  6  7  8  9 
 #&gt;  2  5  4 13 20 10 16 30 </div><div class='input'><span class='co'># should be non-significant -- note no 5 because that was the starting cell</span>
@@ -602,52 +601,54 @@ when passed back into <code>spread2</code>.</p>
                  <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>135</span>,
                  <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='co'># ADVANCED: Estimate spreadProb when using asymmetry, such that the expected</span>
-<span class='co'>#   event size is the same as without using asymmetry</span>
-<span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>a</span>)
-<span class='no'>ras</span>[] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
-  <span class='no'>sizes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(<span class='no'>n</span>)
-  <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='no'>n</span>) {
-    <span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>ras</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.225</span>,
-                     <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> * <span class='fl'>3</span>),
-                     <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-    <span class='no'>sizes</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='no'>circs</span>[, <span class='no'>.N</span>]
-  }
-  <span class='no'>goalSize</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>sizes</span>)
+<span class='co'>## ADVANCED: Estimate spreadProb when using asymmetry, such that the expected</span>
+<span class='co'>##   event size is the same as without using asymmetry</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+    <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>a</span>)
+    <span class='no'>ras</span>[] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
 
-
-  <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>parallel</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>DEoptim</span>)
-  <span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/parallel/makeCluster.html'>makeCluster</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>pmin</a></span>(<span class='fl'>10</span>, <span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span>() - <span class='fl'>2</span>)) <span class='co'># only need 10 cores for 10 populations in DEoptim</span>
-  <span class='kw pkg'>parallel</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/clusterApply.html'>clusterEvalQ</a></span>(<span class='no'>cl</span>, {
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>SpaDES.tools</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>fpCompare</span>)
-  })
-
-  <span class='no'>objFn</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>sp</span>, <span class='no'>n</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='no'>ras</span>, <span class='no'>goalSize</span>) {
+    <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
     <span class='no'>sizes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(<span class='no'>n</span>)
     <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='no'>n</span>) {
-      <span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>ras</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='no'>sp</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> * <span class='fl'>3</span>,
-                       <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>135</span>,
+      <span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>ras</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.225</span>,
+                       <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> * <span class='fl'>3</span>),
                        <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
       <span class='no'>sizes</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='no'>circs</span>[, <span class='no'>.N</span>]
     }
-    <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>sizes</span>) - <span class='no'>goalSize</span>)
+    <span class='no'>goalSize</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>sizes</span>)
+
+    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>parallel</span>)
+    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>DEoptim</span>)
+    <span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/parallel/makeCluster.html'>makeCluster</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>pmin</a></span>(<span class='fl'>10</span>, <span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span>() - <span class='fl'>2</span>)) <span class='co'># need 10 cores for 10 populations in DEoptim</span>
+    <span class='kw pkg'>parallel</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/clusterApply.html'>clusterEvalQ</a></span>(<span class='no'>cl</span>, {
+      <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>SpaDES.tools</span>)
+      <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
+      <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>fpCompare</span>)
+    })
+
+    <span class='no'>objFn</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>sp</span>, <span class='no'>n</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='no'>ras</span>, <span class='no'>goalSize</span>) {
+      <span class='no'>sizes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(<span class='no'>n</span>)
+      <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='no'>n</span>) {
+        <span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>ras</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='no'>sp</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> * <span class='fl'>3</span>,
+                         <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>135</span>,
+                         <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+        <span class='no'>sizes</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='no'>circs</span>[, <span class='no'>.N</span>]
+      }
+      <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>sizes</span>) - <span class='no'>goalSize</span>)
+    }
+    <span class='no'>aa</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/DEoptim/man/DEoptim.html'>DEoptim</a></span>(<span class='no'>objFn</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>0.23</span>,
+                  <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/DEoptim/man/DEoptim.control.html'>DEoptim.control</a></span>(<span class='kw'>cluster</span> <span class='kw'>=</span> <span class='no'>cl</span>, <span class='kw'>NP</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>VTR</span> <span class='kw'>=</span> <span class='fl'>0.02</span>,
+                                            <span class='kw'>initialpop</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/as.matrix.html'>as.matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>10</span>, <span class='fl'>0.213</span>, <span class='fl'>0.001</span>))),
+                  <span class='kw'>ras</span> <span class='kw'>=</span> <span class='no'>a</span>, <span class='kw'>goalSize</span> <span class='kw'>=</span> <span class='no'>goalSize</span>)
+
+    <span class='co'># The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:</span>
+    <span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='no'>aa</span>$<span class='no'>optim</span>$<span class='no'>bestmem</span>
+    <span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>ras</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='no'>sp</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> * <span class='fl'>3</span>,
+                      <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>135</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+    <span class='fu'><a href='https://rdrr.io/r/parallel/makeCluster.html'>stopCluster</a></span>(<span class='no'>cl</span>)
   }
-  <span class='no'>aa</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/DEoptim/man/DEoptim.html'>DEoptim</a></span>(<span class='no'>objFn</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>0.23</span>,
-                <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/DEoptim/man/DEoptim.control.html'>DEoptim.control</a></span>(<span class='kw'>cluster</span> <span class='kw'>=</span> <span class='no'>cl</span>, <span class='kw'>NP</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>VTR</span> <span class='kw'>=</span> <span class='fl'>0.02</span>,
-                                          <span class='kw'>initialpop</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/as.matrix.html'>as.matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>10</span>, <span class='fl'>0.213</span>, <span class='fl'>0.001</span>))),
-                <span class='kw'>ras</span> <span class='kw'>=</span> <span class='no'>a</span>, <span class='kw'>goalSize</span> <span class='kw'>=</span> <span class='no'>goalSize</span>)
-
-  <span class='co'># The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:</span>
-  <span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='no'>aa</span>$<span class='no'>optim</span>$<span class='no'>bestmem</span>
-  <span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread2</span>(<span class='no'>ras</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='no'>sp</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>ras</span>) / <span class='fl'>4</span> * <span class='fl'>3</span>,
-                    <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>135</span>, <span class='kw'>asRaster</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
-  <span class='fu'><a href='https://rdrr.io/r/parallel/makeCluster.html'>stopCluster</a></span>(<span class='no'>cl</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

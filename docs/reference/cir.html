@@ -260,11 +260,7 @@ For the more general GIS buffering, see <code><a href='https://rdrr.io/pkg/rgeos
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>data.table</span>)</div><div class='output co'>#&gt; <span class='message'></span>
-<<<<<<< HEAD
 #&gt; <span class='message'>Attaching package: ‘data.table’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:raster’:</span>
-=======
-#&gt; <span class='message'>Attaching package: 'data.table'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:raster':</span>
->>>>>>> development
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    shift</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>sp</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
@@ -335,11 +331,7 @@ For the more general GIS buffering, see <code><a href='https://rdrr.io/pkg/rgeos
 <span class='no'>cirs</span> <span class='kw'>&lt;-</span> <span class='fu'>cir</span>(<span class='no'>hab</span>, <span class='no'>coords</span>, <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>44</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>0</span>)
 <span class='no'>ras1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>hab</span>)
 <span class='no'>ras1</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-<<<<<<< HEAD
 <span class='no'>cirsOverlap</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='no'>cirs</span>)[, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>sumIDs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>id</span>)), <span class='kw'>by</span> <span class='kw'>=</span> <span class='no'>indices</span>]
-=======
-<span class='no'>cirsOverlap</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/data.table/man/data.table.html'>data.table</a></span>(<span class='no'>cirs</span>)[, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>sumIDs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>id</span>)), <span class='kw'>by</span> <span class='kw'>=</span> <span class='no'>indices</span>]
->>>>>>> development
 <span class='no'>ras1</span>[<span class='no'>cirsOverlap</span>$<span class='no'>indices</span>] <span class='kw'>&lt;-</span> <span class='no'>cirsOverlap</span>$<span class='no'>sumIDs</span>
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
