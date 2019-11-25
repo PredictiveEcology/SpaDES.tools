@@ -959,6 +959,7 @@ setMethod(
           }
         } else {
           if (all(size >= maxSize)) {
+            potentials <- potentials[0L,] # remove any potential cells, as size is met
             events <- NULL
           }
         }

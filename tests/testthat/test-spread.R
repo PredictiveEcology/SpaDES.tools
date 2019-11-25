@@ -34,6 +34,23 @@ test_that("spread produces legal RasterLayer", {
                tabulate(spread(a, loci = c(40, 200, 350), spreadProb = 1,
                                id = TRUE, maxSize = sizes)[]))
 
+  # Check that with maxSize, the active cells are removed when maxSize is reached
+  b <- raster(extent(0, 20, 0, 20), res = 1)
+  loci <- sample(ncell(b), size = 1)
+  spreadProb <- 0.27
+  seed <- 914953
+  set.seed(seed)
+  maxSize1 <- 1e2
+  spreadState <- SpaDES.tools::spread(
+    landscape = b,
+    loci = loci,
+    spreadProb = spreadProb,
+    returnIndices = TRUE,
+    maxSize = maxSize1)
+
+  expect_true(length(unique(spreadState[["indices"]])) == maxSize1)
+  expect_true(length(spreadState[["indices"]]) == maxSize1)
+
   # Test that spreadState with a data.table works
   fires <- list()
   fires[[1]] <- spread(a, loci = as.integer(sample(1:ncell(a), 10)),
