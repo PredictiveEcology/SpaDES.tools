@@ -417,7 +417,7 @@ clearPlot()
 Plot(hab)
 Plot(fires) # default colour range makes zero transparent.
 
-# Instead, to give a colour to the zero values, use \\code{zero.color=}
+# Instead, to give a colour to the zero values, use \code{zero.color=}
 Plot(fires, addTo = "hab",
      cols = colorRampPalette(c("orange", "darkred"))(10), zero.color = "transparent")
 

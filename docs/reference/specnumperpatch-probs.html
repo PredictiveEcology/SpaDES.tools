@@ -162,14 +162,14 @@ agents following the numbers above.</p>
 }
 
 <span class='co'># Use numPerPatchTable</span>
-<span class='no'>patchDT</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/data.table/man/data.table.html'>data.table</a></span>(<span class='kw'>pops</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='no'>Ntypes</span>, <span class='kw'>num.in.pop</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>7</span>))
+<span class='no'>patchDT</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='kw'>pops</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='no'>Ntypes</span>, <span class='kw'>num.in.pop</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>7</span>))
 <span class='no'>rasAgents</span> <span class='kw'>&lt;-</span> <span class='fu'>specificNumPerPatch</span>(<span class='no'>ras</span>, <span class='no'>patchDT</span>)
 <span class='no'>rasAgents</span>[<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='no'>rasAgents</span>)] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>testthat</span>)</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: 'testthat'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:dplyr':</span>
+#&gt; <span class='message'>Attaching package: ‘testthat’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:dplyr’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    matches</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:magrittr':</span>
+#&gt; <span class='message'>    matches</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:magrittr’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    equals, is_less_than, not</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/testthat/man/logical-expectations.html'>expect_true</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/unname.html'>unname</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>ras</span>[<span class='no'>rasAgents</span>])) <span class='kw'>==</span> <span class='no'>patchDT</span>$<span class='no'>num.in.pop</span>))
 

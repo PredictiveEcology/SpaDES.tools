@@ -4,6 +4,21 @@
     <loc>https://spades-tools.predictiveecology.org/index.html</loc>
   </url>
   <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/SELESagentLocation.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/SELESnumAgents.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/SELESprobInit.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/SELEStransitions.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/SpaDES.tools-package.html</loc>
+  </url>
+  <url>
     <loc>https://spades-tools.predictiveecology.org/reference/adj.html</loc>
   </url>
   <url>
@@ -43,10 +58,10 @@
     <loc>https://spades-tools.predictiveecology.org/reference/heading.html</loc>
   </url>
   <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/initiateAgents.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/inRange.html</loc>
   </url>
   <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/inRange.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/initiateAgents.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/matchedPointDirection.html</loc>
@@ -80,21 +95,6 @@
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/sampleV.html</loc>
-  </url>
-  <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/SELESagentLocation.html</loc>
-  </url>
-  <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/SELESnumAgents.html</loc>
-  </url>
-  <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/SELESprobInit.html</loc>
-  </url>
-  <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/SELEStransitions.html</loc>
-  </url>
-  <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/SpaDES.tools-package.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/specnumperpatch-probs.html</loc>
