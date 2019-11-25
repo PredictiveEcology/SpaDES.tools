@@ -3,6 +3,6 @@ pkgdown: 1.4.1
 pkgdown_sha: ~
 articles: []
 urls:
-  reference: http://spades-tools.predictiveecology.org/reference
-  article: http://spades-tools.predictiveecology.org/articles
+  reference: https://spades-tools.predictiveecology.org/reference
+  article: https://spades-tools.predictiveecology.org/articles
 
