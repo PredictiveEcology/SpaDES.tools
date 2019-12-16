@@ -1,6 +1,6 @@
 ## Updated release
 
-This is a maintenance release which adds several new features and fixes some minor bugs.
+This is a maintenance release which fixes some issues with failing tests.
 See `NEWS.md`.
 
 ## Test environments
@@ -19,10 +19,10 @@ See `NEWS.md`.
 * Windows                 (win-builder), R 3.6.1
 
 ### Development R version
-* Ubuntu 16.04              (travis-ci), R 4.0.0 (2019-11-21 r77446)
-* Ubuntu 18.04                  (local), R 4.0.0 (2019-11-21 r77446)
-* Windows                    (appveyor), R 4.0.0 (2019-11-20 r77445)
-* Windows                 (win-builder), R 4.0.0 (2019-11-20 r77445)
+* Ubuntu 16.04              (travis-ci), R 4.0.0 ()
+* Ubuntu 18.04                  (local), R 4.0.0 (2019-12-16 r77581)
+* Windows                    (appveyor), R 4.0.0 ()
+* Windows                 (win-builder), R 4.0.0 (2019-12-16 r77584)
 
 
 ## R CMD check results

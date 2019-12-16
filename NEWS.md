@@ -4,6 +4,18 @@ version 0.3.3
 =============
 
 ## Dependency changes
+* none
+
+## Bugfixes
+* fix issues with failing tests on CRAN
+
+## Enhancements
+* none
+
+version 0.3.3
+=============
+
+## Dependency changes
 * Requires R >= 3.5
 * Added `animation` since it is used in the `spread3` example.
 * Added `backports` for R-oldrel support

@@ -41,8 +41,9 @@ test_that("spread2 tests", {
   # Test warning for raster on disk
   spsRas[] <- sps
   spsRas <- writeRaster(spsRas, tempfile())
-  warn <- capture_warnings(out1 <- spread2(a, start = sams,
-                                           spreadProb = spsRas, asRaster = FALSE))
+  warn <- capture_warnings({
+    out1 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
+  })
   expect_true(grepl("spreadProb is a raster layer stored on disk", warn))
 
   if (interactive()) message("testing maxSize")
@@ -171,16 +172,15 @@ test_that("spread2 tests", {
   compare <- out[cirOut, on = c(initialPixels = "initialPixels", pixels = "indices")]
   expect_true(sum(abs(compare$dists - compare$distance)) %==% 0)
 
-  if (interactive()) message("Scales with number of starts, not maxSize of raster")
-  set.seed(21)
-  b <- raster(extent(0, 33000, 0, 33000), res = 1)
-  sams <- sample(ncell(b), 2)
-  beforeTime <- Sys.time()
+  ## TODO: need better test for hov this scales
+  #if (interactive()) message("Scales with number of starts, not maxSize of raster")
+  #set.seed(21)
+  #b <- raster(extent(0, 33000, 0, 33000), res = 1)
+  #sams <- sample(ncell(b), 2)
   #st1 <- system.time({
-  out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
+  #  out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
   #})
-  afterTime <- Sys.time()
-  expect_true(difftime(afterTime, beforeTime, units = "sec") < 1) ## TODO: fix error: st1[1] is not strictly less than 1. Difference: 0.866
+  #expect_true(st1[1] < 1) ## don't check timing as it fluctuates ased on machine load!
 
   if (interactive()) message("test neighProbs")
   maxSizes <- 14
@@ -237,13 +237,15 @@ test_that("spread2 tests", {
   actual <- unname(table(sp[out$pixels]))
   relProbs <- spreadProbOptions / sum(spreadProbOptions)
   aa <- rmultinom(1, size = 1e4, prob = relProbs)[, 1] * unname(avail)
-  suppressWarnings(cht <- chisq.test(x = cbind(aa, actual)))
+  suppressWarnings({
+    cht <- chisq.test(x = cbind(aa, actual))
+  })
 
-  if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
+  #if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
     expect_true(cht$p.value > 0.05)
-  } else {
-    expect_false(cht$p.value > 0.05) ## TODO: is this valid/correct test?
-  }
+  #} else {
+  #  expect_false(cht$p.value > 0.05) ## TODO: is this valid/correct test?
+  #}
 
   message("Scales with number of starts, not maxSize of raster")
   set.seed(21)
