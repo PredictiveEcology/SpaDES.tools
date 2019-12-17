@@ -19,9 +19,9 @@ See `NEWS.md`.
 * Windows                 (win-builder), R 3.6.1
 
 ### Development R version
-* Ubuntu 16.04              (travis-ci), R 4.0.0 ()
+* Ubuntu 16.04              (travis-ci), R 4.0.0 (2019-12-17 r77589)
 * Ubuntu 18.04                  (local), R 4.0.0 (2019-12-16 r77581)
-* Windows                    (appveyor), R 4.0.0 ()
+* Windows                    (appveyor), R 4.0.0 (2019-12-16 r77584)
 * Windows                 (win-builder), R 4.0.0 (2019-12-16 r77584)
 
 

@@ -67,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
       </span>
     </div>
 
@@ -112,43 +112,42 @@
 
     <div id="version-0-3-3" class="section level1">
 <h1 class="page-header">
-<a href="#version-0-3-3" class="anchor"></a>version 0.3.3<small> Unreleased </small>
+<a href="#version-0-3-3" class="anchor"></a>version 0.3.3<small> 2019-11-25 </small>
 </h1>
 <div id="dependency-changes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dependency-changes" class="anchor"></a>Dependency changes</h2>
 <ul>
-<li>Requires R &gt;= 3.5</li>
-<li>Added <code>animation</code> since it is used in the <code>spread3</code> example.</li>
-<li>Added <code>backports</code> for R-oldrel support</li>
-<li>Removed <code>profvis</code> and <code>microbenchmark</code> from Suggests: all benchmarking is removed from automated tests</li>
+<li>none</li>
 </ul>
 </div>
 <div id="bugfixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bugfixes" class="anchor"></a>Bugfixes</h2>
 <ul>
-<li>minor bug fixes</li>
+<li>fix issues with failing tests on CRAN</li>
 </ul>
 </div>
 <div id="enhancements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#enhancements" class="anchor"></a>Enhancements</h2>
 <ul>
-<li>
-<code>spread2</code> speed enhancements</li>
+<li>none</li>
 </ul>
 </div>
 </div>
-    <div id="version-0-3-2" class="section level1">
+    <div id="version-0-3-3-1" class="section level1">
 <h1 class="page-header">
-<a href="#version-0-3-2" class="anchor"></a>version 0.3.2<small> 2019-03-19 </small>
+<a href="#version-0-3-3-1" class="anchor"></a>version 0.3.3<small> 2019-11-25 </small>
 </h1>
 <div id="dependency-changes-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dependency-changes-1" class="anchor"></a>Dependency changes</h2>
 <ul>
-<li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li>
+<li>Requires R &gt;= 3.5</li>
+<li>Added <code>animation</code> since it is used in the <code>spread3</code> example.</li>
+<li>Added <code>backports</code> for R-oldrel support</li>
+<li>Removed <code>profvis</code> and <code>microbenchmark</code> from Suggests: all benchmarking is removed from automated tests</li>
 </ul>
 </div>
 <div id="bugfixes-1" class="section level2">
@@ -163,6 +162,33 @@
 <a href="#enhancements-1" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
+<code>spread2</code> speed enhancements</li>
+</ul>
+</div>
+</div>
+    <div id="version-0-3-2" class="section level1">
+<h1 class="page-header">
+<a href="#version-0-3-2" class="anchor"></a>version 0.3.2<small> 2019-03-19 </small>
+</h1>
+<div id="dependency-changes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dependency-changes-2" class="anchor"></a>Dependency changes</h2>
+<ul>
+<li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li>
+</ul>
+</div>
+<div id="bugfixes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bugfixes-2" class="anchor"></a>Bugfixes</h2>
+<ul>
+<li>minor bug fixes</li>
+</ul>
+</div>
+<div id="enhancements-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-2" class="anchor"></a>Enhancements</h2>
+<ul>
+<li>
 <code>spread2</code> now takes a numeric for <code>allowOverlap</code>, to allow for 1 more scenario of overlapping, namely, allow between event overlapping, and within event overlapping only if the overlap occurs in the same iteration, otherwise, do not allow overlap within event.</li>
 <li>new function <code>spread3</code> for simulating <em>e.g.</em>, insect spread</li>
 <li>
@@ -174,17 +200,17 @@
 <h1 class="page-header">
 <a href="#version-0-3-1" class="anchor"></a>version 0.3.1<small> 2019-02-01 </small>
 </h1>
-<div id="dependency-changes-2" class="section level2">
+<div id="dependency-changes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-2" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-3" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>
 <code>RandomFields</code> moved to Suggests to prevent clashes with <code>data.table</code> multithreading</li>
 </ul>
 </div>
-<div id="enhancements-2" class="section level2">
+<div id="enhancements-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#enhancements-2" class="anchor"></a>Enhancements</h2>
+<a href="#enhancements-3" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
 <code>randomPolygon</code> now has <code>area</code> argument, instead of <code>hectares</code> (deprecated), and it now succeeds for more cases.</li>
@@ -247,9 +273,9 @@
 <li>minor test fixes.</li>
 </ul>
 </div>
-<div id="dependency-changes-3" class="section level2">
+<div id="dependency-changes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-3" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-4" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>
 <code>dplyr</code> and <code>mgcv</code> added to Suggests because they are used in tests.</li>
@@ -287,6 +313,7 @@
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
         <li><a href="#version-0-3-3">0.3.3</a></li>
+        <li><a href="#version-0-3-3-1">0.3.3</a></li>
         <li><a href="#version-0-3-2">0.3.2</a></li>
         <li><a href="#version-0-3-1">0.3.1</a></li>
         <li><a href="#version-0-3-0">0.3.0</a></li>
