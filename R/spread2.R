@@ -84,9 +84,9 @@ if (getRversion() >= "3.1.0") {
 #'                       on during a spreading event. This will override an event that
 #'                       stops probabilistically via \code{spreadProb}, but forcing
 #'                       its last set of active cells to try again to find neighbours.
-#'                       It will try 10 times per event, before giving up.
-#'                       During those 10 times, it will try twice to "jump" up to
-#'                       4 cells outwards from each of the active cells.\cr
+#'                       It will try \code{maxRetriesPerID} times per event, before giving up.
+#'                       During those \code{maxRetriesPerID} times, it will try to "jump" up to
+#'                       4 cells outwards from each of the active cells, every 5 retries.\cr
 #'   \code{iterations} \tab This is a hard cap on the number of internal iterations to
 #'                          complete before returning the current state of the system
 #'                          as a \code{data.table}.\cr
@@ -101,12 +101,14 @@ if (getRversion() >= "3.1.0") {
 #'              If user has x and y coordinates, these can be converted with
 #'              \code{\link[raster]{cellFromXY}}.
 #'
-#' @param spreadProb  Numeric of length 1 or \code{RasterLayer}.
+#' @param spreadProb  Numeric of length 1 or length \code{ncell(landscape)} or
+#'                    a \code{RasterLayer} that is the identical dimensions as
+#'                    \code{landscape}.
 #'                    If numeric of length 1, then this is the global (absolute)
 #'                    probability of spreading into each cell from a neighbour.
-#'                    If a raster then this must be the cell-specific (absolute)
-#'                    probability of a "receiving" potential cell.
-#'                    Default is \code{0.23}.
+#'                    If a numeric of length \code{ncell(landscape)} or a raster,
+#'                    then this must be the cell-specific (absolute)
+#'                    probability of a "receiving" potential cell. Default is \code{0.23}.
 #'                    If relative probabilities are required, use \code{spreadProbRel}.
 #'                    If used together, then the relative probabilities will be
 #'                    re-scaled so that the mean relative probability of potential
@@ -187,6 +189,10 @@ if (getRversion() >= "3.1.0") {
 #'                   spread iteration will spread to \code{1, 2, ..., length(neighProbs)}
 #'                   neighbours, respectively. If this is used (i.e., something other than
 #'                   NA), \code{circle} and \code{returnDistances} will not work currently.
+#' @param maxRetriesPerID Only active if \code{exactSize} is used. This is the number of attempts
+#'                        that will be made per event ID, before abandoning, therefore completing
+#'                        the spread2 for that event with a size that is smaller than
+#'                        \code{exactSize}. Default 10 times.
 #'
 #' @param asymmetry     A numeric or \code{RasterLayer} indicating the ratio of the
 #'                      asymmetry to be used. i.e., 1 is no asymmetry; 2 means that the
@@ -204,8 +210,6 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param plot.it  If TRUE, then plot the raster at every iteration,
 #'                   so one can watch the spread2 event grow.
-#'
-#' @inheritParams spread
 #'
 #' @details
 #'
@@ -235,8 +239,8 @@ if (getRversion() >= "3.1.0") {
 #' This function can be used iteratively, with relatively little overhead compared to using
 #' it non-iteratively. In general, this function can be called with arguments set as user
 #' needs, and with specifying iterations = 1 (say). This means that the function will spread
-#' outwards 1 iteration, then stop. The returned object will be a data.table or \code{RasterLayer}
-#' that can be passed immediately back as the start argument into a subsequent
+#' outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
+#' \code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
 #' call to \code{spread2}. This means that every argument can be updated at each iteration.
 #'
 #' When using this function iteratively, there are several things to keep in mind.
@@ -255,11 +259,11 @@ if (getRversion() >= "3.1.0") {
 #' If \code{1} (or \code{TRUE}),
 #'  then individual events can overlap with one another, i.e., allow
 #'  overlap between events. If \code{2} (or \code{NA}), then each pixel
-#'  is essentially indepependent, allowing overlap between and within
+#'  is essentially independent, allowing overlap between and within
 #'  events. This likely requires a user to intervene as it is possible
 #'  to spread back onto itself. If \code{3} (did not exist previously),
 #'  individual events can overlap, and there can be overlap within an
-#'  event, but only within an interation, i.e., once an iteration is
+#'  event, but only within an iteration, i.e., once an iteration is
 #'  finished, and a pixel was activated, then the spreading will not
 #'  return onto these pixels. If \code{0} (or \code{FALSE}), then once a
 #'  pixel is activated, it cannot be re-activated, within or between event.
@@ -329,11 +333,12 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom checkmate qassert
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
+#' @importFrom fastmatch fmatch
 #' @importFrom ff ff
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot
-#' @importFrom raster ncell raster res ncol pointDistance
+#' @importFrom raster fromDisk ncell raster res ncol pointDistance
 #' @importFrom stats runif
 #'
 #' @seealso \code{\link{spread}} for a different implementation of the same algorithm.
@@ -345,7 +350,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                     spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE,
                     maxSize, exactSize, directions = 8L, iterations = 1e6L,
                     returnDistances = FALSE, returnDirections = FALSE,
-                    returnFrom = FALSE,
+                    returnFrom = FALSE, maxRetriesPerID = 10,
                     spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
                     asymmetry = NA_real_, asymmetryAngle = NA_real_,
                     allowOverlap = 0, neighProbs = NA_real_, skipChecks = FALSE) {
@@ -354,6 +359,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   assertClass(landscape, "Raster")
   ncells <- ncell(landscape)
   numCols <- ncol(landscape)
+  anyNAneighProbs <- any(is.na(neighProbs))
   if (!skipChecks) {
     assert(
       checkNumeric(start, min.len = 0, max.len = ncells, lower = 1, upper = ncells),
@@ -364,9 +370,18 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     assertNumeric(sum(neighProbs), lower = 1, upper = 1)
 
     assert(
+      checkNumeric(spreadProb, 0, 1, min.len = ncell(landscape), max.len = ncell(landscape)),
       checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
       checkClass(spreadProb, "RasterLayer")
     )
+
+    if (is(spreadProb, "Raster")) {
+      if (fromDisk(spreadProb)) {
+        warning("spreadProb is a raster layer stored on disk. This may cause spread2 to be",
+                " very slow. We suggest extracting the values to a numeric vector first, ",
+                "then passing this to spreadProb")
+      }
+    }
     assert(checkNumeric(persistProb, 0, 1, min.len = 1, max.len = 1),
            checkClass(persistProb, "RasterLayer"))
     assert(
@@ -435,7 +450,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   usingAsymmetry <- !is.na(asymmetry)
 
   # This means that if an event can not spread any more, it will try 10 times, incl. 2 jumps
-  maxRetriesPerID <- 10
+  # maxRetriesPerID <- 10
 
   if (!is.numeric(start) & !is.data.table(start)) {
     if (is(start, "Raster")) {
@@ -742,7 +757,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     set(dtPotential, NULL, "state", "successful")
 
     # Step 5 -- optional -- Algorithm neighProbs - uses a specific number of neighbours
-    if (!anyNA(neighProbs)) {
+    if (!anyNAneighProbs) {
       # numNeighs algorithm
       numNeighsByPixel <- unique(dtPotential, by = c("id", "from"))
       if (is.list(neighProbs)) {
@@ -792,12 +807,20 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         if (NROW(dtPotential)) {
           # If it is a corner or has had pixels removed bc of duplicates,
           # it may not have enough neighbours
-          numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
-          set(numNeighsByPixel, NULL, "numNeighs",
-              pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
-          dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
-                                                                   .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
-                                                                   by = "from"]$V1]
+          set(numNeighsByPixel, NULL, c("to", "state"), NULL)
+          dt1 <- dtPotential[numNeighsByPixel, nomatch = 0]
+          dtPotential <- dt1[dt1[, .I[sample.int(.N, size = min(.N, numNeighs), prob = spreadProbRel)], by = c("id", "from")]$V1]
+
+          if (FALSE) { # old algorithm, replaced by 3 lines above May 30 2019, Eliot -- appears to be a bug below
+            #   the by = "from" should be c("id", "from") -- should sample 1 or more from each fire event, from each front line
+            numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
+            if (any(numNeighsByPixel$numNeighs > numNeighsByPixel$N))
+              set(numNeighsByPixel, NULL, "numNeighs",
+                  pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
+            dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
+                                                                      .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
+                                                                      by = "from"]$V1]
+          }
         }
         set(dtPotential, NULL, "spreadProbRel", NULL)
       }
@@ -847,7 +870,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     spreadProbSuccess <- runifC(NROW(dtPotential)) <= actualSpreadProb
 
     # Step 8 - Remove duplicates & bind dt and dtPotential
-    if (anyNA(neighProbs)) {
+    if (anyNAneighProbs) {
       if (isTRUE(allowOverlap > 0) | is.na(allowOverlap) | !canUseAvailable) {
         # overlapping allowed
         dtPotential <- dtPotential[spreadProbSuccess]
@@ -944,17 +967,22 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # Too small second
       if (!(anyNA(exactSize))) {
         # push those that are too small into "tooSmall"
-        currentSizeTooSmall <- clusterDT[tooBigByNCells < 0]
+        currentSizeTooSmall <- clusterDT[tooBigByNCells < 0, "initialPixels"]
+        # dtOrig <- copy(dt)
+        # csts <- copy(currentSizeTooSmall)
+        #dt <- copy(dtOrig)
+        #currentSizeTooSmall <- copy(csts)
         if (NROW(currentSizeTooSmall) > 0) {
           # successful means will become activeSource next iteration,
           # so they don't need any special treatment
           currentSizeTooSmall <- currentSizeTooSmall[
-            !dt[state %in% c("successful", "holding"), nomatch = 0]
+            !dt[dt$state %in% c("successful", "holding"), nomatch = 0]
             ]
+
         }
         # if the ones that are too small are unsuccessful, make them "tooSmall"
         set(dt, NULL, "ind", seq_len(NROW(dt)))
-        whTooSmall <- dt[!(state %in% c("successful", "inactive"))][
+        whTooSmall <- dt[!(dt$state %in% c("successful", "inactive"))][
           currentSizeTooSmall, nomatch = 0]$ind
         set(dt, NULL, "ind", NULL)
 
@@ -1075,19 +1103,19 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   return(dt)
 }
 
-
-#' Internal helper
+#' Internal helpers
 #'
-#' Not for users. A function to setnames and rbindlist that is used 3 places in spread2.
+#' Not for users.
+#' A function to \code{setnames} and \code{rbindlist} that is used in \code{spread2}.
 #'
-#' @param dt Data.table
-#' @param dtPotential Data.table
-#' @param returnFrom Logical
-#' @param needDistance Logical
-#' @param dtPotentialColNames Character Vector.
-#' @rdname spread2-internals
+#' @param dt a \code{data.table} object
+#' @param dtPotential a \code{data.table} object
+#' @param returnFrom logical
+#' @param needDistance logical
+#' @param dtPotentialColNames character vector.
+#'
 #' @keywords internal
-#'
+#' @rdname spread2-internals
 rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames) {
   # distance column is second last, but needs to be last
   # to merge with dt, need: from, to, state in that order
@@ -1112,10 +1140,8 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
 
 #' Internal helpers for \code{spread2}
 #'
-#' @inheritParams rbindlistDtDtpot
-#' @rdname spread2-internals
 #' @keywords internal
-#'
+#' @rdname spread2-internals
 reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames) {
   if (needDistance)
     setcolorder(dtPotential,
@@ -1129,11 +1155,11 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
 #' @param from vector of cell locations which are the "from" or starting cells
 #' @param to vector of same length as \code{from} which are the "to" or receiving cells
 #' @param landscape \code{RasterLayer} passed from \code{spread2}.
-#' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or
-#'                             vector \code{NROW(dtPotential)}.
+#' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or vector
+#'                             \code{NROW(dtPotential)}.
+#'
 #' @keywords internal
 #' @rdname spread2-internals
-#'
 angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
   from1 <- cbind(id = from, xyFromCell(landscape, from))
   to1 <- cbind(id = from, xyFromCell(landscape, to))
@@ -1146,9 +1172,9 @@ angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
 #' @param angleQualities Matrix. The output from \code{angleQuality}
 #' @param quantity Variable of interest to adjust, e.g., \code{spreadProb}
 #' @param actualAsymmetry Asymmetry intensity. Derived from \code{asymmetry} arg in \code{spread2}
+#'
 #' @keywords internal
 #' @rdname spread2-internals
-#'
 asymmetryAdjust <- function(angleQualities, quantity, actualAsymmetry) {
   if (sum(angleQualities[, "angleQuality"]) %==% 0) {
     # the case where there is no difference in the angles, and they are all zero

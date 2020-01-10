@@ -8,15 +8,15 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
     operations, random map generation, and others.
     See '?SpaDES.tools' for an categorized overview of these additional tools.
 URL:
-    http://spades-tools.predictiveecology.org,
+    https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2019-02-06
-Version: 0.3.1.9000
+Date: 2019-12-16
+Version: 0.3.4.9000
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
-    role = c("aut", "cre"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7146-8135")),
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
-    role = c("aut"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
+    role = c("aut"), comment=c(ORCID = "0000-0002-6914-8316")),
     person("Yong", "Luo", email = "yluo1@lakeheadu.ca",
     role = c("ctb")),
     person("Steve", "Cumming", email = "Steve.Cumming@sbf.ulaval.ca",
@@ -27,8 +27,9 @@ Authors@R: c(
     role = "cph")
     )
 Depends:
-    R (>= 3.3.0)
+    R (>= 3.5.0)
 Imports:
+    backports,
     bit (>= 1.1-12),
     checkmate (>= 1.8.2),
     CircStats (>= 0.2-4),
@@ -48,22 +49,18 @@ Imports:
     sp (>= 1.2-4),
     stats
 Suggests:
+    animation,
     DEoptim (>= 2.2-4),
     dplyr,
     fasterize,
     gdalUtils,
     knitr,
     mgcv,
-    microbenchmark,
-    profvis,
     RandomFields (>= 3.1.24),
     RColorBrewer (>= 1.1-2),
     rmarkdown,
     sf,
     testthat (>= 1.0.2)
-Remotes:
-    PredictiveEcology/quickPlot@development,
-    PredictiveEcology/reproducible@development
 Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
@@ -93,4 +90,4 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2

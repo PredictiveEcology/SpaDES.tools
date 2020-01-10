@@ -8,49 +8,7 @@ env:
 matrix:
   include:
   - os: linux
-    dist: trusty
-    r: 3.3
-    addons:
-      apt:
-        sources:
-          - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
-        packages:
-          - libgdal-dev
-          - libgdal1-dev
-          - libgeos-dev
-          - libnlopt-dev
-          - libproj-dev
-          - libudunits2-dev
-          - gdal-bin
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
-    r_packages:
-      - rgdal
-  - os: linux
-    dist: trusty
-    r: 3.4
-    addons:
-      apt:
-        sources:
-          - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
-        packages:
-          - libgdal-dev
-          - libgdal1-dev
-          - libgeos-dev
-          - libnlopt-dev
-          - libproj-dev
-          - libudunits2-dev
-          - gdal-bin
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
-    r_packages:
-      - rgdal
-  - os: linux
-    dist: trusty
+    dist: xenial
     r: oldrel
     addons:
       apt:
@@ -60,39 +18,37 @@ matrix:
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
+          - libmagick++-dev
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
           - gdal-bin
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
+    services:
+      - xvfb
     r_packages:
       - rgdal
   - os: linux
-    dist: trusty
-    r: release
-    env:
-      - RASTER_DEVEL=false
+    dist: xenial
+    services:
+      - xvfb
     addons:
       apt:
         sources:
           - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
+          - gdal-bin
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
+          - libmagick++-dev
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
-          - gdal-bin
+    r: release
+    env:
+      - RASTER_DEVEL=false
     r_github_packages:
       - jimhester/lintr
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
     r_packages:
       - devtools
       - ggplot2
@@ -101,64 +57,65 @@ matrix:
       - Rscript -e 'covr::coveralls(package_coverage(type = "all", quiet = FALSE)))'
       - Rscript -e 'lintr::lint_package()'
   - os: linux
-    dist: trusty
-    r: release
-    env:
-      - RASTER_DEVEL=true
+    dist: xenial
     addons:
       apt:
         sources:
           - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
+          - gdal-bin
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
+          - libmagick++-dev
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
-          - gdal-bin
+    services:
+      - xvfb
+    env:
+      - RASTER_DEVEL=true
+    r: release
     r_github_packages:
       - jimhester/lintr
       - rspatial/raster
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
     r_packages:
       - devtools
       - ggplot2
       - rgdal
   - os: linux
-    dist: trusty
+    dist: xenial
+    services:
+      - xvfb
     r: devel
     addons:
       apt:
         sources:
           - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
+          - gdal-bin
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
+          - libmagick++-dev
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
-          - gdal-bin
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
     r_packages:
       - rgdal
       - devtools
       - udunits2
   - os: osx
-    osx_image: xcode9.2
+    osx_image: xcode9.4
+    addons:
+      homebrew:
+        packages:
+        - glpk libgit2
+        update: true
     latex: false
     r_build_args: "--no-build-vignettes"
     r_check_args: "--as-cran --ignore-vignettes --no-examples"
     before_install:
-      - brew update
-      - brew install glpk libgit2
       - Rscript -e 'install.packages(c("digest", "igraph", "rgdal"), type = "source")'
 r_build_args: " "
 r_check_args: "--as-cran"

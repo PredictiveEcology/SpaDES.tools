@@ -4,8 +4,13 @@
 \alias{rasterizeReduced}
 \title{Convert reduced representation to full raster}
 \usage{
-rasterizeReduced(reduced, fullRaster, newRasterCols,
-  mapcode = names(fullRaster), ...)
+rasterizeReduced(
+  reduced,
+  fullRaster,
+  newRasterCols,
+  mapcode = names(fullRaster),
+  ...
+)
 }
 \arguments{
 \item{reduced}{\code{data.frame} or \code{data.table} that has at least one

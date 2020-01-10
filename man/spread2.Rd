@@ -4,13 +4,29 @@
 \alias{spread2}
 \title{Simulate a contagious spread process on a landscape, with data.table internals}
 \usage{
-spread2(landscape, start = ncell(landscape)/2 - ncol(landscape)/2,
-  spreadProb = 0.23, persistProb = NA_real_, asRaster = TRUE,
-  maxSize, exactSize, directions = 8L, iterations = 1000000L,
-  returnDistances = FALSE, returnDirections = FALSE,
-  returnFrom = FALSE, spreadProbRel = NA_real_, plot.it = FALSE,
-  circle = FALSE, asymmetry = NA_real_, asymmetryAngle = NA_real_,
-  allowOverlap = 0, neighProbs = NA_real_, skipChecks = FALSE)
+spread2(
+  landscape,
+  start = ncell(landscape)/2 - ncol(landscape)/2,
+  spreadProb = 0.23,
+  persistProb = NA_real_,
+  asRaster = TRUE,
+  maxSize,
+  exactSize,
+  directions = 8L,
+  iterations = 1000000L,
+  returnDistances = FALSE,
+  returnDirections = FALSE,
+  returnFrom = FALSE,
+  maxRetriesPerID = 10,
+  spreadProbRel = NA_real_,
+  plot.it = FALSE,
+  circle = FALSE,
+  asymmetry = NA_real_,
+  asymmetryAngle = NA_real_,
+  allowOverlap = 0,
+  neighProbs = NA_real_,
+  skipChecks = FALSE
+)
 }
 \arguments{
 \item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
@@ -22,12 +38,14 @@ If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
 \code{\link[raster]{cellFromXY}}.}
 
-\item{spreadProb}{Numeric of length 1 or \code{RasterLayer}.
+\item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
+a \code{RasterLayer} that is the identical dimensions as
+\code{landscape}.
 If numeric of length 1, then this is the global (absolute)
 probability of spreading into each cell from a neighbour.
-If a raster then this must be the cell-specific (absolute)
-probability of a "receiving" potential cell.
-Default is \code{0.23}.
+If a numeric of length \code{ncell(landscape)} or a raster,
+then this must be the cell-specific (absolute)
+probability of a "receiving" potential cell. Default is \code{0.23}.
 If relative probabilities are required, use \code{spreadProbRel}.
 If used together, then the relative probabilities will be
 re-scaled so that the mean relative probability of potential
@@ -76,6 +94,11 @@ that event started. Default is FALSE.}
 
 \item{returnFrom}{Logical. Should the function return a column with the
 source, i.e, the lag 1 "from" pixel, for each iteration.}
+
+\item{maxRetriesPerID}{Only active if \code{exactSize} is used. This is the number of attempts
+that will be made per event ID, before abandoning, therefore completing
+the spread2 for that event with a size that is smaller than
+\code{exactSize}. Default 10 times.}
 
 \item{spreadProbRel}{Optional \code{RasterLayer} indicating a surface of relative
 probabilities useful when using \code{neighProbs} (which
@@ -280,9 +303,9 @@ are interacting with each other correctly.
                       on during a spreading event. This will override an event that
                       stops probabilistically via \code{spreadProb}, but forcing
                       its last set of active cells to try again to find neighbours.
-                      It will try 10 times per event, before giving up.
-                      During those 10 times, it will try twice to "jump" up to
-                      4 cells outwards from each of the active cells.\cr
+                      It will try \code{maxRetriesPerID} times per event, before giving up.
+                      During those \code{maxRetriesPerID} times, it will try to "jump" up to
+                      4 cells outwards from each of the active cells, every 5 retries.\cr
   \code{iterations} \tab This is a hard cap on the number of internal iterations to
                          complete before returning the current state of the system
                          as a \code{data.table}.\cr
@@ -295,8 +318,8 @@ are interacting with each other correctly.
 This function can be used iteratively, with relatively little overhead compared to using
 it non-iteratively. In general, this function can be called with arguments set as user
 needs, and with specifying iterations = 1 (say). This means that the function will spread
-outwards 1 iteration, then stop. The returned object will be a data.table or \code{RasterLayer}
-that can be passed immediately back as the start argument into a subsequent
+outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
+\code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
 call to \code{spread2}. This means that every argument can be updated at each iteration.
 
 When using this function iteratively, there are several things to keep in mind.
@@ -317,11 +340,11 @@ when passed back into \code{spread2}.
 If \code{1} (or \code{TRUE}),
  then individual events can overlap with one another, i.e., allow
  overlap between events. If \code{2} (or \code{NA}), then each pixel
- is essentially indepependent, allowing overlap between and within
+ is essentially independent, allowing overlap between and within
  events. This likely requires a user to intervene as it is possible
  to spread back onto itself. If \code{3} (did not exist previously),
  individual events can overlap, and there can be overlap within an
- event, but only within an interation, i.e., once an iteration is
+ event, but only within an iteration, i.e., once an iteration is
  finished, and a pixel was activated, then the spreading will not
  return onto these pixels. If \code{0} (or \code{FALSE}), then once a
  pixel is activated, it cannot be re-activated, within or between event.
@@ -333,8 +356,11 @@ If \code{1} (or \code{TRUE}),
 }
 
 \examples{
+library(data.table)
 library(raster)
 library(quickPlot)
+
+data.table::setDTthreads(1)
 
 a <- raster(extent(0, 10, 0, 10), res = 1)
 sams <- sort(sample(ncell(a), 3))
@@ -413,52 +439,54 @@ circs <- spread2(a, spreadProb = 0.213, start = sams,
                  asymmetry = 2, asymmetryAngle = 135,
                  asRaster = TRUE)
 
-# ADVANCED: Estimate spreadProb when using asymmetry, such that the expected
-#   event size is the same as without using asymmetry
-ras <- raster(a)
-ras[] <- 1
-if (interactive()) {
-  n <- 100
-  sizes <- integer(n)
-  for (i in 1:n) {
-    circs <- spread2(ras, spreadProb = 0.225,
-                     start = round(ncell(ras) / 4 - ncol(ras) / 4 * 3),
-                     asRaster = FALSE)
-    sizes[i] <- circs[, .N]
-  }
-  goalSize <- mean(sizes)
+## ADVANCED: Estimate spreadProb when using asymmetry, such that the expected
+##   event size is the same as without using asymmetry
+\dontrun{
+  if (interactive()) {
+    ras <- raster(a)
+    ras[] <- 1
 
-
-  library(parallel)
-  library(DEoptim)
-  cl <- makeCluster(pmin(10, detectCores() - 2)) # only need 10 cores for 10 populations in DEoptim
-  parallel::clusterEvalQ(cl, {
-    library(SpaDES.tools)
-    library(raster)
-    library(fpCompare)
-  })
-
-  objFn <- function(sp, n = 20, ras, goalSize) {
+    n <- 100
     sizes <- integer(n)
     for (i in 1:n) {
-      circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
-                       asymmetry = 2, asymmetryAngle = 135,
+      circs <- spread2(ras, spreadProb = 0.225,
+                       start = round(ncell(ras) / 4 - ncol(ras) / 4 * 3),
                        asRaster = FALSE)
       sizes[i] <- circs[, .N]
     }
-    abs(mean(sizes) - goalSize)
+    goalSize <- mean(sizes)
+
+    library(parallel)
+    library(DEoptim)
+    cl <- makeCluster(pmin(10, detectCores() - 2)) # need 10 cores for 10 populations in DEoptim
+    parallel::clusterEvalQ(cl, {
+      library(SpaDES.tools)
+      library(raster)
+      library(fpCompare)
+    })
+
+    objFn <- function(sp, n = 20, ras, goalSize) {
+      sizes <- integer(n)
+      for (i in 1:n) {
+        circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
+                         asymmetry = 2, asymmetryAngle = 135,
+                         asRaster = FALSE)
+        sizes[i] <- circs[, .N]
+      }
+      abs(mean(sizes) - goalSize)
+    }
+    aa <- DEoptim(objFn, lower = 0.2, upper = 0.23,
+                  control = DEoptim.control(cluster = cl, NP = 10, VTR = 0.02,
+                                            initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
+                  ras = a, goalSize = goalSize)
+
+    # The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:
+    sp <- aa$optim$bestmem
+    circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
+                      asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)
+
+    stopCluster(cl)
   }
-  aa <- DEoptim(objFn, lower = 0.2, upper = 0.23,
-                control = DEoptim.control(cluster = cl, NP = 10, VTR = 0.02,
-                                          initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
-                ras = a, goalSize = goalSize)
-
-  # The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:
-  sp <- aa$optim$bestmem
-  circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
-                    asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)
-
-  stopCluster(cl)
 }
 }
 \seealso{
