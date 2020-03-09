@@ -7,10 +7,13 @@
 \alias{randomPolygon.SpatialPoints}
 \alias{randomPolygon.matrix}
 \alias{randomPolygon.SpatialPolygons}
-\title{randomPolygons}
+\title{Produce a \code{RasterLayer} of  random polygons}
 \usage{
-randomPolygons(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
-  numTypes = 2, ...)
+randomPolygons(
+  ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
+  numTypes = 2,
+  ...
+)
 
 randomPolygon(x, hectares, area)
 
@@ -27,10 +30,9 @@ randomPolygon(x, hectares, area)
 
 \item{...}{Other arguments passed to spread. No known uses currently.}
 
-\item{x}{Either a \code{SpatialPoints}, \code{SpatialPolygons}  or matrix with
-2 dimensions, 1 row, with
-with the approximate centre of the new random polygon to create. If
-matrix, then longitude and latitude are assumed (epsg:4326)}
+\item{x}{Either a \code{SpatialPoints}, \code{SpatialPolygons}, or \code{matrix} with two
+dimensions, 1 row, with the approximate centre of the new random polygon to create.
+If \code{matrix}, then longitude and latitude are assumed (epsg:4326)}
 
 \item{hectares}{Deprecated. Use \code{area} in meters squared.}
 
@@ -43,12 +45,10 @@ A \code{SpatialPolygons} object, with approximately the area request,
         centred approximately at the coordinates requested, in the projection of \code{x}
 }
 \description{
-Produces a raster of random polygons.
 These are built with the \code{\link{spread}} function internally.
 
-Produces a \code{SpatialPolygons} object with 1 feature that will have approximately
-an area equal to \code{area} (expecting area in hectares),
-and a centre at approximately \code{x}
+Produces a \code{SpatialPolygons} object with 1 feature that will have approximately an area
+equal to \code{area} (expecting area in hectares), #' and a centre at approximately \code{x}.
 }
 \examples{
 library(quickPlot)

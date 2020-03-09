@@ -112,16 +112,14 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #'
 #' @keywords internal
 #' @rdname findFactors
-#'
 .findFactors <- function(x) {
   x <- as.integer(x)
   div <- seq_len(abs(x))
   return(div[x %% div == 0L])
 }
 
-#' randomPolygons
+#' Produce a \code{RasterLayer} of  random polygons
 #'
-#' Produces a raster of random polygons.
 #' These are built with the \code{\link{spread}} function internally.
 #'
 #' @param ras A raster that whose extent will be used for the randomPolygons.
@@ -179,14 +177,12 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 
 #' Create a single random polygon object
 #'
-#' Produces a \code{SpatialPolygons} object with 1 feature that will have approximately
-#' an area equal to \code{area} (expecting area in hectares),
-#' and a centre at approximately \code{x}
+#' Produces a \code{SpatialPolygons} object with 1 feature that will have approximately an area
+#' equal to \code{area} (expecting area in hectares), #' and a centre at approximately \code{x}.
 #'
-#' @param x Either a \code{SpatialPoints}, \code{SpatialPolygons}  or matrix with
-#'          2 dimensions, 1 row, with
-#'          with the approximate centre of the new random polygon to create. If
-#'          matrix, then longitude and latitude are assumed (epsg:4326)
+#' @param x Either a \code{SpatialPoints}, \code{SpatialPolygons}, or \code{matrix} with two
+#'          dimensions, 1 row, with the approximate centre of the new random polygon to create.
+#'          If \code{matrix}, then longitude and latitude are assumed (epsg:4326)
 #'
 #' @param area A numeric, the approximate area in \code{meters squared} of the random polygon.
 #'

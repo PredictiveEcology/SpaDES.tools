@@ -1,16 +1,43 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
-version 0.3.2.9000
+version 0.3.4.9000
 =============
 
 ## Dependency changes
-* Added `backports` for R-oldrel support
+* none
 
 ## Bugfixes
-* Lorem ipsum
+* none
 
 ## Enhancements
-* Lorem ipsum
+* none
+
+version 0.3.4
+=============
+
+## Dependency changes
+* none
+
+## Bugfixes
+* fix issues with failing tests on CRAN
+
+## Enhancements
+* none
+
+version 0.3.3
+=============
+
+## Dependency changes
+* Requires R >= 3.5
+* Added `animation` since it is used in the `spread3` example.
+* Added `backports` for R-oldrel support
+* Removed `profvis` and `microbenchmark` from Suggests: all benchmarking is removed from automated tests
+
+## Bugfixes
+* minor bug fixes
+
+## Enhancements
+* `spread2` speed enhancements
 
 version 0.3.2
 =============

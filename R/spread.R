@@ -2,23 +2,6 @@ if (getRversion() >= "3.1.0") {
   utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLocus"))
 }
 
-#' A faster '\%in\%' based on fastmatch package
-#'
-#' A faster '\%in\%', directly pulled from \code{fastmatch::match}, based on
-#' \url{http://stackoverflow.com/questions/32934933/faster-in-operator}.
-#'
-#' @param x      See \code{\link[fastmatch]{fmatch}}.
-#' @param table  See \code{\link[fastmatch]{fmatch}}.
-#'
-#' @aliases match
-#' @export
-#' @importFrom fastmatch fmatch
-#' @name %fin%
-#' @rdname match
-#'
-`%fin%` <- function(x, table) {
-  fmatch(x, table, nomatch = 0L) > 0L
-}
 
 ###############################################################################
 #' Simulate a spread process on a landscape.
@@ -322,6 +305,7 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom data.table := data.table setcolorder
 #' @importFrom ff as.ram ff
 #' @importFrom ffbase ffwhich
+#' @importFrom fastmatch %fin%
 #' @importFrom fpCompare %<=%
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot clearPlot Plot
@@ -436,13 +420,13 @@ setMethod(
             relativeSpreadProb <- TRUE
           }
       } else {
-        if (!all(inRange(spreadProb))) {
+        if (!all(inRange(na.omit(spreadProb)))) {
           relativeSpreadProb <- TRUE
           stop("spreadProb is not a probability")
         }
         if (spreadProbLaterExists) {
           relativeSpreadProb <- TRUE
-          if (!all(inRange(spreadProbLater))) stop("spreadProbLater is not a probability")
+          if (!all(inRange(na.omit(spreadProbLater)))) stop("spreadProbLater is not a probability")
         }
       }
     }
@@ -683,6 +667,8 @@ setMethod(
 
       # extract spreadProb values from spreadProb argument
       if (is.numeric(spreadProb)) {
+        if (!(length(spreadProb) == 1 || length(spreadProb) == ncell(landscape)))
+          stop("spreadProb must be length 1 or length ncell(landscape), or a raster")
         if (n == 1 & spreadProbLaterExists) {
           # need cell specific values
           spreadProbs <- rep(spreadProb, NROW(potentials))
@@ -973,6 +959,7 @@ setMethod(
           }
         } else {
           if (all(size >= maxSize)) {
+            potentials <- potentials[0L,] # remove any potential cells, as size is met
             events <- NULL
           }
         }

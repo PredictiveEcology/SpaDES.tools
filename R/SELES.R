@@ -228,7 +228,6 @@ setMethod(
 #' @include heading.R
 #' @export
 #' @rdname SELESagentLocation
-#'
 agentLocation <- function(map) {
   if (length(grep(pattern = "Raster", class(map))) == 1) {
     map[map == 0] <- NA

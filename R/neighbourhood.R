@@ -415,16 +415,16 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' @inheritParams spread
 #'
 #' @details This function identifies all the pixels as defined by a donut
-#' with inner radius minRadius and outer radius of maxRadius. The includeBehavior defines
-#' whether the cells that intersect the radii but whose centres are not inside
-#' the donut are included \code{includePixels} or not \code{excludePixels} in the returned
-#' pixels identified. If this is \code{excludePixels}, and if a \code{minRadius} and
+#' with inner radius \code{minRadius} and outer radius of \code{maxRadius}.
+#' The \code{includeBehavior} defines whether the cells that intersect the radii
+#' but whose centres are not inside the donut are included \code{includePixels}
+#' or not \code{excludePixels} in the returned pixels identified.
+#' If this is \code{excludePixels}, and if a \code{minRadius} and
 #' \code{maxRadius} are equal, this will return no pixels.
 #'
 #'
 #' @return A \code{matrix} with 4 columns, \code{id}, \code{indices},
-#' \code{x}, \code{y}. The \code{x} and \code{y} indicate the
-#' exact coordinates of
+#' \code{x}, \code{y}. The \code{x} and \code{y} indicate the exact coordinates of
 #' the \code{indices} (i.e., cell number) of the \code{landscape}
 #' associated with the ring or circle being identified by this function.
 #'
@@ -434,6 +434,7 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' @importFrom raster cellFromXY extract res xyFromCell ncell ncol
 #' @export
 #' @rdname cir
+#'
 #' @seealso \code{\link{rings}} which uses \code{spread} internally.
 #' \code{cir} tends to be faster when there are few starting points, \code{rings}
 #' tends to be faster when there are many starting points. \code{cir} scales with
@@ -444,10 +445,8 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' points, see \code{\link{distanceFromEachPoint}}, which is often faster.
 #' For the more general GIS buffering, see \code{rgeos::gBuffer}.
 #'
-#'@example inst/examples/example_cir.R
+#' @example inst/examples/example_cir.R
 #'
-#' @export
-#' @rdname cir
 # setMethod(
 #   "cir",
 #   signature(landscape = "RasterLayer", coords = "matrix", loci = "missing"),
@@ -1020,17 +1019,15 @@ setMethod(
   }
 })
 
-#' This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
-#' returnIndices = TRUE, returnDistances = TRUE, and includeBehavior = "excludePixels".
-#' It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
-#' just once, then add to the xy coordinates of every locus
+#' This is a very fast version of \code{cir} with \code{allowOverlap = TRUE},
+#' \code{allowDuplicates = FALSE}, \code{returnIndices = TRUE}, \code{returnDistances = TRUE}, and
+#' \code{includeBehavior = "excludePixels"}.
+#' It is used inside \code{spread2}, when asymmetry is active.
+#' The basic algorithm is to run \code{cir} just once, then add to the x,y coordinates of every locus.
+#'
 #' @name cirSpecialQuick
 #' @inheritParams cir
-.cirSpecialQuick <- function(landscape,
-                            loci,
-                            maxRadius,
-                            minRadius) {
-
+.cirSpecialQuick <- function(landscape, loci, maxRadius, minRadius) {
   bb <- xyFromCell(landscape, loci)
   middleCell <- if (identical(ncell(landscape) / 2, floor(ncell(landscape) / 2))) {
     ncell(landscape) / 2 - ncol(landscape) / 2

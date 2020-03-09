@@ -1,129 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://spades-tools.predictiveecology.org/index.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/index.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/SELESagentLocation.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/adj.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/SELESnumAgents.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/cir.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/SELESprobInit.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/cirSpecialQuick.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/SELEStransitions.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/crw.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/SpaDES.tools-package.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/deprecated.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/adj.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/directions.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/cir.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/distanceFromEachPoint.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/cirSpecialQuick.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/distances.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/crw.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/duplicated.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/deprecated.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/dwrpnorm2.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/directions.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/findFactors.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/distanceFromEachPoint.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/gaussmap.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/distances.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/heading.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/duplicated.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/initiateAgents.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/dwrpnorm2.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/inRange.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/findFactors.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/matchedPointDirection.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/gaussmap.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/middlePixel.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/heading.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/patchSize.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/inRange.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/pkgEnv.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/initiateAgents.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/randomPolygons.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/match.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/randomStudyArea.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/matchedPointDirection.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/rasterizeReduce.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/middlePixel.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/rcpp-extras.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/patchSize.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/resample.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/pkgEnv.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/rings.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/randomPolygons.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/sampleV.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/randomStudyArea.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/SELESagentLocation.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/rasterizeReduce.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/SELESnumAgents.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/rcpp-extras.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/SELESprobInit.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/resample.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/SELEStransitions.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/rings.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/SpaDES.tools-package.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/sampleV.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/specnumperpatch-probs.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/specnumperpatch-probs.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/splitRaster.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/splitRaster.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/spokes.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/spokes.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/spread.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/spread.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/spread2-internals.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/spread2-internals.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/spread2.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/spread2.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/spread3.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/spread3.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/testEquivalentMetadata.html</loc>
   </url>
   <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/testEquivalentMetadata.html</loc>
-  </url>
-  <url>
-    <loc>http://spades-tools.predictiveecology.org/reference/wrap.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/wrap.html</loc>
   </url>
 </urlset>

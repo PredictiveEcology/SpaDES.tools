@@ -3,10 +3,11 @@
 \name{cirSpecialQuick}
 \alias{cirSpecialQuick}
 \alias{.cirSpecialQuick}
-\title{This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
-returnIndices = TRUE, returnDistances = TRUE, and includeBehavior = "excludePixels".
-It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
-just once, then add to the xy coordinates of every locus}
+\title{This is a very fast version of \code{cir} with \code{allowOverlap = TRUE},
+\code{allowDuplicates = FALSE}, \code{returnIndices = TRUE}, \code{returnDistances = TRUE}, and
+\code{includeBehavior = "excludePixels"}.
+It is used inside \code{spread2}, when asymmetry is active.
+The basic algorithm is to run \code{cir} just once, then add to the x,y coordinates of every locus.}
 \usage{
 .cirSpecialQuick(landscape, loci, maxRadius, minRadius)
 }
@@ -25,8 +26,9 @@ by the narrow ring at that exact radius. If smaller than \code{maxRadius},
 then this will create a buffer or donut or ring.}
 }
 \description{
-This is a very fast version of cir with allowOverlap = TRUE, allowDuplicates = FALSE,
-returnIndices = TRUE, returnDistances = TRUE, and includeBehavior = "excludePixels".
-It is used inside spread2, when asymmetry is active. The basic algorithm is to run cir
-just once, then add to the xy coordinates of every locus
+This is a very fast version of \code{cir} with \code{allowOverlap = TRUE},
+\code{allowDuplicates = FALSE}, \code{returnIndices = TRUE}, \code{returnDistances = TRUE}, and
+\code{includeBehavior = "excludePixels"}.
+It is used inside \code{spread2}, when asymmetry is active.
+The basic algorithm is to run \code{cir} just once, then add to the x,y coordinates of every locus.
 }
