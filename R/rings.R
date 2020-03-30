@@ -65,7 +65,7 @@ setMethod(
       out <- spreadEvents[(dists %>=% minRadius)]
     }
 
-    if (!returnIndices) {
+    if (!(returnIndices > 0)) {
       outRas <- numeric(ncell(landscape))
       if (returnDistances)
         outRas[] <- NA_real_

@@ -42,7 +42,8 @@ with \code{\link[raster]{cellFromXY}}.}
 \item{id}{Logical. If \code{TRUE}, returns a raster of events ids.
 If \code{FALSE}, returns a raster of iteration numbers,
 i.e., the spread history of one or more events.
-NOTE: this is overridden if \code{returnIndices} is \code{TRUE}.}
+NOTE: this is overridden if \code{returnIndices} is \code{TRUE}
+or \code{1} or \code{2}.}
 
 \item{minRadius}{Numeric. Minimum radius to be included in the ring.
 Note: this is inclusive, i.e., \code{>=}.}
@@ -55,9 +56,13 @@ with one another, i.e., they do not interact (this is slower
 than if \code{allowOverlap = FALSE}).
 Default is \code{FALSE}.}
 
-\item{returnIndices}{Logical. Should the function return a \code{data.table}
-with indices and values of successful spread events, or
-return a raster with values. See Details.}
+\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
+return a \code{data.table}
+with indices and values of successful spread events.
+If \code{2}, it will simply return a vector of pixel indices of
+all cells that were touched. This will be the fastest option. If
+\code{FALSE}, then it will return a raster with
+values. See Details.}
 
 \item{returnDistances}{Logical. Should the function include a column with the
 individual cell distances from the locus where that event

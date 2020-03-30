@@ -38,32 +38,33 @@ spread(
 
 \S4method{spread}{RasterLayer}(
   landscape,
-  loci = NA_real_,
-  spreadProb = 0.23,
-  persistence = 0,
-  mask = NA,
-  maxSize = 100000000L,
-  directions = 8L,
-  iterations = 1000000L,
-  lowMemory = getOption("spades.lowMemory"),
-  returnIndices = FALSE,
-  returnDistances = FALSE,
-  mapID = NULL,
-  id = FALSE,
-  plot.it = FALSE,
-  spreadProbLater = NA_real_,
-  spreadState = NA,
-  circle = FALSE,
-  circleMaxRadius = NA_real_,
-  stopRule = NA,
-  stopRuleBehavior = "includeRing",
-  allowOverlap = FALSE,
-  asymmetry = NA_real_,
-  asymmetryAngle = NA_real_,
-  quick = FALSE,
-  neighProbs = NULL,
-  exactSizes = FALSE,
-  relativeSpreadProb = FALSE,
+  loci,
+  spreadProb,
+  persistence,
+  mask,
+  maxSize,
+  directions,
+  iterations,
+  lowMemory,
+  returnIndices,
+  returnDistances,
+  mapID,
+  id,
+  plot.it,
+  spreadProbLater,
+  spreadState,
+  circle,
+  circleMaxRadius,
+  stopRule,
+  stopRuleBehavior,
+  allowOverlap,
+  asymmetry,
+  asymmetryAngle,
+  quick,
+  neighProbs,
+  exactSizes,
+  relativeSpreadProb,
+  .zeroVector,
   ...
 )
 }
@@ -112,9 +113,13 @@ until stops spreading itself (i.e., exhausts itself).}
 \item{lowMemory}{Logical. If true, then function uses package \code{ff}
 internally. This is slower, but much lower memory footprint.}
 
-\item{returnIndices}{Logical. Should the function return a \code{data.table}
-with indices and values of successful spread events, or
-return a raster with values. See Details.}
+\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
+return a \code{data.table}
+with indices and values of successful spread events.
+If \code{2}, it will simply return a vector of pixel indices of
+all cells that were touched. This will be the fastest option. If
+\code{FALSE}, then it will return a raster with
+values. See Details.}
 
 \item{returnDistances}{Logical. Should the function include a column with the
 individual cell distances from the locus where that event
@@ -125,7 +130,8 @@ started. Default is \code{FALSE}. See Details.}
 \item{id}{Logical. If \code{TRUE}, returns a raster of events ids.
 If \code{FALSE}, returns a raster of iteration numbers,
 i.e., the spread history of one or more events.
-NOTE: this is overridden if \code{returnIndices} is \code{TRUE}.}
+NOTE: this is overridden if \code{returnIndices} is \code{TRUE}
+or \code{1} or \code{2}.}
 
 \item{plot.it}{If \code{TRUE}, then plot the raster at every iteration,
 so one can watch the spread event grow.}
@@ -263,7 +269,8 @@ are internal.
 }
 \details{
 For large rasters, a combination of \code{lowMemory = TRUE} and
-\code{returnIndices = TRUE} will use the least amount of memory.
+\code{returnIndices = TRUE} or \code{returnIndices = 2}
+will be fastest and use the least amount of memory.
 
 This function can be interrupted before all active cells are exhausted if
 the \code{iterations} value is reached before there are no more active

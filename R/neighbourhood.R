@@ -720,7 +720,7 @@ cir <- function(landscape, coords, loci,
     }
     matDT <- matDT[, -which(colnames(matDT) == "rads"), drop = FALSE]
   }
-  if (!returnIndices) {
+  if (!(returnIndices > 0)) {
     ras <- raster(landscape)
     ras[] <- 0
     if (!allowOverlap) {

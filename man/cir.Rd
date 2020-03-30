@@ -65,9 +65,13 @@ data.table that reports the angle from \code{coords} to every
 point that was in the circle/donut surrounding \code{coords}. Default
 FALSE.}
 
-\item{returnIndices}{Logical. Should the function return a \code{data.table}
-with indices and values of successful spread events, or
-return a raster with values. See Details.}
+\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
+return a \code{data.table}
+with indices and values of successful spread events.
+If \code{2}, it will simply return a vector of pixel indices of
+all cells that were touched. This will be the fastest option. If
+\code{FALSE}, then it will return a raster with
+values. See Details.}
 
 \item{closest}{Logical. When determining non-overlapping circles, should the function
 give preference to the closest \code{loci} or the first one (much faster).
