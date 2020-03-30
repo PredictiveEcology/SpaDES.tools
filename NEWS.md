@@ -10,7 +10,7 @@ version 0.3.4.9000
 * none
 
 ## Enhancements
-* none
+* New values for `returnIndices` arg in `spread`, allowing for `numeric`. New option, `2` allows for the fastest return possible, only `pixelIndices`
 
 version 0.3.4
 =============
