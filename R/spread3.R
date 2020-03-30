@@ -59,7 +59,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
                     advectionMag, meanDist, plot.it = 2,
                     minNumAgents = 50, verbose = getOption("LandR.verbose", 0),
                     saveStack = NULL) {
-
+  dtThr <- data.table::getDTthreads()
   testEquivalentMetadata(rasAbundance, rasQuality)
 
   if (is(advectionDir, "Raster")) {
@@ -105,6 +105,8 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
   rasIterations[start$pixels] <- 0
 
   while (abundanceDispersing > minNumAgents) {
+
+    if (dtThr == 1 && data.table::getDTthreads() != 1) data.table::setDTthreads(1)
     b <- spread2(landscape = rasQuality, start = start,
                  spreadProb = 1, iterations = 1, asRaster = FALSE,
                  returnDistances = TRUE, returnFrom = TRUE,
