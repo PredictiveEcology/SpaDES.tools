@@ -303,19 +303,8 @@ testEquivalentMetadata <- function(...) {
 }
 
 #' @export
+#' @importFrom raster compareRaster
 testEquivalentMetadata.Raster <- function(...) {
-  d <- list(...)
-  res <- lapply(d[-1], function(x) {
-    if (!identical(d[[1]]@extent, x@extent)) {
-      stop("rasAbundance and rasQuality must have same extent")
-    }
-    if (!identical(d[[1]]@crs, x@crs)) {
-      stop("rasAbundance and rasQuality must have same crs")
-    }
-    if (!identical(res(d[[1]]), res(x))) {
-      stop("rasAbundance and rasQuality must have same res")
-    }
-
-  })
+  compareRaster(..., orig = TRUE)
   return(invisible())
 }
