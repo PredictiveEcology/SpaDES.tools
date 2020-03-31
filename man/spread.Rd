@@ -220,6 +220,8 @@ to be \code{TRUE}.}
 required for \code{stopRule}. These
 vectors should be as long as required e.g., length
 \code{loci} if there is one value per event.}
+
+\item{.zeroVector}{DESCRIPTION NEEDED}
 }
 \value{
 Either a \code{RasterLayer} indicating the spread of the process in
