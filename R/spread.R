@@ -398,8 +398,8 @@ setMethod(
     if (!quick) {
       dupLoci <- duplicated(loci)
       if (any(duplicated(loci))) {
-        warning("duplicate initial loci are provided; removing duplicates")
-        loci <- loci[dupLoci]
+        message("duplicate initial loci are provided")
+        # loci <- loci[dupLoci]
       }
     }
 
