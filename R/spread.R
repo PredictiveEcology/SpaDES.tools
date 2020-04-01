@@ -366,8 +366,7 @@ setMethod(
                         returnDistances, mapID, id, plot.it, spreadProbLater,
                         spreadState, circle, circleMaxRadius, stopRule,
                         stopRuleBehavior, allowOverlap, asymmetry, asymmetryAngle,
-                        quick, neighProbs, exactSizes, relativeSpreadProb,
-                        .zeroVector, ...) {
+                        quick, neighProbs, exactSizes, relativeSpreadProb, ...) {
     if (!is.null(neighProbs)) {
       if (isTRUE(allowOverlap)) stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
