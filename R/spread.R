@@ -352,8 +352,6 @@ setGeneric(
 #'              NOTE: this is overridden if \code{returnIndices} is \code{TRUE}
 #'              or \code{1} or \code{2}.
 #'
-#' @param .zeroVector DESCRIPTION NEEDED
-#'
 #' @rdname spread
 #'
 #' @example inst/examples/example_spread.R
