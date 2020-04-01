@@ -369,10 +369,6 @@ setMethod(
     if (!is.null(neighProbs)) {
       if (isTRUE(allowOverlap)) stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
-    if (isTRUE(allowOverlap)) {
-      stop("A bug has been detected when `allowOverwrite = TRUE`; results will be be incorrect.",
-           " perhaps try to lapply(...) around the loci, to do one at a time")
-    }
     if (!is.null(mapID)) {
       warning("mapID is deprecated, use id")
       id <- mapID
@@ -397,7 +393,14 @@ setMethod(
     if (any(is.na(loci)))  {
       # start it in the centre cell, if there is no spreadState
       if (!spreadStateExists)
-        loci <- (nrow(landscape) / 2L + 0.5) * ncol(landscape)
+        loci <- middlePixel(landscape) #(nrow(landscape) / 2L + 0.5) * ncol(landscape)
+    }
+    if (!quick) {
+      dupLoci <- duplicated(loci)
+      if (any(duplicated(loci))) {
+        warning("duplicate initial loci are provided; removing duplicates")
+        loci <- loci[dupLoci]
+      }
     }
 
     if (length(loci) == 0) stop("No loci. Nothing to do")
@@ -417,6 +420,7 @@ setMethod(
     } else {
       initialLoci <- loci
     }
+    lenInitialLoci <- length(initialLoci)
 
     # Check for probabilities
     if (!quick) {
@@ -445,6 +449,7 @@ setMethod(
     ncells <- ncell(landscape)
 
     if (allowOverlap | returnDistances | spreadStateExists) {
+      browser(expr = exists("._spread_1"))
       if (spreadStateExists) {
         spreads <- as.matrix(spreadState[, list(initialLocus, indices, id, active)])
       } else {
@@ -469,6 +474,7 @@ setMethod(
       initialLociXY <- cbind(id = seq_along(initialLoci), xyFromCell(landscape, initialLoci))
       id <- TRUE
       if (allowOverlap | returnDistances) {
+        browser(expr = exists("._spread_2"))
         spreads <- cbind(spreads, dists = 0)
       }
     }
@@ -594,7 +600,7 @@ setMethod(
     }
 
     if (!exists("numRetries", envir = .pkgEnv))
-      assign("numRetries", rep(0, length(initialLoci)), envir = .pkgEnv)
+      assign("numRetries", rep(0, lenInitialLoci), envir = .pkgEnv)
 
     toColumn <- c("to", "indices")
 
@@ -612,6 +618,7 @@ setMethod(
       }
 
       # identify neighbours
+      browser(expr = exists("._spread_3"))
       if (allowOverlap | returnDistances | spreadStateExists) {
         whActive <- spreads[, "active"] == 1 # spreads carries over
         potentials <- adj(landscape, loci, directions, pairs = TRUE,
@@ -630,10 +637,12 @@ setMethod(
       if (circle)
         potentials <- cbind(potentials, dists = 0)
 
+      browser(expr = exists("._spread_18"))
       # keep only neighbours that have not been spread to yet
       if (allowOverlap | returnDistances | spreadStateExists) {
+        browser(expr = exists("._spread_4"))
         # data.table version is faster for potentials > 500 or so
-        if (TRUE) {
+        if (FALSE) {
           spreadsDT <- data.table(spreads)
           potentialsDT <- data.table(potentials)
           potentialsDT[, initialLocus := initialLoci[potentialsDT$id]]
@@ -643,13 +652,38 @@ setMethod(
           setcolorder(potentialsDT,
                       c(colnamesPDT[whIL], colnamesPDT[-c(whIL, whFrom)], colnamesPDT[whFrom]))
           setnames(potentialsDT, old = "to", new = "indices")
-          d <- rbindlist(list(spreadsDT, potentialsDT), fill = TRUE)
-          d <- data.table(d); setkey(d, "id");
-          d[, duplicated := duplicated(indices), by = id]
-          d <- d[duplicated == 0 & active == 1];
-          set(d, , "duplicated", NULL)
-          potentials <- as.matrix(d)
-        } else {
+          # d <- rbindlist(list(spreadsDT, potentialsDT), fill = TRUE)
+          # # d <- data.table(d);
+          # setkey(d, "id");
+          # d[, duplicated := duplicated(indices), by = id]
+          # d <- d[duplicated == 0 & active == 1];
+          # set(d, , "duplicated", NULL)
+          # potentials <- as.matrix(d)
+          newPot <- potentialsDT[!spreadsDT, on = c("id", "indices")]
+          potentials1 <- as.matrix(newPot)
+          #if (NROW(potentialsDT) != NROW(potentials))
+          #  browser()
+
+        }
+        if (TRUE) {
+          potentials <- cbind(initialLocus = initialLoci[potentials[, "id"]], potentials)
+          colnames(potentials)[which(colnames(potentials) == "to")] <- "indices"
+          colnamesPot <- colnames(potentials)
+          whIL <- which(colnamesPot == "initialLocus")
+          whFrom <- which(colnamesPot == "from")
+          potentials <- potentials[,c(colnamesPot[whIL],
+                                      colnamesPot[-c(whIL, whFrom)],
+                                      colnamesPot[whFrom])]
+          #browser()
+          out <- lapply(seq(lenInitialLoci), function(ind) {
+            po <- potentials[potentials[, "id"] == ind, ]
+            po[!po[,2L] %in% spreads[spreads[,"id"] == ind,"indices"],]
+          })
+          potentials <- do.call(rbind, out)
+        }
+        # if (!isTRUE(all.equal(NROW(potentials), NROW(potentials1))))
+        #   browser()
+        if (FALSE) {
           potentialsFrom <- potentials[, "from"]
           colnames(potentials) <- colnames(spreads)
           # get rid of immediate "from" and replace with original "from"
@@ -668,6 +702,7 @@ setMethod(
         }
 
       } else {
+        # Keep only the ones where it hasn't been spread to yet
         keep <- spreads[potentials[, 2L]] == 0L
         potentials <- potentials[keep, , drop = FALSE]
       }
@@ -706,6 +741,7 @@ setMethod(
 
       if (!is.na(asymmetry)) {
         if (allowOverlap | returnDistances) {
+          browser(expr = exists("._spread_5"))
           a <- cbind(id = potentials[, 3L], to = potentials[, 2L],
                      xyFromCell(landscape, potentials[, 2L]))
         } else {
@@ -747,14 +783,35 @@ setMethod(
         spreadProbs[spreadProbs > 0] <- 1
       }
 
+      browser(expr = exists("._spread_17"))
       potentials <- potentials[runif(NROW(potentials)) <= spreadProbs, , drop = FALSE]
 
       # random ordering so not always same:
       potentials <- potentials[sample.int(NROW(potentials)), , drop = FALSE]
       if (!allowOverlap) {
-        # here is where allowOverlap and returnDistances are different
+        # here is where allowOverlap and returnDistances are different ##### NOW OBSOLETE, I BELIEVE ELIOT March 2020
         potentials <- potentials[!duplicated(potentials[, 2L]), , drop = FALSE]
+      } else {
+        pots <- potentials[, c("id", "indices"), drop = FALSE]
+        potentials <- potentials[!duplicated(pots), , drop = FALSE]
       }
+      #   spreadsDT <- data.table(spreads)
+      #   potentialsDT <- as.data.table(potentials)
+      #   potentialsDT[, initialLocus := initialLoci[potentialsDT$id]]
+      #   colnamesPDT <- colnames(potentialsDT)
+      #   whIL <- which(colnamesPDT == "initialLocus")
+      #   whFrom <- which(colnamesPDT == "from")
+      #   setcolorder(potentialsDT,
+      #               c(colnamesPDT[whIL], colnamesPDT[-c(whIL, whFrom)], colnamesPDT[whFrom]))
+      #   setnames(potentialsDT, old = "to", new = "indices")
+      #   d <- rbindlist(list(spreadsDT, potentialsDT), fill = TRUE)
+      #   # d <- data.table(d);
+      #   #setkey(d, "id");
+      #   d[, duplicated := duplicated(indices), by = id]
+      #   d <- d[duplicated == 0 & active == 1];
+      #   set(d, , "duplicated", NULL)
+      #   potentials <- as.matrix(d)
+      # }
 
       # increment iteration
       n <- n + 1L
@@ -765,6 +822,7 @@ setMethod(
         if (!missing(circle)) {
           if (circle) {
             if (allowOverlap | returnDistances) {
+              browser(expr = exists("._spread_6"))
               a <- cbind(potentials, xyFromCell(landscape, potentials[, 2L]))
             } else {
               a <- cbind(potentials, id = spreads[potentials[, "from"]],
@@ -795,6 +853,7 @@ setMethod(
 
         if (!noMaxSize) {
           if (allowOverlap | returnDistances | spreadStateExists) {
+            browser(expr = exists("._spread_7"))
             len <- tabulate(potentials[, 3L], length(maxSize))
           } else {
             # actually interested in potential[,2L], but they don't have values yet..
@@ -809,6 +868,7 @@ setMethod(
 
             for (i in 1:length(whichID)) {
               if (allowOverlap | returnDistances | spreadStateExists) {
+                browser(expr = exists("._spread_8"))
                 thisID <- which(potentials[, 3L] == whichID[i])
               } else {
                 thisID <- which(spreads[potentials[, 1L]] == whichID[i])
@@ -826,6 +886,7 @@ setMethod(
         # Implement stopRule section
         if (is.function(stopRule) & length(events) > 0) {
           if (allowOverlap | returnDistances) {
+            browser(expr = exists("._spread_9"))
             prevCells <- cbind(
               id = spreads[, "id"],
               landscape = if (landRasNeeded) landRas[spreads[, "indices"]] else NULL,
@@ -928,6 +989,7 @@ setMethod(
         if (length(events) > 0) {
           # place new value at new cells that became active
           if (allowOverlap | returnDistances | spreadStateExists) {
+            browser(expr = exists("._spread_10"))
             fromCol <- colnames(potentials) == "from"
 
             spreads <- rbind(spreads, potentials[, !fromCol])
@@ -958,6 +1020,7 @@ setMethod(
             # must update toKeepSR in case that is a second reason to stop event
             if (exists("toKeepSR", inherits = FALSE)) {
               if (allowOverlap | returnDistances) {
+                browser(expr = exists("._spread_11"))
                 maxSizeKeep <- !(spreads[spreads[, "active"] == 1, "id"] %fin% whichID)
                 spreads <- spreads[c(rep(TRUE, sum(spreads[, "active"] == 0)), maxSizeKeep), ]
               } else {
@@ -980,6 +1043,7 @@ setMethod(
           if (exists("toKeepSR", inherits = FALSE)) {
             events <- events[toKeepSR]
             if (allowOverlap | returnDistances) {
+              browser(expr = exists("._spread_12"))
               spreads[c(rep(TRUE, sum(spreads[, "active"] == 0)), !toKeepSR), "active"] <- 0
             }
             rm(toKeepSR)
@@ -1048,6 +1112,7 @@ setMethod(
       if (plot.it) {
         if (n == 2 & !spreadStateExists) clearPlot()
         if (allowOverlap | returnDistances) {
+          browser(expr = exists("._spread_13"))
           spreadsDT <- data.table(spreads);
           hab2 <- landscape;
           hab2[] <- 0;
@@ -1062,14 +1127,17 @@ setMethod(
       }
 
       # new loci list for next while loop, concat of persistent and new events
+      browser(expr = exists("._spread_19"))
       loci <- c(loci, events)
     } # end of while loop
+    browser(expr = exists("._spread_14"))
 
     # Convert the data back to raster
     if (!allowOverlap & !returnDistances & !spreadStateExists) {
       if (lowMemory) {
         wh <- ffwhich(spreads, spreads > 0) %>% as.ram()
         if (returnIndices > 0) {
+          wh <- wh[!(wh %in% potentials[,2L])]
           completed <- data.table(indices = wh, id = spreads[wh], active = FALSE)
           if (NROW(potentials) > 0) {
             active <- data.table(indices = potentials[, 2L],
@@ -1087,6 +1155,9 @@ setMethod(
           spreadsIndices
         }
         if (returnIndices > 0) {
+          # wh already contains the potentials for next iteration -- these should be not duplicated
+          #   inside "completed"
+          wh <- wh[!(wh %in% potentials[,2L])]
           completed <- wh %>% data.table(indices = ., id = spreads[.], active = FALSE)
           if (NROW(potentials) > 0) {
             active <- data.table(indices = potentials[, 2L],
@@ -1110,13 +1181,14 @@ setMethod(
         set(allCells, , j = "active", as.logical(allCells$active))
         setkeyv(allCells, "id")
       } else {
-        allCells <- rbindlist(list(active, completed)) # active first; next line will keep active
+        allCells <- rbindlist(list(completed, active)) # active first; next line will keep active
         if (spreadStateExists) {
           initEventID <- unique(spreadState$id)
         } else {
           initEventID <- allCells[indices %fin% initialLoci, id]
         }
         if (!all(is.na(initialLoci))) {
+          attr(initialLoci, ".match.hash") <- NULL # something in data.table put this
           dtToJoin <- data.table(id = sort(initEventID), initialLocus = initialLoci)
         } else {
           dtToJoin <- data.table(id = numeric(0), initialLocus = numeric(0))
@@ -1140,11 +1212,13 @@ setMethod(
     landscape[] <- 0
     landscape@legend@colortable <- logical(0) # remove colour table
     if (allowOverlap | returnDistances) {
+      browser(expr = exists("._spread_15"))
       if (returnDistances & !allowOverlap) {
         landscape[spreads[, "indices"]] <- spreads[, "dists"]
       } else {
         spreadsDT <- data.table(spreads);
         if (returnDistances & allowOverlap) {
+          browser(expr = exists("._spread_16"))
           pixVal <- spreadsDT[, min(dists), by = indices]
           message("returnDistances is TRUE, allowOverlap is TRUE, but returnIndices is FALSE; ",
                   "returning minimum distance raster.")
