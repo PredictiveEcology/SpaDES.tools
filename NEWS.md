@@ -7,9 +7,10 @@ version 0.3.4.9000
 * none
 
 ## Bugfixes
-* none
+* `spread` with `allowOverlap = TRUE` would give wrong results. Fixed.
 
 ## Enhancements
+* `spread` sped up for `allowOverlap = TRUE`
 * New values for `returnIndices` arg in `spread`, allowing for `numeric`. New option, `2` allows for the fastest return possible, only `pixelIndices`
 
 version 0.3.4
