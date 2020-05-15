@@ -3,6 +3,10 @@ Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 version 0.3.5
 =============
 
+We have identified a non-trivial bug in `spread` when using `allowOverlap = TRUE`.
+Until we can patch this bug, using this argument value will generate an error.
+We are currently working on a fix, which may take some time.
+
 ## Dependency changes
 * none
 
