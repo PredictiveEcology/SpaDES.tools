@@ -58,7 +58,7 @@ parallel::makeCluster or equivalent. This is an alternative way, instead
 of \code{beginCluster()}, to use parallelism for this function, allowing for
 more control over cluster use.}
 
-\item{rType}{Datatype of the split rasters. Defaults to FLT4S.}
+\item{rType}{Data type of the split rasters. Defaults to FLT4S.}
 }
 \value{
 \code{mergeRaster} returns a \code{RasterLayer} object.

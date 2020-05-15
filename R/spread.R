@@ -22,7 +22,8 @@ if (getRversion() >= "3.1.0") {
 #' are internal.
 #'
 #' For large rasters, a combination of \code{lowMemory = TRUE} and
-#' \code{returnIndices = TRUE} will use the least amount of memory.
+#' \code{returnIndices = TRUE} or \code{returnIndices = 2}
+#' will be fastest and use the least amount of memory.
 #'
 #' This function can be interrupted before all active cells are exhausted if
 #' the \code{iterations} value is reached before there are no more active
@@ -175,12 +176,16 @@ if (getRversion() >= "3.1.0") {
 #'                      Leaving this \code{NULL} allows the spread to continue
 #'                      until stops spreading itself (i.e., exhausts itself).
 #'
-#' @param lowMemory     Logical. If true, then function uses package \code{ff}
+#' @param lowMemory     Logical. If true, then function uses package \pkg{ff}
 #'                      internally. This is slower, but much lower memory footprint.
 #'
-#' @param returnIndices Logical. Should the function return a \code{data.table}
-#'                      with indices and values of successful spread events, or
-#'                      return a raster with values. See Details.
+#' @param returnIndices Logical or numeric. If \code{1} or \code{TRUE}, will
+#'                      return a \code{data.table} with indices and values of
+#'                      successful spread events.
+#'                      If \code{2}, it will simply return a vector of pixel indices of
+#'                      all cells that were touched. This will be the fastest option. If
+#'                      \code{FALSE}, then it will return a raster with
+#'                      values. See Details.
 #'
 #' @param returnDistances Logical. Should the function include a column with the
 #'                      individual cell distances from the locus where that event
@@ -303,8 +308,6 @@ if (getRversion() >= "3.1.0") {
 #' @author Eliot McIntire and Steve Cumming
 #' @export
 #' @importFrom data.table := data.table setcolorder
-#' @importFrom ff as.ram ff
-#' @importFrom ffbase ffwhich
 #' @importFrom fastmatch %fin%
 #' @importFrom fpCompare %<=%
 #' @importFrom magrittr %>%
@@ -320,13 +323,13 @@ if (getRversion() >= "3.1.0") {
 #' Also, \code{\link{rings}} which uses \code{spread} but with specific argument
 #' values selected for a specific purpose.
 #' \code{\link[raster]{distanceFromPoints}}.
-#' \code{cir} to create "circles"; it is fast for many small problems.
+#' \code{\link{cir}} to create "circles"; it is fast for many small problems.
 #'
 setGeneric(
   "spread",
   function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 0,
            mask = NA, maxSize = 1e8L, directions = 8L, iterations = 1e6L,
-           lowMemory = getOption("spades.lowMemory"), returnIndices = FALSE,
+           lowMemory = getOption("spades.lowMemory", FALSE), returnIndices = FALSE,
            returnDistances = FALSE, mapID = NULL, id = FALSE, plot.it = FALSE,
            spreadProbLater = NA_real_, spreadState = NA,
            circle = FALSE, circleMaxRadius = NA_real_,
@@ -344,7 +347,10 @@ setGeneric(
 #' @param id    Logical. If \code{TRUE}, returns a raster of events ids.
 #'              If \code{FALSE}, returns a raster of iteration numbers,
 #'              i.e., the spread history of one or more events.
-#'              NOTE: this is overridden if \code{returnIndices} is \code{TRUE}.
+#'              NOTE: this is overridden if \code{returnIndices} is \code{TRUE}
+#'              or \code{1} or \code{2}.
+#'
+#' @param .zeroVector DESCRIPTION NEEDED
 #'
 #' @rdname spread
 #'
@@ -358,9 +364,15 @@ setMethod(
                         returnDistances, mapID, id, plot.it, spreadProbLater,
                         spreadState, circle, circleMaxRadius, stopRule,
                         stopRuleBehavior, allowOverlap, asymmetry, asymmetryAngle,
-                        quick, neighProbs, exactSizes, relativeSpreadProb, ...) {
+                        quick, neighProbs, exactSizes, relativeSpreadProb,
+                        .zeroVector, ...) {
     if (!is.null(neighProbs)) {
-      if (isTRUE(allowOverlap)) stop("Can't use neighProbs and allowOverlap = TRUE together")
+      if (isTRUE(allowOverlap))
+        stop("Can't use neighProbs and allowOverlap = TRUE together")
+    }
+    if (isTRUE(allowOverlap)) {
+      stop("A bug has been detected when `allowOverwrite = TRUE`; results will be be incorrect.",
+           "Perhaps try to lapply(...) around the loci, to do one at a time.")
     }
     if (!is.null(mapID)) {
       warning("mapID is deprecated, use id")
@@ -372,6 +384,11 @@ setMethod(
         stop("stopRuleBehaviour must be one of \"",
              paste(allowedRules, collapse = "\", \""), "\".")
     }
+    if (isTRUE(lowMemory)) {
+      requireNamespace("ff", quietly = TRUE)
+      requireNamespace("ffbase", quietly = TRUE)
+    }
+
     spreadStateExists <- is(spreadState, "data.table")
     spreadProbLaterExists <- TRUE
 
@@ -444,7 +461,7 @@ setMethod(
       if (lowMemory) {
         # create vector of 0s called spreads, which corresponds to the indices
         # of the landscape raster
-        spreads <- ff(vmode = "short", 0, length = ncells)
+        spreads <- ff::ff(vmode = "short", 0, length = ncells)
       } else {
         spreads <- vector("integer", ncells)
       }
@@ -505,7 +522,7 @@ setMethod(
     }
 
     if (!allowOverlap & !returnDistances) {
-      if (id | returnIndices | relativeSpreadProb) {
+      if (id | returnIndices > 0 | relativeSpreadProb) {
         if (!spreadStateExists) {
           # give values to spreads vector at initialLoci
           spreads[loci] <- 1L:length(loci)
@@ -608,7 +625,7 @@ setMethod(
         spreads[whActive, "active"] <- 0
         potentials <- cbind(potentials, active = 1)
       } else {
-        if (id | returnIndices | circle | relativeSpreadProb | !is.null(neighProbs)) {
+        if (id | returnIndices > 0 | circle | relativeSpreadProb | !is.null(neighProbs)) {
           potentials <- adj(landscape, loci, directions, pairs = TRUE)
         } else {
           # must pad the first column of potentials
@@ -636,7 +653,7 @@ setMethod(
           d <- data.table(d); setkey(d, "id");
           d[, duplicated := duplicated(indices), by = id]
           d <- d[duplicated == 0 & active == 1];
-          set(d, , "duplicated", NULL)
+          set(d, NULL, "duplicated", NULL)
           potentials <- as.matrix(d)
         } else {
           potentialsFrom <- potentials[, "from"]
@@ -930,7 +947,7 @@ setMethod(
               events <- events[notDupsEvents]
             }
           } else {
-            if (id | returnIndices | relativeSpreadProb) {
+            if (id | returnIndices > 0 | relativeSpreadProb) {
               # give new cells, the id of the source cell
               spreads[events] <- spreads[potentials[, 1L]]
             } else {
@@ -1057,8 +1074,8 @@ setMethod(
     # Convert the data back to raster
     if (!allowOverlap & !returnDistances & !spreadStateExists) {
       if (lowMemory) {
-        wh <- ffwhich(spreads, spreads > 0) %>% as.ram()
-        if (returnIndices) {
+        wh <- ffbase::ffwhich(spreads, spreads > 0) %>% ff::as.ram()
+        if (returnIndices > 0) {
           completed <- data.table(indices = wh, id = spreads[wh], active = FALSE)
           if (NROW(potentials) > 0) {
             active <- data.table(indices = potentials[, 2L],
@@ -1075,7 +1092,7 @@ setMethod(
         } else {
           spreadsIndices
         }
-        if (returnIndices) {
+        if (returnIndices > 0) {
           completed <- wh %>% data.table(indices = ., id = spreads[.], active = FALSE)
           if (NROW(potentials) > 0) {
             active <- data.table(indices = potentials[, 2L],
@@ -1089,7 +1106,7 @@ setMethod(
       }
     }
 
-    if (returnIndices) {
+    if (returnIndices == 1) {
       if (allowOverlap | returnDistances | spreadStateExists) {
         keepCols <- c(3, 1, 2, 4)
         if (circle) keepCols <- c(keepCols, 5)
@@ -1121,6 +1138,9 @@ setMethod(
         if (sum(allCells$active) == 0) rm("numRetries", envir = .pkgEnv)
       }
       return(allCells)
+    }
+    if (returnIndices == 2) {
+      return(wh)
     }
 
     landscape[] <- 0
