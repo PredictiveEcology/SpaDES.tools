@@ -176,12 +176,12 @@ if (getRversion() >= "3.1.0") {
 #'                      Leaving this \code{NULL} allows the spread to continue
 #'                      until stops spreading itself (i.e., exhausts itself).
 #'
-#' @param lowMemory     Logical. If true, then function uses package \code{ff}
+#' @param lowMemory     Logical. If true, then function uses package \pkg{ff}
 #'                      internally. This is slower, but much lower memory footprint.
 #'
 #' @param returnIndices Logical or numeric. If \code{1} or \code{TRUE}, will
-#'                      return a \code{data.table}
-#'                      with indices and values of successful spread events.
+#'                      return a \code{data.table} with indices and values of
+#'                      successful spread events.
 #'                      If \code{2}, it will simply return a vector of pixel indices of
 #'                      all cells that were touched. This will be the fastest option. If
 #'                      \code{FALSE}, then it will return a raster with
@@ -308,8 +308,6 @@ if (getRversion() >= "3.1.0") {
 #' @author Eliot McIntire and Steve Cumming
 #' @export
 #' @importFrom data.table := data.table setcolorder
-#' @importFrom ff as.ram ff
-#' @importFrom ffbase ffwhich
 #' @importFrom fastmatch %fin%
 #' @importFrom fpCompare %<=%
 #' @importFrom magrittr %>%
@@ -325,13 +323,13 @@ if (getRversion() >= "3.1.0") {
 #' Also, \code{\link{rings}} which uses \code{spread} but with specific argument
 #' values selected for a specific purpose.
 #' \code{\link[raster]{distanceFromPoints}}.
-#' \code{cir} to create "circles"; it is fast for many small problems.
+#' \code{\link{cir}} to create "circles"; it is fast for many small problems.
 #'
 setGeneric(
   "spread",
   function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 0,
            mask = NA, maxSize = 1e8L, directions = 8L, iterations = 1e6L,
-           lowMemory = getOption("spades.lowMemory"), returnIndices = FALSE,
+           lowMemory = getOption("spades.lowMemory", FALSE), returnIndices = FALSE,
            returnDistances = FALSE, mapID = NULL, id = FALSE, plot.it = FALSE,
            spreadProbLater = NA_real_, spreadState = NA,
            circle = FALSE, circleMaxRadius = NA_real_,
@@ -386,6 +384,11 @@ setMethod(
         stop("stopRuleBehaviour must be one of \"",
              paste(allowedRules, collapse = "\", \""), "\".")
     }
+    if (isTRUE(lowMemory)) {
+      requireNamespace("ff", quietly = TRUE)
+      requireNamespace("ffbase", quietly = TRUE)
+    }
+
     spreadStateExists <- is(spreadState, "data.table")
     spreadProbLaterExists <- TRUE
 
@@ -458,7 +461,7 @@ setMethod(
       if (lowMemory) {
         # create vector of 0s called spreads, which corresponds to the indices
         # of the landscape raster
-        spreads <- ff(vmode = "short", 0, length = ncells)
+        spreads <- ff::ff(vmode = "short", 0, length = ncells)
       } else {
         spreads <- vector("integer", ncells)
       }
@@ -650,7 +653,7 @@ setMethod(
           d <- data.table(d); setkey(d, "id");
           d[, duplicated := duplicated(indices), by = id]
           d <- d[duplicated == 0 & active == 1];
-          set(d, , "duplicated", NULL)
+          set(d, NULL, "duplicated", NULL)
           potentials <- as.matrix(d)
         } else {
           potentialsFrom <- potentials[, "from"]
@@ -1071,7 +1074,7 @@ setMethod(
     # Convert the data back to raster
     if (!allowOverlap & !returnDistances & !spreadStateExists) {
       if (lowMemory) {
-        wh <- ffwhich(spreads, spreads > 0) %>% as.ram()
+        wh <- ffbase::ffwhich(spreads, spreads > 0) %>% ff::as.ram()
         if (returnIndices > 0) {
           completed <- data.table(indices = wh, id = spreads[wh], active = FALSE)
           if (NROW(potentials) > 0) {

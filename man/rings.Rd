@@ -57,8 +57,8 @@ than if \code{allowOverlap = FALSE}).
 Default is \code{FALSE}.}
 
 \item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
-return a \code{data.table}
-with indices and values of successful spread events.
+return a \code{data.table} with indices and values of
+successful spread events.
 If \code{2}, it will simply return a vector of pixel indices of
 all cells that were touched. This will be the fastest option. If
 \code{FALSE}, then it will return a raster with

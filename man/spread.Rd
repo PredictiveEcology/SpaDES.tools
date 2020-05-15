@@ -14,7 +14,7 @@ spread(
   maxSize = 100000000L,
   directions = 8L,
   iterations = 1000000L,
-  lowMemory = getOption("spades.lowMemory"),
+  lowMemory = getOption("spades.lowMemory", FALSE),
   returnIndices = FALSE,
   returnDistances = FALSE,
   mapID = NULL,
@@ -110,12 +110,12 @@ default is 8 (Queen case). Can only be 4 or 8.}
 Leaving this \code{NULL} allows the spread to continue
 until stops spreading itself (i.e., exhausts itself).}
 
-\item{lowMemory}{Logical. If true, then function uses package \code{ff}
+\item{lowMemory}{Logical. If true, then function uses package \pkg{ff}
 internally. This is slower, but much lower memory footprint.}
 
 \item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
-return a \code{data.table}
-with indices and values of successful spread events.
+return a \code{data.table} with indices and values of
+successful spread events.
 If \code{2}, it will simply return a vector of pixel indices of
 all cells that were touched. This will be the fastest option. If
 \code{FALSE}, then it will return a raster with
@@ -674,7 +674,7 @@ argument combinations.
 Also, \code{\link{rings}} which uses \code{spread} but with specific argument
 values selected for a specific purpose.
 \code{\link[raster]{distanceFromPoints}}.
-\code{cir} to create "circles"; it is fast for many small problems.
+\code{\link{cir}} to create "circles"; it is fast for many small problems.
 }
 \author{
 Eliot McIntire and Steve Cumming
