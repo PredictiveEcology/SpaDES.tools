@@ -8,7 +8,7 @@ Until we can patch this bug, using this argument value will generate an error.
 We are currently working on a fix, which may take some time.
 
 ## Dependency changes
-* removed orphaned package `bit`; it's reverse dependencies `ff` and `ffbase` moved to Suggests
+* removed orphaned package `bit`; its reverse dependencies, `ff` and `ffbase`, moved to Suggests
 
 ## Bugfixes
 * none

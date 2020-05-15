@@ -1,6 +1,6 @@
 ## Updated release
 
-This is a maintenance release which fixes some issues with failing tests.
+This is a maintenance release, which removes dependency on orphaned package `bit` and fixes some issues with failing tests.
 See `NEWS.md`.
 
 ## Test environments
@@ -38,5 +38,9 @@ There was 1 NOTEs:
 
 ## Downstream dependencies
 
-We have run R CMD check on downstream dependencies, and all have passed.
+We checked 3 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
+ 
 Summary at https://github.com/PredictiveEcology/SpaDES.tools/blob/master/revdep/README.md.
