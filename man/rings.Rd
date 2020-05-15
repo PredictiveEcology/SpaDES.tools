@@ -93,15 +93,16 @@ emptyRas <- raster(extent(0, 1e2, 0, 1e2), res = 1)
 loci <- (ncell(emptyRas) / 2 - ncol(emptyRas)) / 2 + c(-3, 3)
 
 # Allow overlap
-emptyRas[] <- 0
-rngs <- rings(emptyRas, loci = loci, allowOverlap = TRUE, returnIndices = TRUE)
-# Make a raster that adds together all id in a cell
-wOverlap <- rngs[, list(sumEventID = sum(id)), by = "indices"]
-emptyRas[wOverlap$indices] <- wOverlap$sumEventID
-if (interactive()) {
-  clearPlot()
-  Plot(emptyRas)
-}
+## TODO: need to fix a bug when allowOverlap = TRUE
+# emptyRas[] <- 0
+# rngs <- rings(emptyRas, loci = loci, allowOverlap = TRUE, returnIndices = TRUE)
+# # Make a raster that adds together all id in a cell
+# wOverlap <- rngs[, list(sumEventID = sum(id)), by = "indices"]
+# emptyRas[wOverlap$indices] <- wOverlap$sumEventID
+# if (interactive()) {
+#  clearPlot()
+#  Plot(emptyRas)
+# }
 
 # No overlap is default, occurs randomly
 emptyRas[] <- 0

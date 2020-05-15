@@ -369,7 +369,8 @@ setMethod(
                         quick, neighProbs, exactSizes, relativeSpreadProb,
                         .zeroVector, ...) {
     if (!is.null(neighProbs)) {
-      if (isTRUE(allowOverlap)) stop("Can't use neighProbs and allowOverlap = TRUE together")
+      if (isTRUE(allowOverlap))
+        stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
     if (isTRUE(allowOverlap)) {
       stop("A bug has been detected when `allowOverwrite = TRUE`; results will be be incorrect.",

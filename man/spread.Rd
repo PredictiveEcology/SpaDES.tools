@@ -590,26 +590,27 @@ twoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = T
 ##############
 # allowOverlap
 ##############
-set.seed(3113)
-initialLoci <- as.integer(sample(1:ncell(hab), 10))
-
-# using "landscape", "id", and a variable passed in
-maxVal <- rep(500, length(initialLoci))
-
-# define stopRule
-stopRule2 <- function(landscape, id, maxVal) sum(landscape) > maxVal[id]
-circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci, stopRule = stopRule2,
-                id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "includeRing",
-                maxVal = maxVal, returnIndices = TRUE)
-(vals <- tapply(hab[circs$indices], circs$id, sum))
-vals <= maxVal ## all TRUE
-overlapEvents <- raster(hab)
-overlapEvents[] <- 0
-toMap <- circs[, sum(id), by = indices]
-overlapEvents[toMap$indices] <- toMap$V1
-
-clearPlot()
-Plot(overlapEvents)
+## TODO: fix error when allowOverlap = TRUE
+# set.seed(3113)
+# initialLoci <- as.integer(sample(1:ncell(hab), 10))
+#
+# # using "landscape", "id", and a variable passed in
+# maxVal <- rep(500, length(initialLoci))
+#
+# # define stopRule
+# stopRule2 <- function(landscape, id, maxVal) sum(landscape) > maxVal[id]
+# circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci, stopRule = stopRule2,
+#                 id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "includeRing",
+#                 maxVal = maxVal, returnIndices = TRUE)
+# (vals <- tapply(hab[circs$indices], circs$id, sum))
+# vals <= maxVal ## all TRUE
+# overlapEvents <- raster(hab)
+# overlapEvents[] <- 0
+# toMap <- circs[, sum(id), by = indices]
+# overlapEvents[toMap$indices] <- toMap$V1
+#
+# clearPlot()
+# Plot(overlapEvents)
 
 ## Using alternative algorithm, not probabilistic diffusion
 ## Will give exactly correct sizes, yet still with variability
