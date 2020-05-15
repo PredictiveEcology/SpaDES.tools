@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -42,7 +46,6 @@ Uses spread under the hood, with specific values set.
 Under many situations, this will be faster than using rgeos::gBuffer
 twice (once for smaller ring and once for larger ring, then removing the
 smaller ring cells)." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -60,7 +63,7 @@ smaller ring cells)." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -74,7 +77,7 @@ smaller ring cells)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
       </span>
     </div>
 
@@ -95,7 +98,7 @@ smaller ring cells)." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/PredictiveEcology/SpaDES.tools">
+  <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -173,7 +176,8 @@ with <code><a href='https://rdrr.io/pkg/raster/man/cellFrom.html'>cellFromXY</a>
       <td><p>Logical. If <code>TRUE</code>, returns a raster of events ids.
 If <code>FALSE</code>, returns a raster of iteration numbers,
 i.e., the spread history of one or more events.
-NOTE: this is overridden if <code>returnIndices</code> is <code>TRUE</code>.</p></td>
+NOTE: this is overridden if <code>returnIndices</code> is <code>TRUE</code>
+or <code>1</code> or <code>2</code>.</p></td>
     </tr>
     <tr>
       <th>minRadius</th>
@@ -194,9 +198,13 @@ Default is <code>FALSE</code>.</p></td>
     </tr>
     <tr>
       <th>returnIndices</th>
-      <td><p>Logical. Should the function return a <code>data.table</code>
-with indices and values of successful spread events, or
-return a raster with values. See Details.</p></td>
+      <td><p>Logical or numeric. If <code>1</code> or <code>TRUE</code>, will
+return a <code>data.table</code> with indices and values of
+successful spread events.
+If <code>2</code>, it will simply return a vector of pixel indices of
+all cells that were touched. This will be the fastest option. If
+<code>FALSE</code>, then it will return a raster with
+values. See Details.</p></td>
     </tr>
     <tr>
       <th>returnDistances</th>
@@ -235,15 +243,16 @@ See example.</p>
 <span class='no'>loci</span> <span class='kw'>&lt;-</span> (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>emptyRas</span>) / <span class='fl'>2</span> - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>emptyRas</span>)) / <span class='fl'>2</span> + <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>3</span>, <span class='fl'>3</span>)
 
 <span class='co'># Allow overlap</span>
-<span class='no'>emptyRas</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-<span class='no'>rngs</span> <span class='kw'>&lt;-</span> <span class='fu'>rings</span>(<span class='no'>emptyRas</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>loci</span>, <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='co'># Make a raster that adds together all id in a cell</span>
-<span class='no'>wOverlap</span> <span class='kw'>&lt;-</span> <span class='no'>rngs</span>[, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>sumEventID</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>id</span>)), <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"indices"</span>]
-<span class='no'>emptyRas</span>[<span class='no'>wOverlap</span>$<span class='no'>indices</span>] <span class='kw'>&lt;-</span> <span class='no'>wOverlap</span>$<span class='no'>sumEventID</span>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>emptyRas</span>)
-}
+<span class='co'>## TODO: need to fix a bug when allowOverlap = TRUE</span>
+<span class='co'># emptyRas[] &lt;- 0</span>
+<span class='co'># rngs &lt;- rings(emptyRas, loci = loci, allowOverlap = TRUE, returnIndices = TRUE)</span>
+<span class='co'># # Make a raster that adds together all id in a cell</span>
+<span class='co'># wOverlap &lt;- rngs[, list(sumEventID = sum(id)), by = "indices"]</span>
+<span class='co'># emptyRas[wOverlap$indices] &lt;- wOverlap$sumEventID</span>
+<span class='co'># if (interactive()) {</span>
+<span class='co'>#  clearPlot()</span>
+<span class='co'>#  Plot(emptyRas)</span>
+<span class='co'># }</span>
 
 <span class='co'># No overlap is default, occurs randomly</span>
 <span class='no'>emptyRas</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
@@ -264,17 +273,10 @@ See example.</p>
   <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>emptyRas</span>)
 }</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Eliot McIntire</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -285,7 +287,7 @@ See example.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

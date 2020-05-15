@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -50,7 +54,6 @@ used to build custom functions.
 However, under some conditions, this spread function is faster.
 The two functions can accomplish many of the same things, and key differences
 are internal." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -68,7 +71,7 @@ are internal." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -82,7 +85,7 @@ are internal." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
       </span>
     </div>
 
@@ -103,7 +106,7 @@ are internal." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/PredictiveEcology/SpaDES.tools">
+  <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -152,7 +155,7 @@ are internal.</p>
   <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fl'>100000000L</span>,
   <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8L</span>,
   <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1000000L</span>,
-  <span class='kw'>lowMemory</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"spades.lowMemory"</span>),
+  <span class='kw'>lowMemory</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"spades.lowMemory"</span>, <span class='fl'>FALSE</span>),
   <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>mapID</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -177,32 +180,33 @@ are internal.</p>
 <span class='co'># S4 method for RasterLayer</span>
 <span class='fu'>spread</span>(
   <span class='no'>landscape</span>,
-  <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.23</span>,
-  <span class='kw'>persistence</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>mask</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fl'>100000000L</span>,
-  <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8L</span>,
-  <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1000000L</span>,
-  <span class='kw'>lowMemory</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"spades.lowMemory"</span>),
-  <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>mapID</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>spreadProbLater</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>spreadState</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>circleMaxRadius</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>stopRuleBehavior</span> <span class='kw'>=</span> <span class='st'>"includeRing"</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>quick</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>exactSizes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>relativeSpreadProb</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>loci</span>,
+  <span class='no'>spreadProb</span>,
+  <span class='no'>persistence</span>,
+  <span class='no'>mask</span>,
+  <span class='no'>maxSize</span>,
+  <span class='no'>directions</span>,
+  <span class='no'>iterations</span>,
+  <span class='no'>lowMemory</span>,
+  <span class='no'>returnIndices</span>,
+  <span class='no'>returnDistances</span>,
+  <span class='no'>mapID</span>,
+  <span class='no'>id</span>,
+  <span class='no'>plot.it</span>,
+  <span class='no'>spreadProbLater</span>,
+  <span class='no'>spreadState</span>,
+  <span class='no'>circle</span>,
+  <span class='no'>circleMaxRadius</span>,
+  <span class='no'>stopRule</span>,
+  <span class='no'>stopRuleBehavior</span>,
+  <span class='no'>allowOverlap</span>,
+  <span class='no'>asymmetry</span>,
+  <span class='no'>asymmetryAngle</span>,
+  <span class='no'>quick</span>,
+  <span class='no'>neighProbs</span>,
+  <span class='no'>exactSizes</span>,
+  <span class='no'>relativeSpreadProb</span>,
+  <span class='no'>.zeroVector</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -268,14 +272,18 @@ until stops spreading itself (i.e., exhausts itself).</p></td>
     </tr>
     <tr>
       <th>lowMemory</th>
-      <td><p>Logical. If true, then function uses package <code>ff</code>
+      <td><p>Logical. If true, then function uses package <span class="pkg">ff</span>
 internally. This is slower, but much lower memory footprint.</p></td>
     </tr>
     <tr>
       <th>returnIndices</th>
-      <td><p>Logical. Should the function return a <code>data.table</code>
-with indices and values of successful spread events, or
-return a raster with values. See Details.</p></td>
+      <td><p>Logical or numeric. If <code>1</code> or <code>TRUE</code>, will
+return a <code>data.table</code> with indices and values of
+successful spread events.
+If <code>2</code>, it will simply return a vector of pixel indices of
+all cells that were touched. This will be the fastest option. If
+<code>FALSE</code>, then it will return a raster with
+values. See Details.</p></td>
     </tr>
     <tr>
       <th>returnDistances</th>
@@ -292,7 +300,8 @@ started. Default is <code>FALSE</code>. See Details.</p></td>
       <td><p>Logical. If <code>TRUE</code>, returns a raster of events ids.
 If <code>FALSE</code>, returns a raster of iteration numbers,
 i.e., the spread history of one or more events.
-NOTE: this is overridden if <code>returnIndices</code> is <code>TRUE</code>.</p></td>
+NOTE: this is overridden if <code>returnIndices</code> is <code>TRUE</code>
+or <code>1</code> or <code>2</code>.</p></td>
     </tr>
     <tr>
       <th>plot.it</th>
@@ -412,6 +421,10 @@ required for <code>stopRule</code>. These
 vectors should be as long as required e.g., length
 <code>loci</code> if there is one value per event.</p></td>
     </tr>
+    <tr>
+      <th>.zeroVector</th>
+      <td><p>DESCRIPTION NEEDED</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -446,7 +459,8 @@ then this function returns a <code>data.table</code> with columns:</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>For large rasters, a combination of <code>lowMemory = TRUE</code> and
-<code>returnIndices = TRUE</code> will use the least amount of memory.</p>
+<code>returnIndices = TRUE</code> or <code>returnIndices = 2</code>
+will be fastest and use the least amount of memory.</p>
 <p>This function can be interrupted before all active cells are exhausted if
 the <code>iterations</code> value is reached before there are no more active
 cells to spread into. If this is desired, <code>returnIndices</code> should be
@@ -566,7 +580,7 @@ argument combinations.
 Also, <code><a href='rings.html'>rings</a></code> which uses <code>spread</code> but with specific argument
 values selected for a specific purpose.
 <code><a href='https://rdrr.io/pkg/raster/man/distanceFromPoints.html'>distanceFromPoints</a></code>.
-<code>cir</code> to create "circles"; it is fast for many small problems.</p></div>
+<code><a href='cir.html'>cir</a></code> to create "circles"; it is fast for many small problems.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
@@ -764,25 +778,28 @@ values selected for a specific purpose.
 <span class='co'>##############</span>
 <span class='co'># allowOverlap</span>
 <span class='co'>##############</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>3113</span>)
-<span class='no'>initialLoci</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>), <span class='fl'>10</span>))
+<span class='co'>## TODO: fix error when allowOverlap = TRUE</span>
+<span class='co'># set.seed(3113)</span>
+<span class='co'># initialLoci &lt;- as.integer(sample(1:ncell(hab), 10))</span>
+<span class='co'>#</span>
+<span class='co'># # using "landscape", "id", and a variable passed in</span>
+<span class='co'># maxVal &lt;- rep(500, length(initialLoci))</span>
+<span class='co'>#</span>
+<span class='co'># # define stopRule</span>
+<span class='co'># stopRule2 &lt;- function(landscape, id, maxVal) sum(landscape) &gt; maxVal[id]</span>
+<span class='co'># circs &lt;- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci, stopRule = stopRule2,</span>
+<span class='co'>#                 id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "includeRing",</span>
+<span class='co'>#                 maxVal = maxVal, returnIndices = TRUE)</span>
+<span class='co'># (vals &lt;- tapply(hab[circs$indices], circs$id, sum))</span>
+<span class='co'># vals &lt;= maxVal ## all TRUE</span>
+<span class='co'># overlapEvents &lt;- raster(hab)</span>
+<span class='co'># overlapEvents[] &lt;- 0</span>
+<span class='co'># toMap &lt;- circs[, sum(id), by = indices]</span>
+<span class='co'># overlapEvents[toMap$indices] &lt;- toMap$V1</span>
+<span class='co'>#</span>
+<span class='co'># clearPlot()</span>
+<span class='co'># Plot(overlapEvents)</span>
 
-<span class='co'># using "landscape", "id", and a variable passed in</span>
-<span class='no'>maxVal</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>500</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>initialLoci</span>))
-
-<span class='co'># define stopRule</span>
-<span class='no'>stopRule2</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>landscape</span>, <span class='no'>id</span>, <span class='no'>maxVal</span>) <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>landscape</span>) <span class='kw'>&gt;</span> <span class='no'>maxVal</span>[<span class='no'>id</span>]
-<span class='no'>circs</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>initialLoci</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule2</span>,
-                <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRuleBehavior</span> <span class='kw'>=</span> <span class='st'>"includeRing"</span>,
-                <span class='kw'>maxVal</span> <span class='kw'>=</span> <span class='no'>maxVal</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-(<span class='no'>vals</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span>(<span class='no'>hab</span>[<span class='no'>circs</span>$<span class='no'>indices</span>], <span class='no'>circs</span>$<span class='no'>id</span>, <span class='no'>sum</span>))</div><div class='output co'>#&gt;    1    2    3    4    5    6    7    8    9   10 
-#&gt; 1102  666 1201  683  608  781  674  696  805  980 </div><div class='input'><span class='no'>vals</span> <span class='kw'>&lt;=</span> <span class='no'>maxVal</span> <span class='co'>## all TRUE</span></div><div class='output co'>#&gt;     1     2     3     4     5     6     7     8     9    10 
-#&gt; FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE </div><div class='input'><span class='no'>overlapEvents</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>hab</span>)
-<span class='no'>overlapEvents</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-<span class='no'>toMap</span> <span class='kw'>&lt;-</span> <span class='no'>circs</span>[, <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>id</span>), <span class='kw'>by</span> <span class='kw'>=</span> <span class='no'>indices</span>]
-<span class='no'>overlapEvents</span>[<span class='no'>toMap</span>$<span class='no'>indices</span>] <span class='kw'>&lt;-</span> <span class='no'>toMap</span>$<span class='no'>V1</span>
-
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>overlapEvents</span>)</div><div class='img'><img src='spread-13.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Using alternative algorithm, not probabilistic diffusion</span>
 <span class='co'>## Will give exactly correct sizes, yet still with variability</span>
 <span class='co'>## within the spreading (i.e., cells with and without successes)</span>
@@ -796,7 +813,7 @@ values selected for a specific purpose.
                 <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1e6</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>exactSizes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>);
 <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>fires</span>[<span class='no'>fires</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>][]) <span class='kw'>==</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>maxSizes</span>))</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/dev.html'>dev</a></span>()
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-14.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/hist.html'>hist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>fires</span>[][<span class='no'>fires</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>])), <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"fire size distribution"</span>)</div><div class='img'><img src='spread-15.png' alt='' width='700' height='433' /></div><div class='img'><img src='spread-16.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-13.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/hist.html'>hist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>fires</span>[][<span class='no'>fires</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>])), <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"fire size distribution"</span>)</div><div class='img'><img src='spread-14.png' alt='' width='700' height='433' /></div><div class='img'><img src='spread-15.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Example with relativeSpreadProb ... i.e., a relative probability spreadProb</span>
 <span class='co'>##  (shown here because because spreadProb raster is not a probability).</span>
 <span class='co'>##  Here, we force the events to grow, choosing always 2 neighbours,</span>
@@ -820,7 +837,7 @@ values selected for a specific purpose.
 <span class='no'>events2</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab3</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>sam</span>, <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>,
                  <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>), <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>70</span>), <span class='kw'>exactSizes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>events1</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-17.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>events2</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-18.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/hist.html'>hist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>events1</span>[][<span class='no'>events1</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]), <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>30</span>), <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"Event size distribution"</span>)</div><div class='img'><img src='spread-19.png' alt='' width='700' height='433' /></div><div class='img'><img src='spread-20.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># Check that events1 resulted in higher hab3 pixels overall</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>events1</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-16.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>events2</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-17.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/hist.html'>hist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>events1</span>[][<span class='no'>events1</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]), <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>30</span>), <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"Event size distribution"</span>)</div><div class='img'><img src='spread-18.png' alt='' width='700' height='433' /></div><div class='img'><img src='spread-19.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># Check that events1 resulted in higher hab3 pixels overall</span>
 
 <span class='co'># Compare outputs -- should be more high value hab pixels spread to in event1</span>
 <span class='co'>#  (randomness may prevent this in all cases)</span>
@@ -833,20 +850,10 @@ values selected for a specific purpose.
 #&gt; [58]   1   1   1   1   1   1   1   1   1   1   1   1   1</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>hab3</span>[<span class='no'>events1</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]) <span class='kw'>&gt;=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>hab3</span>[<span class='no'>events2</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]) <span class='co'>## should be usually TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#breaking-out-of-spread-events">Breaking out of spread events</a></li>
-      <li><a href="#stoprulebehavior"><code>stopRuleBehavior</code></a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Eliot McIntire and Steve Cumming</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -857,7 +864,7 @@ values selected for a specific purpose.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
