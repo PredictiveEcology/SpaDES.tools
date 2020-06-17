@@ -31,7 +31,7 @@ if (getRversion() >= "3.1.0") {
 #' @export
 #' @importFrom data.table := data.table key setkeyv setnames
 #' @importFrom raster extent getValues raster res
-#' @rdname rasterizeReduce
+#' @rdname rasterizeReduced
 #'
 #' @example inst/examples/example_mapReduce.R
 #'
