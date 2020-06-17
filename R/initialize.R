@@ -41,7 +41,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
-#' @rdname gaussmap
+#' @rdname gaussMap
 #'
 #' @examples
 #' \dontrun{
