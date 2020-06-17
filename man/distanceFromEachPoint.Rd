@@ -75,7 +75,7 @@ This function has the potential to use a lot of memory if there are a lot of
 }
 \details{
 This function is cluster aware. If there is a cluster running, it will use it.
-To start a cluster use \code{\link[raster]{beginCluster}}, with \code{N} being
+To start a cluster use \code{\link[raster:cluster]{beginCluster}}, with \code{N} being
 the number of cores to use. See examples in \code{SpaDES.core::experiment}.
 
 

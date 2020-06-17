@@ -142,7 +142,7 @@ if (getRversion() >= "3.1.0") {
 #' @param loci          A vector of locations in \code{landscape}.
 #'                      These should be cell indices.
 #'                      If user has x and y coordinates, these can be converted
-#'                      with \code{\link[raster]{cellFromXY}}.
+#'                      with \code{\link[raster:cellFrom]{cellFromXY}}.
 #'
 #' @param spreadProb    Numeric, or \code{RasterLayer}.
 #'                      If numeric of length 1, then this is the global probability

@@ -36,7 +36,7 @@ locations for spreading events to start and spread2 into. Required.}
 data.table that is the output of a previous \code{spread2}.
 If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
-\code{\link[raster]{cellFromXY}}.}
+\code{\link[raster:cellFrom]{cellFromXY}}.}
 
 \item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
 a \code{RasterLayer} that is the identical dimensions as
