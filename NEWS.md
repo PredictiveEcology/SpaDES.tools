@@ -1,13 +1,13 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
-version 0.3.5.9000
+version 0.3.6
 =============
 
 ## Dependency changes
 * none
 
 ## Bugfixes
-* none
+* update a test to deal with forthcoming `raster` changes.
 
 ## Enhancements
 * none
