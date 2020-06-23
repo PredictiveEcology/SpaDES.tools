@@ -19,10 +19,10 @@ See `NEWS.md`.
 * Windows                 (win-builder), R 4.0.1
 
 ### Development R version
-* Ubuntu 16.04              (travis-ci), R 4.1.0 (2020-05-13 r78453)
-* Ubuntu 18.04                  (local), R 4.1.0 (2020-05-13 r78456)
-* Windows                    (appveyor), R 4.1.0 (2020-05-12 r78431)
-* Windows                 (win-builder), R 4.1.0 (2020-05-11 r78411)
+* Ubuntu 16.04              (travis-ci), R 4.1.0 (2020-06-22 r78735)
+* Ubuntu 18.04                  (local), R 4.1.0 (2020-06-17 r78704)
+* Windows                    (appveyor), R 4.1.0 (2020-06-17 r78705)
+* Windows                 (win-builder), R 4.1.0 (2020-06-19 r78718)
 
 ## R CMD check results
 
