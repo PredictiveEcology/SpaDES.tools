@@ -75,7 +75,7 @@ They are &quot;rounded&quot; to pixel centres." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
       </span>
     </div>
 
@@ -266,7 +266,7 @@ as part of a <code>rasterStack</code> to disk upon exit.</p></td>
     <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='randomStudyArea.html'>randomStudyArea</a></span>(<span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>1e9</span>)
     <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span>(<span class='no'>a</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>100</span>)
     <span class='no'>mask</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/fasterize/man/fasterize.html'>fasterize</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/sf/man/st_as_sf.html'>st_as_sf</a></span>(<span class='no'>a</span>), <span class='no'>ras</span>) <span class='co'># faster than raster::rasterize</span>
-    <span class='no'>rasQuality</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussmap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
+    <span class='no'>rasQuality</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
     <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>rasQuality</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>a</span>)
     <span class='no'>rasQuality</span>[<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='no'>mask</span>)] <span class='kw'>&lt;-</span> <span class='fl'>NA</span>
     <span class='co'># rescale so min is 0.75 and max is 1</span>
@@ -307,13 +307,13 @@ as part of a <code>rasterStack</code> to disk upon exit.</p></td>
   <span class='no'>rasAbundance</span>[<span class='no'>startPixel</span>] <span class='kw'>&lt;-</span> <span class='fl'>1000</span>
 
   <span class='co'># raster for advectionDir</span>
-  <span class='no'>advectionDir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussmap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
+  <span class='no'>advectionDir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
   <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>advectionDir</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>rasQuality</span>)
   <span class='co'># rescale so min is 0.75 and max is 1</span>
   <span class='no'>advectionDir</span>[] <span class='kw'>&lt;-</span> <span class='no'>advectionDir</span>[] / (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span>(<span class='no'>advectionDir</span>)) * <span class='fl'>180</span>
 
   <span class='co'># raster for advectionMag</span>
-  <span class='no'>advectionMag</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussmap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
+  <span class='no'>advectionMag</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
   <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>advectionMag</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>rasQuality</span>)
   <span class='co'># rescale so min is 0.75 and max is 1</span>
   <span class='no'>advectionMag</span>[] <span class='kw'>&lt;-</span> <span class='no'>advectionMag</span>[] / (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span>(<span class='no'>advectionMag</span>)) * <span class='fl'>600</span>

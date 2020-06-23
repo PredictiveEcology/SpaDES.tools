@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split and re-merge RasterLayer(s) — mergeRaster • SpaDES.tools</title>
+<title>Split and re-merge <code>RasterLayer</code>(s) — mergeRaster • SpaDES.tools</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Split and re-merge RasterLayer(s) — mergeRaster" />
+<meta property="og:title" content="Split and re-merge <code>RasterLayer</code>(s) — mergeRaster" />
 <meta property="og:description" content="splitRaster divides up a raster into an arbitrary number of pieces (tiles).
 Split rasters can be recombined using do.call(merge, y) or mergeRaster(y),
 where y &amp;lt;- splitRaster(x)." />
@@ -74,7 +74,7 @@ where y &amp;lt;- splitRaster(x)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@ where y &amp;lt;- splitRaster(x)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split and re-merge RasterLayer(s)</h1>
+    <h1>Split and re-merge <code>RasterLayer</code>(s)</h1>
     <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/R/mergeRaster.R'><code>R/mergeRaster.R</code></a>, <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/R/splitRaster.R'><code>R/splitRaster.R</code></a></small>
     <div class="hidden name"><code>splitRaster.Rd</code></div>
     </div>
@@ -226,10 +226,10 @@ tiles and the new resolution is not a multiple of the original one,
 <code>mergeRaster</code> will use mosaic with the max function to merge the tiles
 with a message. The user can also pass the function to be used when mosaic
 is triggered.</p>
-<p>This function is parallel-aware, using the same mechanism as used in the <code>raster</code>
-package. Specifically, if you start a cluster using <code><a href='https://rdrr.io/pkg/raster/man/cluster.html'>beginCluster</a></code>, then
-this function will automatically use that cluster. It is always a good
-idea to stop the cluster when finished, using <code><a href='https://rdrr.io/pkg/raster/man/cluster.html'>endCluster</a></code>.</p>
+<p>This function is parallel-aware, using the same mechanism as used in <span class="pkg">raster</span>.
+Specifically, if you start a cluster using <code><a href='https://rdrr.io/pkg/raster/man/cluster.html'>beginCluster</a></code>,
+then this function will automatically use that cluster.
+It is always a good idea to stop the cluster when finished, using <code><a href='https://rdrr.io/pkg/raster/man/cluster.html'>endCluster</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/raster/man/merge.html'>merge</a></code>, <code><a href='https://rdrr.io/pkg/raster/man/mosaic.html'>mosaic</a></code></p>

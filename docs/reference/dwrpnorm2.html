@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
       </span>
     </div>
 
@@ -163,7 +163,7 @@
 <span class='co'># Compute wrapped normal density function</span>
 <span class='no'>density</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>500</span>)
 <span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>500</span>) <span class='no'>density</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='fu'>dwrpnorm2</span>(<span class='no'>theta</span>[<span class='no'>i</span>], <span class='no'>pi</span>, <span class='fl'>.75</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>theta</span>, <span class='no'>density</span>)
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>theta</span>, <span class='no'>density</span>)
 <span class='co'># Approximate area under density curve</span>
 <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>density</span> * <span class='fl'>2</span> * <span class='no'>pi</span> / <span class='fl'>500</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 </div></pre>

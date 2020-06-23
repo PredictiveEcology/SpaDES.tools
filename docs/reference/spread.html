@@ -85,7 +85,7 @@ are internal." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
       </span>
     </div>
 
@@ -224,7 +224,7 @@ This can also be used as part of <code>stopRule</code>.</p></td>
       <td><p>A vector of locations in <code>landscape</code>.
 These should be cell indices.
 If user has x and y coordinates, these can be converted
-with <code><a href='https://rdrr.io/pkg/raster/man/cellFrom.html'>cellFromXY</a></code>.</p></td>
+with <code>cellFromXY</code>.</p></td>
     </tr>
     <tr>
       <th>spreadProb</th>
@@ -667,7 +667,7 @@ values selected for a specific purpose.
 <span class='no'>fullRas</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>hab</span>)
 <span class='no'>fullRas</span>[] <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>)
 <span class='no'>burned</span> <span class='kw'>&lt;-</span> <span class='no'>fires</span>[<span class='no'>active</span> <span class='kw'>==</span> <span class='fl'>FALSE</span>]
-<span class='no'>burnedMap</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rasterizeReduce.html'>rasterizeReduced</a></span>(<span class='no'>burned</span>, <span class='no'>fullRas</span>, <span class='st'>"id"</span>, <span class='st'>"indices"</span>)
+<span class='no'>burnedMap</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rasterizeReduced.html'>rasterizeReduced</a></span>(<span class='no'>burned</span>, <span class='no'>fullRas</span>, <span class='st'>"id"</span>, <span class='st'>"indices"</span>)
 
 <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>burnedMap</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='spread-6.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>####################</span>

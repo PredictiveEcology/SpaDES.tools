@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
       </span>
     </div>
 
@@ -114,28 +114,54 @@
       <small>Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="version-035" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.5">
-<a href="#version-035" class="anchor"></a>version 0.3.5<small> Unreleased </small>
+    <div id="version-036" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.6">
+<a href="#version-036" class="anchor"></a>version 0.3.6<small> Unreleased </small>
 </h1>
-<p>We have identified a non-trivial bug in <code>spread</code> when using <code>allowOverlap = TRUE</code>. Until we can patch this bug, using this argument value will generate an error. We are currently working on a fix, which may take some time.</p>
 <div id="dependency-changes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dependency-changes" class="anchor"></a>Dependency changes</h2>
 <ul>
-<li>removed orphaned package <code>bit</code>; its reverse dependencies, <code>ff</code> and <code>ffbase</code>, moved to Suggests</li>
+<li>none</li>
 </ul>
 </div>
 <div id="bugfixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bugfixes" class="anchor"></a>Bugfixes</h2>
 <ul>
-<li>none</li>
+<li>update a test to deal with forthcoming <code>raster</code> changes.</li>
 </ul>
 </div>
 <div id="enhancements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#enhancements" class="anchor"></a>Enhancements</h2>
+<ul>
+<li>none</li>
+</ul>
+</div>
+</div>
+    <div id="version-035" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.5">
+<a href="#version-035" class="anchor"></a>version 0.3.5<small> 2020-05-15 </small>
+</h1>
+<p>We have identified a non-trivial bug in <code>spread</code> when using <code>allowOverlap = TRUE</code>. Until we can patch this bug, using this argument value will generate an error. We are currently working on a fix, which may take some time.</p>
+<div id="dependency-changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dependency-changes-1" class="anchor"></a>Dependency changes</h2>
+<ul>
+<li>removed orphaned package <code>bit</code>; its reverse dependencies, <code>ff</code> and <code>ffbase</code>, moved to Suggests</li>
+</ul>
+</div>
+<div id="bugfixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bugfixes-1" class="anchor"></a>Bugfixes</h2>
+<ul>
+<li>none</li>
+</ul>
+</div>
+<div id="enhancements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-1" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>New values for <code>returnIndices</code> arg in <code>spread</code>, allowing for <code>numeric</code>. New option, <code>2</code> allows for the fastest return possible, only <code>pixelIndices</code>
 </li>
@@ -146,23 +172,23 @@
 <h1 class="page-header" data-toc-text="0.3.4">
 <a href="#version-034" class="anchor"></a>version 0.3.4<small> 2019-12-17 </small>
 </h1>
-<div id="dependency-changes-1" class="section level2">
+<div id="dependency-changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-1" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-2" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>none</li>
 </ul>
 </div>
-<div id="bugfixes-1" class="section level2">
+<div id="bugfixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bugfixes-1" class="anchor"></a>Bugfixes</h2>
+<a href="#bugfixes-2" class="anchor"></a>Bugfixes</h2>
 <ul>
 <li>fix issues with failing tests on CRAN</li>
 </ul>
 </div>
-<div id="enhancements-1" class="section level2">
+<div id="enhancements-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#enhancements-1" class="anchor"></a>Enhancements</h2>
+<a href="#enhancements-2" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>none</li>
 </ul>
@@ -172,41 +198,14 @@
 <h1 class="page-header" data-toc-text="0.3.3">
 <a href="#version-033" class="anchor"></a>version 0.3.3<small> 2019-11-25 </small>
 </h1>
-<div id="dependency-changes-2" class="section level2">
+<div id="dependency-changes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-2" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-3" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>Requires R &gt;= 3.5</li>
 <li>Added <code>animation</code> since it is used in the <code>spread3</code> example.</li>
 <li>Added <code>backports</code> for R-oldrel support</li>
 <li>Removed <code>profvis</code> and <code>microbenchmark</code> from Suggests: all benchmarking is removed from automated tests</li>
-</ul>
-</div>
-<div id="bugfixes-2" class="section level2">
-<h2 class="hasAnchor">
-<a href="#bugfixes-2" class="anchor"></a>Bugfixes</h2>
-<ul>
-<li>minor bug fixes</li>
-</ul>
-</div>
-<div id="enhancements-2" class="section level2">
-<h2 class="hasAnchor">
-<a href="#enhancements-2" class="anchor"></a>Enhancements</h2>
-<ul>
-<li>
-<code>spread2</code> speed enhancements</li>
-</ul>
-</div>
-</div>
-    <div id="version-032" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.2">
-<a href="#version-032" class="anchor"></a>version 0.3.2<small> 2019-03-19 </small>
-</h1>
-<div id="dependency-changes-3" class="section level2">
-<h2 class="hasAnchor">
-<a href="#dependency-changes-3" class="anchor"></a>Dependency changes</h2>
-<ul>
-<li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li>
 </ul>
 </div>
 <div id="bugfixes-3" class="section level2">
@@ -221,6 +220,33 @@
 <a href="#enhancements-3" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
+<code>spread2</code> speed enhancements</li>
+</ul>
+</div>
+</div>
+    <div id="version-032" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.2">
+<a href="#version-032" class="anchor"></a>version 0.3.2<small> 2019-03-19 </small>
+</h1>
+<div id="dependency-changes-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dependency-changes-4" class="anchor"></a>Dependency changes</h2>
+<ul>
+<li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li>
+</ul>
+</div>
+<div id="bugfixes-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bugfixes-4" class="anchor"></a>Bugfixes</h2>
+<ul>
+<li>minor bug fixes</li>
+</ul>
+</div>
+<div id="enhancements-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-4" class="anchor"></a>Enhancements</h2>
+<ul>
+<li>
 <code>spread2</code> now takes a numeric for <code>allowOverlap</code>, to allow for 1 more scenario of overlapping, namely, allow between event overlapping, and within event overlapping only if the overlap occurs in the same iteration, otherwise, do not allow overlap within event.</li>
 <li>new function <code>spread3</code> for simulating <em>e.g.</em>, insect spread</li>
 <li>
@@ -232,17 +258,17 @@
 <h1 class="page-header" data-toc-text="0.3.1">
 <a href="#version-031" class="anchor"></a>version 0.3.1<small> 2019-02-01 </small>
 </h1>
-<div id="dependency-changes-4" class="section level2">
+<div id="dependency-changes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-4" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-5" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>
 <code>RandomFields</code> moved to Suggests to prevent clashes with <code>data.table</code> multithreading</li>
 </ul>
 </div>
-<div id="enhancements-4" class="section level2">
+<div id="enhancements-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#enhancements-4" class="anchor"></a>Enhancements</h2>
+<a href="#enhancements-5" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
 <code>randomPolygon</code> now has <code>area</code> argument, instead of <code>hectares</code> (deprecated), and it now succeeds for more cases.</li>
@@ -305,9 +331,9 @@
 <li>minor test fixes.</li>
 </ul>
 </div>
-<div id="dependency-changes-5" class="section level2">
+<div id="dependency-changes-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-5" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-6" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>
 <code>dplyr</code> and <code>mgcv</code> added to Suggests because they are used in tests.</li>
