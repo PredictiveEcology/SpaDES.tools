@@ -24,12 +24,9 @@ excludePixels
 FLT4S
 geo
 github
-GitHub
 http
 https
 includePixels
-indices
-Indices
 iteratively
 makeCluster
 maxDistance
@@ -45,7 +42,6 @@ preceeding
 PredictiveEcology
 probabilistically
 Probabilistically
-radians
 randomPolygons
 RasterLayer
 rasters

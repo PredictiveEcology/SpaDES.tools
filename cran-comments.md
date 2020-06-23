@@ -1,6 +1,6 @@
 ## Updated release
 
-This is a maintenance release, which removes dependency on orphaned package `bit` and fixes some issues with failing tests.
+This is a maintenance release, which fixes a problem in an upcoming version of `raster`.
 See `NEWS.md`.
 
 ## Test environments
@@ -11,12 +11,12 @@ See `NEWS.md`.
 * Windows                 (win-builder), R 3.6.3
 
 ### Current R versions
-* macOS 10.13.3 High Sierra (travis-ci), R 4.0.0
-* macOS 10.15.4 Catalina        (local), R 4.0.0
-* Ubuntu 16.04              (travis-ci), R 4.0.0
-* Ubuntu 18.04                  (local), R 4.0.0
-* Windows                    (appveyor), R 4.0.0
-* Windows                 (win-builder), R 4.0.0
+* macOS 10.13.3 High Sierra (travis-ci), R 4.0.1
+* macOS 10.15.4 Catalina        (local), R 4.0.1
+* Ubuntu 16.04              (travis-ci), R 4.0.1
+* Ubuntu 18.04                  (local), R 4.0.1
+* Windows                    (appveyor), R 4.0.1
+* Windows                 (win-builder), R 4.0.1
 
 ### Development R version
 * Ubuntu 16.04              (travis-ci), R 4.1.0 (2020-05-13 r78453)
@@ -43,4 +43,4 @@ We checked 3 reverse dependencies, comparing R CMD check results across CRAN and
  * We saw 0 new problems
  * We failed to check 0 packages
  
-Summary at https://github.com/PredictiveEcology/SpaDES.tools/blob/master/revdep/README.md.
+Summary at <https://github.com/PredictiveEcology/SpaDES.tools/blob/master/revdep/README.md>.

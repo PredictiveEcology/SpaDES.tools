@@ -1,11 +1,10 @@
-sudo: required
 language: r
 cache: packages
 cran: https://cran.rstudio.com/
 env:
   global:
     secure: WNm/3nk5Gz4VVP/AsH8PWyF8bv2VETxQ2GUwCqIn/GvA/wMjxre46A++1pv6sAcFX3CEaOPYAdh1Le1Oj7B8M03j7yQ4alaEjqNTGVhRQQaDSceXCHEiyPLYOHua7GAGVwslarWhF7t7ALGZ1ZKmFTnJJQscNxRiSyL8l7mnupeU/3S/j76NW15C3pCMqotbo8bc1qSVmV5MjLBZAL3x2FzRei3rrgaG23joTkPstXVJCXfZg99MWTzKyDd54n03aARLNhQbBvZll8p5IjmfxPGAPgXxm5S7MZvMSwrBg6zcsBds+SwRsBpDt4NOhXuPG+mrgKRy5lsK8EOkH6Huk2BiByTH9xRxKcPvH7+q02yNEAVThDpnrh0pQkNm0neTp8ieujxiFga6USw3ASVR2GmvosDlD1x2XzZcvusK+CqbfDlJ+SGganE2ncX1a8fJt76DC2E9hnuXNIDLAYB1XbWaFHnslbKMjBcfVlIBdz5FBnSB8gjK1uxIA2ULz7Wl0q6v90tB3FM85VPRQnAaNvpXkJw1KuGNWD/Yi6UFRBG8Vxl6dfOIiqTbTMbc6tPB0zC7hBK2v6DipMzYPQvcR34pXCvasY51fK5q4cLs0XgJUKx6XcKyFcq9sG2nYjBUteUZbhyX258atUErkmM8PxWOrmkiDfedE+nA9HAGGnE=
-matrix:
+jobs:
   include:
   - os: linux
     dist: xenial
@@ -15,6 +14,7 @@ matrix:
         sources:
           - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
+          - gdal-bin
           - libgdal-dev
           - libgdal1-dev
           - libgeos-dev
@@ -22,7 +22,6 @@ matrix:
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
-          - gdal-bin
     services:
       - xvfb
     r_packages:
@@ -110,7 +109,9 @@ matrix:
     addons:
       homebrew:
         packages:
-        - glpk libgit2
+        - glpk
+        - libgit2
+        - udunits
         update: true
     latex: false
     r_build_args: "--no-build-vignettes"
