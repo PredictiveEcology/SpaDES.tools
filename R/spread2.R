@@ -334,7 +334,6 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
 #' @importFrom fastmatch fmatch
-#' @importFrom ff ff
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot
@@ -433,7 +432,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   # Step 0 - set up objects -- main ones: dt, clusterDT -- get them from attributes
   ## on start or initiate them
-  smallRaster <- ncells < 4e7 # should use bit vector (RAM) or ff raster (Disk)
+  smallRaster <- ncells < 4e7 # should use bit vector (RAM)
   canUseAvailable <- !(isTRUE(allowOverlap > 0) | is.na(allowOverlap))
   if (missing(maxSize)) {
     maxSize <- NA_real_
@@ -464,11 +463,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   if (!is.data.table(start)) {
     # A "new" entry into spread2 -- need to set up stuff
     if (canUseAvailable) {
-      if (smallRaster) {
+      #if (smallRaster) {
         notAvailable <- bit(ncells)
-      } else {
-        notAvailable <- ff(vmode = "boolean", FALSE, length = ncells)
-      }
+      #} else {
+      #  notAvailable <- ff(vmode = "boolean", FALSE, length = ncells)
+      #}
       notAvailable[start] <- TRUE
     }
 
