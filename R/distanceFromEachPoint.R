@@ -13,7 +13,7 @@
 #' \code{from} and \code{to} points.
 #'
 #' This function is cluster aware. If there is a cluster running, it will use it.
-#' To start a cluster use \code{\link[raster]{beginCluster}}, with \code{N} being
+#' To start a cluster use \code{\link[raster:cluster]{beginCluster}}, with \code{N} being
 #' the number of cores to use. See examples in \code{SpaDES.core::experiment}.
 #'
 #' @param from Numeric matrix with 2 or 3 or more columns. They must include x and y,

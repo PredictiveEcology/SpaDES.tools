@@ -1,13 +1,13 @@
-#' Split and re-merge RasterLayer(s)
+#' Split and re-merge \code{RasterLayer}(s)
 #'
 #' \code{splitRaster} divides up a raster into an arbitrary number of pieces (tiles).
 #' Split rasters can be recombined using \code{do.call(merge, y)} or \code{mergeRaster(y)},
 #' where \code{y <- splitRaster(x)}.
 #'
-#' This function is parallel-aware, using the same mechanism as used in the \code{raster}
-#' package. Specifically, if you start a cluster using \code{\link{beginCluster}}, then
-#' this function will automatically use that cluster. It is always a good
-#' idea to stop the cluster when finished, using \code{\link{endCluster}}.
+#' This function is parallel-aware, using the same mechanism as used in \pkg{raster}.
+#' Specifically, if you start a cluster using \code{\link{beginCluster}},
+#' then this function will automatically use that cluster.
+#' It is always a good idea to stop the cluster when finished, using \code{\link{endCluster}}.
 #'
 #' @param r       The raster to be split.
 #'
@@ -28,7 +28,7 @@
 #'                parallel::makeCluster or equivalent. This is an alternative way, instead
 #'                of \code{beginCluster()}, to use parallelism for this function, allowing for
 #'                more control over cluster use.
-#' @param rType   Datatype of the split rasters. Defaults to FLT4S.
+#' @param rType   Data type of the split rasters. Defaults to FLT4S.
 #'
 #' @return \code{splitRaster} returns a list (length \code{nx*ny}) of cropped raster tiles.
 #'

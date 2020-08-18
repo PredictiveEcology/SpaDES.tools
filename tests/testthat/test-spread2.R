@@ -684,13 +684,12 @@ test_that("spread2 tests -- persistence", {
 
   set.seed(5)
   wRasPersist <- spread2(landscape = landscape, start = start,
-                        spreadProb = 0.23, persistProb = persistRas, iterations = 10, directions = 8L,
-                        asRaster = TRUE, plot.it = FALSE)
+                        spreadProb = 0.23, persistProb = persistRas, iterations = 10,
+                        directions = 8L, asRaster = TRUE, plot.it = FALSE)
 
   expect_true(sum(wRasPersist[] == 1, na.rm = TRUE) > sum(wRasPersist[] == 2, na.rm = TRUE))
 
 })
-
 
 test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   library(raster)

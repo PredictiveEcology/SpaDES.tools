@@ -1,6 +1,6 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
-version 0.3.4.9000
+version 0.3.6
 =============
 
 ## Dependency changes
@@ -8,6 +8,23 @@ version 0.3.4.9000
 
 ## Bugfixes
 * `spread` with `allowOverlap = TRUE` would give wrong results. Fixed.
+* update a test to deal with forthcoming `raster` changes.
+
+## Enhancements
+* none
+
+version 0.3.5
+=============
+
+We have identified a non-trivial bug in `spread` when using `allowOverlap = TRUE`.
+Until we can patch this bug, using this argument value will generate an error.
+We are currently working on a fix, which may take some time.
+
+## Dependency changes
+* removed orphaned package `bit`; its reverse dependencies, `ff` and `ffbase`, moved to Suggests
+
+## Bugfixes
+* none
 
 ## Enhancements
 * `spread` sped up for `allowOverlap = TRUE`

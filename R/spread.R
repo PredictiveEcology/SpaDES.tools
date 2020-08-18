@@ -142,7 +142,7 @@ if (getRversion() >= "3.1.0") {
 #' @param loci          A vector of locations in \code{landscape}.
 #'                      These should be cell indices.
 #'                      If user has x and y coordinates, these can be converted
-#'                      with \code{\link[raster]{cellFromXY}}.
+#'                      with \code{\link[raster:cellFrom]{cellFromXY}}.
 #'
 #' @param spreadProb    Numeric, or \code{RasterLayer}.
 #'                      If numeric of length 1, then this is the global probability
@@ -179,8 +179,8 @@ if (getRversion() >= "3.1.0") {
 #' @param lowMemory     Deprecated.
 #'
 #' @param returnIndices Logical or numeric. If \code{1} or \code{TRUE}, will
-#'                      return a \code{data.table}
-#'                      with indices and values of successful spread events.
+#'                      return a \code{data.table} with indices and values of
+#'                      successful spread events.
 #'                      If \code{2}, it will simply return a vector of pixel indices of
 #'                      all cells that were touched. This will be the fastest option. If
 #'                      \code{FALSE}, then it will return a raster with
@@ -322,7 +322,7 @@ if (getRversion() >= "3.1.0") {
 #' Also, \code{\link{rings}} which uses \code{spread} but with specific argument
 #' values selected for a specific purpose.
 #' \code{\link[raster]{distanceFromPoints}}.
-#' \code{cir} to create "circles"; it is fast for many small problems.
+#' \code{\link{cir}} to create "circles"; it is fast for many small problems.
 #'
 setGeneric(
   "spread",
@@ -364,7 +364,8 @@ setMethod(
                         stopRuleBehavior, allowOverlap, asymmetry, asymmetryAngle,
                         quick, neighProbs, exactSizes, relativeSpreadProb, ...) {
     if (!is.null(neighProbs)) {
-      if (isTRUE(allowOverlap)) stop("Can't use neighProbs and allowOverlap = TRUE together")
+      if (isTRUE(allowOverlap))
+        stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
     if (!is.null(mapID)) {
       warning("mapID is deprecated, use id")
@@ -376,6 +377,11 @@ setMethod(
         stop("stopRuleBehaviour must be one of \"",
              paste(allowedRules, collapse = "\", \""), "\".")
     }
+    if (isTRUE(lowMemory)) {
+      requireNamespace("ff", quietly = TRUE)
+      requireNamespace("ffbase", quietly = TRUE)
+    }
+
     spreadStateExists <- is(spreadState, "data.table")
     spreadProbLaterExists <- TRUE
 

@@ -5,7 +5,7 @@
 \alias{mergeRaster,list-method}
 \alias{splitRaster}
 \alias{splitRaster,RasterLayer-method}
-\title{Split and re-merge RasterLayer(s)}
+\title{Split and re-merge \code{RasterLayer}(s)}
 \usage{
 mergeRaster(x, fun = NULL)
 
@@ -58,7 +58,7 @@ parallel::makeCluster or equivalent. This is an alternative way, instead
 of \code{beginCluster()}, to use parallelism for this function, allowing for
 more control over cluster use.}
 
-\item{rType}{Datatype of the split rasters. Defaults to FLT4S.}
+\item{rType}{Data type of the split rasters. Defaults to FLT4S.}
 }
 \value{
 \code{mergeRaster} returns a \code{RasterLayer} object.
@@ -91,10 +91,10 @@ tiles and the new resolution is not a multiple of the original one,
 with a message. The user can also pass the function to be used when mosaic
 is triggered.
 
-This function is parallel-aware, using the same mechanism as used in the \code{raster}
-package. Specifically, if you start a cluster using \code{\link{beginCluster}}, then
-this function will automatically use that cluster. It is always a good
-idea to stop the cluster when finished, using \code{\link{endCluster}}.
+This function is parallel-aware, using the same mechanism as used in \pkg{raster}.
+Specifically, if you start a cluster using \code{\link{beginCluster}},
+then this function will automatically use that cluster.
+It is always a good idea to stop the cluster when finished, using \code{\link{endCluster}}.
 }
 \examples{
 library(raster)

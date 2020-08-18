@@ -37,7 +37,7 @@ This can also be used as part of \code{stopRule}.}
 \item{loci}{A vector of locations in \code{landscape}.
 These should be cell indices.
 If user has x and y coordinates, these can be converted
-with \code{\link[raster]{cellFromXY}}.}
+with \code{\link[raster:cellFrom]{cellFromXY}}.}
 
 \item{id}{Logical. If \code{TRUE}, returns a raster of events ids.
 If \code{FALSE}, returns a raster of iteration numbers,
@@ -57,8 +57,8 @@ than if \code{allowOverlap = FALSE}).
 Default is \code{FALSE}.}
 
 \item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
-return a \code{data.table}
-with indices and values of successful spread events.
+return a \code{data.table} with indices and values of
+successful spread events.
 If \code{2}, it will simply return a vector of pixel indices of
 all cells that were touched. This will be the fastest option. If
 \code{FALSE}, then it will return a raster with
@@ -93,15 +93,16 @@ emptyRas <- raster(extent(0, 1e2, 0, 1e2), res = 1)
 loci <- (ncell(emptyRas) / 2 - ncol(emptyRas)) / 2 + c(-3, 3)
 
 # Allow overlap
-emptyRas[] <- 0
-rngs <- rings(emptyRas, loci = loci, allowOverlap = TRUE, returnIndices = TRUE)
-# Make a raster that adds together all id in a cell
-wOverlap <- rngs[, list(sumEventID = sum(id)), by = "indices"]
-emptyRas[wOverlap$indices] <- wOverlap$sumEventID
-if (interactive()) {
-  clearPlot()
-  Plot(emptyRas)
-}
+## TODO: need to fix a bug when allowOverlap = TRUE
+# emptyRas[] <- 0
+# rngs <- rings(emptyRas, loci = loci, allowOverlap = TRUE, returnIndices = TRUE)
+# # Make a raster that adds together all id in a cell
+# wOverlap <- rngs[, list(sumEventID = sum(id)), by = "indices"]
+# emptyRas[wOverlap$indices] <- wOverlap$sumEventID
+# if (interactive()) {
+#  clearPlot()
+#  Plot(emptyRas)
+# }
 
 # No overlap is default, occurs randomly
 emptyRas[] <- 0

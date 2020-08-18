@@ -99,7 +99,7 @@ if (getRversion() >= "3.1.0") {
 #'              data.table that is the output of a previous \code{spread2}.
 #'              If a vector, they should be cell indices (pixels) on the \code{landscape}.
 #'              If user has x and y coordinates, these can be converted with
-#'              \code{\link[raster]{cellFromXY}}.
+#'              \code{\link[raster:cellFrom]{cellFromXY}}.
 #'
 #' @param spreadProb  Numeric of length 1 or length \code{ncell(landscape)} or
 #'                    a \code{RasterLayer} that is the identical dimensions as
@@ -327,7 +327,6 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
-#' @importFrom bit bit
 #' @importFrom checkmate assert assertClass assertNumeric
 #' @importFrom checkmate checkClass checkDataTable checkLogical checkNumeric checkScalarNA
 #' @importFrom checkmate qassert
