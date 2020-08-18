@@ -14,7 +14,7 @@ spread(
   maxSize = 100000000L,
   directions = 8L,
   iterations = 1000000L,
-  lowMemory = getOption("spades.lowMemory", FALSE),
+  lowMemory = NULL,
   returnIndices = FALSE,
   returnDistances = FALSE,
   mapID = NULL,
@@ -45,7 +45,7 @@ spread(
   maxSize = 100000000L,
   directions = 8L,
   iterations = 1000000L,
-  lowMemory = getOption("spades.lowMemory"),
+  lowMemory = NULL,
   returnIndices = FALSE,
   returnDistances = FALSE,
   mapID = NULL,
@@ -109,8 +109,7 @@ default is 8 (Queen case). Can only be 4 or 8.}
 Leaving this \code{NULL} allows the spread to continue
 until stops spreading itself (i.e., exhausts itself).}
 
-\item{lowMemory}{Logical. If true, then function uses package \pkg{ff}
-internally. This is slower, but much lower memory footprint.}
+\item{lowMemory}{Deprecated.}
 
 \item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
 return a \code{data.table} with indices and values of
@@ -219,8 +218,6 @@ to be \code{TRUE}.}
 required for \code{stopRule}. These
 vectors should be as long as required e.g., length
 \code{loci} if there is one value per event.}
-
-\item{.zeroVector}{DESCRIPTION NEEDED}
 }
 \value{
 Either a \code{RasterLayer} indicating the spread of the process in
