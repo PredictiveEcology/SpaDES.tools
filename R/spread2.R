@@ -464,7 +464,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # A "new" entry into spread2 -- need to set up stuff
     if (canUseAvailable) {
       #if (smallRaster) {
-        notAvailable <- bit(ncells)
+      notAvailable <- if (requireNamespace("bit", quietly = TRUE))
+        bit(ncells)
+      else
+        logical(ncells)
       #} else {
       #  notAvailable <- ff(vmode = "boolean", FALSE, length = ncells)
       #}

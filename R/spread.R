@@ -176,8 +176,7 @@ if (getRversion() >= "3.1.0") {
 #'                      Leaving this \code{NULL} allows the spread to continue
 #'                      until stops spreading itself (i.e., exhausts itself).
 #'
-#' @param lowMemory     Logical. If true, then function uses package \code{ff}
-#'                      internally. This is slower, but much lower memory footprint.
+#' @param lowMemory     Deprecated.
 #'
 #' @param returnIndices Logical or numeric. If \code{1} or \code{TRUE}, will
 #'                      return a \code{data.table}
@@ -308,8 +307,6 @@ if (getRversion() >= "3.1.0") {
 #' @author Eliot McIntire and Steve Cumming
 #' @export
 #' @importFrom data.table := data.table setcolorder
-#' @importFrom ff as.ram ff
-#' @importFrom ffbase ffwhich
 #' @importFrom fastmatch %fin%
 #' @importFrom fpCompare %<=%
 #' @importFrom magrittr %>%
@@ -331,7 +328,8 @@ setGeneric(
   "spread",
   function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 0,
            mask = NA, maxSize = 1e8L, directions = 8L, iterations = 1e6L,
-           lowMemory = getOption("spades.lowMemory"), returnIndices = FALSE,
+           lowMemory = NULL, # getOption("spades.lowMemory"),
+           returnIndices = FALSE,
            returnDistances = FALSE, mapID = NULL, id = FALSE, plot.it = FALSE,
            spreadProbLater = NA_real_, spreadState = NA,
            circle = FALSE, circleMaxRadius = NA_real_,
@@ -456,13 +454,14 @@ setMethod(
                          id = 1:length(loci), active = 1)
       }
     } else {
-      if (lowMemory) {
+      if (!is.null(lowMemory)) {
+        message("lowMemory argument is now deprecated; using standard spread")
         # create vector of 0s called spreads, which corresponds to the indices
         # of the landscape raster
-        spreads <- ff(vmode = "short", 0, length = ncells)
-      } else {
-        spreads <- vector("integer", ncells)
-      }
+        #spreads <- ff(vmode = "short", 0, length = ncells)
+      } #else {
+      spreads <- vector("integer", ncells)
+      #}
     }
 
     n <- 1L
@@ -1077,21 +1076,21 @@ setMethod(
 
     # Convert the data back to raster
     if (!allowOverlap & !returnDistances & !spreadStateExists) {
-      if (lowMemory) {
-        wh <- ffwhich(spreads, spreads > 0) %>% as.ram()
-        if (returnIndices > 0) {
-          wh <- wh[!(wh %in% potentials[,2L])]
-          completed <- data.table(indices = wh, id = spreads[wh], active = FALSE)
-          if (NROW(potentials) > 0) {
-            active <- data.table(indices = potentials[, 2L],
-                                 id = spreads[potentials[, 1L]],
-                                 active = TRUE)
-          } else {
-            active <- data.table(indices = numeric(0), id = numeric(0),
-                                 active = logical(0))
-          }
-        }
-      } else {
+      # if (lowMemory) {
+      #   wh <- ffwhich(spreads, spreads > 0) %>% as.ram()
+      #   if (returnIndices > 0) {
+      #     wh <- wh[!(wh %in% potentials[,2L])]
+      #     completed <- data.table(indices = wh, id = spreads[wh], active = FALSE)
+      #     if (NROW(potentials) > 0) {
+      #       active <- data.table(indices = potentials[, 2L],
+      #                            id = spreads[potentials[, 1L]],
+      #                            active = TRUE)
+      #     } else {
+      #       active <- data.table(indices = numeric(0), id = numeric(0),
+      #                            active = logical(0))
+      #     }
+      #   }
+      # } else {
         wh <- if (spreadStateExists) {
           c(spreadState[!keepers]$indices, spreadsIndices)
         } else {
@@ -1112,7 +1111,7 @@ setMethod(
           }
         }
       }
-    }
+    #}
 
     if (returnIndices == 1) {
       if (allowOverlap | returnDistances | spreadStateExists) {

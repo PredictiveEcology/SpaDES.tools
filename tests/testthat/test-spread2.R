@@ -657,7 +657,6 @@ test_that("spread2 tests -- persistence", {
   library(raster)
   library(data.table)
   library(checkmate)
-  library(bit)
   library(fastmatch)
 
   landscape <- raster::raster(nrows = 50, ncols = 50)
