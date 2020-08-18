@@ -637,12 +637,7 @@ setMethod(
       # keep only neighbours that have not been spread to yet
       if (allowOverlap | returnDistances | spreadStateExists) {
         # data.table version is faster for potentials > 2000 or so
-        # if (NROW(potentials) > 10000) {
-        #   needBrowser <- if(exists("needBrowser")) FALSE else TRUE
-        #   if (isTRUE(needBrowser))
-        #     browser()
-        # }
-        if (NROW(potentials) > 12000) {
+        if (NROW(potentials) > 2000) {
           spreadsDT <- as.data.table(spreads)
           potentialsDT <- as.data.table(potentials)
           potentialsDT[, initialLocus := initialLoci[potentialsDT$id]]
