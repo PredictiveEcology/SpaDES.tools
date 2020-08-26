@@ -7,7 +7,7 @@ env:
 jobs:
   include:
   - os: linux
-    dist: xenial
+    dist: bionic
     r: oldrel
     addons:
       apt:
@@ -27,7 +27,7 @@ jobs:
     r_packages:
       - rgdal
   - os: linux
-    dist: xenial
+    dist: bionic
     services:
       - xvfb
     addons:
@@ -56,7 +56,7 @@ jobs:
       - Rscript -e 'covr::coveralls(package_coverage(type = "all", quiet = FALSE)))'
       - Rscript -e 'lintr::lint_package()'
   - os: linux
-    dist: xenial
+    dist: bionic
     addons:
       apt:
         sources:
@@ -83,7 +83,7 @@ jobs:
       - ggplot2
       - rgdal
   - os: linux
-    dist: xenial
+    dist: bionic
     services:
       - xvfb
     r: devel
