@@ -371,7 +371,7 @@ setMethod(
         stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
     if (isTRUE(allowOverlap)) {
-      stop("A bug has been detected when `allowOverwrite = TRUE`; results will be be incorrect.",
+      stop("A bug has been detected when `allowOverlap = TRUE`; results will be be incorrect.",
            "Perhaps try to lapply(...) around the loci, to do one at a time.")
     }
     if (!is.null(mapID)) {
