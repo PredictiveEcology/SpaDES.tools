@@ -41,7 +41,6 @@ test_that("spread produces legal RasterLayer", {
   seed <- 914953
   set.seed(seed)
   maxSize1 <- 1e2
-  browser()
   spreadState <- SpaDES.tools::spread(
     landscape = b,
     loci = loci,
@@ -335,30 +334,32 @@ test_that("spread stopRule does not work correctly", {
 
   # Test allowOverlap
   initialLoci <- as.integer(sample(1:ncell(hab), 10))
-  expect_error({
+
+  #expect_error({
     circs <- spread(hab2, spreadProb = 1, circle = TRUE, loci = initialLoci,
                     id = TRUE, circleMaxRadius = maxRadius, allowOverlap = TRUE)
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
 
-  expect_error({
+  #expect_error({
     circs <- spread(hab2, spreadProb = 1, loci = initialLoci,
                     maxSize = 10, allowOverlap = TRUE)
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
 
-  expect_error({
+  #expect_error({
     circs <- spread(hab2, spreadProb = 1, loci = initialLoci,
                     maxSize = seq_along(initialLoci) * 3, allowOverlap = TRUE)
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
 
   # Test allowOverlap and stopRule
   for (i in 1:6) {
     maxVal <- sample(10:300, 1)
     stopRule2 <- function(landscape, maxVal) sum(landscape) > maxVal
-    expect_error({
+
+    #expect_error({
       circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
                       stopRule = stopRule2, maxVal = maxVal, returnIndices = TRUE,
                       id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "includeRing")
-    }) ## TODO: fix error when allowOverlap = TRUE
+    # }) ## TODO: fix error when allowOverlap = TRUE
 
     #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOverlap error
     #expect_true(all(vals > maxVal)) ## TODO: fix allowOverlap error
@@ -367,22 +368,22 @@ test_that("spread stopRule does not work correctly", {
   #stopRuleBehavior the allowOverlap
   maxVal <- 20
   stopRule2 <- function(landscape, maxVal) sum(landscape) > maxVal
-  expect_error({
+  #expect_error({
     circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
                     stopRule = stopRule2, maxVal = maxVal, returnIndices = TRUE,
                     id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "excludePixel")
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
   #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOwerlap error
   #expect_true(all(vals <= maxVal)) ## TODO: fix allowOverlap error
 
   maxVal <- sample(10:100, 10)
   stopRule2 <- function(landscape, id, maxVal) sum(landscape) > maxVal[id]
-  expect_error({
+  #expect_error({
     circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
                     stopRule = stopRule2, id = TRUE, allowOverlap = TRUE,
                     stopRuleBehavior = "excludePixel", maxVal = maxVal,
                     returnIndices = TRUE)
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
   #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOverlap error
   #expect_true(all(vals <= maxVal)) ## TODO: fix allowOverlap error
   # Test that maxSize can be a non integer value (i.e, Real)
@@ -574,10 +575,10 @@ test_that("rings and cir", {
   cirs <- data.table(cir(hab, caribou[1, ], maxRadius = radius * 1.5001, minRadius = radius,
                          simplify = TRUE, allowOverlap = TRUE,
                          includeBehavior = "excludePixels", returnDistances = TRUE))
-  expect_error({
+  #expect_error({
     cirs2 <- rings(hab, loci, minRadius = radius, maxRadius = radius * 1.5001,
                    allowOverlap = TRUE, returnIndices = TRUE, includeBehavior = "includeRing")
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
 
   #expect_true(all.equal(range(cirs$dists), range(cirs2$dists)))
   #setkey(cirs2, dists, indices)

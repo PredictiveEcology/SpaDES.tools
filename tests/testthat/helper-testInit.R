@@ -18,7 +18,7 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
   if (missing(libraries)) libraries <- list()
   unlist(lapply(libraries, require, character.only = TRUE))
   require("testthat")
-  tmpdir <- reproducible:::tempdir2(reproducible:::rndstr(1, 6))
+  tmpdir <- Require::tempdir2(reproducible:::rndstr(1, 6))
 
   if (isTRUE(needGoogle)) {
     if (utils::packageVersion("googledrive") >= "1.0.0")

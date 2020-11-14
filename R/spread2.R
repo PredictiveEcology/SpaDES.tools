@@ -464,7 +464,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     if (canUseAvailable) {
       #if (smallRaster) {
       notAvailable <- if (requireNamespace("bit", quietly = TRUE))
-        bit(ncells)
+        bit::bit(ncells)
       else
         logical(ncells)
       #} else {
