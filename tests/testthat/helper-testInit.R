@@ -18,13 +18,16 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
   if (missing(libraries)) libraries <- list()
   unlist(lapply(libraries, require, character.only = TRUE))
   require("testthat")
-  tmpdir <- Require::tempdir2(reproducible:::rndstr(1, 6))
+  subDir <- paste(sample(LETTERS, 8), collapse = "")
+  tmpdir <- Require::tempdir2(subDir)
 
   if (isTRUE(needGoogle)) {
-    if (utils::packageVersion("googledrive") >= "1.0.0")
-      googledrive::drive_deauth()
-    else
-      googledrive::drive_auth_config(active = TRUE)
+    if (requireNamespace("googledrive", quietly = TRUE)) {
+      if (utils::packageVersion("googledrive") >= "1.0.0")
+        googledrive::drive_deauth()
+      else
+        googledrive::drive_auth_config(active = TRUE)
+    }
 
     if (quickPlot::isRstudioServer()) {
       options(httr_oob_default = TRUE)
@@ -47,6 +50,7 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
         if (!file.exists("~/.httr-oauth"))
           message("Please put an .httr-oauth file in your ~ directory")
       }
+
     }
   }
   checkPath(tmpdir, create = TRUE)
@@ -77,7 +81,8 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
   }
 
   if (!is.null(tmpFileExt)) {
-    ranfiles <- unlist(lapply(tmpFileExt, function(x) paste0(reproducible:::rndstr(1, 7), ".", x)))
+    rndstr <- subDir <- paste(sample(LETTERS, 8), collapse = "")
+    ranfiles <- unlist(lapply(tmpFileExt, function(x) paste0(rndstr, ".", x)))
     tmpfile <- file.path(tmpdir, ranfiles)
     tmpfile <- gsub(pattern = "\\.\\.", tmpfile, replacement = "\\.")
     file.create(tmpfile)
