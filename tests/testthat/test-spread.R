@@ -878,13 +878,13 @@ test_that("spreadProb with relative values does not work correctly", {
   events2 <- spread(hab3, id = TRUE, loci = sam, directions = 8,
                     neighProbs = c(0, 1), maxSize = c(100), exactSizes = TRUE)
 
-  if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.4") {
+  #if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.4") {
     ## many more high value hab pixels spread to in event1
-    expect_true(sum(hab3[events1[] > 0]) > sum(hab3[events2[] > 0]))
-  } else {
+  #  expect_true(sum(hab3[events1[] > 0]) > sum(hab3[events2[] > 0]))
+  #} else {
     ## equal number on R-devel
     expect_equal(sum(hab3[events1[] > 0]), sum(hab3[events2[] > 0]))
-  }
+  #}
 
 
   # Check numeric vector with NAs is equivalent to raster with NAs
