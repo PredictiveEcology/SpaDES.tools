@@ -153,20 +153,20 @@ test_that("allowOverlap -- produces exact result", {
 
   skip("benchmarking is for manual testing")
 
-  N <- 1000
-  a <- raster::raster(extent(0, N, 0, N), res = 1)
-  mp <- middlePixel(a)
-  mps <- mp+(-50:50)
-  mb <- microbenchmark::microbenchmark(times = 4,
-    aoFALSE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
-           allowOverlap = FALSE, returnIndices = TRUE),
-    aoTRUE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
-           allowOverlap = TRUE, returnIndices = TRUE))
-
-  set.seed(123)
-  profvis::profvis(for (i in 1:4)
-    aoTRUE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
-                    allowOverlap = TRUE, returnIndices = TRUE))
+  # N <- 1000
+  # a <- raster::raster(extent(0, N, 0, N), res = 1)
+  # mp <- middlePixel(a)
+  # mps <- mp+(-50:50)
+  # mb <- microbenchmark::microbenchmark(times = 4,
+  #   aoFALSE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
+  #          allowOverlap = FALSE, returnIndices = TRUE),
+  #   aoTRUE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
+  #          allowOverlap = TRUE, returnIndices = TRUE))
+  #
+  # set.seed(123)
+  # profvis::profvis(for (i in 1:4)
+  #   aoTRUE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
+  #                   allowOverlap = TRUE, returnIndices = TRUE))
 
   ###############################################
 })
