@@ -176,8 +176,7 @@ if (getRversion() >= "3.1.0") {
 #'                      Leaving this \code{NULL} allows the spread to continue
 #'                      until stops spreading itself (i.e., exhausts itself).
 #'
-#' @param lowMemory     Logical. If true, then function uses package \pkg{ff}
-#'                      internally. This is slower, but much lower memory footprint.
+#' @param lowMemory     Deprecated.
 #'
 #' @param returnIndices Logical or numeric. If \code{1} or \code{TRUE}, will
 #'                      return a \code{data.table} with indices and values of
@@ -329,7 +328,8 @@ setGeneric(
   "spread",
   function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 0,
            mask = NA, maxSize = 1e8L, directions = 8L, iterations = 1e6L,
-           lowMemory = getOption("spades.lowMemory", FALSE), returnIndices = FALSE,
+           lowMemory = NULL, # getOption("spades.lowMemory"),
+           returnIndices = FALSE,
            returnDistances = FALSE, mapID = NULL, id = FALSE, plot.it = FALSE,
            spreadProbLater = NA_real_, spreadState = NA,
            circle = FALSE, circleMaxRadius = NA_real_,
@@ -350,8 +350,6 @@ setGeneric(
 #'              NOTE: this is overridden if \code{returnIndices} is \code{TRUE}
 #'              or \code{1} or \code{2}.
 #'
-#' @param .zeroVector DESCRIPTION NEEDED
-#'
 #' @rdname spread
 #'
 #' @example inst/examples/example_spread.R
@@ -364,15 +362,10 @@ setMethod(
                         returnDistances, mapID, id, plot.it, spreadProbLater,
                         spreadState, circle, circleMaxRadius, stopRule,
                         stopRuleBehavior, allowOverlap, asymmetry, asymmetryAngle,
-                        quick, neighProbs, exactSizes, relativeSpreadProb,
-                        .zeroVector, ...) {
+                        quick, neighProbs, exactSizes, relativeSpreadProb, ...) {
     if (!is.null(neighProbs)) {
       if (isTRUE(allowOverlap))
         stop("Can't use neighProbs and allowOverlap = TRUE together")
-    }
-    if (isTRUE(allowOverlap)) {
-      stop("A bug has been detected when `allowOverlap = TRUE`; results will be be incorrect.",
-           "Perhaps try to lapply(...) around the loci, to do one at a time.")
     }
     if (!is.null(mapID)) {
       warning("mapID is deprecated, use id")
@@ -403,7 +396,14 @@ setMethod(
     if (any(is.na(loci)))  {
       # start it in the centre cell, if there is no spreadState
       if (!spreadStateExists)
-        loci <- (nrow(landscape) / 2L + 0.5) * ncol(landscape)
+        loci <- middlePixel(landscape) #(nrow(landscape) / 2L + 0.5) * ncol(landscape)
+    }
+    if (!quick) {
+      dupLoci <- duplicated(loci)
+      if (any(duplicated(loci))) {
+        message("duplicate initial loci are provided")
+        # loci <- loci[dupLoci]
+      }
     }
 
     if (length(loci) == 0) stop("No loci. Nothing to do")
@@ -423,6 +423,8 @@ setMethod(
     } else {
       initialLoci <- loci
     }
+    lenInitialLoci <- length(initialLoci)
+    sequenceInitialLoci <- seq(lenInitialLoci)
 
     # Check for probabilities
     if (!quick) {
@@ -458,13 +460,14 @@ setMethod(
                          id = 1:length(loci), active = 1)
       }
     } else {
-      if (lowMemory) {
+      if (!is.null(lowMemory)) {
+        message("lowMemory argument is now deprecated; using standard spread")
         # create vector of 0s called spreads, which corresponds to the indices
         # of the landscape raster
-        spreads <- ff::ff(vmode = "short", 0, length = ncells)
-      } else {
-        spreads <- vector("integer", ncells)
-      }
+        #spreads <- ff(vmode = "short", 0, length = ncells)
+      } #else {
+      spreads <- vector("integer", ncells)
+      #}
     }
 
     n <- 1L
@@ -600,7 +603,7 @@ setMethod(
     }
 
     if (!exists("numRetries", envir = .pkgEnv))
-      assign("numRetries", rep(0, length(initialLoci)), envir = .pkgEnv)
+      assign("numRetries", rep(0, lenInitialLoci), envir = .pkgEnv)
 
     toColumn <- c("to", "indices")
 
@@ -638,42 +641,44 @@ setMethod(
 
       # keep only neighbours that have not been spread to yet
       if (allowOverlap | returnDistances | spreadStateExists) {
-        # data.table version is faster for potentials > 500 or so
-        if (TRUE) {
-          spreadsDT <- data.table(spreads)
-          potentialsDT <- data.table(potentials)
+        # data.table version is faster for potentials > 2000 or so
+        if (NROW(potentials) > 2000) {
+          spreadsDT <- as.data.table(spreads)
+          potentialsDT <- as.data.table(potentials)
           potentialsDT[, initialLocus := initialLoci[potentialsDT$id]]
-          colnamesPDT <- colnames(potentialsDT)
-          whIL <- which(colnamesPDT == "initialLocus")
-          whFrom <- which(colnamesPDT == "from")
+          colnamesPot <- colnames(potentialsDT)
+          whIL <- which(colnamesPot == "initialLocus")
+          whFrom <- which(colnamesPot == "from")
           setcolorder(potentialsDT,
-                      c(colnamesPDT[whIL], colnamesPDT[-c(whIL, whFrom)], colnamesPDT[whFrom]))
+                      c(colnamesPot[whIL], colnamesPot[-c(whIL, whFrom)], colnamesPot[whFrom]))
           setnames(potentialsDT, old = "to", new = "indices")
-          d <- rbindlist(list(spreadsDT, potentialsDT), fill = TRUE)
-          d <- data.table(d); setkey(d, "id");
-          d[, duplicated := duplicated(indices), by = id]
-          d <- d[duplicated == 0 & active == 1];
-          set(d, NULL, "duplicated", NULL)
-          potentials <- as.matrix(d)
+          newPot <- potentialsDT[!spreadsDT, on = c("id", "indices")]
+          potentials <- as.matrix(newPot)
         } else {
-          potentialsFrom <- potentials[, "from"]
-          colnames(potentials) <- colnames(spreads)
-          # get rid of immediate "from" and replace with original "from"
-          potentials[, "initialLocus"] <- initialLoci[potentials[, "id"]]
-          d <- rbind(spreads, potentials)
-          d <- cbind(d, "from" = c(rep(NA, NROW(spreads)), potentialsFrom))
-          ids <- as.integer(unique(d[, "id"]))
-          d <- do.call(rbind, lapply(ids, function(id) {
-            cbind(d[d[, "id"] == id, , drop = FALSE],
-                  duplicated = duplicated(d[d[, "id"] == id, "indices"]))
-          }))
+          potentials <- cbind(initialLocus = initialLoci[potentials[, "id"]], potentials)
+          colnames(potentials)[which(colnames(potentials) == "to")] <- "indices"
+          colnamesPot <- colnames(potentials)
+          whIL <- which(colnamesPot == "initialLocus")
+          whFrom <- which(colnamesPot == "from")
+          potentials <- potentials[,c(colnamesPot[whIL],
+                                      colnamesPot[-c(whIL, whFrom)],
+                                      colnamesPot[whFrom])]
 
-          lastCol <- ncol(d)
-          potentials <- d[d[, "duplicated"] == 0 &
-                            d[, "active"] == 1, , drop = FALSE][, -lastCol, drop = FALSE]
+          # These next lines including the lapply are the rate limiting
+          #   step and it has been heavily worked to speed it up March 31, 2020
+          seq2 <- sequenceInitialLoci[sequenceInitialLoci %in% potentials[,"id"]]
+          out <- lapply(seq2, function(ind) {
+            hasID <- potentials[, "id"] == ind
+            po <- potentials[hasID, ]
+            hasID2 <- spreads[, "id"] == ind
+            inds <- spreads[hasID2, "indices"]
+            vals <- po[, 2L] %in% inds
+            po[!vals,]
+          })
+          potentials <- do.call(rbind, out)
         }
-
       } else {
+        # Keep only the ones where it hasn't been spread to yet
         keep <- spreads[potentials[, 2L]] == 0L
         potentials <- potentials[keep, , drop = FALSE]
       }
@@ -758,8 +763,11 @@ setMethod(
       # random ordering so not always same:
       potentials <- potentials[sample.int(NROW(potentials)), , drop = FALSE]
       if (!allowOverlap) {
-        # here is where allowOverlap and returnDistances are different
+        # here is where allowOverlap and returnDistances are different ##### NOW OBSOLETE, I BELIEVE ELIOT March 2020
         potentials <- potentials[!duplicated(potentials[, 2L]), , drop = FALSE]
+      } else {
+        pots <- potentials[, c("id", "indices"), drop = FALSE]
+        potentials <- potentials[!duplicated(pots), , drop = FALSE]
       }
 
       # increment iteration
@@ -1071,28 +1079,33 @@ setMethod(
       loci <- c(loci, events)
     } # end of while loop
 
+
     # Convert the data back to raster
     if (!allowOverlap & !returnDistances & !spreadStateExists) {
-      if (lowMemory) {
-        wh <- ffbase::ffwhich(spreads, spreads > 0) %>% ff::as.ram()
-        if (returnIndices > 0) {
-          completed <- data.table(indices = wh, id = spreads[wh], active = FALSE)
-          if (NROW(potentials) > 0) {
-            active <- data.table(indices = potentials[, 2L],
-                                 id = spreads[potentials[, 1L]],
-                                 active = TRUE)
-          } else {
-            active <- data.table(indices = numeric(0), id = numeric(0),
-                                 active = logical(0))
-          }
-        }
-      } else {
+      # if (lowMemory) {
+      #   wh <- ffwhich(spreads, spreads > 0) %>% as.ram()
+      #   if (returnIndices > 0) {
+      #     wh <- wh[!(wh %in% potentials[,2L])]
+      #     completed <- data.table(indices = wh, id = spreads[wh], active = FALSE)
+      #     if (NROW(potentials) > 0) {
+      #       active <- data.table(indices = potentials[, 2L],
+      #                            id = spreads[potentials[, 1L]],
+      #                            active = TRUE)
+      #     } else {
+      #       active <- data.table(indices = numeric(0), id = numeric(0),
+      #                            active = logical(0))
+      #     }
+      #   }
+      # } else {
         wh <- if (spreadStateExists) {
           c(spreadState[!keepers]$indices, spreadsIndices)
         } else {
           spreadsIndices
         }
         if (returnIndices > 0) {
+          # wh already contains the potentials for next iteration -- these should be not duplicated
+          #   inside "completed"
+          wh <- wh[!(wh %in% potentials[,2L])]
           completed <- wh %>% data.table(indices = ., id = spreads[.], active = FALSE)
           if (NROW(potentials) > 0) {
             active <- data.table(indices = potentials[, 2L],
@@ -1104,7 +1117,7 @@ setMethod(
           }
         }
       }
-    }
+    #}
 
     if (returnIndices == 1) {
       if (allowOverlap | returnDistances | spreadStateExists) {
@@ -1112,17 +1125,18 @@ setMethod(
         if (circle) keepCols <- c(keepCols, 5)
 
         # change column order to match non allowOverlap
-        allCells <- data.table(spreads[, keepCols, drop = FALSE])
+        allCells <- as.data.table(spreads[, keepCols, drop = FALSE])
         set(allCells, , j = "active", as.logical(allCells$active))
-        setkeyv(allCells, "id")
+        # setkeyv(allCells, "id")
       } else {
-        allCells <- rbindlist(list(active, completed)) # active first; next line will keep active
+        allCells <- rbindlist(list(completed, active)) # active first; next line will keep active
         if (spreadStateExists) {
           initEventID <- unique(spreadState$id)
         } else {
           initEventID <- allCells[indices %fin% initialLoci, id]
         }
         if (!all(is.na(initialLoci))) {
+          attr(initialLoci, ".match.hash") <- NULL # something in data.table put this
           dtToJoin <- data.table(id = sort(initEventID), initialLocus = initialLoci)
         } else {
           dtToJoin <- data.table(id = numeric(0), initialLocus = numeric(0))
@@ -1134,8 +1148,9 @@ setMethod(
         allCells <- dtToJoin[allCells]
       }
       allCells[]
-      if (exists("numRetries", envir = .pkgEnv)) {
-        if (sum(allCells$active) == 0) rm("numRetries", envir = .pkgEnv)
+      if (exactSizes)
+        if (exists("numRetries", envir = .pkgEnv)) {
+          if (sum(allCells$active) == 0) rm("numRetries", envir = .pkgEnv)
       }
       return(allCells)
     }

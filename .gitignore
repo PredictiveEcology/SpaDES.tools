@@ -30,3 +30,5 @@ src/*.so
 src/*.dll
 src-*/
 /revdep/.cache.rds
+tests/manualTests/benchmarking.R
+

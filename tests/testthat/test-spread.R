@@ -86,10 +86,90 @@ test_that("spread produces legal RasterLayer", {
     #                  c(4L, 8L, 7L, 9L, 1L, 25L, 13L, 13L, 20L, 1L)))
   } else {
     expect_true(all(fires2[, length(initialLocus), by = id][, V1] ==
-                      c(8L, 7L, 2L, 2L, 19L, 16L, 18L, 3L, 7L, 7L)))
+                      c(8L, 9L, 2L, 2L, 28L, 17L, 21L, 3L, 6L, 7L)))
   }
 })
 
+test_that("allowOverlap -- produces exact result", {
+  testInitOut <- testInit(needGoogle = FALSE, c("sp", "raster"))
+  on.exit({
+    testOnExit(testInitOut)
+  }, add = TRUE)
+
+  N <- 10
+  a <- raster::raster(extent(0, N, 0, N), res = 1)
+  ao <- c(FALSE, TRUE)
+  mp <- middlePixel(a)
+  mps <- mp+(-3:3)
+
+  # ._spread_3 <- ._spread_19 <-._spread_14 <- 1;
+  b <- list()
+  Nreps <- 100
+  sams <- sample(1e7, Nreps)
+  for (i in seq_along(ao)) {
+    b[[i]] <- list()
+    for (j in seq_len(Nreps)) {
+      set.seed(sams[j])
+  #    set.seed(1892809)
+      b[[i]][[j]] <- spread(a, loci = mp, spreadProb = 0.22, id = TRUE,
+                            allowOverlap = ao[i], returnIndices = TRUE)
+    }
+  }
+  bs <- lapply(b, function(x) rbindlist(x, idcol = "rep"))
+  expect_true(all.equal(bs[[1]], bs[[2]]))
+  # aBigger <- sum(unlist(lapply(purrr::transpose(b), function(x) NROW(x[[1]]) < NROW(x[[2]]))))
+  # bBigger <- sum(unlist(lapply(purrr::transpose(b), function(x) NROW(x[[1]]) > NROW(x[[2]]))))
+  # (comp <- aBigger - bBigger)
+  # out <- abs(comp) < Nreps/20
+  # expect_true(out)
+
+  ##################################################
+  i <- 0L
+  b <- list()
+  Nreps <- 100
+  sams <- sample(1e7, Nreps)
+
+  #._spread_14 <- 1
+  for (i in seq_along(ao)) {
+    b[[i]] <- list()
+    for (j in seq_len(Nreps)) {
+      set.seed(sams[j])
+      b[[i]][[j]] <- spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
+                            allowOverlap = ao[i], returnIndices = TRUE)
+    }
+  }
+  bs <- lapply(b, function(x) rbindlist(x, idcol = "rep"))
+  ras <- list()
+  for (i in seq_along(bs)) {
+    ras[[i]] <- raster(a)
+    ras[[i]][] <- 0
+    v <- bs[[i]][, .N, by = 'indices']
+    ras[[i]][v$indices] <- v$N
+  }
+  s <- raster::stack(ras)
+  s <- crop(s, extent(s[[1]], 2, 9, 2, 9))
+  o <- raster::calc(s, function(x) x[2] >= x[1])
+  expect_true(sum(o[] == 1) > (ncell(s) - 10))
+
+  skip("benchmarking is for manual testing")
+
+  # N <- 1000
+  # a <- raster::raster(extent(0, N, 0, N), res = 1)
+  # mp <- middlePixel(a)
+  # mps <- mp+(-50:50)
+  # mb <- microbenchmark::microbenchmark(times = 4,
+  #   aoFALSE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
+  #          allowOverlap = FALSE, returnIndices = TRUE),
+  #   aoTRUE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
+  #          allowOverlap = TRUE, returnIndices = TRUE))
+  #
+  # set.seed(123)
+  # profvis::profvis(for (i in 1:4)
+  #   aoTRUE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
+  #                   allowOverlap = TRUE, returnIndices = TRUE))
+
+  ###############################################
+})
 test_that("spread stopRule does not work correctly", {
   library(raster)
   library(quickPlot)
@@ -254,30 +334,32 @@ test_that("spread stopRule does not work correctly", {
 
   # Test allowOverlap
   initialLoci <- as.integer(sample(1:ncell(hab), 10))
-  expect_error({
+
+  #expect_error({
     circs <- spread(hab2, spreadProb = 1, circle = TRUE, loci = initialLoci,
                     id = TRUE, circleMaxRadius = maxRadius, allowOverlap = TRUE)
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
 
-  expect_error({
+  #expect_error({
     circs <- spread(hab2, spreadProb = 1, loci = initialLoci,
                     maxSize = 10, allowOverlap = TRUE)
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
 
-  expect_error({
+  #expect_error({
     circs <- spread(hab2, spreadProb = 1, loci = initialLoci,
                     maxSize = seq_along(initialLoci) * 3, allowOverlap = TRUE)
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
 
   # Test allowOverlap and stopRule
   for (i in 1:6) {
     maxVal <- sample(10:300, 1)
     stopRule2 <- function(landscape, maxVal) sum(landscape) > maxVal
-    expect_error({
+
+    #expect_error({
       circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
                       stopRule = stopRule2, maxVal = maxVal, returnIndices = TRUE,
                       id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "includeRing")
-    }) ## TODO: fix error when allowOverlap = TRUE
+    # }) ## TODO: fix error when allowOverlap = TRUE
 
     #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOverlap error
     #expect_true(all(vals > maxVal)) ## TODO: fix allowOverlap error
@@ -286,22 +368,22 @@ test_that("spread stopRule does not work correctly", {
   #stopRuleBehavior the allowOverlap
   maxVal <- 20
   stopRule2 <- function(landscape, maxVal) sum(landscape) > maxVal
-  expect_error({
+  #expect_error({
     circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
                     stopRule = stopRule2, maxVal = maxVal, returnIndices = TRUE,
                     id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "excludePixel")
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
   #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOwerlap error
   #expect_true(all(vals <= maxVal)) ## TODO: fix allowOverlap error
 
   maxVal <- sample(10:100, 10)
   stopRule2 <- function(landscape, id, maxVal) sum(landscape) > maxVal[id]
-  expect_error({
+  #expect_error({
     circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
                     stopRule = stopRule2, id = TRUE, allowOverlap = TRUE,
                     stopRuleBehavior = "excludePixel", maxVal = maxVal,
                     returnIndices = TRUE)
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
   #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOverlap error
   #expect_true(all(vals <= maxVal)) ## TODO: fix allowOverlap error
   # Test that maxSize can be a non integer value (i.e, Real)
@@ -493,10 +575,10 @@ test_that("rings and cir", {
   cirs <- data.table(cir(hab, caribou[1, ], maxRadius = radius * 1.5001, minRadius = radius,
                          simplify = TRUE, allowOverlap = TRUE,
                          includeBehavior = "excludePixels", returnDistances = TRUE))
-  expect_error({
+  #expect_error({
     cirs2 <- rings(hab, loci, minRadius = radius, maxRadius = radius * 1.5001,
                    allowOverlap = TRUE, returnIndices = TRUE, includeBehavior = "includeRing")
-  }) ## TODO: fix error when allowOverlap = TRUE
+  #}) ## TODO: fix error when allowOverlap = TRUE
 
   #expect_true(all.equal(range(cirs$dists), range(cirs2$dists)))
   #setkey(cirs2, dists, indices)
@@ -796,13 +878,13 @@ test_that("spreadProb with relative values does not work correctly", {
   events2 <- spread(hab3, id = TRUE, loci = sam, directions = 8,
                     neighProbs = c(0, 1), maxSize = c(100), exactSizes = TRUE)
 
-  if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
+  #if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.4") {
     ## many more high value hab pixels spread to in event1
-    expect_true(sum(hab3[events1[] > 0]) > sum(hab3[events2[] > 0]))
-  } else {
+  #  expect_true(sum(hab3[events1[] > 0]) > sum(hab3[events2[] > 0]))
+  #} else {
     ## equal number on R-devel
     expect_equal(sum(hab3[events1[] > 0]), sum(hab3[events2[] > 0]))
-  }
+  #}
 
 
   # Check numeric vector with NAs is equivalent to raster with NAs

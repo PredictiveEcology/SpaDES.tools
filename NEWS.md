@@ -7,6 +7,7 @@ version 0.3.6
 * none
 
 ## Bugfixes
+* `spread` with `allowOverlap = TRUE` would give wrong results. Fixed.
 * update a test to deal with forthcoming `raster` changes.
 
 ## Enhancements
@@ -26,6 +27,7 @@ We are currently working on a fix, which may take some time.
 * none
 
 ## Enhancements
+* `spread` sped up for `allowOverlap = TRUE`
 * New values for `returnIndices` arg in `spread`, allowing for `numeric`. New option, `2` allows for the fastest return possible, only `pixelIndices`
 
 version 0.3.4
