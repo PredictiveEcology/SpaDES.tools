@@ -123,10 +123,14 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     numCell <- as.integer(ncell(x))
   }
 
-  if (directions == "bishop")  {
-    dirs <- 4
-    needCorners <- TRUE
-  } else {
+  if (is.character(directions)) {
+    if (directions == "bishop")  {
+      dirs <- 4
+      needCorners <- TRUE
+    } else {
+      stop("directions must be numeric or 'bishop'")
+    }
+} else {
     needCorners <- if (directions == 8) TRUE else FALSE
     dirs <- directions
   }

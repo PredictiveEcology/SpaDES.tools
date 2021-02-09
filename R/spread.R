@@ -367,6 +367,12 @@ setMethod(
       if (isTRUE(allowOverlap))
         stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
+    samInt <- if (requireNamespace("dqrng", quietly = TRUE))
+      dqsample.int
+    else
+      sample.int
+
+
     if (!is.null(mapID)) {
       warning("mapID is deprecated, use id")
       id <- mapID
@@ -534,6 +540,9 @@ setMethod(
         spreads[loci] <- n
       }
       spreadsIndices <- unname(loci)
+      length(spreadsIndices) <- length(loci) * 100
+      prevSpreadIndicesActiveLen <- length(loci)
+      prevSpreadIndicesFullLen <- length(spreadsIndices)
     }
 
     # Convert mask and NAs to 0 on the spreadProb Raster
@@ -612,10 +621,10 @@ setMethod(
       if (!is.null(neighProbs)) {
         numNeighs <- if (is.list(neighProbs)) {
           unlist(lapply(neighProbs, function(x) {
-            sample.int(length(x), size = 1, replace = TRUE, prob = x)
+            samInt(length(x), size = 1, replace = TRUE, prob = x)
           }))
         } else {
-          sample.int(length(neighProbs), size = length(loci), replace = TRUE,
+          samInt(length(neighProbs), size = length(loci), replace = TRUE,
                      prob = neighProbs)
         }
       }
@@ -632,7 +641,8 @@ setMethod(
           potentials <- adj(landscape, loci, directions, pairs = TRUE)
         } else {
           # must pad the first column of potentials
-          potentials <- cbind(NA, adj(landscape, loci, directions, pairs = FALSE))
+          newAdj <- adj(landscape, loci, directions, pairs = FALSE)
+          potentials <- cbind(NA, newAdj)
         }
       }
 
@@ -679,6 +689,7 @@ setMethod(
         }
       } else {
         # Keep only the ones where it hasn't been spread to yet
+        # browser()
         keep <- spreads[potentials[, 2L]] == 0L
         potentials <- potentials[keep, , drop = FALSE]
       }
@@ -758,10 +769,15 @@ setMethod(
         spreadProbs[spreadProbs > 0] <- 1
       }
 
-      potentials <- potentials[runif(NROW(potentials)) <= spreadProbs, , drop = FALSE]
+      randomSuccesses <- runifC(NROW(potentials)) <= spreadProbs
+      potentials <- potentials[randomSuccesses, , drop = FALSE]
 
       # random ordering so not always same:
-      potentials <- potentials[sample.int(NROW(potentials)), , drop = FALSE]
+      lenPot <- NROW(potentials)
+      if (lenPot) {
+        reorderVals <- samInt(lenPot)
+        potentials <- potentials[reorderVals, , drop = FALSE]
+      }
       if (!allowOverlap) {
         # here is where allowOverlap and returnDistances are different ##### NOW OBSOLETE, I BELIEVE ELIOT March 2020
         potentials <- potentials[!duplicated(potentials[, 2L]), , drop = FALSE]
@@ -961,7 +977,16 @@ setMethod(
             } else {
               spreads[events] <- n
             }
-            spreadsIndices <- unname(c(spreadsIndices, events))
+            curEventsLen <- length(events)
+            addedIndices <- prevSpreadIndicesActiveLen + 1:curEventsLen
+
+            if (sum(curEventsLen, prevSpreadIndicesActiveLen) > prevSpreadIndicesFullLen) {
+              length(spreadsIndices) <- (prevSpreadIndicesActiveLen + curEventsLen) * 2
+              prevSpreadIndicesFullLen <- length(spreadsIndices)
+            }
+            spreadsIndices[addedIndices] <- events
+            prevSpreadIndicesActiveLen <- prevSpreadIndicesActiveLen + curEventsLen
+            # spreadsIndices <- c(spreadsIndices, events)
           }
         }
 
@@ -1078,6 +1103,8 @@ setMethod(
       # new loci list for next while loop, concat of persistent and new events
       loci <- c(loci, events)
     } # end of while loop
+
+    spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
 
 
     # Convert the data back to raster
