@@ -486,7 +486,7 @@ setMethod(
         spreads <- vector("integer", ncells)
         spreadsDT <- data.table(spreads = spreads)
         set(spreadsDT, NULL, "spreads", 0L)
-        assign("spreadsDT", spreadsDT, envir = spNamespace)
+        assignInMyNamespace("spreadsDT", spreadsDT)
         on.exit({rm("spreadsDT", envir = stNamespace)})
       }
     }
