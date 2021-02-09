@@ -1211,7 +1211,6 @@ setMethod(
       return(wh)
     }
 
-    browser()
     landscape[] <- 0
     landscape@legend@colortable <- logical(0) # remove colour table
     if (allowOverlap | returnDistances) {
@@ -1236,3 +1235,5 @@ setMethod(
     }
     return(landscape)
 })
+
+spreadsDT <- integer()
