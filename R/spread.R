@@ -368,7 +368,7 @@ setMethod(
         stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
     samInt <- if (requireNamespace("dqrng", quietly = TRUE))
-      dqsample.int
+      dqrng::dqsample.int
     else
       sample.int
 
@@ -691,7 +691,8 @@ setMethod(
         # Keep only the ones where it hasn't been spread to yet
         # browser()
         keep <- spreads[potentials[, 2L]] == 0L
-        potentials <- potentials[keep, , drop = FALSE]
+       # if (any(!keep))
+          potentials <- potentials[keep, , drop = FALSE]
       }
 
       if (n == 2) {
@@ -1104,7 +1105,8 @@ setMethod(
       loci <- c(loci, events)
     } # end of while loop
 
-    spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
+    if (!allowOverlap & !returnDistances)
+      spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
 
 
     # Convert the data back to raster
