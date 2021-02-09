@@ -456,7 +456,7 @@ setMethod(
       }
     }
 
-    ncells <- ncell(landscape)
+    ncells <- as.integer(ncell(landscape))
 
     if (allowOverlap | returnDistances | spreadStateExists) {
       if (spreadStateExists) {
@@ -472,10 +472,24 @@ setMethod(
         # of the landscape raster
         #spreads <- ff(vmode = "short", 0, length = ncells)
       } #else {
-      spreads <- vector("integer", ncells)
-      #}
+      needEmptySpreads <- TRUE
+      spNamespace <- asNamespace("SpaDES.tools")
+      if (exists("spreadsDT", envir = spNamespace)) {
+        spreadsDT <- get("spreadsDT", envir = spNamespace)
+        # set(spreadsDT, NULL, "spreads", 0L)
+        # spreads <- spreadsDT$spreads
+        if (identical(NROW(spreadsDT), ncells)) {
+          needEmptySpreads <- FALSE
+        }
+      }
+      if (needEmptySpreads) {
+        spreads <- vector("integer", ncells)
+        spreadsDT <- data.table(spreads = spreads)
+        set(spreadsDT, NULL, "spreads", 0L)
+        assign("spreadsDT", spreadsDT, envir = spNamespace)
+        on.exit({rm("spreadsDT", envir = stNamespace)})
+      }
     }
-
     n <- 1L
 
     # circle needs directions to be 8
@@ -533,8 +547,9 @@ setMethod(
     if (!allowOverlap & !returnDistances) {
       if (id | returnIndices > 0 | relativeSpreadProb) {
         if (!spreadStateExists) {
+          set(spreadsDT, loci, "spreads", seq(loci))
+          ##DT spreads[loci] <- 1L:length(loci)
           # give values to spreads vector at initialLoci
-          spreads[loci] <- 1L:length(loci)
         }
       } else {
         spreads[loci] <- n
@@ -689,8 +704,9 @@ setMethod(
         }
       } else {
         # Keep only the ones where it hasn't been spread to yet
-        # browser()
-        keep <- spreads[potentials[, 2L]] == 0L
+        ##DT
+        keep <- spreadsDT$spreads[potentials[, 2L]] == 0L
+        # keep <- spreads[potentials[, 2L]] == 0L
        # if (any(!keep))
           potentials <- potentials[keep, , drop = FALSE]
       }
@@ -974,7 +990,9 @@ setMethod(
           } else {
             if (id | returnIndices > 0 | relativeSpreadProb) {
               # give new cells, the id of the source cell
-              spreads[events] <- spreads[potentials[, 1L]]
+              ##DT
+              set(spreadsDT, events, "spreads", spreadsDT$spreads[potentials[, 1L]])
+              # spreads[events] <- spreads[potentials[, 1L]]
             } else {
               spreads[events] <- n
             }
@@ -1135,13 +1153,13 @@ setMethod(
           # wh already contains the potentials for next iteration -- these should be not duplicated
           #   inside "completed"
           wh <- wh[!(wh %in% potentials[,2L])]
-          completed <- wh %>% data.table(indices = ., id = spreads[.], active = FALSE)
+          completed <- wh %>% data.table(indices = ., id = spreadsDT$spreads[.], active = FALSE)
           if (NROW(potentials) > 0) {
             active <- data.table(indices = potentials[, 2L],
                                  id = spreads[potentials[, 1L]],
                                  active = TRUE)
           } else {
-            active <- data.table(indices = numeric(0), id = numeric(0),
+            active <- data.table(indices = integer(0), id = integer(0),
                                  active = logical(0))
           }
         }
@@ -1180,13 +1198,20 @@ setMethod(
       if (exactSizes)
         if (exists("numRetries", envir = .pkgEnv)) {
           if (sum(allCells$active) == 0) rm("numRetries", envir = .pkgEnv)
+        }
+      if (!allowOverlap & !returnDistances) {
+        set(spreadsDT, allCells$indices, "spreads", 0L)
+        on.exit()
+        # spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
       }
+
       return(allCells)
     }
     if (returnIndices == 2) {
       return(wh)
     }
 
+    browser()
     landscape[] <- 0
     landscape@legend@colortable <- logical(0) # remove colour table
     if (allowOverlap | returnDistances) {
