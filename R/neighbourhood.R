@@ -238,10 +238,11 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
         #   , , drop = FALSE]
         # return(orig)
         #possNew <-
-          return(adj[
+          ret <- adj[
           !((adj[, "to"] <= 0 | adj[, "to"] > numCell)  | # top or bottom of raster
               ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
-          , , drop = FALSE])
+          , , drop = FALSE]
+          return(ret)
         # if (!identical(orig, possNew)) stop("the new adj algorithm is not the same as the old")
         #return(possNew)
       } else {

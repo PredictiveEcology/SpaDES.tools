@@ -847,7 +847,7 @@ setMethod(
           } else {
             # actually interested in potential[,2L], but they don't have values yet..
             #  can use their source
-            len <- tabulate(spreads[potentials[, 1L]], length(maxSize))
+            len <- tabulate(spreadsDT$spreads[potentials[, 1L]], length(maxSize))
           }
           if (any((size + len) > maxSize & size <= maxSize)) {
             whichID <- which(size + len > maxSize)
@@ -859,7 +859,7 @@ setMethod(
               if (allowOverlap | returnDistances | spreadStateExists) {
                 thisID <- which(potentials[, 3L] == whichID[i])
               } else {
-                thisID <- which(spreads[potentials[, 1L]] == whichID[i])
+                thisID <- which(spreadsDT$spreads[potentials[, 1L]] == whichID[i])
               }
 
               # some unusual cases where there are none on the spreads. Unsure how this occurs
