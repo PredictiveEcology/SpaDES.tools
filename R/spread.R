@@ -474,9 +474,9 @@ setMethod(
         #spreads <- ff(vmode = "short", 0, length = ncells)
       } #else {
       needEmptySpreads <- TRUE
-      spNamespace <- asNamespace("SpaDES.tools")
-      if (exists("spreadsDT", envir = spNamespace)) {
-        spreadsDT <- get("spreadsDT", envir = spNamespace)
+      stNamespace <- asNamespace("SpaDES.tools")
+      if (exists("spreadsDT", envir = stNamespace)) {
+        spreadsDT <- get("spreadsDT", envir = stNamespace)
         # set(spreadsDT, NULL, "spreads", 0L)
         # spreads <- spreadsDT$spreads
         if (identical(NROW(spreadsDT), ncells)) {
