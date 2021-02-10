@@ -306,13 +306,14 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
-#' @importFrom data.table := data.table setcolorder
+#' @importFrom data.table := data.table setcolorder set
 #' @importFrom fastmatch %fin%
 #' @importFrom fpCompare %<=%
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot clearPlot Plot
 #' @importFrom raster extent maxValue minValue ncell ncol nrow raster res setValues
 #' @importFrom stats runif
+#' @importFrom utils assignInMyNamespace
 #' @rdname spread
 #'
 #' @seealso \code{\link{spread2}} for a different implementation of the same algorithm.
