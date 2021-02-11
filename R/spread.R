@@ -364,15 +364,19 @@ setMethod(
                         spreadState, circle, circleMaxRadius, stopRule,
                         stopRuleBehavior, allowOverlap, asymmetry, asymmetryAngle,
                         quick, neighProbs, exactSizes, relativeSpreadProb, ...) {
+
     if (!is.null(neighProbs)) {
       if (isTRUE(allowOverlap))
         stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
-    samInt <- if (requireNamespace("dqrng", quietly = TRUE)) {
-      dqrng::dqsample.int
+    if (requireNamespace("dqrng", quietly = TRUE)) {
+      samInt <- dqrng::dqsample.int
+      # set dqrng seed from base state
+      dqrng::dqset.seed(sample.int(1e9, 2))
     } else {
-      sample.int
+      samInt <- sample.int
     }
+
 
     if (!is.null(mapID)) {
       warning("mapID is deprecated, use id")
@@ -509,6 +513,7 @@ setMethod(
         on.exit({assignInMyNamespace("spreadsDTInNamespace", integer())})
       }
     }
+
     n <- 1L
 
     # circle needs directions to be 8
@@ -656,6 +661,7 @@ setMethod(
     #browser(expr = exists("aaaaa"))
     # while there are active cells
     while (length(loci) & (n <= iterations)) {
+
       if (!is.null(neighProbs)) {
         numNeighs <- if (is.list(neighProbs)) {
           unlist(lapply(neighProbs, function(x) {
@@ -1171,6 +1177,10 @@ setMethod(
       # new loci list for next while loop, concat of persistent and new events
       loci <- c(loci, events)
     } # end of while loop
+
+    # Reset the base R seed so it is deterministic
+    if (requireNamespace("dqrng", quietly = TRUE))
+      set.seed(dqrng::dqsample.int(1e9, 1) + sample.int(1e9, 1))
 
     if (!allowOverlap & !returnDistances) {
       spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
