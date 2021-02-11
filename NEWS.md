@@ -1,5 +1,12 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
+version 0.3.8
+=============
+
+## enhancements
+
+* improved speed for `spread` under most conditions, especially larger events, possibly up to 2x.
+
 version 0.3.6
 =============
 
