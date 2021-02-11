@@ -405,6 +405,9 @@ setMethod(
       if (!spreadStateExists)
         loci <- middlePixel(landscape) #(nrow(landscape) / 2L + 0.5) * ncol(landscape)
     }
+    if (!is.integer(loci)) {
+      loci <- as.integer(loci)
+    }
     if (!quick) {
       dupLoci <- duplicated(loci)
       if (any(duplicated(loci))) {
@@ -1250,10 +1253,15 @@ setMethod(
         landscape[pixVal$indices] <- pixVal$V1;
       }
     } else {
-      landscape[wh] <- spreads[wh]
-      if (exists("potentials"))
-        if (NROW(potentials) > 0)
-          landscape[potentials[, 1L]] <- spreads[potentials[, 2L]]
+      landscape[wh] <- spreadsDT$spreads[wh]
+      if (exists("potentials")) {
+        if (NROW(potentials) > 0) {
+          landscape[potentials[, 1L]] <- spreadsDT$spreads[potentials[, 2L]]
+          set(spreadsDT, potentials[, 1L], "spreads", 0L)
+        }
+      }
+      set(spreadsDT, wh, "spreads", 0L)
+
     }
     return(landscape)
 })
