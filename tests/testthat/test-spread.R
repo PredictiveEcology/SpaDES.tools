@@ -100,7 +100,7 @@ test_that("allowOverlap -- produces exact result", {
   a <- raster::raster(extent(0, N, 0, N), res = 1)
   ao <- c(FALSE, TRUE)
   mp <- middlePixel(a)
-  mps <- mp + (-3:3)
+  mps <- mp+(-3:3)
 
   # ._spread_3 <- ._spread_19 <-._spread_14 <- 1;
   b <- list()
@@ -151,26 +151,7 @@ test_that("allowOverlap -- produces exact result", {
   o <- raster::calc(s, function(x) x[2] >= x[1])
   expect_true(sum(o[] == 1) > (ncell(s) - 10))
 
-  skip("benchmarking is for manual testing")
-
-  # N <- 1000
-  # a <- raster::raster(extent(0, N, 0, N), res = 1)
-  # mp <- middlePixel(a)
-  # mps <- mp+(-50:50)
-  # mb <- microbenchmark::microbenchmark(times = 4,
-  #   aoFALSE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
-  #          allowOverlap = FALSE, returnIndices = TRUE),
-  #   aoTRUE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
-  #          allowOverlap = TRUE, returnIndices = TRUE))
-  #
-  # set.seed(123)
-  # profvis::profvis(for (i in 1:4)
-  #   aoTRUE = spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
-  #                   allowOverlap = TRUE, returnIndices = TRUE))
-
-  ###############################################
 })
-
 test_that("spread stopRule does not work correctly", {
   library(raster)
   library(quickPlot)
@@ -887,6 +868,7 @@ test_that("spreadProb with relative values does not work correctly", {
     expect_equal(sum(hab3[events1[] > 0]), sum(hab3[events2[] > 0]))
   #}
 
+
   # Check numeric vector with NAs is equivalent to raster with NAs
   numNAs <- 50
   sps <- sample(c(rep(NA_real_, numNAs), runif(ncell(hab3) - numNAs, 0, 0.5)))
@@ -897,4 +879,6 @@ test_that("spreadProb with relative values does not work correctly", {
   set.seed(seed)
   expect_that(out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps), is_a("RasterLayer"))
   expect_identical(out1, out2)
+
 })
+
