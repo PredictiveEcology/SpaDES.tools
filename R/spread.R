@@ -1180,8 +1180,7 @@ setMethod(
                                  id = spreads[potentials[, 1L]],
                                  active = TRUE)
           } else {
-            active <- data.table(indices = integer(0), id = integer(0),
-                                 active = logical(0))
+            active <- data.table(indices = integer(0), id = integer(0), active = logical(0))
           }
         }
       }
@@ -1221,7 +1220,7 @@ setMethod(
           if (sum(allCells$active) == 0) rm("numRetries", envir = .pkgEnv)
         }
       if (!allowOverlap & !returnDistances) {
-        set(spreadsDT, allCells$indices, "spreads", 0L)
+        set(spreadsDT, as.integer(allCells$indices), "spreads", 0L)
         # remove the previous on.exit which had the effect of deleting the contents
         #   completely on a failed `spread`. Here, we want to delete the previous
         #   on.exit --> allowing the object to stay intact, but with only zeros.

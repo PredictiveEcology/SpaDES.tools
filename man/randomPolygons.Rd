@@ -24,11 +24,11 @@ randomPolygon(x, hectares, area)
 \method{randomPolygon}{SpatialPolygons}(x, hectares, area)
 }
 \arguments{
-\item{ras}{A raster that whose extent will be used for the randomPolygons.}
+\item{ras}{A raster that whose extent will be used for the random polygons.}
 
 \item{numTypes}{Numeric value. The number of unique polygon types to use.}
 
-\item{...}{Other arguments passed to spread. No known uses currently.}
+\item{...}{Other arguments passed to \code{spread}. No known uses currently.}
 
 \item{x}{Either a \code{SpatialPoints}, \code{SpatialPolygons}, or \code{matrix} with two
 dimensions, 1 row, with the approximate centre of the new random polygon to create.
