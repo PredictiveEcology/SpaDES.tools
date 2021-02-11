@@ -473,6 +473,23 @@ setMethod(
         # of the landscape raster
         #spreads <- ff(vmode = "short", 0, length = ncells)
       } #else {
+
+      # The experimental new spread function has some changes for speed. 1) The
+      # bottleneck amazingly, was the creation of a new empty vector of length
+      # ncell(landscape) ... it took >50% of the time of the spread function
+      # when called 100,000s of times on a variety of spreadProb situations. 2) I
+      # found that the only way to stop instantiating this was to have a
+      # data.table object that uses reference semantics. 3) Put a simple, 1 column
+      # data.table object into the SpaDES.tools namespace. It will contain the
+      # former spreads object which was 0 everywhere the events hadn't spread
+      # to, and a non-zero integer otherwise. 4) The function has to make sure that
+      # it is "correct" on leaving the function. Two different cases: A) it
+      # exits improperly --> action is delete this object; B) it exits correctly
+      # --> action is to change all the values that were non-zero back to zero,
+      # rather than delete the object. The whole point is to keep the object
+      # intact after it has exited spread, so that it is available again
+      # immediately for reuse.
+
       needEmptySpreads <- TRUE
       stNamespace <- asNamespace("SpaDES.tools")
       if (exists("spreadsDT", envir = stNamespace)) {
@@ -487,8 +504,9 @@ setMethod(
         spreads <- vector("integer", ncells)
         spreadsDT <- data.table(spreads = spreads)
         set(spreadsDT, NULL, "spreads", 0L)
+        # put the empty data.table into the SpaDES.tools namespace
         assignInMyNamespace("spreadsDT", spreadsDT)
-        on.exit({rm("spreadsDT", envir = stNamespace)})
+        on.exit({assignInMyNamespace("spreadsDT", integer())})
       }
     }
     n <- 1L
@@ -1202,6 +1220,9 @@ setMethod(
         }
       if (!allowOverlap & !returnDistances) {
         set(spreadsDT, allCells$indices, "spreads", 0L)
+        # remove the previous on.exit which had the effect of deleting the contents
+        #   completely on a failed `spread`. Here, we want to delete the previous
+        #   on.exit --> allowing the object to stay intact, but with only zeros.
         on.exit()
         # spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
       }
