@@ -569,7 +569,7 @@ setMethod(
     if (!allowOverlap & !returnDistances) {
       if (id | returnIndices > 0 | relativeSpreadProb) {
         if (!spreadStateExists) {
-          set(spreadsDT, as.integer(loci), "spreads", seq(loci))
+          set(spreadsDT, loci, "spreads", seq(loci))
           ##DT spreads[loci] <- 1L:length(loci)
           # give values to spreads vector at initialLoci
         }
