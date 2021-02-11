@@ -100,7 +100,7 @@ test_that("allowOverlap -- produces exact result", {
   a <- raster::raster(extent(0, N, 0, N), res = 1)
   ao <- c(FALSE, TRUE)
   mp <- middlePixel(a)
-  mps <- mp+(-3:3)
+  mps <- mp + (-3:3)
 
   # ._spread_3 <- ._spread_19 <-._spread_14 <- 1;
   b <- list()
@@ -815,11 +815,11 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
       clusterEvalQ(cl1, {
         library(SpaDES.tools)})
     })
-    system.time(
+    system.time({
       dfepCluster <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
                                            landscape = hab, cumulativeFn = `+`,
                                            cl = cl1)
-    )
+    })
     stopCluster(cl1)
     expect_true(all.equal(dfep, dfepCluster))
 
