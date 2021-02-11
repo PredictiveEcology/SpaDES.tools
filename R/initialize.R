@@ -122,11 +122,11 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #'
 #' These are built with the \code{\link{spread}} function internally.
 #'
-#' @param ras A raster that whose extent will be used for the randomPolygons.
+#' @param ras A raster that whose extent will be used for the random polygons.
 #'
 #' @param numTypes Numeric value. The number of unique polygon types to use.
 #'
-#' @param ...      Other arguments passed to spread. No known uses currently.
+#' @param ...      Other arguments passed to \code{spread}. No known uses currently.
 #'
 #' @return A map of extent \code{ext} with random polygons.
 #'
