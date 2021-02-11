@@ -658,10 +658,10 @@ setMethod(
       if (!is.null(neighProbs)) {
         numNeighs <- if (is.list(neighProbs)) {
           unlist(lapply(neighProbs, function(x) {
-            samInt(length(x), size = 1, replace = TRUE, prob = x)
+            sample.int(length(x), size = 1, replace = TRUE, prob = x)
           }))
         } else {
-          samInt(length(neighProbs), size = length(loci), replace = TRUE,
+          sample.int(length(neighProbs), size = length(loci), replace = TRUE,
                      prob = neighProbs)
         }
       }
