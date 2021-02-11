@@ -566,7 +566,7 @@ setMethod(
     if (!allowOverlap & !returnDistances) {
       if (id | returnIndices > 0 | relativeSpreadProb) {
         if (!spreadStateExists) {
-          set(spreadsDT, loci, "spreads", seq(loci))
+          set(spreadsDT, as.integer(loci), "spreads", seq(loci))
           ##DT spreads[loci] <- 1L:length(loci)
           # give values to spreads vector at initialLoci
         }
@@ -1105,7 +1105,6 @@ setMethod(
               keepLoci <- spreads[loci] %fin% which(tooSmall & inactive)
               events <- c(loci[keepLoci], events)
             }
-
           }
         }
       }
@@ -1142,9 +1141,9 @@ setMethod(
       loci <- c(loci, events)
     } # end of while loop
 
-    if (!allowOverlap & !returnDistances)
+    if (!allowOverlap & !returnDistances) {
       spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
-
+    }
 
     # Convert the data back to raster
     if (!allowOverlap & !returnDistances & !spreadStateExists) {
@@ -1192,7 +1191,7 @@ setMethod(
 
         # change column order to match non allowOverlap
         allCells <- as.data.table(spreads[, keepCols, drop = FALSE])
-        set(allCells, , j = "active", as.logical(allCells$active))
+        set(allCells, NULL, j = "active", as.logical(allCells$active))
         # setkeyv(allCells, "id")
       } else {
         allCells <- rbindlist(list(completed, active)) # active first; next line will keep active
