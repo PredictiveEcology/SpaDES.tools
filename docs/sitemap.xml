@@ -37,7 +37,7 @@
     <loc>https://spades-tools.predictiveecology.org/reference/findFactors.html</loc>
   </url>
   <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/gaussmap.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/gaussMap.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/heading.html</loc>
@@ -67,7 +67,7 @@
     <loc>https://spades-tools.predictiveecology.org/reference/randomStudyArea.html</loc>
   </url>
   <url>
-    <loc>https://spades-tools.predictiveecology.org/reference/rasterizeReduce.html</loc>
+    <loc>https://spades-tools.predictiveecology.org/reference/rasterizeReduced.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/rcpp-extras.html</loc>
