@@ -87,7 +87,6 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     expect_false(file.exists(file.path(y1[[i]]$red@file@name)))
   }
 
-
   # with buffer (proportion of cells)
   y2 <- splitRaster(r, nx, ny, c(0.5, 0.3), path = file.path(tmpdir, "red2"))
   xextents <- c()
@@ -152,6 +151,10 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   #defaults to FLT4S
   y6 <- splitRaster(r, nx, ny)
   expect_true(dataType(y6[[1]]) == "FLT4S")
+
+  #use different file extension
+  y7 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".tif")
+  expect_true(extension(filename(y7[[1]])) == ".tif")
 })
 
 test_that("splitRaster works in parallel", {
@@ -162,7 +165,8 @@ test_that("splitRaster works in parallel", {
   if (interactive()) {
     library(raster); on.exit(detach("package:raster"), add = TRUE)
 
-    tmpdir <- file.path(tempdir(), "splitRaster-test-parallel") %>% reproducible::checkPath(create = TRUE)
+    tmpdir <- file.path(tempdir(), "splitRaster-test-parallel") %>%
+      reproducible::checkPath(create = TRUE)
 
     on.exit({
       #detach("package:raster")
