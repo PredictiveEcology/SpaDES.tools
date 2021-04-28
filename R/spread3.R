@@ -133,44 +133,62 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
            legendRange = c(0, meanDist / (res(rasQuality)[1] / 12)))
     }
 
-    fromPts <- xyFromCell(rasQuality, b[active]$from)
-    toPts <- xyFromCell(rasQuality, b[active]$pixels)
+
+    fromPts <- xyFromCell(rasQuality, b[["from"]][active])
+    toPts <- xyFromCell(rasQuality, b[["pixels"]][active])
     dists <- pointDistance(p1 = fromPts, p2 = toPts, lonlat = FALSE)
-    dirs <- b[active]$direction
+    dirs <- b[["direction"]][active]
 
     # Convert advection vector into length of dirs from pixels, if length is not 1
     advectionDirTmp <- if (length(advectionDir) > 1) {
-      advectionDir[b[active]$pixels]
+      advectionDir[b[["pixels"]][active]]
     } else {
       advectionDir
     }
     advectionMagTmp <- if (length(advectionMag) > 1) {
-      advectionMag[b[active]$pixels]
+      advectionMag[b[["pixels"]][active]]
     } else {
       advectionMag
     }
     xDist <- round(sin(advectionDirTmp) * advectionMagTmp + sin(dirs) * dists, 4)
     yDist <- round(cos(advectionDirTmp) * advectionMagTmp + cos(dirs) * dists, 4)
 
+
+
     # This calculates: "what fraction of the distance being moved is along the dirs axis"
     #   This means that negative mags is "along same axis, but in the opposite direction"
     #   which is dealt with next, see "opposite direction"
-    b[active, mags := round(sin(dirs) * xDist + cos(dirs) * yDist, 3)]
-    negs <- b[active]$mags < 0
+    set(b, active, "mags", round(sin(dirs) * xDist + cos(dirs) * yDist, 3))
+
+    # b[active, mags := round(sin(dirs) * xDist + cos(dirs) * yDist, 3)]
+    negs <- b[["mags"]][active] < 0
     negs[is.na(negs)] <- FALSE
     #dirs2 <- dirs
     anyNegs <- any(negs)
-    nonNA <- !is.na(b[active]$direction)
+    nonNA <- !is.na(b[["direction"]][active])
+    activeNonNA <- active[nonNA]
+
     if (any(anyNegs)) { # "opposite direction"
       dirs2 <- (dirs[negs] + pi) %% (2*pi)
-      b[active[negs], mags := -mags]
-      b[active[negs], newDirs := dirs2]
-      b[active[nonNA], newMags := mags + mags[match(round(direction, 4), round(newDirs, 4))],
+      activeNegs <- active[negs]
+      set(b, activeNegs, "mags", -b$mags[activeNegs])
+      # b[active[negs], mags := -mags]
+      set(b, activeNegs, "newDirs", dirs2)
+      # b[active[negs], newDirs := dirs2]
+
+      b[activeNonNA, newMags := mags + mags[match(round(direction, 4), round(newDirs, 4))],
         by = "initialPixels"]
-      nonNANewMags <- !is.na(b[active]$newMags)
-      b[active[nonNANewMags], mags := newMags]
-      nonNANewDirs <- !is.na(b[active]$newDirs)
-      b[active[nonNANewDirs], mags := 0]
+      nonNANewMags <- !is.na(b[["newMags"]][active])
+      activeNonNANewMags <- active[nonNANewMags]
+
+      set(b, activeNonNANewMags, "mags", b[["newMags"]][activeNonNANewMags])
+      # b[active[nonNANewMags], mags := newMags]
+
+      nonNANewDirs <- !is.na(b[["newDirs"]][active])
+
+      activeNonNANewDirs <- active[nonNANewDirs]
+      set(b, activeNonNANewDirs, "mags", 0)
+      # b[active[nonNANewDirs], mags := 0]
       set(b, NULL, c("newDirs", "newMags"), NULL)
     }
     b[active[nonNA], prop := round(mags / sum(mags), 3), by = c("from", "initialPixels")]
@@ -183,9 +201,11 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 
 
     # Expected number, based on advection and standard spread2
-    b[active, abund := srcAbundActive * prop]
+    set(b, active, "abund", b[["srcAbundActive"]][active] * b[["prop"]][active])
+    # b[active, abund := srcAbundActive * prop]
 
-    b[active, lenRec := .N, by = c("pixels", "initialPixels")]
+    byGroup <- c("pixels", "initialPixels")
+    b[active, lenRec := .N, by = byGroup]
     b[active, lenSrc := min(2.5, .N), by = c("from", "initialPixels")]
 
     # Sum all within a receiving pixel,
@@ -193,20 +213,22 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     #    it is a markov chain of order 1 only, except for some initial info
     b[active, `:=`(sumAbund = sum(abund, na.rm = TRUE),
                    indWithin = seq(.N),
-                   indFull = .I), by = c('initialPixels', 'pixels')]
-    b[active, meanNumNeighs := mean(lenSrc / lenRec) * mean(mags), by = c("pixels", "initialPixels")]
+                   indFull = .I,
+                   meanNumNeighs = mean(lenSrc / lenRec) * mean(mags)), by = byGroup]
     keepRows <- which(b$indWithin == 1 | is.na(b$indWithin))
     b <- b[keepRows]
     active <- na.omit(match(active, b$indFull))
     #b[, indFull := seq(NROW(b))]
 
-    b[active, sumAbund2 := sumAbund * meanNumNeighs/ mean(mags)]
+    set(b, active, "sumAbund2", b[["sumAbund"]][active] * b[["meanNumNeighs"]][active]/
+          mean(b[["mags"]][active]))
+    # b[active, sumAbund2 := sumAbund * meanNumNeighs/ mean(mags)]
 
-    totalSumAbund <- sum(b[active]$sumAbund, na.rm = TRUE)
-    totalSumAbund2 <- sum(b[active]$sumAbund2, na.rm = TRUE)
+    totalSumAbund <- sum(b[["sumAbund"]][active], na.rm = TRUE)
+    totalSumAbund2 <- sum(b[["sumAbund2"]][active], na.rm = TRUE)
     multiplyAll <- totalSumAbund/totalSumAbund2
 
-    b[active, sumAbund := sumAbund2 * multiplyAll]
+    set(b, active, "sumAbund", b[["sumAbund2"]][active] * multiplyAll)
     set(b, NULL, c("abund", "sumAbund2", "mags", "lenSrc", "lenRec",
                    "meanNumNeighs", "prop", "indWithin", "indFull"),
         NULL)
@@ -217,8 +239,11 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     } else {
       advectionMag
     }
-    b[active, abundSettled := pexp(q = distance,
-                                   rate = pi / (meanDist + advectionMagTmp)^1.5) * sumAbund] # kernel is 1 dimensional,
+    set(b, active, "abundSettled", pexp(q = b[["distance"]][active],
+                                        rate = pi / (meanDist + advectionMagTmp)^1.5) *
+          b[["sumAbund"]][active])
+    #b[active, abundSettled := pexp(q = distance,
+    #                               rate = pi / (meanDist + advectionMagTmp)^1.5) * sumAbund] # kernel is 1 dimensional,
     # b[active, abundSettled :=
     #     dexp(x = distance, rate = 1/(meanDist+advectionMag)) * sumAbund] # kernel is 1 dimensional,
     # but spreading is dropping agents in 2 dimensions
@@ -227,9 +252,13 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     # is not actually the full square on a 1 dimensional line ... I might be wrong
     # Some of the estimated dropped will not drop because of quality
     #   First place to round to whole numbers
-    b[active, abundSettled := abundSettled  * rasQuality[][pixels]]
-    b[active, abundActive := sumAbund - abundSettled]
-    b[active[active %in% which(b$abundActive < 1)], abundActive := 0]
+    set(b, active, "abundSettled", b[["abundSettled"]][active] * rasQuality[][b[["pixels"]][active]])
+    # b[active, abundSettled := abundSettled  * rasQuality[][pixels]]
+    set(b, active, "abundActive", b[["sumAbund"]][active] - b[["abundSettled"]][active])
+    # b[active, abundActive := sumAbund - abundSettled]
+    set(b, active[active %in% which(b$abundActive < 1)], "abundActive", 0)
+    # b[active[active %in% which(b$abundActive < 1)], abundActive := 0]
+
 
     abundanceDispersing <- sum(b[active]$abundActive, na.rm = TRUE)
     if (verbose > 1) message("Number still dispersing ", abundanceDispersing)
@@ -245,8 +274,10 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
            legendRange = c(0, plotMultiplier), title = "Abundance")
     }
 
-    newInactive <- b[active]$abundActive == 0
-    b[active[newInactive], state := "inactive"]
+    newInactive <- b[["abundActive"]][active] == 0
+
+    set(b, active[newInactive], "state", "inactive")
+    # b[active[newInactive], state := "inactive"]
     spreadState$whActive <- active[!newInactive]
     spreadState$whInactive <- c(spreadState$whInactive, active[newInactive])
     setattr(b, "spreadState", spreadState)
