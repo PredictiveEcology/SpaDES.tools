@@ -58,12 +58,14 @@ if (getRversion() >= "3.1.0") {
 spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
                     advectionMag, meanDist, plot.it = 2,
                     minNumAgents = 50, verbose = getOption("LandR.verbose", 0),
-                    saveStack = NULL) {
+                    saveStack = NULL, skipChecks = FALSE) {
   dtThr <- data.table::getDTthreads()
-  testEquivalentMetadata(rasAbundance, rasQuality)
+  if (!skipChecks)
+    testEquivalentMetadata(rasAbundance, rasQuality)
 
   if (is(advectionDir, "Raster")) {
-    testEquivalentMetadata(rasAbundance, advectionDir)
+    if (!skipChecks)
+      testEquivalentMetadata(rasAbundance, advectionDir)
     advectionDir <- advectionDir[]
   } else if (length(advectionDir) != 1) {
     if (length(advectionDir) != ncell(rasAbundance)) {
@@ -72,7 +74,8 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     }
   }
   if (is(advectionMag, "Raster")) {
-    testEquivalentMetadata(rasAbundance, advectionMag)
+    if (!skipChecks)
+      testEquivalentMetadata(rasAbundance, advectionMag)
     advectionMag <- advectionMag[]
   } else if (length(advectionMag) != 1) {
     if (length(advectionMag) != ncell(rasAbundance)) {
@@ -94,15 +97,18 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     start <- which(!is.na(rasAbundance[]) & rasAbundance[] > 0)
 
   start <- spread2(rasQuality, start, iterations = 0, returnDistances = TRUE,
-                   returnDirections = TRUE, returnFrom = TRUE, asRaster = FALSE)
+                   returnDirections = TRUE, returnFrom = TRUE, asRaster = FALSE,
+                   skipChecks = skipChecks)
   start[, `:=`(abundActive = rasAbundance[][start$pixels],
                abundSettled = 0)]
   abundanceDispersing <- sum(start$abundActive)
   plotMultiplier <- mean(start$abundActive) /
     ((meanDist * 10 / res(rasQuality)[1]))
-  rasIterations <- raster(rasQuality)
-  rasIterations[] <- NA
-  rasIterations[start$pixels] <- 0
+  if (isTRUE(plot.it > 1)) {
+    rasIterations <- raster(rasQuality)
+    rasIterations[] <- NA
+    rasIterations[start$pixels] <- 0
+  }
 
   while (abundanceDispersing > minNumAgents) {
 
@@ -110,7 +116,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     b <- spread2(landscape = rasQuality, start = start,
                  spreadProb = 1, iterations = 1, asRaster = FALSE,
                  returnDistances = TRUE, returnFrom = TRUE,
-                 returnDirections = TRUE,
+                 returnDirections = TRUE, skipChecks = skipChecks,
                  circle = TRUE, allowOverlap = 3)
     #b <- b[!duplicated(b, by = c("initialPixels", "pixels"))]
     spreadState <- attr(b, "spreadState")
