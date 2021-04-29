@@ -90,6 +90,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
   } else {
     messAngles <- "radians"
   }
+  if (verbose > 0)
   message("assuming that advectionDir is in geographic ", messAngles,
           "(i.e., North is 0)")
 
