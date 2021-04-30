@@ -11,10 +11,13 @@ spread3(
   advectionDir,
   advectionMag,
   meanDist,
+  dispersalKernel = "exponential",
+  sdDist = 1,
   plot.it = 2,
   minNumAgents = 50,
   verbose = getOption("LandR.verbose", 0),
-  saveStack = NULL
+  saveStack = NULL,
+  skipChecks = FALSE
 )
 }
 \arguments{
@@ -43,6 +46,12 @@ distance (i.e., 63\% of agents) will have settled by \code{15000} map units.}
 (not pixels), for a negative exponential distribution
 dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
 settled at this \code{meanDist} (still experimental)}
+
+\item{dispersalKernel}{Currently character string, with either `exponential` or `weibull`.
+If}
+
+\item{sdDist}{A single number indicating the sd parameter of a 2 parameter `dispersalKernel`.
+Defaults to `1`, which is the same as the `exponential` distribution.}
 
 \item{plot.it}{Numeric. With increasing numbers above 0, there will be plots
 produced during iterations. Currently, only 0, 1, or 2+ are distinct.}

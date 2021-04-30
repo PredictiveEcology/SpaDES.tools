@@ -29,10 +29,14 @@ if (getRversion() >= "3.1.0") {
 #'   occur. It is imposed on the total event, i.e., if the \code{meanDist} is
 #'   \code{10000}, and \code{advectionMag} is \code{5000}, then the expected
 #'   distance (i.e., 63\% of agents) will have settled by \code{15000} map units.
+#' @param dispersalKernel Currently character string, with either `exponential` or `weibull`.
+#'   If
 #' @param meanDist A single number indicating the mean distance parameter in map units
 #'    (not pixels), for a negative exponential distribution
 #'    dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
 #'    settled at this \code{meanDist} (still experimental)
+#' @param sdDist A single number indicating the sd parameter of a 2 parameter `dispersalKernel`.
+#'   Defaults to `1`, which is the same as the `exponential` distribution.
 #' @param verbose Numeric. With increasing numbers above 0, there will be more
 #'     messages produced. Currently, only 0, 1, or 2+ are distinct.
 #' @param plot.it Numeric. With increasing numbers above 0, there will be plots
@@ -56,7 +60,8 @@ if (getRversion() >= "3.1.0") {
 #' @example inst/examples/example_spread3.R
 #'
 spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
-                    advectionMag, meanDist, plot.it = 2,
+                    advectionMag, meanDist, dispersalKernel = "exponential",
+                    sdDist = 1, plot.it = 2,
                     minNumAgents = 50, verbose = getOption("LandR.verbose", 0),
                     saveStack = NULL, skipChecks = FALSE) {
   dtThr <- data.table::getDTthreads()
@@ -240,9 +245,25 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     } else {
       advectionMag
     }
-    set(b, active, "abundSettled", pexp(q = b[["distance"]][active],
-                                        rate = pi / (meanDist + advectionMagTmp)^1.5) *
-          b[["sumAbund"]][active])
+    if (startsWith(tolower(dispersalKernel), prefix = "expon")) {
+      cumProb <- pexp(q = b[["distance"]][active],
+                      rate = pi / (meanDist + advectionMagTmp)^1.5)
+    } else if (startsWith(tolower(dispersalKernel), prefix = "weib")) {
+      mn <- (meanDist + advectionMagTmp)
+      sd <- mn/sdDist # 0.8 to 2.0 range
+      shape <- (sd/mn)^(-1.086)
+      scale <- mn/exp(lgamma(1+1/shape))
+      cumProb <- pweibull(b[["distance"]][active], shape, scale = scale)
+      if (plot.it > 0) {
+        par(mfrow = c(1,2))
+        x <- seq(mn/5)*10; plot(x, cumProb)
+        plot(x, dweibull(x, shape, scale = scale))
+      }
+
+    } else {
+      stop("dispersalKernel must be either exponential or weibull")
+    }
+    set(b, active, "abundSettled", cumProb * b[["sumAbund"]][active])
     #b[active, abundSettled := pexp(q = distance,
     #                               rate = pi / (meanDist + advectionMagTmp)^1.5) * sumAbund] # kernel is 1 dimensional,
     # b[active, abundSettled :=

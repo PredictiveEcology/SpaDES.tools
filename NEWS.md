@@ -4,7 +4,7 @@ version 0.3.8
 =============
 
 ## enhancements
-
+* `spread3` has new arguments (`sdDist`, `dispersalKernel`)
 * improved speed for `spread` under most conditions, especially larger events, possibly up to 2x.
 * `splitRaster()` can now specify file extension, instead of defaulting to `.grd`
 
