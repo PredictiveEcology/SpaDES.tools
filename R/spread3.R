@@ -107,8 +107,8 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
                    skipChecks = skipChecks)
   start[, `:=`(abundActive = rasAbundance[][start$pixels],
                abundSettled = 0)]
-  abundanceDispersing <- sum(start$abundActive)
-  plotMultiplier <- mean(start$abundActive) /
+  abundanceDispersing <- sum(start$abundActive, na.rm = TRUE)
+  plotMultiplier <- mean(start$abundActive, na.rm = TRUE) /
     ((meanDist * 10 / res(rasQuality)[1]))
   if (isTRUE(plot.it > 1)) {
     rasIterations <- raster(rasQuality)
