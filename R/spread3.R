@@ -68,6 +68,12 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
   if (!skipChecks)
     testEquivalentMetadata(rasAbundance, rasQuality)
 
+  if (missing(advectionDir)) {
+    advectionDir <- 0
+    message("advectionDir was not supplied; removing advection")
+    advectionMag <- 0
+  }
+
   if (is(advectionDir, "Raster")) {
     if (!skipChecks)
       testEquivalentMetadata(rasAbundance, advectionDir)
@@ -77,6 +83,10 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
       stop("advectionDir must be length 1, length ncell(rasAbundance), or a Raster with ",
            "identical metadata as rasAbundance")
     }
+  }
+
+  if (missing(advectionMag)) {
+    advectionMag <- 0
   }
   if (is(advectionMag, "Raster")) {
     if (!skipChecks)
