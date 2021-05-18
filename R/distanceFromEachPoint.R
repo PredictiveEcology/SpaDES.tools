@@ -123,19 +123,20 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
     nrowFrom <- NROW(from)
     if (nrowFrom > 1) {
       if (is.null(cumulativeFn)) {
-        if (any(otherFromCols) | isTRUE(angles)) {
+        # if (any(otherFromCols) | isTRUE(angles)) {
           out <- lapply(seq_len(nrowFrom), function(k) {
             out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
                                   angles = angles, maxDistance = maxDistance,
                                   otherFromCols = otherFromCols)
           })
           out <- do.call(rbind, out)
-        } else {
-          maxDistance2 <- if (is.na(maxDistance)) Inf else maxDistance
-          out <- pointDistance3(fromX = from[, "x"], toX = to[, "x"],
-                                fromY = from[, "y"], toY = to[, "y"],
-                                maxDistance = maxDistance2)
-        }
+        # } else {
+        #   maxDistance2 <- if (is.na(maxDistance)) Inf else maxDistance
+        #   browser()
+        #   out <- pointDistance3(fromX = from[, "x"], toX = to[, "x"],
+        #                         fromY = from[, "y"], toY = to[, "y"],
+        #                         maxDistance = maxDistance2)
+        # }
       } else {
         # if there is a cluster, then there are two levels of cumulative function,
         #  inside each cluster and outside, or "within and between clusters".
@@ -260,7 +261,6 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
 
   dists <- cbind(to, dists = sqrt((from[,"x"] - to[,"x"])^2 + (from[,"y"] - to[,"y"])^2))
-  # dists <- pointDistance2(to, from)
   if (angles) {
     dists <- cbind(dists, angles = .pointDirectionInner(from = from, to = to))
   }
