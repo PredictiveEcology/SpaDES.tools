@@ -259,7 +259,8 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
                (abs(to[, "y"] - from[, "y"]) <= maxDistance), ]
   }
 
-  dists <- pointDistance2(to, from)
+  dists <- cbind(to, dists = sqrt((from[,"x"] - to[,"x"])^2 + (from[,"y"] - to[,"y"])^2))
+  # dists <- pointDistance2(to, from)
   if (angles) {
     dists <- cbind(dists, angles = .pointDirectionInner(from = from, to = to))
   }
@@ -405,8 +406,12 @@ directionFromEachPoint <- function(from, to = NULL, landscape) {
 #' @keywords internal
 #' @rdname directions
 .pointDirection <- function(from, to) {
+  angls <- .pointDirectionInner(from, to)
+  cbind(to, angles = angls)
+}
+
+.pointDirectionInner <- function(from, to) {
   rise <- to[, "y"] - from[, "y"]
   run <- to[, "x"] - from[, "x"]
-  angls <- pi / 2 - atan2(rise, run) # Convert to geographic 0 = North
-  cbind(to, angles = angls)
+  pi / 2 - atan2(rise, run) # Convert to geographic 0 = North
 }
