@@ -260,6 +260,9 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
 
   dists <- pointDistance2(to, from)
+  if (angles) {
+    dists <- cbind(dists, angles = .pointDirectionInner(from = from, to = to))
+  }
 
   if (!is.na(maxDistance)) {
     dists <- dists[dists[, "dists"] <= maxDistance, ]
