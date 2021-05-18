@@ -64,6 +64,9 @@ messages produced. Currently, only 0, 1, or 2+ are distinct.}
 
 \item{saveStack}{If provided as a character string, it will save each iteration
 as part of a \code{rasterStack} to disk upon exit.}
+
+\item{skipChecks}{Logical. If `TRUE`, assertions will be skipped (faster, but could miss
+problems)}
 }
 \value{
 A \code{data.table} with all information used during the spreading

@@ -247,6 +247,10 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   return(out)
 }
 
+#' Alternative point distance (and direction) calculations
+#'
+#' These have been written with speed in mind.
+#'
 #' @param otherFromCols TODO: description needed
 #'
 #' @aliases pointDistance

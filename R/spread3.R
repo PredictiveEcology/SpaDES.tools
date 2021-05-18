@@ -45,6 +45,8 @@ if (getRversion() >= "3.1.0") {
 #'    to consider all dispersing finished. Default is 50
 #' @param saveStack If provided as a character string, it will save each iteration
 #'   as part of a \code{rasterStack} to disk upon exit.
+#' @param skipChecks Logical. If `TRUE`, assertions will be skipped (faster, but could miss
+#'   problems)
 #'
 #' @return
 #' A \code{data.table} with all information used during the spreading
@@ -55,7 +57,9 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom fpCompare %>=% %>>%
 #' @importFrom quickPlot clearPlot Plot
 #' @importFrom raster pointDistance xyFromCell
-#' @importFrom stats pexp
+#' @importFrom stats pexp dweibull pweibull
+#' @importFrom graphics par
+#'
 #'
 #' @example inst/examples/example_spread3.R
 #'
