@@ -68,7 +68,6 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
   if (!skipChecks)
     testEquivalentMetadata(rasAbundance, rasQuality)
 
-  browser()
   if (is(advectionDir, "Raster")) {
     if (!skipChecks)
       testEquivalentMetadata(rasAbundance, advectionDir)
