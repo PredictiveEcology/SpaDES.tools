@@ -68,6 +68,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
   if (!skipChecks)
     testEquivalentMetadata(rasAbundance, rasQuality)
 
+  browser()
   if (is(advectionDir, "Raster")) {
     if (!skipChecks)
       testEquivalentMetadata(rasAbundance, advectionDir)
@@ -89,12 +90,12 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     }
   }
 
-  if (any(abs(advectionDir) > 2 * pi)) {
+  #if (any(abs(advectionDir) > 2 * pi)) {
     messAngles <- "degrees"
     advectionDir <- CircStats::rad(advectionDir)
-  } else {
-    messAngles <- "radians"
-  }
+  # } else {
+  #   messAngles <- "radians"
+  # }
   if (verbose > 0)
   message("assuming that advectionDir is in geographic ", messAngles,
           "(i.e., North is 0)")
