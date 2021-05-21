@@ -42,7 +42,9 @@
 #'                     through each \code{from}. See Details.
 #'
 #' @param distFn A function. This can be a function of \code{landscape},
-#'               \code{fromCells}, \code{toCells}, and \code{dist}.
+#'               \code{fromCell} (single integer value of a from pixel),
+#'               \code{toCells} (integer vector value of all the to pixel indices),
+#'               and \code{dist}.
 #'               If \code{cumulativeFn} is supplied, this will be used to convert
 #'               the distances to some other set of units that will be accumulated
 #'               by the \code{cumulativeFn}. See Details and examples.
@@ -111,12 +113,13 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
     forms <- names(formals(distFn))
     fromC <- "fromCell" %fin% forms
     if (fromC) fromCell <- cellFromXY(landscape, from[, c("x", "y")])
-    toC <- "toCell" %fin% forms
-    if (toC) toCell <- cellFromXY(landscape, to[, c("x", "y")])
+    toC <- "toCells" %fin% forms
+    if (toC) toCells <- cellFromXY(landscape, to[, c("x", "y")])
     land <- "landscape" %fin% forms
-    distFnArgs <- if (land) list(landscape = landscape[]) else NULL
+    distFnArgs <- if (land) list(landscape = landscape[]) else list()
     if (length(list(...)) > 0) distFnArgs <- append(distFnArgs, list(...))
     xDist <- "dist" %fin% forms
+    xDir <- "angle" %fin% forms
   }
 
   if (!matched) {
@@ -124,12 +127,12 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
     if (nrowFrom > 1) {
       if (is.null(cumulativeFn)) {
         # if (any(otherFromCols) | isTRUE(angles)) {
-          out <- lapply(seq_len(nrowFrom), function(k) {
-            out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
-                                  angles = angles, maxDistance = maxDistance,
-                                  otherFromCols = otherFromCols)
-          })
-          out <- do.call(rbind, out)
+        out <- lapply(seq_len(nrowFrom), function(k) {
+          out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
+                                angles = angles, maxDistance = maxDistance,
+                                otherFromCols = otherFromCols)
+        })
+        out <- do.call(rbind, out)
         # } else {
         #   maxDistance2 <- if (is.na(maxDistance)) Inf else maxDistance
         #   browser()
@@ -142,56 +145,69 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
         #  inside each cluster and outside, or "within and between clusters".
         #  This is the outer one.
         #  The inner one is the one defined by the user argument.
-        outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance,
-                                distFnArgs, fromC, toC, xDist, cumulativeFn, distFn) {
+        outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, xDir,
+                                distFnArgs, fromC, toC, xDist, cumulativeFn, distFn, evalEnv) {
+
+          fromCell <- eval(fromCell, envir = evalEnv)
+          to <- eval(to, envir = evalEnv)
+          distFn <- eval(distFn, envir = evalEnv)
+
+          fromCell <- rlang::eval_tidy(fromCell)
 
           cumVal <- rep_len(0, NROW(to))
+          needAngles <- isTRUE(angles) && isTRUE(xDir)
 
           for (k in seq_len(nrowFrom)) {
             out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
                                   angles = angles, maxDistance = maxDistance,
                                   otherFromCols = otherFromCols)
-            indices <- cellFromXY(landscape, out[, c("x", "y")])
+            if (toC)
+              toCells <- cellFromXY(landscape, out[, c("x", "y")])
             if (k == 1) {
               if (fromC) distFnArgs <- append(distFnArgs, list(fromCell = fromCell[k]))
-              if (toC) distFnArgs <- append(distFnArgs, list(toCell = toCell[indices]))
+              if (toC) distFnArgs <- append(distFnArgs, list(toCells = toCells))
               if (xDist) distFnArgs <- append(distFnArgs, list(dist = out[, "dists", drop = FALSE]))
+              if (needAngles) distFnArgs <- append(distFnArgs, list(angle = out[, "angles", drop = FALSE]))
             } else {
               if (fromC) distFnArgs[["fromCell"]] <- fromCell[k]
-              if (toC) distFnArgs[["toCell"]] <- toCell[indices]
+              if (toC) distFnArgs[["toCells"]] <- toCells
               if (xDist) distFnArgs[["dist"]] <- out[, "dists"]
+              if (needAngles) distFnArgs[["angle"]] <- out[, "angles", drop = FALSE]
             }
+            if (!is.null(distFnArgs$landscape))
+              distFnArgs$landscape
 
             # call inner cumulative function
-            if (length(indices) < ncell(landscape)) {
-              cumVal <- do.call(
-                cumulativeFn, args = list(cumVal, do.call(distFn, args = distFnArgs))
+            if (isTRUE(!anyNA(maxDistance))) {
+              distFnOut <- docall(distFn, args = distFnArgs)
+              cumVal[out[, "keptIndex"]] <- docall(
+                cumulativeFn, args = list(cumVal[out[, "keptIndex"]], distFnOut)
               )
             } else {
-              cumVal[indices] <- do.call(
-                cumulativeFn, args = list(
-                  cumVal[indices], do.call(distFn, args = distFnArgs)
-                )
-              )
+              cumVal <- docall(cumulativeFn, args = list(cumVal, docall(distFn, args = distFnArgs)))
             }
+            # cumVal <- docall(cumulativeFn, args = list(cumVal, docall(distFn, args = distFnArgs)))
+
           }
           return(cumVal)
         }
+
 
         if (missing(cl)) {
           cl <- tryCatch(getCluster(), error = function(e) NULL)
           on.exit(if (!is.null(cl)) returnCluster(), add = TRUE)
         }
 
-        outerCumFunArgs <- list(landscape = landscape, to = to, angles = angles,
-                                maxDistance = maxDistance, distFnArgs = distFnArgs,
-                                fromC = fromC, toC = toC, xDist = xDist,
-                                cumulativeFn = cumulativeFn, distFn = distFn)
+        evalEnv <- environment()
+        outerCumFunArgs <- list(landscape = quote(landscape), to = quote(to), angles = angles,
+                                maxDistance = maxDistance, distFnArgs = quote(distFnArgs),
+                                fromC = fromC, toC = toC, xDist = xDist, xDir = xDir,
+                                cumulativeFn = cumulativeFn, distFn = distFn, evalEnv = evalEnv)
 
         parFunFun <- function(x) {
           # this is a slightly tweaked version of outerCumFun, doing all calls
-          do.call(outerCumFun, append(list(x = x, from = fromList[[x]],
-                                           if (fromC) fromCell = fromCellList[[x]]), # nolint
+          do.call(outerCumFun, append(list(x = x, from = quote(fromList[[x]]),
+                                           if (fromC) fromCell = quote(fromCellList[[x]])), # nolint
                                       outerCumFunArgs))
         }
 
@@ -215,7 +231,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
         }
 
         # The actual call
-        cumVal <- do.call(get(parFun), args = parFunArgs)
+        cumVal <- do.call(get(parFun), args = parFunArgs, quote = TRUE)
 
         # must cumulativeFn the separate cluster results
         while (length(cumVal) > 1) {
@@ -242,6 +258,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
                      angles = angles, maxDistance = maxDistance,
                      otherFromCols = otherFromCols)
     })
+    browser()
     out <- do.call(rbind, out)
   }
   return(out)
@@ -260,8 +277,9 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 .pointDistance <- function(from, to, angles = NA, maxDistance = NA_real_,
                            otherFromCols = FALSE) {
   if (!is.na(maxDistance)) {
-    to <- to[(abs(to[, "x"] - from[, "x"]) <= maxDistance)  &
-               (abs(to[, "y"] - from[, "y"]) <= maxDistance), ]
+    keep <- which((abs(to[, "x"] - from[, "x"]) <= maxDistance)  &
+                    (abs(to[, "y"] - from[, "y"]) <= maxDistance))
+    to <- to[keep, , drop = FALSE]
   }
 
   dists <- cbind(to, dists = sqrt((from[,"x"] - to[,"x"])^2 + (from[,"y"] - to[,"y"])^2))
@@ -270,12 +288,16 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
 
   if (!is.na(maxDistance)) {
-    dists <- dists[dists[, "dists"] <= maxDistance, ]
+    keep2 <- which(dists[, "dists"] <= maxDistance)
+    dists <- dists[keep2, , drop = FALSE]
   }
   if (any(otherFromCols)) {
     colNums <- seq_len(ncol(dists))
     dists <- cbind(dists = dists, from[, otherFromCols])
     colnames(dists)[-colNums] <- colnames(from)[otherFromCols]
+  }
+  if (!is.na(maxDistance)) {
+    dists <- cbind(dists, keptIndex = keep[keep2])
   }
   return(dists)
 }
@@ -419,3 +441,102 @@ directionFromEachPoint <- function(from, to = NULL, landscape) {
   run <- to[, "x"] - from[, "x"]
   pi / 2 - atan2(rise, run) # Convert to geographic 0 = North
 }
+
+dfn <- function(distFn, ...) {
+  # do.call(distFn, alist(...))
+  distFn(...)
+}
+
+docall <- function (what, args, quote = FALSE, envir = parent.frame()) {
+  if (quote) {
+    args <- lapply(args, enquote)
+  }
+  if (is.null(names(args)) || is.data.frame(args)) {
+    argn <- args
+    args <- list()
+  }
+  else {
+    argn <- lapply(names(args)[names(args) != ""], as.name)
+    names(argn) <- names(args)[names(args) != ""]
+    argn <- c(argn, args[names(args) == ""])
+    args <- args[names(args) != ""]
+  }
+  if ("character" %in% class(what)) {
+    if (is.character(what)) {
+      fn <- strsplit(what, "[:]{2,3}")[[1]]
+      what <- if (length(fn) == 1) {
+        get(fn[[1]], envir = envir, mode = "function")
+      }
+      else {
+        get(fn[[2]], envir = asNamespace(fn[[1]]), mode = "function")
+      }
+    }
+    call <- as.call(c(list(what), argn))
+  }
+  else if ("function" %in% class(what)) {
+    f_name <- deparse(substitute(what))
+    call <- as.call(c(list(as.name(f_name)), argn))
+    args[[f_name]] <- what
+  }
+  else if ("name" %in% class(what)) {
+    call <- as.call(c(list(what, argn)))
+  }
+  eval(call, envir = args, enclos = envir)
+}
+
+outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, xDir,
+                        distFnArgs, fromC, toC, xDist, cumulativeFn, distFn, evalEnv) {
+
+  fromCell <- eval(fromCell, envir = evalEnv)
+  to <- eval(to, envir = evalEnv)
+  distFn <- eval(distFn, envir = evalEnv)
+
+  fromCell <- rlang::eval_tidy(fromCell)
+
+  cumVal <- rep_len(0, NROW(to))
+  needAngles <- isTRUE(angles) && isTRUE(xDir)
+
+  for (k in seq_len(nrowFrom)) {
+    out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
+                          angles = angles, maxDistance = maxDistance,
+                          otherFromCols = otherFromCols)
+    if (toC)
+      toCells <- cellFromXY(landscape, out[, c("x", "y")])
+    if (k == 1) {
+      if (fromC) distFnArgs <- append(distFnArgs, list(fromCell = fromCell[k]))
+      if (toC) distFnArgs <- append(distFnArgs, list(toCells = toCells))
+      if (xDist) distFnArgs <- append(distFnArgs, list(dist = out[, "dists", drop = FALSE]))
+      if (needAngles) distFnArgs <- append(distFnArgs, list(angle = out[, "angles", drop = FALSE]))
+    } else {
+      if (fromC) distFnArgs[["fromCell"]] <- fromCell[k]
+      if (toC) distFnArgs[["toCells"]] <- toCells
+      if (xDist) distFnArgs[["dist"]] <- out[, "dists"]
+      if (needAngles) distFnArgs[["angle"]] <- out[, "angles", drop = FALSE]
+    }
+    if (!is.null(distFnArgs$landscape))
+      distFnArgs$landscape
+
+    browser()
+    # call inner cumulative function
+    if (isTRUE(!anyNA(maxDistance))) {
+      distFnOut <- docall(distFn, args = distFnArgs)
+      cumVal[out[, "keptIndex"]] <- docall(
+        cumulativeFn, args = list(cumVal[out[, "keptIndex"]], distFnOut)
+      )
+    } else {
+      cumVal <- docall(cumulativeFn, args = list(cumVal, docall(distFn, args = distFnArgs)))
+    }
+    # cumVal <- docall(cumulativeFn, args = list(cumVal, docall(distFn, args = distFnArgs)))
+
+  }
+  return(cumVal)
+}
+
+spiralDistances <- function(pixelGroupMap, maxDis, cellSize) {
+  spiral <- which(focalWeight(pixelGroupMap, maxDis, type = "circle")>0, arr.ind = TRUE) -
+    ceiling(maxDis/cellSize) - 1
+  spiral <- cbind(spiral, dists = sqrt( (0 - spiral[,1]) ^ 2 + (0 - spiral[, 2]) ^ 2))
+  spiral <- spiral[order(spiral[, "dists"], apply(abs(spiral), 1, sum),
+                         abs(spiral[, 1]), abs(spiral[, 2])),, drop = FALSE]
+}
+
