@@ -242,11 +242,8 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
         cumVal <- cumVal[[1]]
 
-        if (is.null(to)) {
-          out <- cbind(to, val = cumVal)
-        } else {
-          out <- cbind(to, val = cumVal[!is.na(cumVal)])
-        }
+        out <- cbind(to, val = cumVal)
+
       }
     } else {
       out <- .pointDistance(from = from, to = to, angles = angles,
@@ -259,7 +256,6 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
                      angles = angles, maxDistance = maxDistance,
                      otherFromCols = otherFromCols)
     })
-    browser()
     out <- do.call(rbind, out)
   }
   return(out)
