@@ -221,7 +221,6 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
           } else {
             parFun <- "clusterApply"
           }
-          browser()
           seqLen <- seq_len(min(nrowFrom, length(cl)))
           inds <- rep(seq_along(cl), length.out = nrowFrom)
           fromList <- lapply(seqLen, function(ind) {
@@ -245,7 +244,6 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
         # The actual call
         # cumVal <- do.call(get(parFun), args = parFunArgs, quote = TRUE)
-        browser()
         cumVal <- docall(get(parFun), args = parFunArgs)
 
         # must cumulativeFn the separate cluster results
