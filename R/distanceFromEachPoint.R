@@ -215,7 +215,13 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
         }
 
         if (!is.null(cl)) {
-          parFun <- "clusterApply"
+          if (is.numeric(cl)) {
+            parFun <- "mclapply"
+            cl <- seq(cl)
+          } else {
+            parFun <- "clusterApply"
+          }
+          browser()
           seqLen <- seq_len(min(nrowFrom, length(cl)))
           inds <- rep(seq_along(cl), length.out = nrowFrom)
           fromList <- lapply(seqLen, function(ind) {
@@ -225,7 +231,11 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
           if (fromC) fromCellList <- lapply(seqLen, function(ind) {
             fromCell[inds == ind]
           })
-          parFunArgs <- list(cl = cl, x = seqLen, fun = parFunFun)
+          parFunArgs <- if (is.numeric(cl)) {
+            list(mc.cores = max(cl), X = seqLen, FUN = parFunFun)
+          } else {
+            list(cl = cl, x = seqLen, fun = parFunFun)
+          }
         } else {
           parFun <- "lapply"
           fromList <- list(from)
@@ -289,7 +299,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
 
   dists <- cbind(to, dists = sqrt((from[,"x"] - to[,"x"])^2 + (from[,"y"] - to[,"y"])^2))
-  if (angles) {
+  if (isTRUE(angles)) {
     dists <- cbind(dists, angles = .pointDirectionInner(from = from, to = to))
   }
 

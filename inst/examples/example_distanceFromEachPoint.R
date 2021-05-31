@@ -48,3 +48,8 @@ if (interactive()) {
   Plot(sp1, addTo = "rp")
   Plot(sp1, addTo = "idwRaster")
 }
+
+# On linux; can use numeric passed to cl; will use mclapply with mc.cores = cl
+dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
+                                landscape = rp, distFn = distFn, cumulativeFn = `+`,
+                                cl = 3)
