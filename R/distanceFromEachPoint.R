@@ -245,12 +245,14 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
         # The actual call
         # cumVal <- do.call(get(parFun), args = parFunArgs, quote = TRUE)
+        browser()
         cumVal <- docall(get(parFun), args = parFunArgs)
 
         # must cumulativeFn the separate cluster results
-        while (length(cumVal) > 1) {
-          cumVal[[2]] <- docall(cumulativeFn, cumVal[1:2])
-          cumVal[[1]] <- NULL
+        if (length(cumVal) > 1) {
+          cumVal <- list(Reduce(cumulativeFn, cumVal))
+          # cumVal[[2]] <- docall(cumulativeFn, cumVal[1:2])
+          # cumVal[[1]] <- NULL
         }
 
         cumVal <- cumVal[[1]]
@@ -503,6 +505,7 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
 
   cumVal <- rep_len(0, NROW(to))
   needAngles <- isTRUE(angles) && isTRUE(xDir)
+  nrowFrom <- NROW(from)
   for (k in seq_len(nrowFrom)) {
     out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
                           angles = angles, maxDistance = maxDistance,
