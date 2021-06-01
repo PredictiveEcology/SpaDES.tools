@@ -160,6 +160,7 @@ test_that("allowOverlap -- produces exact result", {
   expect_true(sum(o[] == 1) > (ncell(s) - 10))
 
 })
+
 test_that("spread stopRule does not work correctly", {
   library(raster)
   library(quickPlot)
@@ -676,7 +677,7 @@ test_that("distanceFromPoints does not work correctly", {
   })
   dfep <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
                                 landscape = hab, cumulativeFn = `+`)
-  expect_true(sum(idw - dfep[, "val"]) %==% 0)
+  expect_true(sum(idw - dfep[, "dists"]) %==% 0)
 })
 
 test_that("simple cir does not work correctly", {

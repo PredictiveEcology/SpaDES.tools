@@ -31,10 +31,9 @@ of "agents" or pseudo-agents contained. This number of agents, will
 be spread horizontally, and distributed from each pixel
 that contains a non-zero non NA value.}
 
-\item{advectionDir}{A single number or \code{RasterLayer} in degrees
-from North = 0 (though it will use radians if all values are
-\code{abs(advectionDir) > 2 * pi)}. This indicates
-the direction of advective forcing (i.e., wind).}
+\item{advectionDir}{A single number or \code{RasterLayer} in degrees from North = 0
+(though it will use radians if all values are \code{abs(advectionDir) > 2 * pi)}.
+This indicates the direction of advective forcing (i.e., wind).}
 
 \item{advectionMag}{A single number or \code{RasterLayer} in distance units of the
 \code{rasQuality}, e.g., meters, indicating the relative forcing that will
@@ -50,7 +49,7 @@ settled at this \code{meanDist} (still experimental)}
 \item{dispersalKernel}{Currently character string, with either `exponential` or `weibull`.
 If}
 
-\item{sdDist}{A single number indicating the sd parameter of a 2 parameter `dispersalKernel`.
+\item{sdDist}{A single number indicating the `sd` parameter of a 2 parameter `dispersalKernel`.
 Defaults to `1`, which is the same as the `exponential` distribution.}
 
 \item{plot.it}{Numeric. With increasing numbers above 0, there will be plots

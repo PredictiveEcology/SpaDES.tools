@@ -279,6 +279,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'
 #' @param from TODO: description needed
 #' @param to TODO: description needed
+#' @param angles TODO: description needed
 #' @param maxDistance TODO: description needed
 #' @param otherFromCols TODO: description needed
 #'
@@ -289,17 +290,17 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 .pointDistance <- function(from, to, angles = NA, maxDistance = NA_real_, otherFromCols = FALSE) {
   if (!is.na(maxDistance)) {
     keep3 <- which(abs(to[, "x"] - from[, "x"]) <= maxDistance)
-    keep4 <- which(abs(to[keep3,"y"] - from[,"y"]) <= maxDistance)
+    keep4 <- which(abs(to[keep3, "y"] - from[, "y"]) <= maxDistance)
     keep <- keep3[keep4]
 
     # keepOrig <- which((abs(to[, "x"] - from[, "x"]) <= maxDistance)  &
     #                 (abs(to[, "y"] - from[, "y"]) <= maxDistance))
     # if (!identical(keepOrig, keep)) browser()
 
-    to <- to[keep, NULL, drop = FALSE]
+    to <- to[keep, , drop = FALSE]
   }
 
-  dists <- cbind(to, dists = sqrt((from[,"x"] - to[,"x"])^2 + (from[,"y"] - to[,"y"])^2))
+  dists <- cbind(to, dists = sqrt((from[, "x"] - to[, "x"])^2 + (from[, "y"] - to[, "y"])^2))
   if (isTRUE(angles)) {
     dists <- cbind(dists, angles = .pointDirectionInner(from = from, to = to))
   }

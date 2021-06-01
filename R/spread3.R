@@ -20,10 +20,9 @@ if (getRversion() >= "3.1.0") {
 #'   of "agents" or pseudo-agents contained. This number of agents, will
 #'   be spread horizontally, and distributed from each pixel
 #'   that contains a non-zero non NA value.
-#' @param advectionDir A single number or \code{RasterLayer} in degrees
-#'   from North = 0 (though it will use radians if all values are
-#'   \code{abs(advectionDir) > 2 * pi)}. This indicates
-#'   the direction of advective forcing (i.e., wind).
+#' @param advectionDir A single number or \code{RasterLayer} in degrees from North = 0
+#'   (though it will use radians if all values are \code{abs(advectionDir) > 2 * pi)}.
+#'   This indicates the direction of advective forcing (i.e., wind).
 #' @param advectionMag A single number or \code{RasterLayer} in distance units of the
 #'   \code{rasQuality}, e.g., meters, indicating the relative forcing that will
 #'   occur. It is imposed on the total event, i.e., if the \code{meanDist} is
@@ -35,7 +34,7 @@ if (getRversion() >= "3.1.0") {
 #'    (not pixels), for a negative exponential distribution
 #'    dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
 #'    settled at this \code{meanDist} (still experimental)
-#' @param sdDist A single number indicating the sd parameter of a 2 parameter `dispersalKernel`.
+#' @param sdDist A single number indicating the `sd` parameter of a 2 parameter `dispersalKernel`.
 #'   Defaults to `1`, which is the same as the `exponential` distribution.
 #' @param verbose Numeric. With increasing numbers above 0, there will be more
 #'     messages produced. Currently, only 0, 1, or 2+ are distinct.

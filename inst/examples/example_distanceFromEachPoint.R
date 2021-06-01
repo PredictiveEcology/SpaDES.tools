@@ -20,7 +20,7 @@ if (interactive()) {
 dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
                                 landscape = distRas, cumulativeFn = `+`)
 idwRaster <- raster(distRas)
-idwRaster[] <- dists1[, "val"]
+idwRaster[] <- dists1[, "dists"]
 if (interactive()) Plot(idwRaster)
 
 all(idwRaster[] == distRas[]) # TRUE
@@ -40,7 +40,7 @@ dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
 #endCluster() # if beginCluster was run
 
 idwRaster <- raster(ras)
-idwRaster[] <- dists1[, "val"]
+idwRaster[] <- dists1[, "dists"]
 if (interactive()) {
   clearPlot()
   Plot(rp, idwRaster)

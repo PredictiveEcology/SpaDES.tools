@@ -18,6 +18,8 @@
 
 \item{to}{TODO: description needed}
 
+\item{angles}{TODO: description needed}
+
 \item{maxDistance}{TODO: description needed}
 
 \item{otherFromCols}{TODO: description needed}
