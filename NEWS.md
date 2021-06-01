@@ -7,9 +7,15 @@ version 0.3.8
 * Dropped support for R 3.5 due to changes in dependency packages. R versions 3.6 and higher are supported.
 
 ## Enhancements
+* `distanceFromEachPoint`: `cl` argument can now accept a numeric scalar indicating how many cores to use with an `mclapply` internally
+* `distanceFromEachPoint`: minor speed improvements
 * `spread3` has new arguments (`sdDist`, `dispersalKernel`)
 * improved speed for `spread` under most conditions, especially larger events, possibly up to 2x.
 * `splitRaster()` can now specify file extension, instead of defaulting to `.grd`
+* several under the hood improvements for stability, speed
+
+## bug fixes
+* `distanceFromEachPoint` bugfixes under some cases (some values of `toCells`, `angles` would cause errors)
 
 version 0.3.6
 =============

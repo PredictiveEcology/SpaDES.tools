@@ -89,7 +89,7 @@
 #'
 #' @export
 #' @importFrom raster getCluster ncell returnCluster xyFromCell
-#' @importFrom parallel clusterApply
+#' @importFrom parallel clusterApply mclapply
 #'
 #' @example inst/examples/example_distanceFromEachPoint.R
 #'
