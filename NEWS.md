@@ -3,7 +3,10 @@ Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 version 0.3.8
 =============
 
-## enhancements
+## Dependency changes
+* Dropped support for R 3.5 due to changes in dependency packages. R versions 3.6 and higher are supported.
+
+## Enhancements
 * `spread3` has new arguments (`sdDist`, `dispersalKernel`)
 * improved speed for `spread` under most conditions, especially larger events, possibly up to 2x.
 * `splitRaster()` can now specify file extension, instead of defaulting to `.grd`
