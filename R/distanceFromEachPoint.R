@@ -195,7 +195,6 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
         #   return(cumVal)
         # }
 
-
         if (missing(cl)) {
           cl <- tryCatch(getCluster(), error = function(e) NULL)
           on.exit(if (!is.null(cl)) returnCluster(), add = TRUE)
@@ -278,14 +277,16 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'
 #' These have been written with speed in mind.
 #'
+#' @param from TODO: description needed
+#' @param to TODO: description needed
+#' @param maxDistance TODO: description needed
 #' @param otherFromCols TODO: description needed
 #'
 #' @aliases pointDistance
 #' @export
 #' @name .pointDistance
 #' @rdname distances
-.pointDistance <- function(from, to, angles = NA, maxDistance = NA_real_,
-                           otherFromCols = FALSE) {
+.pointDistance <- function(from, to, angles = NA, maxDistance = NA_real_, otherFromCols = FALSE) {
   if (!is.na(maxDistance)) {
     keep3 <- which(abs(to[, "x"] - from[, "x"]) <= maxDistance)
     keep4 <- which(abs(to[keep3,"y"] - from[,"y"]) <= maxDistance)
@@ -295,7 +296,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
     #                 (abs(to[, "y"] - from[, "y"]) <= maxDistance))
     # if (!identical(keepOrig, keep)) browser()
 
-    to <- to[keep, , drop = FALSE]
+    to <- to[keep, NULL, drop = FALSE]
   }
 
   dists <- cbind(to, dists = sqrt((from[,"x"] - to[,"x"])^2 + (from[,"y"] - to[,"y"])^2))
@@ -544,11 +545,12 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
   return(cumVal)
 }
 
+#' @importFrom raster focalWeight
 spiralDistances <- function(pixelGroupMap, maxDis, cellSize) {
-  spiral <- which(focalWeight(pixelGroupMap, maxDis, type = "circle")>0, arr.ind = TRUE) -
+  spiral <- which(focalWeight(pixelGroupMap, maxDis, type = "circle") > 0, arr.ind = TRUE) -
     ceiling(maxDis/cellSize) - 1
   spiral <- cbind(spiral, dists = sqrt( (0 - spiral[,1]) ^ 2 + (0 - spiral[, 2]) ^ 2))
   spiral <- spiral[order(spiral[, "dists"], apply(abs(spiral), 1, sum),
-                         abs(spiral[, 1]), abs(spiral[, 2])),, drop = FALSE]
+                         abs(spiral[, 1]), abs(spiral[, 2])), NULL, drop = FALSE]
 }
 

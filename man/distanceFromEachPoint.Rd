@@ -43,7 +43,9 @@ values in each \code{to} location, as the function iterates
 through each \code{from}. See Details.}
 
 \item{distFn}{A function. This can be a function of \code{landscape},
-\code{fromCells}, \code{toCells}, and \code{dist}.
+\code{fromCell} (single integer value of a from pixel),
+\code{toCells} (integer vector value of all the to pixel indices),
+and \code{dist}.
 If \code{cumulativeFn} is supplied, this will be used to convert
 the distances to some other set of units that will be accumulated
 by the \code{cumulativeFn}. See Details and examples.}
@@ -150,6 +152,11 @@ if (interactive()) {
   Plot(sp1, addTo = "rp")
   Plot(sp1, addTo = "idwRaster")
 }
+
+# On linux; can use numeric passed to cl; will use mclapply with mc.cores = cl
+dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
+                                landscape = rp, distFn = distFn, cumulativeFn = `+`,
+                                cl = 3)
 }
 \seealso{
 \code{\link{rings}}, \code{\link{cir}}, \code{\link[raster]{distanceFromPoints}},

@@ -14,6 +14,12 @@
 )
 }
 \arguments{
+\item{from}{TODO: description needed}
+
+\item{to}{TODO: description needed}
+
+\item{maxDistance}{TODO: description needed}
+
 \item{otherFromCols}{TODO: description needed}
 }
 \description{
