@@ -127,7 +127,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
   if (!matched) {
     nrowFrom <- NROW(from)
-    if (nrowFrom > 1) {
+    if (nrowFrom >= 1) {
       if (is.null(cumulativeFn)) {
         # if (any(otherFromCols) | isTRUE(angles)) {
         out <- lapply(seq_len(nrowFrom), function(k) {
@@ -247,7 +247,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
         cumVal <- docall(get(parFun), args = parFunArgs)
 
         # must cumulativeFn the separate cluster results
-        if (length(cumVal) > 1) {
+        if (length(cumVal) >= 1) {
           cumVal <- list(Reduce(cumulativeFn, cumVal))
           # cumVal[[2]] <- docall(cumulativeFn, cumVal[1:2])
           # cumVal[[1]] <- NULL
@@ -411,7 +411,7 @@ directionFromEachPoint <- function(from, to = NULL, landscape) {
   nrowFrom <- NROW(from)
   if ("id" %in% colnames(from)) {
     ids <- unique(from[, "id"])
-  } else if (nrowFrom > 1) {
+  } else if (nrowFrom >= 1) {
     ids <- seq_len(nrowFrom)
   }
 
@@ -421,7 +421,7 @@ directionFromEachPoint <- function(from, to = NULL, landscape) {
   if (is.null(to))
     to <- xyFromCell(landscape, 1:ncell(landscape))
   if (!matched) {
-    if (nrowFrom > 1) {
+    if (nrowFrom >= 1) {
       out <- lapply(seq_len(nrowFrom), function(k) {
         out <- .pointDirection(from = from[k, , drop = FALSE], to = to)
         cbind(out, id = ids[k])
