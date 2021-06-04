@@ -75,7 +75,7 @@ They are &quot;rounded&quot; to pixel centres." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@ They are &quot;rounded&quot; to pixel centres." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -97,7 +97,7 @@ They are &quot;rounded&quot; to pixel centres." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -126,18 +126,21 @@ dispersal as mathematical vectors that are added together.
 They are "rounded" to pixel centres.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>spread3</span>(
-  <span class='no'>start</span>,
-  <span class='no'>rasQuality</span>,
-  <span class='no'>rasAbundance</span>,
-  <span class='no'>advectionDir</span>,
-  <span class='no'>advectionMag</span>,
-  <span class='no'>meanDist</span>,
-  <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>minNumAgents</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"LandR.verbose"</span>, <span class='fl'>0</span>),
-  <span class='kw'>saveStack</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>spread3</span><span class='op'>(</span>
+  <span class='va'>start</span>,
+  <span class='va'>rasQuality</span>,
+  <span class='va'>rasAbundance</span>,
+  <span class='va'>advectionDir</span>,
+  <span class='va'>advectionMag</span>,
+  <span class='va'>meanDist</span>,
+  dispersalKernel <span class='op'>=</span> <span class='st'>"exponential"</span>,
+  sdDist <span class='op'>=</span> <span class='fl'>1</span>,
+  plot.it <span class='op'>=</span> <span class='fl'>2</span>,
+  minNumAgents <span class='op'>=</span> <span class='fl'>50</span>,
+  verbose <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"LandR.verbose"</span>, <span class='fl'>0</span><span class='op'>)</span>,
+  saveStack <span class='op'>=</span> <span class='cn'>NULL</span>,
+  skipChecks <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,10 +163,9 @@ that contains a non-zero non NA value.</p></td>
     </tr>
     <tr>
       <th>advectionDir</th>
-      <td><p>A single number or <code>RasterLayer</code> in degrees
-from North = 0 (though it will use radians if all values are
-<code>abs(advectionDir) &gt; 2 * pi)</code>. This indicates
-the direction of advective forcing (i.e., wind).</p></td>
+      <td><p>A single number or <code>RasterLayer</code> in degrees from North = 0
+(though it will use radians if all values are <code>abs(advectionDir) &gt; 2 * pi)</code>.
+This indicates the direction of advective forcing (i.e., wind).</p></td>
     </tr>
     <tr>
       <th>advectionMag</th>
@@ -179,6 +181,16 @@ distance (i.e., 63% of agents) will have settled by <code>15000</code> map units
 (not pixels), for a negative exponential distribution
 dispersal kernel (e.g., <code>dexp</code>). This will mean that 63<!-- % of agents will have -->
 settled at this <code>meanDist</code> (still experimental)</p></td>
+    </tr>
+    <tr>
+      <th>dispersalKernel</th>
+      <td><p>Currently character string, with either `exponential` or `weibull`.
+If</p></td>
+    </tr>
+    <tr>
+      <th>sdDist</th>
+      <td><p>A single number indicating the `sd` parameter of a 2 parameter `dispersalKernel`.
+Defaults to `1`, which is the same as the `exponential` distribution.</p></td>
     </tr>
     <tr>
       <th>plot.it</th>
@@ -200,6 +212,11 @@ messages produced. Currently, only 0, 1, or 2+ are distinct.</p></td>
       <td><p>If provided as a character string, it will save each iteration
 as part of a <code>rasterStack</code> to disk upon exit.</p></td>
     </tr>
+    <tr>
+      <th>skipChecks</th>
+      <td><p>Logical. If `TRUE`, assertions will be skipped (faster, but could miss
+problems)</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -208,152 +225,153 @@ as part of a <code>rasterStack</code> to disk upon exit.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## these tests are fairly heavy, so don't run during automated tests</span>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'>#########################################################</span>
   <span class='co'># Simple case, no variation in rasQuality, numeric advectionDir and advectionMag</span>
   <span class='co'>#########################################################</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>quickPlot</span>)
-  <span class='no'>maxDim</span> <span class='kw'>&lt;-</span> <span class='fl'>10000</span>
-  <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>raster</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='no'>maxDim</span>, <span class='fl'>0</span>, <span class='no'>maxDim</span>)), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>vals</span> <span class='kw'>=</span> <span class='fl'>0</span>)
-  <span class='no'>rasQuality</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>ras</span>)
-  <span class='no'>rasQuality</span>[] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-  <span class='no'>rasAbundance</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>rasQuality</span>)
-  <span class='no'>rasAbundance</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://quickplot.predictiveecology.org'>quickPlot</a></span><span class='op'>)</span>
+  <span class='va'>maxDim</span> <span class='op'>&lt;-</span> <span class='fl'>10000</span>
+  <span class='va'>ras</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='va'>maxDim</span>, <span class='fl'>0</span>, <span class='va'>maxDim</span><span class='op'>)</span><span class='op'>)</span>, res <span class='op'>=</span> <span class='fl'>100</span>, vals <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>
+  <span class='va'>rasQuality</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='va'>ras</span><span class='op'>)</span>
+  <span class='va'>rasQuality</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+  <span class='va'>rasAbundance</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='va'>rasQuality</span><span class='op'>)</span>
+  <span class='va'>rasAbundance</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
   <span class='co'># startPixel &lt;- middlePixel(rasAbundance)</span>
-  <span class='no'>startPixel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>rasAbundance</span>)), <span class='fl'>30</span>)
-  <span class='no'>rasAbundance</span>[<span class='no'>startPixel</span>] <span class='kw'>&lt;-</span> <span class='fl'>1000</span>
-  <span class='no'>advectionDir</span> <span class='kw'>&lt;-</span> <span class='fl'>70</span>
-  <span class='no'>advectionMag</span> <span class='kw'>&lt;-</span> <span class='fl'>4</span> * <span class='fu'><a href='https://rdrr.io/pkg/raster/man/resolution.html'>res</a></span>(<span class='no'>rasAbundance</span>)[<span class='fl'>1</span>]
-  <span class='no'>meanDist</span> <span class='kw'>&lt;-</span> <span class='fl'>2600</span>
+  <span class='va'>startPixel</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>rasAbundance</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>30</span><span class='op'>)</span>
+  <span class='va'>rasAbundance</span><span class='op'>[</span><span class='va'>startPixel</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1000</span>
+  <span class='va'>advectionDir</span> <span class='op'>&lt;-</span> <span class='fl'>70</span>
+  <span class='va'>advectionMag</span> <span class='op'>&lt;-</span> <span class='fl'>4</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/resolution.html'>res</a></span><span class='op'>(</span><span class='va'>rasAbundance</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+  <span class='va'>meanDist</span> <span class='op'>&lt;-</span> <span class='fl'>2600</span>
 
-   <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+   <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
      <span class='co'># Test the dispersal kernel -- create a function</span>
-     <span class='no'>plotDispersalKernel</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>out</span>, <span class='no'>meanAdvectionMag</span>) {
-       <span class='no'>out</span>[, <span class='no'>disGroup</span> <span class='kw'>:=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>distance</span> / <span class='fl'>100</span>) * <span class='fl'>100</span>]
-       <span class='no'>freqs</span> <span class='kw'>&lt;-</span> <span class='no'>out</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"disGroup"</span>]
-       <span class='no'>freqs</span>[, <span class='fu'>`:=`</span>(<span class='kw'>cumSum</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='no'>N</span>), <span class='kw'>N</span> <span class='kw'>=</span> <span class='no'>N</span>)]
-       <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>freqs</span>$<span class='no'>disGroup</span>, <span class='no'>freqs</span>$<span class='no'>cumSum</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"CumulativeNumberSettled"</span>,
-            <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"Cumulative Number Settled"</span>) <span class='co'># can plot the distance X number</span>
-       <span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(<span class='kw'>v</span> <span class='kw'>=</span> <span class='no'>meanAdvectionMag</span> + <span class='no'>meanDist</span>)
-       <span class='no'>newTitle</span> <span class='kw'>&lt;-</span> <span class='st'>"Number Settled By Distance"</span>
-       <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>freqs</span>$<span class='no'>disGroup</span>, <span class='no'>freqs</span>$<span class='no'>N</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span>(<span class='st'>" "</span>, <span class='st'>""</span>, <span class='no'>newTitle</span>),
-            <span class='kw'>title</span> <span class='kw'>=</span> <span class='no'>newTitle</span>) <span class='co'># can plot the distance X number</span>
-       <span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(<span class='kw'>v</span> <span class='kw'>=</span> <span class='no'>meanAdvectionMag</span> + <span class='no'>meanDist</span>)
+     <span class='va'>plotDispersalKernel</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>out</span>, <span class='va'>meanAdvectionMag</span><span class='op'>)</span> <span class='op'>{</span>
+       <span class='va'>out</span><span class='op'>[</span>, <span class='va'>disGroup</span> <span class='op'>:=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>round</a></span><span class='op'>(</span><span class='va'>distance</span> <span class='op'>/</span> <span class='fl'>100</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>100</span><span class='op'>]</span>
+       <span class='va'>freqs</span> <span class='op'>&lt;-</span> <span class='va'>out</span><span class='op'>[</span>, <span class='va'>.N</span>, by <span class='op'>=</span> <span class='st'>"disGroup"</span><span class='op'>]</span>
+       <span class='va'>freqs</span><span class='op'>[</span>, <span class='fu'>`:=`</span><span class='op'>(</span>cumSum <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span><span class='op'>(</span><span class='va'>N</span><span class='op'>)</span>, N <span class='op'>=</span> <span class='va'>N</span><span class='op'>)</span><span class='op'>]</span>
+       <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>freqs</span><span class='op'>$</span><span class='va'>disGroup</span>, <span class='va'>freqs</span><span class='op'>$</span><span class='va'>cumSum</span>, addTo <span class='op'>=</span> <span class='st'>"CumulativeNumberSettled"</span>,
+            title <span class='op'>=</span> <span class='st'>"Cumulative Number Settled"</span><span class='op'>)</span> <span class='co'># can plot the distance X number</span>
+       <span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span><span class='op'>(</span>v <span class='op'>=</span> <span class='va'>meanAdvectionMag</span> <span class='op'>+</span> <span class='va'>meanDist</span><span class='op'>)</span>
+       <span class='va'>newTitle</span> <span class='op'>&lt;-</span> <span class='st'>"Number Settled By Distance"</span>
+       <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>freqs</span><span class='op'>$</span><span class='va'>disGroup</span>, <span class='va'>freqs</span><span class='op'>$</span><span class='va'>N</span>, addTo <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span><span class='op'>(</span><span class='st'>" "</span>, <span class='st'>""</span>, <span class='va'>newTitle</span><span class='op'>)</span>,
+            title <span class='op'>=</span> <span class='va'>newTitle</span><span class='op'>)</span> <span class='co'># can plot the distance X number</span>
+       <span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span><span class='op'>(</span>v <span class='op'>=</span> <span class='va'>meanAdvectionMag</span> <span class='op'>+</span> <span class='va'>meanDist</span><span class='op'>)</span>
        <span class='co'># should be 0.63:</span>
-       <span class='no'>freqs</span>[<span class='no'>disGroup</span> <span class='kw'>==</span> <span class='no'>meanAdvectionMag</span> + <span class='no'>meanDist</span>, <span class='no'>cumSum</span>] / <span class='fu'><a href='https://rdrr.io/pkg/raster/man/headtail.html'>tail</a></span>(<span class='no'>freqs</span>,<span class='fl'>1</span>)[, <span class='no'>cumSum</span>]
-       <span class='fu'><a href='https://rdrr.io/r/graphics/mtext.html'>mtext</a></span>(<span class='kw'>side</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"Average habitat quality: "</span>,
-             <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>rasQuality</span>[], <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>), <span class='fl'>2</span>)),
-             <span class='kw'>outer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>line</span> <span class='kw'>=</span> -<span class='fl'>2</span>, <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-    }
-    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/dev.html'>dev</a></span>() <span class='co'># don't use Rstudio windows, which is very slow</span>
-    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
-    <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread3</span>(<span class='kw'>rasAbundance</span> <span class='kw'>=</span> <span class='no'>rasAbundance</span>,
-                   <span class='kw'>rasQuality</span> <span class='kw'>=</span> <span class='no'>rasQuality</span>,
-                   <span class='kw'>advectionDir</span> <span class='kw'>=</span> <span class='no'>advectionDir</span>,
-                   <span class='kw'>advectionMag</span> <span class='kw'>=</span> <span class='no'>advectionMag</span>,
-                   <span class='kw'>meanDist</span> <span class='kw'>=</span> <span class='no'>meanDist</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-                   <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+       <span class='va'>freqs</span><span class='op'>[</span><span class='va'>disGroup</span> <span class='op'>==</span> <span class='va'>meanAdvectionMag</span> <span class='op'>+</span> <span class='va'>meanDist</span>, <span class='va'>cumSum</span><span class='op'>]</span> <span class='op'>/</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/headtail.html'>tail</a></span><span class='op'>(</span><span class='va'>freqs</span>,<span class='fl'>1</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>cumSum</span><span class='op'>]</span>
+       <span class='fu'><a href='https://rdrr.io/r/graphics/mtext.html'>mtext</a></span><span class='op'>(</span>side <span class='op'>=</span> <span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>"Average habitat quality: "</span>,
+             <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>round</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rasQuality</span><span class='op'>[</span><span class='op'>]</span>, na.rm <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,
+             outer <span class='op'>=</span> <span class='cn'>TRUE</span>, line <span class='op'>=</span> <span class='op'>-</span><span class='fl'>2</span>, cex <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+    <span class='op'>}</span>
+    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/dev.html'>dev</a></span><span class='op'>(</span><span class='op'>)</span> <span class='co'># don't use Rstudio windows, which is very slow</span>
+    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+    <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'>spread3</span><span class='op'>(</span>rasAbundance <span class='op'>=</span> <span class='va'>rasAbundance</span>,
+                   rasQuality <span class='op'>=</span> <span class='va'>rasQuality</span>,
+                   advectionDir <span class='op'>=</span> <span class='va'>advectionDir</span>,
+                   advectionMag <span class='op'>=</span> <span class='va'>advectionMag</span>,
+                   meanDist <span class='op'>=</span> <span class='va'>meanDist</span>, verbose <span class='op'>=</span> <span class='fl'>2</span>,
+                   plot.it <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 
-    <span class='fu'>plotDispersalKernel</span>(<span class='no'>out</span>, <span class='no'>advectionMag</span>)
-  }
+    <span class='fu'>plotDispersalKernel</span><span class='op'>(</span><span class='va'>out</span>, <span class='va'>advectionMag</span><span class='op'>)</span>
+  <span class='op'>}</span>
 
   <span class='co'>#########################################################</span>
   <span class='co'>### The case of variable quality raster</span>
   <span class='co'>#########################################################</span>
-  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>sf</span>) <span class='kw'>&amp;&amp;</span> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>fasterize</span>)) {
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>SpaDES.tools</span>) <span class='co'># for gaussMap</span>
-    <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='randomStudyArea.html'>randomStudyArea</a></span>(<span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>1e9</span>)
-    <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span>(<span class='no'>a</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>100</span>)
-    <span class='no'>mask</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/fasterize/man/fasterize.html'>fasterize</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/sf/man/st_as_sf.html'>st_as_sf</a></span>(<span class='no'>a</span>), <span class='no'>ras</span>) <span class='co'># faster than raster::rasterize</span>
-    <span class='no'>rasQuality</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
-    <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>rasQuality</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>a</span>)
-    <span class='no'>rasQuality</span>[<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='no'>mask</span>)] <span class='kw'>&lt;-</span> <span class='fl'>NA</span>
+  <span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://r-spatial.github.io/sf/'>sf</a></span><span class='op'>)</span> <span class='op'>&amp;&amp;</span> <span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/ecohealthalliance/fasterize'>fasterize</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://spades-tools.predictiveecology.org'>SpaDES.tools</a></span><span class='op'>)</span> <span class='co'># for gaussMap</span>
+    <span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='randomStudyArea.html'>randomStudyArea</a></span><span class='op'>(</span>size <span class='op'>=</span> <span class='fl'>1e9</span><span class='op'>)</span>
+    <span class='va'>ras</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>, res <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
+    <span class='va'>mask</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/fasterize/man/fasterize.html'>fasterize</a></span><span class='op'>(</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_as_sf.html'>st_as_sf</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>, <span class='va'>ras</span><span class='op'>)</span> <span class='co'># faster than raster::rasterize</span>
+    <span class='va'>rasQuality</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span><span class='op'>(</span><span class='va'>ras</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>rasQuality</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
+    <span class='va'>rasQuality</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>mask</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
     <span class='co'># rescale so min is 0.75 and max is 1</span>
-    <span class='no'>rasQuality</span>[] <span class='kw'>&lt;-</span> <span class='no'>rasQuality</span>[] / (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span>(<span class='no'>rasQuality</span>) * <span class='fl'>4</span> ) + <span class='fl'>1</span>/<span class='fl'>4</span>
-    <span class='no'>rasAbundance</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>rasQuality</span>)
-    <span class='no'>rasAbundance</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-    <span class='no'>startPixel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>rasAbundance</span>)), <span class='fl'>300</span>)
-    <span class='no'>rasAbundance</span>[<span class='no'>startPixel</span>] <span class='kw'>&lt;-</span> <span class='fl'>1000</span>
-    <span class='no'>advectionDir</span> <span class='kw'>&lt;-</span> <span class='fl'>75</span>
-    <span class='no'>advectionMag</span> <span class='kw'>&lt;-</span> <span class='fl'>4</span> * <span class='fu'><a href='https://rdrr.io/pkg/raster/man/resolution.html'>res</a></span>(<span class='no'>rasAbundance</span>)[<span class='fl'>1</span>]
-    <span class='no'>meanDist</span> <span class='kw'>&lt;-</span> <span class='fl'>2600</span>
-    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
-    <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread3</span>(<span class='kw'>rasAbundance</span> <span class='kw'>=</span> <span class='no'>rasAbundance</span>,
-                   <span class='kw'>rasQuality</span> <span class='kw'>=</span> <span class='no'>rasQuality</span>,
-                   <span class='kw'>advectionDir</span> <span class='kw'>=</span> <span class='no'>advectionDir</span>,
-                   <span class='kw'>advectionMag</span> <span class='kw'>=</span> <span class='no'>advectionMag</span>,
-                   <span class='kw'>meanDist</span> <span class='kw'>=</span> <span class='no'>meanDist</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-                   <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-    <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-      <span class='fu'>plotDispersalKernel</span>(<span class='no'>out</span>, <span class='no'>advectionMag</span>)
-    }
-  }
+    <span class='va'>rasQuality</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rasQuality</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>/</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span><span class='op'>(</span><span class='va'>rasQuality</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>4</span> <span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>4</span>
+    <span class='va'>rasAbundance</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='va'>rasQuality</span><span class='op'>)</span>
+    <span class='va'>rasAbundance</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
+    <span class='va'>startPixel</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>rasAbundance</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>300</span><span class='op'>)</span>
+    <span class='va'>rasAbundance</span><span class='op'>[</span><span class='va'>startPixel</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1000</span>
+    <span class='va'>advectionDir</span> <span class='op'>&lt;-</span> <span class='fl'>75</span>
+    <span class='va'>advectionMag</span> <span class='op'>&lt;-</span> <span class='fl'>4</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/resolution.html'>res</a></span><span class='op'>(</span><span class='va'>rasAbundance</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+    <span class='va'>meanDist</span> <span class='op'>&lt;-</span> <span class='fl'>2600</span>
+    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+    <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'>spread3</span><span class='op'>(</span>rasAbundance <span class='op'>=</span> <span class='va'>rasAbundance</span>,
+                   rasQuality <span class='op'>=</span> <span class='va'>rasQuality</span>,
+                   advectionDir <span class='op'>=</span> <span class='va'>advectionDir</span>,
+                   advectionMag <span class='op'>=</span> <span class='va'>advectionMag</span>,
+                   meanDist <span class='op'>=</span> <span class='va'>meanDist</span>, verbose <span class='op'>=</span> <span class='fl'>2</span>,
+                   plot.it <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+    <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+      <span class='fu'>plotDispersalKernel</span><span class='op'>(</span><span class='va'>out</span>, <span class='va'>advectionMag</span><span class='op'>)</span>
+    <span class='op'>}</span>
+  <span class='op'>}</span>
 
   <span class='co'>###############################################################################</span>
   <span class='co'>### The case of variable quality raster, raster for advectionDir &amp; advectionMag</span>
   <span class='co'>###############################################################################</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>quickPlot</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>SpaDES.tools</span>)
-  <span class='no'>maxDim</span> <span class='kw'>&lt;-</span> <span class='fl'>10000</span>
-  <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='no'>maxDim</span>, <span class='fl'>0</span>, <span class='no'>maxDim</span>)), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>vals</span> <span class='kw'>=</span> <span class='fl'>0</span>)
-  <span class='no'>rasQuality</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>ras</span>)
-  <span class='no'>rasQuality</span>[] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-  <span class='no'>rasAbundance</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>rasQuality</span>)
-  <span class='no'>rasAbundance</span>[] <span class='kw'>&lt;-</span> <span class='fl'>NA</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://quickplot.predictiveecology.org'>quickPlot</a></span><span class='op'>)</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://spades-tools.predictiveecology.org'>SpaDES.tools</a></span><span class='op'>)</span>
+  <span class='va'>maxDim</span> <span class='op'>&lt;-</span> <span class='fl'>10000</span>
+  <span class='va'>ras</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='va'>maxDim</span>, <span class='fl'>0</span>, <span class='va'>maxDim</span><span class='op'>)</span><span class='op'>)</span>, res <span class='op'>=</span> <span class='fl'>100</span>, vals <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>
+  <span class='va'>rasQuality</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='va'>ras</span><span class='op'>)</span>
+  <span class='va'>rasQuality</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+  <span class='va'>rasAbundance</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='va'>rasQuality</span><span class='op'>)</span>
+  <span class='va'>rasAbundance</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
   <span class='co'># startPixel &lt;- middlePixel(rasAbundance)</span>
-  <span class='no'>startPixel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>rasAbundance</span>)), <span class='fl'>25</span>)
-  <span class='no'>rasAbundance</span>[<span class='no'>startPixel</span>] <span class='kw'>&lt;-</span> <span class='fl'>1000</span>
+  <span class='va'>startPixel</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>rasAbundance</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>25</span><span class='op'>)</span>
+  <span class='va'>rasAbundance</span><span class='op'>[</span><span class='va'>startPixel</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1000</span>
 
   <span class='co'># raster for advectionDir</span>
-  <span class='no'>advectionDir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
-  <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>advectionDir</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>rasQuality</span>)
+  <span class='va'>advectionDir</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span><span class='op'>(</span><span class='va'>ras</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>advectionDir</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>rasQuality</span><span class='op'>)</span>
   <span class='co'># rescale so min is 0.75 and max is 1</span>
-  <span class='no'>advectionDir</span>[] <span class='kw'>&lt;-</span> <span class='no'>advectionDir</span>[] / (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span>(<span class='no'>advectionDir</span>)) * <span class='fl'>180</span>
+  <span class='va'>advectionDir</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>advectionDir</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>/</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span><span class='op'>(</span><span class='va'>advectionDir</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>180</span>
 
   <span class='co'># raster for advectionMag</span>
-  <span class='no'>advectionMag</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span>(<span class='no'>ras</span>)
-  <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>advectionMag</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span>(<span class='no'>rasQuality</span>)
+  <span class='va'>advectionMag</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span><span class='op'>(</span><span class='va'>ras</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>advectionMag</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>rasQuality</span><span class='op'>)</span>
   <span class='co'># rescale so min is 0.75 and max is 1</span>
-  <span class='no'>advectionMag</span>[] <span class='kw'>&lt;-</span> <span class='no'>advectionMag</span>[] / (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span>(<span class='no'>advectionMag</span>)) * <span class='fl'>600</span>
+  <span class='va'>advectionMag</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>advectionMag</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>/</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span><span class='op'>(</span><span class='va'>advectionMag</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>600</span>
 
-  <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread3</span>(<span class='kw'>rasAbundance</span> <span class='kw'>=</span> <span class='no'>rasAbundance</span>,
-                 <span class='kw'>rasQuality</span> <span class='kw'>=</span> <span class='no'>rasQuality</span>,
-                 <span class='kw'>advectionDir</span> <span class='kw'>=</span> <span class='no'>advectionDir</span>,
-                 <span class='kw'>advectionMag</span> <span class='kw'>=</span> <span class='no'>advectionMag</span>,
-                 <span class='kw'>meanDist</span> <span class='kw'>=</span> <span class='no'>meanDist</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-                 <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+  <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'>spread3</span><span class='op'>(</span>rasAbundance <span class='op'>=</span> <span class='va'>rasAbundance</span>,
+                 rasQuality <span class='op'>=</span> <span class='va'>rasQuality</span>,
+                 advectionDir <span class='op'>=</span> <span class='va'>advectionDir</span>,
+                 advectionMag <span class='op'>=</span> <span class='va'>advectionMag</span>,
+                 meanDist <span class='op'>=</span> <span class='va'>meanDist</span>, verbose <span class='op'>=</span> <span class='fl'>2</span>,
+                 plot.it <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
-  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/dev.html'>dev</a></span>() <span class='co'># don't use Rstudio windows, which is very slow</span>
-    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
-    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>advectionDir</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"Wind direction"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"Reds"</span>)
-    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>advectionMag</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"Wind speed"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"Blues"</span>)
-    <span class='fu'>plotDispersalKernel</span>(<span class='no'>out</span>, <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>advectionMag</span>[]))
-    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>rasAbundance</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"rasAbundance"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='st'>"black"</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>""</span>)
-  }
+  <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/dev.html'>dev</a></span><span class='op'>(</span><span class='op'>)</span> <span class='co'># don't use Rstudio windows, which is very slow</span>
+    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>advectionDir</span>, title <span class='op'>=</span> <span class='st'>"Wind direction"</span>, cols <span class='op'>=</span> <span class='st'>"Reds"</span><span class='op'>)</span>
+    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>advectionMag</span>, title <span class='op'>=</span> <span class='st'>"Wind speed"</span>, cols <span class='op'>=</span> <span class='st'>"Blues"</span><span class='op'>)</span>
+    <span class='fu'>plotDispersalKernel</span><span class='op'>(</span><span class='va'>out</span>, <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>advectionMag</span><span class='op'>[</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>rasAbundance</span>, addTo <span class='op'>=</span> <span class='st'>"rasAbundance"</span>, cols <span class='op'>=</span> <span class='st'>"black"</span>, title <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
+  <span class='op'>}</span>
 
   <span class='co'>#########################################</span>
   <span class='co'># save iterations to a stack to make animated GIF</span>
   <span class='co'>########################################</span>
-  <span class='no'>tmpStack</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>raster</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/rasterTmpFile.html'>rasterTmpFile</a></span>(<span class='st'>"stackToAnimate"</span>)
-  <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>spread3</span>(<span class='kw'>rasAbundance</span> <span class='kw'>=</span> <span class='no'>rasAbundance</span>,
-                 <span class='kw'>rasQuality</span> <span class='kw'>=</span> <span class='no'>rasQuality</span>,
-                 <span class='kw'>advectionDir</span> <span class='kw'>=</span> <span class='no'>advectionDir</span>,
-                 <span class='kw'>advectionMag</span> <span class='kw'>=</span> <span class='no'>advectionMag</span>,
-                 <span class='kw'>meanDist</span> <span class='kw'>=</span> <span class='fl'>2600</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-                 <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>saveStack</span> <span class='kw'>=</span> <span class='no'>tmpStack</span>)
+  <span class='va'>tmpStack</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/rasterTmpFile.html'>rasterTmpFile</a></span><span class='op'>(</span><span class='st'>"stackToAnimate"</span><span class='op'>)</span>
+  <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'>spread3</span><span class='op'>(</span>rasAbundance <span class='op'>=</span> <span class='va'>rasAbundance</span>,
+                 rasQuality <span class='op'>=</span> <span class='va'>rasQuality</span>,
+                 advectionDir <span class='op'>=</span> <span class='va'>advectionDir</span>,
+                 advectionMag <span class='op'>=</span> <span class='va'>advectionMag</span>,
+                 meanDist <span class='op'>=</span> <span class='fl'>2600</span>, verbose <span class='op'>=</span> <span class='fl'>2</span>,
+                 plot.it <span class='op'>=</span> <span class='fl'>0</span>, saveStack <span class='op'>=</span> <span class='va'>tmpStack</span><span class='op'>)</span>
 
   <span class='co'>## This animates the series of images into an animated GIF</span>
-  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>animation</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
-    <span class='no'>out2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>raster</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/stack.html'>stack</a></span>(<span class='no'>tmpStack</span>)
-    <span class='no'>gifName</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>(), <span class='st'>"animation.gif"</span>)
-    <span class='fu'><a href='https://rdrr.io/pkg/animation/man/saveGIF.html'>saveGIF</a></span>(<span class='kw'>interval</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>movie.name</span> <span class='kw'>=</span> <span class='no'>gifName</span>, <span class='kw'>expr</span> <span class='kw'>=</span> {
-      <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/numLayers.html'>numLayers</a></span>(<span class='no'>out2</span>))) <span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span>(<span class='no'>out2</span><span class='kw'>[[</span><span class='no'>i</span>]])
-    })
-  }
-}</div></pre>
+  <span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://yihui.name/animation'>animation</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>out2</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/stack.html'>stack</a></span><span class='op'>(</span><span class='va'>tmpStack</span><span class='op'>)</span>
+    <span class='va'>gifName</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"animation.gif"</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/pkg/animation/man/saveGIF.html'>saveGIF</a></span><span class='op'>(</span>interval <span class='op'>=</span> <span class='fl'>0.1</span>, movie.name <span class='op'>=</span> <span class='va'>gifName</span>, expr <span class='op'>=</span> <span class='op'>{</span>
+      <span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/numLayers.html'>numLayers</a></span><span class='op'>(</span><span class='va'>out2</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span><span class='op'>(</span><span class='va'>out2</span><span class='op'>[[</span><span class='va'>i</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
+    <span class='op'>}</span><span class='op'>)</span>
+  <span class='op'>}</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -369,7 +387,7 @@ as part of a <code>rasterStack</code> to disk upon exit.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

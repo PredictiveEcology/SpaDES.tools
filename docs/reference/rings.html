@@ -77,7 +77,7 @@ smaller ring cells)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8</span>
       </span>
     </div>
 
@@ -85,7 +85,7 @@ smaller ring cells)." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -99,7 +99,7 @@ smaller ring cells)." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -130,30 +130,30 @@ twice (once for smaller ring and once for larger ring, then removing the
 smaller ring cells).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rings</span>(
-  <span class='no'>landscape</span>,
-  <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>
-)
+    <pre class="usage"><span class='fu'>rings</span><span class='op'>(</span>
+  <span class='va'>landscape</span>,
+  loci <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  id <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  minRadius <span class='op'>=</span> <span class='fl'>2</span>,
+  maxRadius <span class='op'>=</span> <span class='fl'>5</span>,
+  allowOverlap <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  returnIndices <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  returnDistances <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for RasterLayer</span>
-<span class='fu'>rings</span>(
-  <span class='no'>landscape</span>,
-  <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>
-)</pre>
+<span class='fu'>rings</span><span class='op'>(</span>
+  <span class='va'>landscape</span>,
+  loci <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  id <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  minRadius <span class='op'>=</span> <span class='fl'>2</span>,
+  maxRadius <span class='op'>=</span> <span class='fl'>5</span>,
+  allowOverlap <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  returnIndices <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  returnDistances <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -231,16 +231,19 @@ between the two functions is that <code>rings</code> takes the centre of the pix
 as the centre of a circle, whereas <code>cir</code> takes the exact coordinates.
 See example.</p>
 <p><code><a href='https://rdrr.io/pkg/rgeos/man/misc-gBuffer.html'>rgeos::gBuffer</a></code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Eliot McIntire</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>quickPlot</span>)
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://quickplot.predictiveecology.org'>quickPlot</a></span><span class='op'>)</span>
 
 <span class='co'># Make random forest cover map</span>
-<span class='no'>emptyRas</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>1e2</span>, <span class='fl'>0</span>, <span class='fl'>1e2</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='va'>emptyRas</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1e2</span>, <span class='fl'>0</span>, <span class='fl'>1e2</span><span class='op'>)</span>, res <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
 <span class='co'># start from two cells near middle</span>
-<span class='no'>loci</span> <span class='kw'>&lt;-</span> (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>emptyRas</span>) / <span class='fl'>2</span> - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>emptyRas</span>)) / <span class='fl'>2</span> + <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>3</span>, <span class='fl'>3</span>)
+<span class='va'>loci</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>emptyRas</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>2</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span><span class='op'>(</span><span class='va'>emptyRas</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>3</span>, <span class='fl'>3</span><span class='op'>)</span>
 
 <span class='co'># Allow overlap</span>
 <span class='co'>## TODO: need to fix a bug when allowOverlap = TRUE</span>
@@ -255,23 +258,24 @@ See example.</p>
 <span class='co'># }</span>
 
 <span class='co'># No overlap is default, occurs randomly</span>
-<span class='no'>emptyRas</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-<span class='no'>rngs</span> <span class='kw'>&lt;-</span> <span class='fu'>rings</span>(<span class='no'>emptyRas</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>loci</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fl'>7</span>, <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fl'>9</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>emptyRas</span>[<span class='no'>rngs</span>$<span class='no'>indices</span>] <span class='kw'>&lt;-</span> <span class='no'>rngs</span>$<span class='no'>id</span>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>emptyRas</span>)
-}
+<span class='va'>emptyRas</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
+<span class='va'>rngs</span> <span class='op'>&lt;-</span> <span class='fu'>rings</span><span class='op'>(</span><span class='va'>emptyRas</span>, loci <span class='op'>=</span> <span class='va'>loci</span>, minRadius <span class='op'>=</span> <span class='fl'>7</span>, maxRadius <span class='op'>=</span> <span class='fl'>9</span>, returnIndices <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>emptyRas</span><span class='op'>[</span><span class='va'>rngs</span><span class='op'>$</span><span class='va'>indices</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rngs</span><span class='op'>$</span><span class='va'>id</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>emptyRas</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 <span class='co'># Variable ring widths, including centre cell for smaller one</span>
-<span class='no'>emptyRas</span>[] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-<span class='no'>rngs</span> <span class='kw'>&lt;-</span> <span class='fu'>rings</span>(<span class='no'>emptyRas</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>loci</span>, <span class='kw'>minRadius</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>7</span>), <span class='kw'>maxRadius</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>8</span>, <span class='fl'>18</span>),
-              <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>emptyRas</span>[<span class='no'>rngs</span>$<span class='no'>indices</span>] <span class='kw'>&lt;-</span> <span class='no'>rngs</span>$<span class='no'>id</span>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>emptyRas</span>)
-}</div></pre>
+<span class='va'>emptyRas</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
+<span class='va'>rngs</span> <span class='op'>&lt;-</span> <span class='fu'>rings</span><span class='op'>(</span><span class='va'>emptyRas</span>, loci <span class='op'>=</span> <span class='va'>loci</span>, minRadius <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>7</span><span class='op'>)</span>, maxRadius <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='fl'>18</span><span class='op'>)</span>,
+              returnIndices <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>emptyRas</span><span class='op'>[</span><span class='va'>rngs</span><span class='op'>$</span><span class='va'>indices</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rngs</span><span class='op'>$</span><span class='va'>id</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>emptyRas</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -287,7 +291,7 @@ See example.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

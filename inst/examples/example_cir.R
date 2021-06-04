@@ -3,7 +3,7 @@ library(sp)
 library(raster)
 library(quickPlot)
 
-set.seed(1642)
+set.seed(1462)
 
 # circle centred
 ras <- raster(extent(0, 15, 0, 15), res = 1, val = 0)
@@ -22,8 +22,8 @@ n <- 2
 agent <- SpatialPoints(coords = cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
                                       y = stats::runif(n, xmin(ras), xmax(ras))))
 
-cirs <- cir(ras, agent, maxRadius = 15, simplify = TRUE)
-cirsSP <- SpatialPoints(coords = cirs[, c("x", "y")])
+cirs <- cir(ras, agent, maxRadius = 15, simplify = TRUE) ## TODO: empty with some seeds! e.g. 1642
+cirsSP <- SpatialPoints(coords = cirs[, c("x", "y")]) ## TODO: error with some seeds! e.g. 1642
 cirsRas <- raster(ras)
 cirsRas[] <- 0
 cirsRas[cirs[, "indices"]] <- 1

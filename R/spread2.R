@@ -431,7 +431,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   # Step 0 - set up objects -- main ones: dt, clusterDT -- get them from attributes
   ## on start or initiate them
-  smallRaster <- ncells < 4e7 # should use bit vector (RAM) or ff raster (Disk)
+  smallRaster <- ncells < 4e7 # should use bit vector (RAM)
   canUseAvailable <- !(isTRUE(allowOverlap > 0) | is.na(allowOverlap))
   if (missing(maxSize)) {
     maxSize <- NA_real_
@@ -462,7 +462,14 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   if (!is.data.table(start)) {
     # A "new" entry into spread2 -- need to set up stuff
     if (canUseAvailable) {
-      notAvailable <- logical(ncells)
+      #if (smallRaster) {
+      notAvailable <- if (requireNamespace("bit", quietly = TRUE))
+        bit::bit(ncells)
+      else
+        logical(ncells)
+      #} else {
+      #  notAvailable <- ff(vmode = "boolean", FALSE, length = ncells)
+      #}
       notAvailable[start] <- TRUE
     }
 

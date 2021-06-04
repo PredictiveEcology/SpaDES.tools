@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title><code>SELES</code> - Initiate agents — initiateAgents • SpaDES.tools</title>
+<title>SELES - Initiate agents — initiateAgents • SpaDES.tools</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="<code>SELES</code> - Initiate agents — initiateAgents" />
+<meta property="og:title" content="SELES - Initiate agents — initiateAgents" />
 <meta property="og:description" content="Sets the the number of agents to initiate. THIS IS NOT FULLY IMPLEMENTED.
 A SELES-like function to maintain conceptual backwards compatibility
 with that simulation tool. This is intended to ease transitions from
@@ -76,7 +76,7 @@ You must know how to use SELES for these to be useful." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8</span>
       </span>
     </div>
 
@@ -84,7 +84,7 @@ You must know how to use SELES for these to be useful." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -98,7 +98,7 @@ You must know how to use SELES for these to be useful." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -128,22 +128,22 @@ with that simulation tool. This is intended to ease transitions from
 <p>You must know how to use SELES for these to be useful.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>numAgents</span>, <span class='no'>probInit</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>indices</span>)
+    <pre class="usage"><span class='fu'>initiateAgents</span><span class='op'>(</span><span class='va'>map</span>, <span class='va'>numAgents</span>, <span class='va'>probInit</span>, asSpatialPoints <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>indices</span><span class='op'>)</span>
 
 <span class='co'># S4 method for Raster,missing,missing,ANY,missing</span>
-<span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>numAgents</span>, <span class='no'>probInit</span>, <span class='no'>asSpatialPoints</span>)
+<span class='fu'>initiateAgents</span><span class='op'>(</span><span class='va'>map</span>, <span class='va'>numAgents</span>, <span class='va'>probInit</span>, <span class='va'>asSpatialPoints</span><span class='op'>)</span>
 
 <span class='co'># S4 method for Raster,missing,Raster,ANY,missing</span>
-<span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>probInit</span>, <span class='no'>asSpatialPoints</span>)
+<span class='fu'>initiateAgents</span><span class='op'>(</span><span class='va'>map</span>, <span class='va'>probInit</span>, <span class='va'>asSpatialPoints</span><span class='op'>)</span>
 
 <span class='co'># S4 method for Raster,numeric,missing,ANY,missing</span>
-<span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>numAgents</span>, <span class='no'>probInit</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>indices</span>)
+<span class='fu'>initiateAgents</span><span class='op'>(</span><span class='va'>map</span>, <span class='va'>numAgents</span>, <span class='va'>probInit</span>, asSpatialPoints <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>indices</span><span class='op'>)</span>
 
 <span class='co'># S4 method for Raster,numeric,Raster,ANY,missing</span>
-<span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>numAgents</span>, <span class='no'>probInit</span>, <span class='no'>asSpatialPoints</span>)
+<span class='fu'>initiateAgents</span><span class='op'>(</span><span class='va'>map</span>, <span class='va'>numAgents</span>, <span class='va'>probInit</span>, <span class='va'>asSpatialPoints</span><span class='op'>)</span>
 
 <span class='co'># S4 method for Raster,missing,missing,ANY,numeric</span>
-<span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='no'>numAgents</span>, <span class='no'>probInit</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>indices</span>)</pre>
+<span class='fu'>initiateAgents</span><span class='op'>(</span><span class='va'>map</span>, <span class='va'>numAgents</span>, <span class='va'>probInit</span>, asSpatialPoints <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>indices</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -154,11 +154,11 @@ with that simulation tool. This is intended to ease transitions from
     </tr>
     <tr>
       <th>numAgents</th>
-      <td><p>numeric resulting from a call to <code><a href='SELESnumAgents.html'>numAgents</a></code></p></td>
+      <td><p>numeric resulting from a call to <code><a href='numAgents.html'>numAgents</a></code></p></td>
     </tr>
     <tr>
       <th>probInit</th>
-      <td><p>a Raster resulting from a <code><a href='SELESprobInit.html'>probInit</a></code> call</p></td>
+      <td><p>a Raster resulting from a <code><a href='probInit.html'>probInit</a></code> call</p></td>
     </tr>
     <tr>
       <th>asSpatialPoints</th>
@@ -174,32 +174,37 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A SpatialPointsDataFrame, with each row representing an individual agent</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Eliot McIntire</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>magrittr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://magrittr.tidyverse.org'>magrittr</a></span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>Attaching package: ‘magrittr’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:raster’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    extract</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>quickPlot</span>)
+#&gt; <span class='message'>    extract</span></div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://quickplot.predictiveecology.org'>quickPlot</a></span><span class='op'>)</span>
 
-<span class='no'>map</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='kw'>xmn</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>xmx</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>ymn</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>ymx</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>val</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>map</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span>(<span class='no'>map</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>var</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>pr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SELESprobInit.html'>probInit</a></span>(<span class='no'>map</span>, <span class='kw'>p</span> <span class='kw'>=</span> (<span class='no'>map</span>/<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span>(<span class='no'>map</span>))^<span class='fl'>2</span>)
-<span class='no'>agents</span> <span class='kw'>&lt;-</span> <span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='fl'>100</span>, <span class='no'>pr</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>map</span>)
-  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agents</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"map"</span>)
-}
+<span class='va'>map</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>xmn <span class='op'>=</span> <span class='fl'>0</span>, xmx <span class='op'>=</span> <span class='fl'>10</span>, ymn <span class='op'>=</span> <span class='fl'>0</span>, ymx <span class='op'>=</span> <span class='fl'>10</span>, val <span class='op'>=</span> <span class='fl'>0</span>, res <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>map</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gaussMap.html'>gaussMap</a></span><span class='op'>(</span><span class='va'>map</span>, scale <span class='op'>=</span> <span class='fl'>1</span>, var <span class='op'>=</span> <span class='fl'>4</span>, speedup <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>pr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='probInit.html'>probInit</a></span><span class='op'>(</span><span class='va'>map</span>, p <span class='op'>=</span> <span class='op'>(</span><span class='va'>map</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extremeValues.html'>maxValue</a></span><span class='op'>(</span><span class='va'>map</span><span class='op'>)</span><span class='op'>)</span><span class='op'>^</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>agents</span> <span class='op'>&lt;-</span> <span class='fu'>initiateAgents</span><span class='op'>(</span><span class='va'>map</span>, <span class='fl'>100</span>, <span class='va'>pr</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>map</span><span class='op'>)</span>
+  <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>agents</span>, addTo <span class='op'>=</span> <span class='st'>"map"</span><span class='op'>)</span>
+<span class='op'>}</span>
 <span class='co'># Test that they are indeed selecting according to probabilities in pr</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>data.table</span>)
-<span class='no'>dt1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>map</span>[<span class='no'>agents</span>], <span class='fl'>0</span>)))
-<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setnames</a></span>(<span class='no'>dt1</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"N"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"count"</span>)
-<span class='no'>dt2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>map</span>[], <span class='fl'>0</span>)))
-<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setnames</a></span>(<span class='no'>dt2</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"N"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"available"</span>)
-<span class='no'>dt</span> <span class='kw'>&lt;-</span><span class='no'>dt1</span>[<span class='no'>dt2</span>, <span class='kw'>on</span> <span class='kw'>=</span> <span class='st'>"V1"</span>]  <span class='co'># join the counts and available data.tables</span>
-<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setnames</a></span>(<span class='no'>dt</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='st'>"V1"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='st'>"mapValue"</span>)
-<span class='no'>dt</span>[, <span class='no'>selection</span> <span class='kw'>:=</span> <span class='no'>count</span>/<span class='no'>available</span>]</div><div class='output co'>#&gt;     mapValue count available selection
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://r-datatable.com'>data.table</a></span><span class='op'>)</span>
+<span class='va'>dt1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>round</a></span><span class='op'>(</span><span class='va'>map</span><span class='op'>[</span><span class='va'>agents</span><span class='op'>]</span>, <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setnames</a></span><span class='op'>(</span><span class='va'>dt1</span>, old <span class='op'>=</span> <span class='st'>"N"</span>, new <span class='op'>=</span> <span class='st'>"count"</span><span class='op'>)</span>
+<span class='va'>dt2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>round</a></span><span class='op'>(</span><span class='va'>map</span><span class='op'>[</span><span class='op'>]</span>, <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setnames</a></span><span class='op'>(</span><span class='va'>dt2</span>, old <span class='op'>=</span> <span class='st'>"N"</span>, new <span class='op'>=</span> <span class='st'>"available"</span><span class='op'>)</span>
+<span class='va'>dt</span> <span class='op'>&lt;-</span><span class='va'>dt1</span><span class='op'>[</span><span class='va'>dt2</span>, on <span class='op'>=</span> <span class='st'>"V1"</span><span class='op'>]</span>  <span class='co'># join the counts and available data.tables</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setnames</a></span><span class='op'>(</span><span class='va'>dt</span>, old <span class='op'>=</span> <span class='st'>"V1"</span>, new <span class='op'>=</span> <span class='st'>"mapValue"</span><span class='op'>)</span>
+<span class='va'>dt</span><span class='op'>[</span>, <span class='va'>selection</span> <span class='op'>:=</span> <span class='va'>count</span><span class='op'>/</span><span class='va'>available</span><span class='op'>]</span>
+</div><div class='output co'>#&gt;     mapValue count available selection
 #&gt;  1:        0    NA         2        NA
 #&gt;  2:        1    NA         3        NA
 #&gt;  3:        2    NA         7        NA
@@ -209,7 +214,8 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
 #&gt;  7:        6    15        13 1.1538462
 #&gt;  8:        7    17         5 3.4000000
 #&gt;  9:        8    20         9 2.2222222
-#&gt; 10:       10     2         1 2.0000000</div><div class='input'><span class='no'>dt</span>[<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='no'>selection</span>), <span class='no'>selection</span> <span class='kw'>:=</span> <span class='fl'>0</span>]</div><div class='output co'>#&gt;     mapValue count available selection
+#&gt; 10:       10     2         1 2.0000000</div><div class='input'><span class='va'>dt</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>selection</span><span class='op'>)</span>, <span class='va'>selection</span> <span class='op'>:=</span> <span class='fl'>0</span><span class='op'>]</span>
+</div><div class='output co'>#&gt;     mapValue count available selection
 #&gt;  1:        0    NA         2 0.0000000
 #&gt;  2:        1    NA         3 0.0000000
 #&gt;  3:        2    NA         7 0.0000000
@@ -219,30 +225,31 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
 #&gt;  7:        6    15        13 1.1538462
 #&gt;  8:        7    17         5 3.4000000
 #&gt;  9:        8    20         9 2.2222222
-#&gt; 10:       10     2         1 2.0000000</div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
-  <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='no'>dt</span>, {<span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span>(<span class='no'>mapValue</span>, <span class='no'>selection</span>)})
+#&gt; 10:       10     2         1 2.0000000</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='va'>dt</span>, <span class='op'>{</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span><span class='op'>(</span><span class='va'>mapValue</span>, <span class='va'>selection</span><span class='op'>)</span><span class='op'>}</span><span class='op'>)</span>
 
 <span class='co'># Note, can also produce a Raster representing agents,</span>
 <span class='co'># then the number of points produced can't be more than</span>
 <span class='co'># the number of pixels:</span>
-<span class='no'>agentsRas</span> <span class='kw'>&lt;-</span> <span class='fu'>initiateAgents</span>(<span class='no'>map</span>, <span class='fl'>30</span>, <span class='no'>pr</span>, <span class='kw'>asSpatialPoints</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>agentsRas</span>)
+<span class='va'>agentsRas</span> <span class='op'>&lt;-</span> <span class='fu'>initiateAgents</span><span class='op'>(</span><span class='va'>map</span>, <span class='fl'>30</span>, <span class='va'>pr</span>, asSpatialPoints <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>agentsRas</span><span class='op'>)</span>
 
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dplyr</span>) <span class='kw'>&amp;&amp;</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric_version.html'>getRversion</a></span>() <span class='kw'>&gt;=</span> <span class='fl'>3.4</span>) {
+<span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span> <span class='op'>&amp;&amp;</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric_version.html'>getRversion</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>&gt;=</span> <span class='fl'>3.4</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'># Check that the agents are more often at the higher probability areas based on pr</span>
-  <span class='kw'>if</span> (<span class='kw pkg'>utils</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/utils/packageDescription.html'>packageVersion</a></span>(<span class='st'>"raster"</span>) <span class='kw'>&gt;=</span> <span class='st'>"2.8-11"</span>) {
-    <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/stats/na.fail.html'>na.omit</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/crosstab.html'>crosstab</a></span>(<span class='no'>agentsRas</span>, <span class='no'>map</span>)), <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>map</span>[]))) <span class='kw'>%&gt;%</span>
-             <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>selectionRatio</span> <span class='kw'>=</span> <span class='no'>Freq</span> / <span class='no'>Freq.1</span>) <span class='kw'>%&gt;%</span>
-             <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span>(-<span class='no'>layer.1</span>, -<span class='no'>Var1</span>) <span class='kw'>%&gt;%</span>
-             <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span>(<span class='kw'>Present</span> <span class='kw'>=</span> <span class='no'>Freq</span>, <span class='kw'>Avail</span> <span class='kw'>=</span> <span class='no'>Freq.1</span>, <span class='kw'>Type</span> <span class='kw'>=</span> <span class='no'>layer.2</span>)
-  } <span class='kw'>else</span> {
-    <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/stats/na.fail.html'>na.omit</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/crosstab.html'>crosstab</a></span>(<span class='no'>agentsRas</span>, <span class='no'>map</span>)), <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='no'>map</span>[]))) <span class='kw'>%&gt;%</span>
-             <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>selectionRatio</span> <span class='kw'>=</span> <span class='no'>Freq</span>/<span class='no'>Freq.1</span>) <span class='kw'>%&gt;%</span>
-             <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span>(-<span class='no'>Var1</span>, -<span class='no'>Var1.1</span>) <span class='kw'>%&gt;%</span>
-             <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span>(<span class='kw'>Present</span> <span class='kw'>=</span> <span class='no'>Freq</span>, <span class='kw'>Avail</span> <span class='kw'>=</span> <span class='no'>Freq.1</span>, <span class='kw'>Type</span> <span class='kw'>=</span> <span class='no'>Var2</span>)
-  }
-  <span class='no'>out</span>
-}</div><div class='output co'>#&gt; <span class='message'>Loading required package: dplyr</span></div><div class='output co'>#&gt; <span class='message'></span>
+  <span class='kw'>if</span> <span class='op'>(</span><span class='fu'>utils</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/utils/packageDescription.html'>packageVersion</a></span><span class='op'>(</span><span class='st'>"raster"</span><span class='op'>)</span> <span class='op'>&gt;=</span> <span class='st'>"2.8-11"</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'>stats</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/stats/na.fail.html'>na.omit</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/crosstab.html'>crosstab</a></span><span class='op'>(</span><span class='va'>agentsRas</span>, <span class='va'>map</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>round</a></span><span class='op'>(</span><span class='va'>map</span><span class='op'>[</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+             <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>selectionRatio <span class='op'>=</span> <span class='va'>Freq</span> <span class='op'>/</span> <span class='va'>Freq.1</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+             <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>layer.1</span>, <span class='op'>-</span><span class='va'>Var1</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+             <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span><span class='op'>(</span>Present <span class='op'>=</span> <span class='va'>Freq</span>, Avail <span class='op'>=</span> <span class='va'>Freq.1</span>, Type <span class='op'>=</span> <span class='va'>layer.2</span><span class='op'>)</span>
+  <span class='op'>}</span> <span class='kw'>else</span> <span class='op'>{</span>
+    <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'>stats</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/stats/na.fail.html'>na.omit</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/crosstab.html'>crosstab</a></span><span class='op'>(</span><span class='va'>agentsRas</span>, <span class='va'>map</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>round</a></span><span class='op'>(</span><span class='va'>map</span><span class='op'>[</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+             <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>selectionRatio <span class='op'>=</span> <span class='va'>Freq</span><span class='op'>/</span><span class='va'>Freq.1</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+             <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>Var1</span>, <span class='op'>-</span><span class='va'>Var1.1</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+             <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span><span class='op'>(</span>Present <span class='op'>=</span> <span class='va'>Freq</span>, Avail <span class='op'>=</span> <span class='va'>Freq.1</span>, Type <span class='op'>=</span> <span class='va'>Var2</span><span class='op'>)</span>
+  <span class='op'>}</span>
+  <span class='va'>out</span>
+<span class='op'>}</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: dplyr</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:MASS’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    select</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:data.table’:</span>
@@ -290,7 +297,7 @@ or <code>SpatialPointsDataFrame</code> (default)</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

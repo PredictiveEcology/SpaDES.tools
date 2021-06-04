@@ -18,7 +18,8 @@ splitRaster(
   buffer = c(0, 0),
   path = NA,
   cl,
-  rType = "FLT4S"
+  rType = "FLT4S",
+  fExt = ".grd"
 )
 
 \S4method{splitRaster}{RasterLayer}(
@@ -28,7 +29,8 @@ splitRaster(
   buffer = c(0, 0),
   path = NA,
   cl,
-  rType = "FLT4S"
+  rType = "FLT4S",
+  fExt = ".grd"
 )
 }
 \arguments{
@@ -59,6 +61,8 @@ of \code{beginCluster()}, to use parallelism for this function, allowing for
 more control over cluster use.}
 
 \item{rType}{Data type of the split rasters. Defaults to FLT4S.}
+
+\item{fExt}{file extension (e.g., \code{".grd"} or \code{".tif"}) specifying the file format.}
 }
 \value{
 \code{mergeRaster} returns a \code{RasterLayer} object.

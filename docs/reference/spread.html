@@ -85,7 +85,7 @@ are internal." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8</span>
       </span>
     </div>
 
@@ -93,7 +93,7 @@ are internal." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -107,7 +107,7 @@ are internal." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -146,69 +146,68 @@ The two functions can accomplish many of the same things, and key differences
 are internal.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>spread</span>(
-  <span class='no'>landscape</span>,
-  <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.23</span>,
-  <span class='kw'>persistence</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>mask</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fl'>100000000L</span>,
-  <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8L</span>,
-  <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1000000L</span>,
-  <span class='kw'>lowMemory</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"spades.lowMemory"</span>, <span class='fl'>FALSE</span>),
-  <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>returnDistances</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>mapID</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>spreadProbLater</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>spreadState</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>circleMaxRadius</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>stopRuleBehavior</span> <span class='kw'>=</span> <span class='st'>"includeRing"</span>,
-  <span class='kw'>allowOverlap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>asymmetry</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>asymmetryAngle</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>,
-  <span class='kw'>quick</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>exactSizes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>relativeSpreadProb</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)
+    <pre class="usage"><span class='fu'>spread</span><span class='op'>(</span>
+  <span class='va'>landscape</span>,
+  loci <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  spreadProb <span class='op'>=</span> <span class='fl'>0.23</span>,
+  persistence <span class='op'>=</span> <span class='fl'>0</span>,
+  mask <span class='op'>=</span> <span class='cn'>NA</span>,
+  maxSize <span class='op'>=</span> <span class='fl'>100000000L</span>,
+  directions <span class='op'>=</span> <span class='fl'>8L</span>,
+  iterations <span class='op'>=</span> <span class='fl'>1000000L</span>,
+  lowMemory <span class='op'>=</span> <span class='cn'>NULL</span>,
+  returnIndices <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  returnDistances <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  mapID <span class='op'>=</span> <span class='cn'>NULL</span>,
+  id <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  plot.it <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  spreadProbLater <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  spreadState <span class='op'>=</span> <span class='cn'>NA</span>,
+  circle <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  circleMaxRadius <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  stopRule <span class='op'>=</span> <span class='cn'>NA</span>,
+  stopRuleBehavior <span class='op'>=</span> <span class='st'>"includeRing"</span>,
+  allowOverlap <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  asymmetry <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  asymmetryAngle <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  quick <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  neighProbs <span class='op'>=</span> <span class='cn'>NULL</span>,
+  exactSizes <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  relativeSpreadProb <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for RasterLayer</span>
-<span class='fu'>spread</span>(
-  <span class='no'>landscape</span>,
-  <span class='no'>loci</span>,
-  <span class='no'>spreadProb</span>,
-  <span class='no'>persistence</span>,
-  <span class='no'>mask</span>,
-  <span class='no'>maxSize</span>,
-  <span class='no'>directions</span>,
-  <span class='no'>iterations</span>,
-  <span class='no'>lowMemory</span>,
-  <span class='no'>returnIndices</span>,
-  <span class='no'>returnDistances</span>,
-  <span class='no'>mapID</span>,
-  <span class='no'>id</span>,
-  <span class='no'>plot.it</span>,
-  <span class='no'>spreadProbLater</span>,
-  <span class='no'>spreadState</span>,
-  <span class='no'>circle</span>,
-  <span class='no'>circleMaxRadius</span>,
-  <span class='no'>stopRule</span>,
-  <span class='no'>stopRuleBehavior</span>,
-  <span class='no'>allowOverlap</span>,
-  <span class='no'>asymmetry</span>,
-  <span class='no'>asymmetryAngle</span>,
-  <span class='no'>quick</span>,
-  <span class='no'>neighProbs</span>,
-  <span class='no'>exactSizes</span>,
-  <span class='no'>relativeSpreadProb</span>,
-  <span class='no'>.zeroVector</span>,
-  <span class='no'>...</span>
-)</pre>
+<span class='fu'>spread</span><span class='op'>(</span>
+  <span class='va'>landscape</span>,
+  loci <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  spreadProb <span class='op'>=</span> <span class='fl'>0.23</span>,
+  persistence <span class='op'>=</span> <span class='fl'>0</span>,
+  mask <span class='op'>=</span> <span class='cn'>NA</span>,
+  maxSize <span class='op'>=</span> <span class='fl'>100000000L</span>,
+  directions <span class='op'>=</span> <span class='fl'>8L</span>,
+  iterations <span class='op'>=</span> <span class='fl'>1000000L</span>,
+  lowMemory <span class='op'>=</span> <span class='cn'>NULL</span>,
+  returnIndices <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  returnDistances <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  mapID <span class='op'>=</span> <span class='cn'>NULL</span>,
+  id <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  plot.it <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  spreadProbLater <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  spreadState <span class='op'>=</span> <span class='cn'>NA</span>,
+  circle <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  circleMaxRadius <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  stopRule <span class='op'>=</span> <span class='cn'>NA</span>,
+  stopRuleBehavior <span class='op'>=</span> <span class='st'>"includeRing"</span>,
+  allowOverlap <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  asymmetry <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  asymmetryAngle <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  quick <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  neighProbs <span class='op'>=</span> <span class='cn'>NULL</span>,
+  exactSizes <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  relativeSpreadProb <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -231,7 +230,7 @@ with <code>cellFromXY</code>.</p></td>
       <td><p>Numeric, or <code>RasterLayer</code>.
 If numeric of length 1, then this is the global probability
 of spreading into each cell from a neighbour.
-If a raster (or a vector of length <code>ncell(landscape)</code>,
+If a raster (or a vector of length <code><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell(landscape)</a></code>,
 resolution and extent of <code>landscape</code>), then this will
 be the cell-specific probability. Default is <code>0.23</code>.
 If a <code>spreadProbLater</code> is provided, then this is
@@ -272,8 +271,7 @@ until stops spreading itself (i.e., exhausts itself).</p></td>
     </tr>
     <tr>
       <th>lowMemory</th>
-      <td><p>Logical. If true, then function uses package <span class="pkg">ff</span>
-internally. This is slower, but much lower memory footprint.</p></td>
+      <td><p>Deprecated.</p></td>
     </tr>
     <tr>
       <th>returnIndices</th>
@@ -397,7 +395,7 @@ spreading to <code>1:length(neighProbs)</code> neighbours.</p></td>
       <th>exactSizes</th>
       <td><p>Logical. If <code>TRUE</code>, then the <code>maxSize</code> will be
 treated as exact sizes, i.e., the spread events will continue
-until they are <code><a href='https://rdrr.io/r/base/Round.html'>floor(maxSize)</a></code>.
+until they are <code><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>floor(maxSize)</a></code>.
 This is overridden by <code>iterations</code>, but if <code>iterations</code>
 is run, and individual events haven't reached <code>maxSize</code>,
 then the returned <code>data.table</code> will still have at least
@@ -420,10 +418,6 @@ to be <code>TRUE</code>.</p></td>
 required for <code>stopRule</code>. These
 vectors should be as long as required e.g., length
 <code>loci</code> if there is one value per event.</p></td>
-    </tr>
-    <tr>
-      <th>.zeroVector</th>
-      <td><p>DESCRIPTION NEEDED</p></td>
     </tr>
     </table>
 
@@ -581,199 +575,232 @@ Also, <code><a href='rings.html'>rings</a></code> which uses <code>spread</code>
 values selected for a specific purpose.
 <code><a href='https://rdrr.io/pkg/raster/man/distanceFromPoints.html'>distanceFromPoints</a></code>.
 <code><a href='cir.html'>cir</a></code> to create "circles"; it is fast for many small problems.</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Eliot McIntire and Steve Cumming</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>RColorBrewer</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>quickPlot</span>)
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>RColorBrewer</span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://quickplot.predictiveecology.org'>quickPlot</a></span><span class='op'>)</span>
 
 <span class='co'># Make random forest cover map</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
-<span class='no'>emptyRas</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>1e2</span>, <span class='fl'>0</span>, <span class='fl'>1e2</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>hab</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='randomPolygons.html'>randomPolygons</a></span>(<span class='no'>emptyRas</span>, <span class='kw'>numTypes</span> <span class='kw'>=</span> <span class='fl'>40</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span>(<span class='no'>hab</span>) <span class='kw'>&lt;-</span> <span class='st'>"hab"</span>
-<span class='no'>mask</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>emptyRas</span>)
-<span class='no'>mask</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/setValues.html'>setValues</a></span>(<span class='no'>mask</span>, <span class='fl'>0</span>)
-<span class='no'>mask</span>[<span class='fl'>1</span>:<span class='fl'>5000</span>] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='no'>numCol</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>emptyRas</span>)
-<span class='no'>numCell</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>emptyRas</span>)
-<span class='no'>directions</span> <span class='kw'>&lt;-</span> <span class='fl'>8</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>123</span><span class='op'>)</span>
+<span class='va'>emptyRas</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1e2</span>, <span class='fl'>0</span>, <span class='fl'>1e2</span><span class='op'>)</span>, res <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>hab</span> <span class='op'>&lt;-</span> <span class='fu'><a href='randomPolygons.html'>randomPolygons</a></span><span class='op'>(</span><span class='va'>emptyRas</span>, numTypes <span class='op'>=</span> <span class='fl'>40</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"hab"</span>
+<span class='va'>mask</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='va'>emptyRas</span><span class='op'>)</span>
+<span class='va'>mask</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/setValues.html'>setValues</a></span><span class='op'>(</span><span class='va'>mask</span>, <span class='fl'>0</span><span class='op'>)</span>
+<span class='va'>mask</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5000</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+<span class='va'>numCol</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span><span class='op'>(</span><span class='va'>emptyRas</span><span class='op'>)</span>
+<span class='va'>numCell</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>emptyRas</span><span class='op'>)</span>
+<span class='va'>directions</span> <span class='op'>&lt;-</span> <span class='fl'>8</span>
 
 <span class='co'># Can use transparent as a colour</span>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/getSetColors.html'>setColors</a></span>(<span class='no'>hab</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"transparent"</span>, <span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span>(<span class='fl'>8</span>, <span class='st'>"Greys"</span>)))
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/getSetColors.html'>setColors</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='st'>"transparent"</span>, <span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='st'>"Greys"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># note speedup is equivalent to making pyramids, so, some details are lost</span>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>hab</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='img'><img src='spread-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>hab</span>, speedup <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># initiate 10 fires</span>
-<span class='no'>startCells</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>emptyRas</span>), <span class='fl'>100</span>))
-<span class='no'>fires</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>startCells</span>, <span class='fl'>0.235</span>, <span class='kw'>persistence</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>numNeighs</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-                <span class='kw'>mask</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fl'>1e8</span>, <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1e6</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='va'>startCells</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>emptyRas</span><span class='op'>)</span>, <span class='fl'>100</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>fires</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='va'>startCells</span>, <span class='fl'>0.235</span>, persistence <span class='op'>=</span> <span class='fl'>0</span>, numNeighs <span class='op'>=</span> <span class='fl'>2</span>,
+                mask <span class='op'>=</span> <span class='cn'>NULL</span>, maxSize <span class='op'>=</span> <span class='fl'>1e8</span>, directions <span class='op'>=</span> <span class='fl'>8</span>, iterations <span class='op'>=</span> <span class='fl'>1e6</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='co'>#set colours of raster, including a transparent layer for zeros</span>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/getSetColors.html'>setColors</a></span>(<span class='no'>fires</span>, <span class='fl'>10</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"transparent"</span>, <span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span>(<span class='fl'>8</span>, <span class='st'>"Reds"</span>)[<span class='fl'>5</span>:<span class='fl'>8</span>])
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>)</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"hab"</span>)</div><div class='img'><img src='spread-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/getSetColors.html'>setColors</a></span><span class='op'>(</span><span class='va'>fires</span>, <span class='fl'>10</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='st'>"transparent"</span>, <span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='st'>"Reds"</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>5</span><span class='op'>:</span><span class='fl'>8</span><span class='op'>]</span><span class='op'>)</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>fires</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>fires</span>, addTo <span class='op'>=</span> <span class='st'>"hab"</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>#alternatively, set colours using cols= in the Plot function</span>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>hab</span>)</div><div class='img'><img src='spread-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>) <span class='co'># default colour range makes zero transparent.</span></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>fires</span><span class='op'>)</span> <span class='co'># default colour range makes zero transparent.</span>
+</div><div class='input'>
 <span class='co'># Instead, to give a colour to the zero values, use \code{zero.color=}</span>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"hab"</span>,
-     <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"orange"</span>, <span class='st'>"darkred"</span>))(<span class='fl'>10</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"transparent"</span>)</div><div class='img'><img src='spread-4.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='no'>hab2</span> <span class='kw'>&lt;-</span> <span class='no'>hab</span>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>hab2</span>)</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"hab2"</span>, <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"transparent"</span>,
-   <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"orange"</span>, <span class='st'>"darkred"</span>))(<span class='fl'>10</span>))</div><div class='input'><span class='co'># or overplot the original (NOTE: legend stays at original values)</span>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/palettes.html'>topo.colors</a></span>(<span class='fl'>10</span>), <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-5.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>fires</span>, addTo <span class='op'>=</span> <span class='st'>"hab"</span>,
+     cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='st'>"orange"</span>, <span class='st'>"darkred"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>, zero.color <span class='op'>=</span> <span class='st'>"transparent"</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-4.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='va'>hab2</span> <span class='op'>&lt;-</span> <span class='va'>hab</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>hab2</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>fires</span>, addTo <span class='op'>=</span> <span class='st'>"hab2"</span>, zero.color <span class='op'>=</span> <span class='st'>"transparent"</span>,
+   cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='st'>"orange"</span>, <span class='st'>"darkred"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='co'># or overplot the original (NOTE: legend stays at original values)</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>fires</span>, cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/palettes.html'>topo.colors</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>, new <span class='op'>=</span> <span class='cn'>TRUE</span>, zero.color <span class='op'>=</span> <span class='st'>"white"</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-5.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>##------------------------------------------------------------------------------</span>
 <span class='co'>## Continue event by passing interrupted object into spreadState</span>
 <span class='co'>##------------------------------------------------------------------------------</span>
 
 <span class='co'>## Interrupt a spread event using iterations - need `returnIndices = TRUE` to</span>
 <span class='co'>##  use outputs as new inputs in next iteration</span>
-<span class='no'>fires</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>), <span class='fl'>10</span>)),
-                <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='fl'>0.235</span>, <span class='fl'>0</span>, <span class='kw'>NULL</span>, <span class='fl'>1e8</span>, <span class='fl'>8</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>fires</span>[, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>size</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>initialLocus</span>)), <span class='kw'>by</span> <span class='kw'>=</span> <span class='no'>id</span>]  <span class='co'># See sizes of fires</span></div><div class='output co'>#&gt;     id size
+<span class='va'>fires</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>,
+                returnIndices <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='fl'>0.235</span>, <span class='fl'>0</span>, <span class='cn'>NULL</span>, <span class='fl'>1e8</span>, <span class='fl'>8</span>, iterations <span class='op'>=</span> <span class='fl'>3</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>fires</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>size <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>initialLocus</span><span class='op'>)</span><span class='op'>)</span>, by <span class='op'>=</span> <span class='va'>id</span><span class='op'>]</span>  <span class='co'># See sizes of fires</span>
+</div><div class='output co'>#&gt;     id size
 #&gt;  1:  1    1
-#&gt;  2:  2   13
-#&gt;  3:  3    1
-#&gt;  4:  4    1
-#&gt;  5:  5    5
-#&gt;  6:  6   12
-#&gt;  7:  7    1
-#&gt;  8:  8   13
-#&gt;  9:  9   24
-#&gt; 10: 10   18</div><div class='input'>
-<span class='no'>fires2</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fl'>NA_real_</span>, <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='fl'>0.235</span>, <span class='fl'>0</span>, <span class='kw'>NULL</span>,
-                 <span class='fl'>1e8</span>, <span class='fl'>8</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>spreadState</span> <span class='kw'>=</span> <span class='no'>fires</span>)
+#&gt;  2:  2    4
+#&gt;  3:  3    6
+#&gt;  4:  4    2
+#&gt;  5:  5    9
+#&gt;  6:  6   11
+#&gt;  7:  7    6
+#&gt;  8:  8   11
+#&gt;  9:  9   11
+#&gt; 10: 10    9</div><div class='input'>
+<span class='va'>fires2</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='cn'>NA_real_</span>, returnIndices <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='fl'>0.235</span>, <span class='fl'>0</span>, <span class='cn'>NULL</span>,
+                 <span class='fl'>1e8</span>, <span class='fl'>8</span>, iterations <span class='op'>=</span> <span class='fl'>2</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, spreadState <span class='op'>=</span> <span class='va'>fires</span><span class='op'>)</span>
 <span class='co'># NOTE events are assigned arbitrary IDs, starting at 1</span>
 
 <span class='co'>## Add new fires to the already burning fires</span>
-<span class='no'>fires3</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>), <span class='fl'>10</span>)),
-                 <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='fl'>0.235</span>, <span class='fl'>0</span>, <span class='kw'>NULL</span>, <span class='fl'>1e8</span>, <span class='fl'>8</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-                 <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>spreadState</span> <span class='kw'>=</span> <span class='no'>fires</span>)
-<span class='no'>fires3</span>[, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>size</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>initialLocus</span>)), <span class='kw'>by</span> <span class='kw'>=</span> <span class='no'>id</span>]  <span class='co'># See sizes of fires</span></div><div class='output co'>#&gt;     id size
+<span class='va'>fires3</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>,
+                 returnIndices <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='fl'>0.235</span>, <span class='fl'>0</span>, <span class='cn'>NULL</span>, <span class='fl'>1e8</span>, <span class='fl'>8</span>, iterations <span class='op'>=</span> <span class='fl'>1</span>,
+                 id <span class='op'>=</span> <span class='cn'>TRUE</span>, spreadState <span class='op'>=</span> <span class='va'>fires</span><span class='op'>)</span>
+<span class='va'>fires3</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>size <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>initialLocus</span><span class='op'>)</span><span class='op'>)</span>, by <span class='op'>=</span> <span class='va'>id</span><span class='op'>]</span>  <span class='co'># See sizes of fires</span>
+</div><div class='output co'>#&gt;     id size
 #&gt;  1:  1    1
-#&gt;  2:  2   12
-#&gt;  3:  3    1
-#&gt;  4:  4    1
-#&gt;  5:  5    5
-#&gt;  6:  6   12
-#&gt;  7:  7    1
+#&gt;  2:  2    4
+#&gt;  3:  3   14
+#&gt;  4:  4    2
+#&gt;  5:  5   12
+#&gt;  6:  6   16
+#&gt;  7:  7   10
 #&gt;  8:  8   14
-#&gt;  9:  9   26
-#&gt; 10: 10   17</div><div class='input'><span class='co'># NOTE old ids are maintained, new events get ids begining above previous</span>
+#&gt;  9:  9   16
+#&gt; 10: 10   13</div><div class='input'><span class='co'># NOTE old ids are maintained, new events get ids begining above previous</span>
 <span class='co'># maximum (e.g., new fires 11 to 20 here)</span>
 
 <span class='co'>## Use data.table and loci...</span>
-<span class='no'>fires</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>), <span class='fl'>10</span>)),
-                <span class='kw'>returnIndices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='fl'>0.235</span>, <span class='fl'>0</span>, <span class='kw'>NULL</span>, <span class='fl'>1e8</span>, <span class='fl'>8</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>fullRas</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>hab</span>)
-<span class='no'>fullRas</span>[] <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>)
-<span class='no'>burned</span> <span class='kw'>&lt;-</span> <span class='no'>fires</span>[<span class='no'>active</span> <span class='kw'>==</span> <span class='fl'>FALSE</span>]
-<span class='no'>burnedMap</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rasterizeReduced.html'>rasterizeReduced</a></span>(<span class='no'>burned</span>, <span class='no'>fullRas</span>, <span class='st'>"id"</span>, <span class='st'>"indices"</span>)
+<span class='va'>fires</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>,
+                returnIndices <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='fl'>0.235</span>, <span class='fl'>0</span>, <span class='cn'>NULL</span>, <span class='fl'>1e8</span>, <span class='fl'>8</span>, iterations <span class='op'>=</span> <span class='fl'>2</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>fullRas</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>
+<span class='va'>fullRas</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>
+<span class='va'>burned</span> <span class='op'>&lt;-</span> <span class='va'>fires</span><span class='op'>[</span><span class='va'>active</span> <span class='op'>==</span> <span class='cn'>FALSE</span><span class='op'>]</span>
+<span class='va'>burnedMap</span> <span class='op'>&lt;-</span> <span class='fu'><a href='rasterizeReduced.html'>rasterizeReduced</a></span><span class='op'>(</span><span class='va'>burned</span>, <span class='va'>fullRas</span>, <span class='st'>"id"</span>, <span class='st'>"indices"</span><span class='op'>)</span>
 
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>burnedMap</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='spread-6.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>burnedMap</span>, new <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-6.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>####################</span>
 <span class='co'>## stopRule examples</span>
 <span class='co'>####################</span>
 
 <span class='co'># examples with stopRule, which means that the eventual size is driven by the values on the raster</span>
 <span class='co'>#  passed in to the landscape argument</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1234</span>)
-<span class='no'>stopRule1</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>landscape</span>) <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>landscape</span>) <span class='kw'>&gt;</span> <span class='fl'>50</span>
-<span class='no'>stopRuleA</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>), <span class='fl'>10</span>)), <span class='fl'>1</span>, <span class='fl'>0</span>, <span class='kw'>NULL</span>,
-                    <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fl'>1e6</span>, <span class='fl'>8</span>, <span class='fl'>1e6</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule1</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1234</span><span class='op'>)</span>
+<span class='va'>stopRule1</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>50</span>
+<span class='va'>stopRuleA</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span>, <span class='fl'>0</span>, <span class='cn'>NULL</span>,
+                    maxSize <span class='op'>=</span> <span class='fl'>1e6</span>, <span class='fl'>8</span>, <span class='fl'>1e6</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, circle <span class='op'>=</span> <span class='cn'>TRUE</span>, stopRule <span class='op'>=</span> <span class='va'>stopRule1</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1234</span>)
-<span class='no'>stopRule2</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>landscape</span>) <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>landscape</span>) <span class='kw'>&gt;</span> <span class='fl'>100</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1234</span><span class='op'>)</span>
+<span class='va'>stopRule2</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>100</span>
 <span class='co'># using stopRuleBehavior = "excludePixel"</span>
-<span class='no'>stopRuleB</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>), <span class='fl'>10</span>)), <span class='fl'>1</span>, <span class='fl'>0</span>, <span class='kw'>NULL</span>,
-                    <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fl'>1e6</span>, <span class='fl'>8</span>, <span class='fl'>1e6</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule2</span>,
-                    <span class='kw'>stopRuleBehavior</span> <span class='kw'>=</span> <span class='st'>"excludePixel"</span>)
+<span class='va'>stopRuleB</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span>, <span class='fl'>0</span>, <span class='cn'>NULL</span>,
+                    maxSize <span class='op'>=</span> <span class='fl'>1e6</span>, <span class='fl'>8</span>, <span class='fl'>1e6</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, circle <span class='op'>=</span> <span class='cn'>TRUE</span>, stopRule <span class='op'>=</span> <span class='va'>stopRule2</span>,
+                    stopRuleBehavior <span class='op'>=</span> <span class='st'>"excludePixel"</span><span class='op'>)</span>
 
 <span class='co'># using stopRuleBehavior = "includeRing", means that end result is slightly larger patches, as a</span>
 <span class='co'>#  complete "iteration" of the spread algorithm is used.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1234</span>)
-<span class='no'>stopRuleBNotExact</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>), <span class='fl'>10</span>)), <span class='fl'>1</span>, <span class='fl'>0</span>,
-                             <span class='kw'>NULL</span>, <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fl'>1e6</span>, <span class='fl'>8</span>, <span class='fl'>1e6</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                             <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule2</span>)
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>stopRuleA</span>, <span class='no'>stopRuleB</span>, <span class='no'>stopRuleBNotExact</span>)</div><div class='img'><img src='spread-7.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1234</span><span class='op'>)</span>
+<span class='va'>stopRuleBNotExact</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span>, <span class='fl'>0</span>,
+                             <span class='cn'>NULL</span>, maxSize <span class='op'>=</span> <span class='fl'>1e6</span>, <span class='fl'>8</span>, <span class='fl'>1e6</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, circle <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             stopRule <span class='op'>=</span> <span class='va'>stopRule2</span><span class='op'>)</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>stopRuleA</span>, <span class='va'>stopRuleB</span>, <span class='va'>stopRuleBNotExact</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-7.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Test that the stopRules work</span>
 <span class='co'># stopRuleA was not exact, so each value will "overshoot" the stopRule, here it was hab&gt;50</span>
-<span class='no'>foo</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>vals</span> <span class='kw'>=</span> <span class='no'>hab</span>[<span class='no'>stopRuleA</span>], <span class='kw'>id</span> <span class='kw'>=</span> <span class='no'>stopRuleA</span>[<span class='no'>stopRuleA</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>]);
-<span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span>(<span class='no'>foo</span>[, <span class='st'>"vals"</span>], <span class='no'>foo</span>[, <span class='st'>"id"</span>], <span class='no'>sum</span>) <span class='co'># Correct ... all are above 50</span></div><div class='output co'>#&gt;   1   2   3   4   5   6   7   8   9  10 
-#&gt; 124 154 117  80 185  55  95  95 135 164 </div><div class='input'>
+<span class='va'>foo</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span>vals <span class='op'>=</span> <span class='va'>hab</span><span class='op'>[</span><span class='va'>stopRuleA</span><span class='op'>]</span>, id <span class='op'>=</span> <span class='va'>stopRuleA</span><span class='op'>[</span><span class='va'>stopRuleA</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span><span class='op'>)</span>;
+<span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span><span class='op'>(</span><span class='va'>foo</span><span class='op'>[</span>, <span class='st'>"vals"</span><span class='op'>]</span>, <span class='va'>foo</span><span class='op'>[</span>, <span class='st'>"id"</span><span class='op'>]</span>, <span class='va'>sum</span><span class='op'>)</span> <span class='co'># Correct ... all are above 50</span>
+</div><div class='output co'>#&gt;   1   2   3   4   5   6   7   8   9  10 
+#&gt; 185  55  95  95 135 130 165 150 125  90 </div><div class='input'>
 <span class='co'># stopRuleB was exact, so each value will be as close as possible while rule still is TRUE</span>
 <span class='co'>#  Because we have discrete cells, these numbers will always slightly under the rule</span>
-<span class='no'>foo</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>vals</span> <span class='kw'>=</span> <span class='no'>hab</span>[<span class='no'>stopRuleB</span>], <span class='kw'>id</span> <span class='kw'>=</span> <span class='no'>stopRuleB</span>[<span class='no'>stopRuleB</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>]);
-<span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span>(<span class='no'>foo</span>[, <span class='st'>"vals"</span>], <span class='no'>foo</span>[, <span class='st'>"id"</span>], <span class='no'>sum</span>) <span class='co'># Correct ... all are above 50</span></div><div class='output co'>#&gt;  1  2  3  4  5  6  7  8  9 10 
-#&gt; 88 74 99 96 74 99 95 95 81 90 </div><div class='input'>
+<span class='va'>foo</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span>vals <span class='op'>=</span> <span class='va'>hab</span><span class='op'>[</span><span class='va'>stopRuleB</span><span class='op'>]</span>, id <span class='op'>=</span> <span class='va'>stopRuleB</span><span class='op'>[</span><span class='va'>stopRuleB</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span><span class='op'>)</span>;
+<span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span><span class='op'>(</span><span class='va'>foo</span><span class='op'>[</span>, <span class='st'>"vals"</span><span class='op'>]</span>, <span class='va'>foo</span><span class='op'>[</span>, <span class='st'>"id"</span><span class='op'>]</span>, <span class='va'>sum</span><span class='op'>)</span> <span class='co'># Correct ... all are above 50</span>
+</div><div class='output co'>#&gt;   1   2   3   4   5   6   7   8   9  10 
+#&gt;  74  99  95  95  81 100  99  90  79  90 </div><div class='input'>
 <span class='co'># stopRuleB_notExact will overshoot</span>
-<span class='no'>foo</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>vals</span> <span class='kw'>=</span> <span class='no'>hab</span>[<span class='no'>stopRuleBNotExact</span>], <span class='kw'>id</span> <span class='kw'>=</span> <span class='no'>stopRuleBNotExact</span>[<span class='no'>stopRuleBNotExact</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>]);
-<span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span>(<span class='no'>foo</span>[, <span class='st'>"vals"</span>], <span class='no'>foo</span>[, <span class='st'>"id"</span>], <span class='no'>sum</span>) <span class='co'># Correct ... all are above 50</span></div><div class='output co'>#&gt;   1   2   3   4   5   6   7   8   9  10 
-#&gt; 124 154 117 208 185 137 247 247 135 164 </div><div class='input'>
+<span class='va'>foo</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span>vals <span class='op'>=</span> <span class='va'>hab</span><span class='op'>[</span><span class='va'>stopRuleBNotExact</span><span class='op'>]</span>, id <span class='op'>=</span> <span class='va'>stopRuleBNotExact</span><span class='op'>[</span><span class='va'>stopRuleBNotExact</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span><span class='op'>)</span>;
+<span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span><span class='op'>(</span><span class='va'>foo</span><span class='op'>[</span>, <span class='st'>"vals"</span><span class='op'>]</span>, <span class='va'>foo</span><span class='op'>[</span>, <span class='st'>"id"</span><span class='op'>]</span>, <span class='va'>sum</span><span class='op'>)</span> <span class='co'># Correct ... all are above 50</span>
+</div><div class='output co'>#&gt;   1   2   3   4   5   6   7   8   9  10 
+#&gt; 185 137 247 247 135 130 165 150 125 234 </div><div class='input'>
 <span class='co'># Cellular automata shapes</span>
 <span class='co'># Diamonds - can make them with: a boolean raster, directions = 4,</span>
 <span class='co'>#    stopRule in place, spreadProb = 1</span>
-<span class='no'>diamonds</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule2</span>)
+<span class='va'>diamonds</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span> <span class='op'>&gt;</span> <span class='fl'>0</span>, spreadProb <span class='op'>=</span> <span class='fl'>1</span>, directions <span class='op'>=</span> <span class='fl'>4</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, stopRule <span class='op'>=</span> <span class='va'>stopRule2</span><span class='op'>)</span>
 
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>diamonds</span>)</div><div class='img'><img src='spread-8.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>diamonds</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-8.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Squares - can make them with: a boolean raster, directions = 8,</span>
 <span class='co'>#    stopRule in place, spreadProb = 1</span>
-<span class='no'>squares</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule2</span>)
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>squares</span>)</div><div class='img'><img src='spread-9.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='va'>squares</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span> <span class='op'>&gt;</span> <span class='fl'>0</span>, spreadProb <span class='op'>=</span> <span class='fl'>1</span>, directions <span class='op'>=</span> <span class='fl'>8</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, stopRule <span class='op'>=</span> <span class='va'>stopRule2</span><span class='op'>)</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>squares</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-9.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Interference shapes - can make them with: a boolean raster, directions = 8,</span>
 <span class='co'>#    stopRule in place, spreadProb = 1</span>
-<span class='no'>stopRule2</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>landscape</span>) <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>landscape</span>) <span class='kw'>&gt;</span> <span class='fl'>200</span>
-<span class='no'>squashedDiamonds</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-                           <span class='kw'>loci</span> <span class='kw'>=</span> (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>) - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>hab</span>)) / <span class='fl'>2</span> + <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, -<span class='fl'>4</span>),
-                           <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule2</span>)
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>squashedDiamonds</span>)</div><div class='img'><img src='spread-10.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='va'>stopRule2</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>200</span>
+<span class='va'>squashedDiamonds</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span> <span class='op'>&gt;</span> <span class='fl'>0</span>, spreadProb <span class='op'>=</span> <span class='fl'>1</span>,
+                           loci <span class='op'>=</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='op'>-</span><span class='fl'>4</span><span class='op'>)</span>,
+                           directions <span class='op'>=</span> <span class='fl'>4</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, stopRule <span class='op'>=</span> <span class='va'>stopRule2</span><span class='op'>)</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>squashedDiamonds</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-10.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Circles with spreadProb &lt; 1 will give "more" circular shapes, but definitely not circles</span>
-<span class='no'>stopRule2</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>landscape</span>) <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>landscape</span>) <span class='kw'>&gt;</span> <span class='fl'>200</span>
-<span class='no'>seed</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1e4</span>, <span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='no'>seed</span>)
-<span class='no'>circlish</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.23</span>,
-                   <span class='kw'>loci</span> <span class='kw'>=</span> (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>) - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>hab</span>)) / <span class='fl'>2</span> + <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, -<span class='fl'>4</span>),
-                   <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)<span class='co'>#, stopRule = stopRule2)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='no'>seed</span>)
-<span class='no'>regularCA</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>0.23</span>,
-                    <span class='kw'>loci</span> <span class='kw'>=</span> (<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>) - <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span>(<span class='no'>hab</span>)) / <span class='fl'>2</span> + <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, -<span class='fl'>4</span>),
-                    <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)<span class='co'>#, stopRule = stopRule2)</span>
+<span class='va'>stopRule2</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>200</span>
+<span class='va'>seed</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1e4</span>, <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='va'>seed</span><span class='op'>)</span>
+<span class='va'>circlish</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span> <span class='op'>&gt;</span> <span class='fl'>0</span>, spreadProb <span class='op'>=</span> <span class='fl'>0.23</span>,
+                   loci <span class='op'>=</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='op'>-</span><span class='fl'>4</span><span class='op'>)</span>,
+                   directions <span class='op'>=</span> <span class='fl'>8</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, circle <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='co'>#, stopRule = stopRule2)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='va'>seed</span><span class='op'>)</span>
+<span class='va'>regularCA</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span> <span class='op'>&gt;</span> <span class='fl'>0</span>, spreadProb <span class='op'>=</span> <span class='fl'>0.23</span>,
+                    loci <span class='op'>=</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncol</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='op'>-</span><span class='fl'>4</span><span class='op'>)</span>,
+                    directions <span class='op'>=</span> <span class='fl'>8</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='co'>#, stopRule = stopRule2)</span>
 
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>circlish</span>, <span class='no'>regularCA</span>)</div><div class='img'><img src='spread-11.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>circlish</span>, <span class='va'>regularCA</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-11.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>####################</span>
 <span class='co'># complex stopRule</span>
 <span class='co'>####################</span>
 
-<span class='no'>initialLoci</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>hab</span>)), <span class='fl'>2</span>)
-<span class='no'>endSizes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span>(<span class='no'>initialLoci</span>) * <span class='fl'>200</span>
+<span class='va'>initialLoci</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>endSizes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='va'>initialLoci</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>200</span>
 
 <span class='co'># Can be a function of landscape, id, and/or any other named</span>
 <span class='co'>#   variable passed into spread</span>
-<span class='no'>stopRule3</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>landscape</span>, <span class='no'>id</span>, <span class='no'>endSizes</span>) <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>landscape</span>) <span class='kw'>&gt;</span> <span class='no'>endSizes</span>[<span class='no'>id</span>]
+<span class='va'>stopRule3</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>landscape</span>, <span class='va'>id</span>, <span class='va'>endSizes</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='va'>endSizes</span><span class='op'>[</span><span class='va'>id</span><span class='op'>]</span>
 
-<span class='no'>twoCirclesDiffSize</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>initialLoci</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                             <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule3</span>,
-                             <span class='kw'>endSizes</span> <span class='kw'>=</span> <span class='no'>endSizes</span>, <span class='kw'>stopRuleBehavior</span> <span class='kw'>=</span> <span class='st'>"excludePixel"</span>)
+<span class='va'>twoCirclesDiffSize</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, spreadProb <span class='op'>=</span> <span class='fl'>1</span>, loci <span class='op'>=</span> <span class='va'>initialLoci</span>, circle <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             directions <span class='op'>=</span> <span class='fl'>8</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, stopRule <span class='op'>=</span> <span class='va'>stopRule3</span>,
+                             endSizes <span class='op'>=</span> <span class='va'>endSizes</span>, stopRuleBehavior <span class='op'>=</span> <span class='st'>"excludePixel"</span><span class='op'>)</span>
 
 <span class='co'># or using named list of named elements:</span>
-<span class='no'>twoCirclesDiffSize2</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>initialLoci</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                             <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule3</span>,
-                             <span class='kw'>vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>endSizes</span> <span class='kw'>=</span> <span class='no'>endSizes</span>), <span class='kw'>stopRuleBehavior</span> <span class='kw'>=</span> <span class='st'>"excludePixel"</span>)
+<span class='va'>twoCirclesDiffSize2</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, spreadProb <span class='op'>=</span> <span class='fl'>1</span>, loci <span class='op'>=</span> <span class='va'>initialLoci</span>, circle <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             directions <span class='op'>=</span> <span class='fl'>8</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, stopRule <span class='op'>=</span> <span class='va'>stopRule3</span>,
+                             vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>endSizes <span class='op'>=</span> <span class='va'>endSizes</span><span class='op'>)</span>, stopRuleBehavior <span class='op'>=</span> <span class='st'>"excludePixel"</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='no'>twoCirclesDiffSize</span>, <span class='no'>twoCirclesDiffSize2</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>twoCirclesDiffSize</span>)</div><div class='img'><img src='spread-12.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='no'>cirs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>getValues</a></span>(<span class='no'>twoCirclesDiffSize</span>)
-<span class='no'>vals</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span>(<span class='no'>hab</span>[<span class='no'>twoCirclesDiffSize</span>], <span class='no'>cirs</span>[<span class='no'>cirs</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>], <span class='no'>sum</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>twoCirclesDiffSize</span>, <span class='va'>twoCirclesDiffSize2</span><span class='op'>)</span> <span class='co'>## TRUE</span>
+</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>twoCirclesDiffSize</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-12.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='va'>cirs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>getValues</a></span><span class='op'>(</span><span class='va'>twoCirclesDiffSize</span><span class='op'>)</span>
+<span class='va'>vals</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tapply.html'>tapply</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>[</span><span class='va'>twoCirclesDiffSize</span><span class='op'>]</span>, <span class='va'>cirs</span><span class='op'>[</span><span class='va'>cirs</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span>, <span class='va'>sum</span><span class='op'>)</span>
 
 <span class='co'># Stop if sum of landscape is big or mean of quality is too small</span>
-<span class='no'>quality</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='no'>hab</span>)
-<span class='no'>quality</span>[] <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span>(<span class='no'>quality</span>), <span class='fl'>0</span>, <span class='fl'>1</span>)
-<span class='no'>stopRule4</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>landscape</span>, <span class='no'>quality</span>, <span class='no'>cells</span>) {
-  (<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>landscape</span>) <span class='kw'>&gt;</span> <span class='fl'>20</span>) <span class='kw'>|</span> (<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>quality</span>[<span class='no'>cells</span>]) <span class='kw'>&lt;</span> <span class='fl'>0.3</span>)
-}
+<span class='va'>quality</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='va'>hab</span><span class='op'>)</span>
+<span class='va'>quality</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>quality</span><span class='op'>)</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>stopRule4</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>landscape</span>, <span class='va'>quality</span>, <span class='va'>cells</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>landscape</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>20</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>quality</span><span class='op'>[</span><span class='va'>cells</span><span class='op'>]</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>0.3</span><span class='op'>)</span>
+<span class='op'>}</span>
 
-<span class='no'>twoCirclesDiffSize</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>initialLoci</span>, <span class='kw'>circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                             <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stopRule</span> <span class='kw'>=</span> <span class='no'>stopRule4</span>,
-                             <span class='kw'>quality</span> <span class='kw'>=</span> <span class='no'>quality</span>, <span class='kw'>stopRuleBehavior</span> <span class='kw'>=</span> <span class='st'>"excludePixel"</span>)
+<span class='va'>twoCirclesDiffSize</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, spreadProb <span class='op'>=</span> <span class='fl'>1</span>, loci <span class='op'>=</span> <span class='va'>initialLoci</span>, circle <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             directions <span class='op'>=</span> <span class='fl'>8</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, stopRule <span class='op'>=</span> <span class='va'>stopRule4</span>,
+                             quality <span class='op'>=</span> <span class='va'>quality</span>, stopRuleBehavior <span class='op'>=</span> <span class='st'>"excludePixel"</span><span class='op'>)</span>
 
 <span class='co'>##############</span>
 <span class='co'># allowOverlap</span>
@@ -803,17 +830,21 @@ values selected for a specific purpose.
 <span class='co'>## Using alternative algorithm, not probabilistic diffusion</span>
 <span class='co'>## Will give exactly correct sizes, yet still with variability</span>
 <span class='co'>## within the spreading (i.e., cells with and without successes)</span>
-<span class='no'>seed</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1e6</span>, <span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='no'>seed</span>)
-<span class='no'>startCells</span> <span class='kw'>&lt;-</span> <span class='no'>startCells</span>[<span class='fl'>1</span>:<span class='fl'>4</span>]
-<span class='no'>maxSizes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Exponential.html'>rexp</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>startCells</span>), <span class='kw'>rate</span> <span class='kw'>=</span> <span class='fl'>1</span> / <span class='fl'>500</span>)
-<span class='no'>fires</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>startCells</span>, <span class='fl'>1</span>, <span class='kw'>persistence</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-                <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>) / <span class='fl'>1.5</span>,
-                <span class='kw'>mask</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='no'>maxSizes</span>, <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>,
-                <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>1e6</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>plot.it</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>exactSizes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>);
-<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>fires</span>[<span class='no'>fires</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>][]) <span class='kw'>==</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>maxSizes</span>))</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/dev.html'>dev</a></span>()
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>fires</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-13.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/hist.html'>hist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>fires</span>[][<span class='no'>fires</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>])), <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"fire size distribution"</span>)</div><div class='img'><img src='spread-14.png' alt='' width='700' height='433' /></div><div class='img'><img src='spread-15.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='va'>seed</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1e6</span>, <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='va'>seed</span><span class='op'>)</span>
+<span class='va'>startCells</span> <span class='op'>&lt;-</span> <span class='va'>startCells</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
+<span class='va'>maxSizes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Exponential.html'>rexp</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>startCells</span><span class='op'>)</span>, rate <span class='op'>=</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='fl'>500</span><span class='op'>)</span>
+<span class='va'>fires</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab</span>, loci <span class='op'>=</span> <span class='va'>startCells</span>, <span class='fl'>1</span>, persistence <span class='op'>=</span> <span class='fl'>0</span>,
+                neighProbs <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>1.5</span>,
+                mask <span class='op'>=</span> <span class='cn'>NULL</span>, maxSize <span class='op'>=</span> <span class='va'>maxSizes</span>, directions <span class='op'>=</span> <span class='fl'>8</span>,
+                iterations <span class='op'>=</span> <span class='fl'>1e6</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, plot.it <span class='op'>=</span> <span class='cn'>FALSE</span>, exactSizes <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>;
+<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>fires</span><span class='op'>[</span><span class='va'>fires</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span><span class='op'>[</span><span class='op'>]</span><span class='op'>)</span> <span class='op'>==</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>floor</a></span><span class='op'>(</span><span class='va'>maxSizes</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/dev.html'>dev</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>fires</span>, new <span class='op'>=</span> <span class='cn'>TRUE</span>, cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='st'>"red"</span>, <span class='st'>"yellow"</span><span class='op'>)</span>, zero.color <span class='op'>=</span> <span class='st'>"white"</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-13.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/hist.html'>hist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>fires</span><span class='op'>[</span><span class='op'>]</span><span class='op'>[</span><span class='va'>fires</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>, title <span class='op'>=</span> <span class='st'>"fire size distribution"</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-14.png' alt='' width='700' height='433' /></div><div class='img'><img src='spread-15.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Example with relativeSpreadProb ... i.e., a relative probability spreadProb</span>
 <span class='co'>##  (shown here because because spreadProb raster is not a probability).</span>
 <span class='co'>##  Here, we force the events to grow, choosing always 2 neighbours,</span>
@@ -824,31 +855,34 @@ values selected for a specific purpose.
 <span class='co'>##</span>
 <span class='co'>## Note: set hab3 to be very distinct probability differences, to detect spread</span>
 <span class='co'>##  differences</span>
-<span class='no'>hab3</span> <span class='kw'>&lt;-</span> (<span class='no'>hab</span> <span class='kw'>&lt;</span> <span class='fl'>20</span>) * <span class='fl'>200</span> + <span class='fl'>1</span>
-<span class='no'>seed</span> <span class='kw'>&lt;-</span> <span class='fl'>643503</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='no'>seed</span>)
-<span class='no'>sam</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='no'>hab3</span>[] <span class='kw'>==</span> <span class='fl'>1</span>), <span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='no'>seed</span>)
-<span class='no'>events1</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab3</span>, <span class='kw'>spreadProb</span> <span class='kw'>=</span> <span class='no'>hab3</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>sam</span>, <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>,
-             <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>), <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>70</span>), <span class='kw'>exactSizes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='va'>hab3</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>hab</span> <span class='op'>&lt;</span> <span class='fl'>20</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>200</span> <span class='op'>+</span> <span class='fl'>1</span>
+<span class='va'>seed</span> <span class='op'>&lt;-</span> <span class='fl'>643503</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='va'>seed</span><span class='op'>)</span>
+<span class='va'>sam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>hab3</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>==</span> <span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='va'>seed</span><span class='op'>)</span>
+<span class='va'>events1</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab3</span>, spreadProb <span class='op'>=</span> <span class='va'>hab3</span>, loci <span class='op'>=</span> <span class='va'>sam</span>, directions <span class='op'>=</span> <span class='fl'>8</span>,
+             neighProbs <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, maxSize <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>70</span><span class='op'>)</span>, exactSizes <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='co'># Compare to absolute probability version</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='no'>seed</span>)
-<span class='no'>events2</span> <span class='kw'>&lt;-</span> <span class='fu'>spread</span>(<span class='no'>hab3</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>loci</span> <span class='kw'>=</span> <span class='no'>sam</span>, <span class='kw'>directions</span> <span class='kw'>=</span> <span class='fl'>8</span>,
-                 <span class='kw'>neighProbs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>), <span class='kw'>maxSize</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>70</span>), <span class='kw'>exactSizes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='va'>seed</span><span class='op'>)</span>
+<span class='va'>events2</span> <span class='op'>&lt;-</span> <span class='fu'>spread</span><span class='op'>(</span><span class='va'>hab3</span>, id <span class='op'>=</span> <span class='cn'>TRUE</span>, loci <span class='op'>=</span> <span class='va'>sam</span>, directions <span class='op'>=</span> <span class='fl'>8</span>,
+                 neighProbs <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, maxSize <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>70</span><span class='op'>)</span>, exactSizes <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
-<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>events1</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-16.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='no'>events2</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>), <span class='kw'>zero.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>)</div><div class='img'><img src='spread-17.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/raster/man/hist.html'>hist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>events1</span>[][<span class='no'>events1</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]), <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>30</span>), <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"Event size distribution"</span>)</div><div class='img'><img src='spread-18.png' alt='' width='700' height='433' /></div><div class='img'><img src='spread-19.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># Check that events1 resulted in higher hab3 pixels overall</span>
+<span class='fu'><a href='http://quickplot.predictiveecology.org//reference/clearPlot.html'>clearPlot</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>events1</span>, new <span class='op'>=</span> <span class='cn'>TRUE</span>, cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='st'>"red"</span>, <span class='st'>"yellow"</span><span class='op'>)</span>, zero.color <span class='op'>=</span> <span class='st'>"white"</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-16.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>events2</span>, new <span class='op'>=</span> <span class='cn'>TRUE</span>, cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='st'>"red"</span>, <span class='st'>"yellow"</span><span class='op'>)</span>, zero.color <span class='op'>=</span> <span class='st'>"white"</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-17.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/hist.html'>hist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>events1</span><span class='op'>[</span><span class='op'>]</span><span class='op'>[</span><span class='va'>events1</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span><span class='op'>)</span>, breaks <span class='op'>=</span> <span class='fl'>30</span><span class='op'>)</span>, title <span class='op'>=</span> <span class='st'>"Event size distribution"</span><span class='op'>)</span>
+</div><div class='img'><img src='spread-18.png' alt='' width='700' height='433' /></div><div class='img'><img src='spread-19.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># Check that events1 resulted in higher hab3 pixels overall</span>
 
 <span class='co'># Compare outputs -- should be more high value hab pixels spread to in event1</span>
 <span class='co'>#  (randomness may prevent this in all cases)</span>
-<span class='no'>hab3</span>[<span class='no'>events1</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]</div><div class='output co'>#&gt;  [1] 201 201 201 201   1   1 201 201 201   1   1 201 201   1   1   1   1 201 201
-#&gt; [20] 201 201   1   1   1   1 201 201 201 201 201   1   1   1   1 201 201 201 201
-#&gt; [39]   1   1   1   1   1 201 201 201 201   1   1   1   1   1 201 201 201   1   1
-#&gt; [58]   1   1 201 201 201 201   1   1   1 201   1   1   1</div><div class='input'><span class='no'>hab3</span>[<span class='no'>events2</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]</div><div class='output co'>#&gt;  [1]   1   1   1 201 201   1   1   1   1   1 201 201   1   1   1   1   1 201 201
-#&gt; [20]   1   1   1   1   1   1 201 201   1   1   1   1   1 201 201   1   1   1   1
-#&gt; [39]   1 201   1   1   1   1   1   1   1   1 201   1   1   1   1   1   1   1 201
-#&gt; [58]   1   1   1   1   1   1   1   1   1   1   1   1   1</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>hab3</span>[<span class='no'>events1</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]) <span class='kw'>&gt;=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>hab3</span>[<span class='no'>events2</span>[] <span class='kw'>&gt;</span> <span class='fl'>0</span>]) <span class='co'>## should be usually TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div></pre>
+<span class='va'>hab3</span><span class='op'>[</span><span class='va'>events1</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span>
+</div><div class='output co'>#&gt;  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+#&gt; [39] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</div><div class='input'><span class='va'>hab3</span><span class='op'>[</span><span class='va'>events2</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span>
+</div><div class='output co'>#&gt;  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+#&gt; [39] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>hab3</span><span class='op'>[</span><span class='va'>events1</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span><span class='op'>)</span> <span class='op'>&gt;=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>hab3</span><span class='op'>[</span><span class='va'>events2</span><span class='op'>[</span><span class='op'>]</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>]</span><span class='op'>)</span> <span class='co'>## should be usually TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -864,7 +898,7 @@ values selected for a specific purpose.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

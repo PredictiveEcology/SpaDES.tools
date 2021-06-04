@@ -73,7 +73,7 @@ This version uses just turn angles and step lengths to define the correlated ran
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@ This version uses just turn angles and step lengths to define the correlated ran
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -95,7 +95,7 @@ This version uses just turn angles and step lengths to define the correlated ran
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -122,15 +122,15 @@ This version uses just turn angles and step lengths to define the correlated ran
 <p>This version uses just turn angles and step lengths to define the correlated random walk.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>move</span>(<span class='kw'>hypothesis</span> <span class='kw'>=</span> <span class='st'>"crw"</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>move</span><span class='op'>(</span>hypothesis <span class='op'>=</span> <span class='st'>"crw"</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>crw</span>(<span class='no'>agent</span>, <span class='no'>extent</span>, <span class='no'>stepLength</span>, <span class='no'>stddev</span>, <span class='no'>lonlat</span>, <span class='kw'>torus</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>crw</span><span class='op'>(</span><span class='va'>agent</span>, <span class='va'>extent</span>, <span class='va'>stepLength</span>, <span class='va'>stddev</span>, <span class='va'>lonlat</span>, torus <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SpatialPointsDataFrame</span>
-<span class='fu'>crw</span>(<span class='no'>agent</span>, <span class='no'>extent</span>, <span class='no'>stepLength</span>, <span class='no'>stddev</span>, <span class='no'>lonlat</span>, <span class='kw'>torus</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>crw</span><span class='op'>(</span><span class='va'>agent</span>, <span class='va'>extent</span>, <span class='va'>stepLength</span>, <span class='va'>stddev</span>, <span class='va'>lonlat</span>, torus <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SpatialPoints</span>
-<span class='fu'>crw</span>(<span class='no'>agent</span>, <span class='no'>extent</span>, <span class='no'>stepLength</span>, <span class='no'>stddev</span>, <span class='no'>lonlat</span>, <span class='kw'>torus</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'>crw</span><span class='op'>(</span><span class='va'>agent</span>, <span class='va'>extent</span>, <span class='va'>stepLength</span>, <span class='va'>stddev</span>, <span class='va'>lonlat</span>, torus <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,7 +201,11 @@ in McIntire, Schultz, Crone 2007.</p>
             Journal of Applied Ecology 44:725-736.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='distances.html'>pointDistance</a></code></p></div>
+    <div class='dont-index'><p><code><a href='.pointDistance.html'>pointDistance</a></code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Eliot McIntire</p>
+<p>Eliot McIntire</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -218,7 +222,7 @@ in McIntire, Schultz, Crone 2007.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

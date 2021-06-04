@@ -20,19 +20,22 @@ if (getRversion() >= "3.1.0") {
 #'   of "agents" or pseudo-agents contained. This number of agents, will
 #'   be spread horizontally, and distributed from each pixel
 #'   that contains a non-zero non NA value.
-#' @param advectionDir A single number or \code{RasterLayer} in degrees
-#'   from North = 0 (though it will use radians if all values are
-#'   \code{abs(advectionDir) > 2 * pi)}. This indicates
-#'   the direction of advective forcing (i.e., wind).
+#' @param advectionDir A single number or \code{RasterLayer} in degrees from North = 0
+#'   (though it will use radians if all values are \code{abs(advectionDir) > 2 * pi)}.
+#'   This indicates the direction of advective forcing (i.e., wind).
 #' @param advectionMag A single number or \code{RasterLayer} in distance units of the
 #'   \code{rasQuality}, e.g., meters, indicating the relative forcing that will
 #'   occur. It is imposed on the total event, i.e., if the \code{meanDist} is
 #'   \code{10000}, and \code{advectionMag} is \code{5000}, then the expected
 #'   distance (i.e., 63\% of agents) will have settled by \code{15000} map units.
+#' @param dispersalKernel Currently character string, with either `exponential` or `weibull`.
+#'   If
 #' @param meanDist A single number indicating the mean distance parameter in map units
 #'    (not pixels), for a negative exponential distribution
 #'    dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
 #'    settled at this \code{meanDist} (still experimental)
+#' @param sdDist A single number indicating the `sd` parameter of a 2 parameter `dispersalKernel`.
+#'   Defaults to `1`, which is the same as the `exponential` distribution.
 #' @param verbose Numeric. With increasing numbers above 0, there will be more
 #'     messages produced. Currently, only 0, 1, or 2+ are distinct.
 #' @param plot.it Numeric. With increasing numbers above 0, there will be plots
@@ -41,6 +44,8 @@ if (getRversion() >= "3.1.0") {
 #'    to consider all dispersing finished. Default is 50
 #' @param saveStack If provided as a character string, it will save each iteration
 #'   as part of a \code{rasterStack} to disk upon exit.
+#' @param skipChecks Logical. If `TRUE`, assertions will be skipped (faster, but could miss
+#'   problems)
 #'
 #' @return
 #' A \code{data.table} with all information used during the spreading
@@ -51,19 +56,30 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom fpCompare %>=% %>>%
 #' @importFrom quickPlot clearPlot Plot
 #' @importFrom raster pointDistance xyFromCell
-#' @importFrom stats pexp
+#' @importFrom stats pexp dweibull pweibull
+#' @importFrom graphics par
+#'
 #'
 #' @example inst/examples/example_spread3.R
 #'
 spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
-                    advectionMag, meanDist, plot.it = 2,
+                    advectionMag, meanDist, dispersalKernel = "exponential",
+                    sdDist = 1, plot.it = 2,
                     minNumAgents = 50, verbose = getOption("LandR.verbose", 0),
-                    saveStack = NULL) {
+                    saveStack = NULL, skipChecks = FALSE) {
   dtThr <- data.table::getDTthreads()
-  testEquivalentMetadata(rasAbundance, rasQuality)
+  if (!skipChecks)
+    testEquivalentMetadata(rasAbundance, rasQuality)
+
+  if (missing(advectionDir)) {
+    advectionDir <- 0
+    message("advectionDir was not supplied; removing advection")
+    advectionMag <- 0
+  }
 
   if (is(advectionDir, "Raster")) {
-    testEquivalentMetadata(rasAbundance, advectionDir)
+    if (!skipChecks)
+      testEquivalentMetadata(rasAbundance, advectionDir)
     advectionDir <- advectionDir[]
   } else if (length(advectionDir) != 1) {
     if (length(advectionDir) != ncell(rasAbundance)) {
@@ -71,8 +87,13 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
            "identical metadata as rasAbundance")
     }
   }
+
+  if (missing(advectionMag)) {
+    advectionMag <- 0
+  }
   if (is(advectionMag, "Raster")) {
-    testEquivalentMetadata(rasAbundance, advectionMag)
+    if (!skipChecks)
+      testEquivalentMetadata(rasAbundance, advectionMag)
     advectionMag <- advectionMag[]
   } else if (length(advectionMag) != 1) {
     if (length(advectionMag) != ncell(rasAbundance)) {
@@ -81,12 +102,13 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     }
   }
 
-  if (any(abs(advectionDir) > 2 * pi)) {
+  #if (any(abs(advectionDir) > 2 * pi)) {
     messAngles <- "degrees"
     advectionDir <- CircStats::rad(advectionDir)
-  } else {
-    messAngles <- "radians"
-  }
+  # } else {
+  #   messAngles <- "radians"
+  # }
+  if (verbose > 0)
   message("assuming that advectionDir is in geographic ", messAngles,
           "(i.e., North is 0)")
 
@@ -94,15 +116,18 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     start <- which(!is.na(rasAbundance[]) & rasAbundance[] > 0)
 
   start <- spread2(rasQuality, start, iterations = 0, returnDistances = TRUE,
-                   returnDirections = TRUE, returnFrom = TRUE, asRaster = FALSE)
+                   returnDirections = TRUE, returnFrom = TRUE, asRaster = FALSE,
+                   skipChecks = skipChecks)
   start[, `:=`(abundActive = rasAbundance[][start$pixels],
                abundSettled = 0)]
-  abundanceDispersing <- sum(start$abundActive)
-  plotMultiplier <- mean(start$abundActive) /
+  abundanceDispersing <- sum(start$abundActive, na.rm = TRUE)
+  plotMultiplier <- mean(start$abundActive, na.rm = TRUE) /
     ((meanDist * 10 / res(rasQuality)[1]))
-  rasIterations <- raster(rasQuality)
-  rasIterations[] <- NA
-  rasIterations[start$pixels] <- 0
+  if (isTRUE(plot.it > 1)) {
+    rasIterations <- raster(rasQuality)
+    rasIterations[] <- NA
+    rasIterations[start$pixels] <- 0
+  }
 
   while (abundanceDispersing > minNumAgents) {
 
@@ -110,7 +135,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     b <- spread2(landscape = rasQuality, start = start,
                  spreadProb = 1, iterations = 1, asRaster = FALSE,
                  returnDistances = TRUE, returnFrom = TRUE,
-                 returnDirections = TRUE,
+                 returnDirections = TRUE, skipChecks = skipChecks,
                  circle = TRUE, allowOverlap = 3)
     #b <- b[!duplicated(b, by = c("initialPixels", "pixels"))]
     spreadState <- attr(b, "spreadState")
@@ -127,44 +152,62 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
            legendRange = c(0, meanDist / (res(rasQuality)[1] / 12)))
     }
 
-    fromPts <- xyFromCell(rasQuality, b[active]$from)
-    toPts <- xyFromCell(rasQuality, b[active]$pixels)
+
+    fromPts <- xyFromCell(rasQuality, b[["from"]][active])
+    toPts <- xyFromCell(rasQuality, b[["pixels"]][active])
     dists <- pointDistance(p1 = fromPts, p2 = toPts, lonlat = FALSE)
-    dirs <- b[active]$direction
+    dirs <- b[["direction"]][active]
 
     # Convert advection vector into length of dirs from pixels, if length is not 1
     advectionDirTmp <- if (length(advectionDir) > 1) {
-      advectionDir[b[active]$pixels]
+      advectionDir[b[["pixels"]][active]]
     } else {
       advectionDir
     }
     advectionMagTmp <- if (length(advectionMag) > 1) {
-      advectionMag[b[active]$pixels]
+      advectionMag[b[["pixels"]][active]]
     } else {
       advectionMag
     }
     xDist <- round(sin(advectionDirTmp) * advectionMagTmp + sin(dirs) * dists, 4)
     yDist <- round(cos(advectionDirTmp) * advectionMagTmp + cos(dirs) * dists, 4)
 
+
+
     # This calculates: "what fraction of the distance being moved is along the dirs axis"
     #   This means that negative mags is "along same axis, but in the opposite direction"
     #   which is dealt with next, see "opposite direction"
-    b[active, mags := round(sin(dirs) * xDist + cos(dirs) * yDist, 3)]
-    negs <- b[active]$mags < 0
+    set(b, active, "mags", round(sin(dirs) * xDist + cos(dirs) * yDist, 3))
+
+    # b[active, mags := round(sin(dirs) * xDist + cos(dirs) * yDist, 3)]
+    negs <- b[["mags"]][active] < 0
     negs[is.na(negs)] <- FALSE
     #dirs2 <- dirs
     anyNegs <- any(negs)
-    nonNA <- !is.na(b[active]$direction)
+    nonNA <- !is.na(b[["direction"]][active])
+    activeNonNA <- active[nonNA]
+
     if (any(anyNegs)) { # "opposite direction"
       dirs2 <- (dirs[negs] + pi) %% (2*pi)
-      b[active[negs], mags := -mags]
-      b[active[negs], newDirs := dirs2]
-      b[active[nonNA], newMags := mags + mags[match(round(direction, 4), round(newDirs, 4))],
+      activeNegs <- active[negs]
+      set(b, activeNegs, "mags", -b$mags[activeNegs])
+      # b[active[negs], mags := -mags]
+      set(b, activeNegs, "newDirs", dirs2)
+      # b[active[negs], newDirs := dirs2]
+
+      b[activeNonNA, newMags := mags + mags[match(round(direction, 4), round(newDirs, 4))],
         by = "initialPixels"]
-      nonNANewMags <- !is.na(b[active]$newMags)
-      b[active[nonNANewMags], mags := newMags]
-      nonNANewDirs <- !is.na(b[active]$newDirs)
-      b[active[nonNANewDirs], mags := 0]
+      nonNANewMags <- !is.na(b[["newMags"]][active])
+      activeNonNANewMags <- active[nonNANewMags]
+
+      set(b, activeNonNANewMags, "mags", b[["newMags"]][activeNonNANewMags])
+      # b[active[nonNANewMags], mags := newMags]
+
+      nonNANewDirs <- !is.na(b[["newDirs"]][active])
+
+      activeNonNANewDirs <- active[nonNANewDirs]
+      set(b, activeNonNANewDirs, "mags", 0)
+      # b[active[nonNANewDirs], mags := 0]
       set(b, NULL, c("newDirs", "newMags"), NULL)
     }
     b[active[nonNA], prop := round(mags / sum(mags), 3), by = c("from", "initialPixels")]
@@ -177,9 +220,11 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 
 
     # Expected number, based on advection and standard spread2
-    b[active, abund := srcAbundActive * prop]
+    set(b, active, "abund", b[["srcAbundActive"]][active] * b[["prop"]][active])
+    # b[active, abund := srcAbundActive * prop]
 
-    b[active, lenRec := .N, by = c("pixels", "initialPixels")]
+    byGroup <- c("pixels", "initialPixels")
+    b[active, lenRec := .N, by = byGroup]
     b[active, lenSrc := min(2.5, .N), by = c("from", "initialPixels")]
 
     # Sum all within a receiving pixel,
@@ -187,20 +232,22 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     #    it is a markov chain of order 1 only, except for some initial info
     b[active, `:=`(sumAbund = sum(abund, na.rm = TRUE),
                    indWithin = seq(.N),
-                   indFull = .I), by = c('initialPixels', 'pixels')]
-    b[active, meanNumNeighs := mean(lenSrc / lenRec) * mean(mags), by = c("pixels", "initialPixels")]
+                   indFull = .I,
+                   meanNumNeighs = mean(lenSrc / lenRec) * mean(mags)), by = byGroup]
     keepRows <- which(b$indWithin == 1 | is.na(b$indWithin))
     b <- b[keepRows]
     active <- na.omit(match(active, b$indFull))
     #b[, indFull := seq(NROW(b))]
 
-    b[active, sumAbund2 := sumAbund * meanNumNeighs/ mean(mags)]
+    set(b, active, "sumAbund2", b[["sumAbund"]][active] * b[["meanNumNeighs"]][active]/
+          mean(b[["mags"]][active]))
+    # b[active, sumAbund2 := sumAbund * meanNumNeighs/ mean(mags)]
 
-    totalSumAbund <- sum(b[active]$sumAbund, na.rm = TRUE)
-    totalSumAbund2 <- sum(b[active]$sumAbund2, na.rm = TRUE)
+    totalSumAbund <- sum(b[["sumAbund"]][active], na.rm = TRUE)
+    totalSumAbund2 <- sum(b[["sumAbund2"]][active], na.rm = TRUE)
     multiplyAll <- totalSumAbund/totalSumAbund2
 
-    b[active, sumAbund := sumAbund2 * multiplyAll]
+    set(b, active, "sumAbund", b[["sumAbund2"]][active] * multiplyAll)
     set(b, NULL, c("abund", "sumAbund2", "mags", "lenSrc", "lenRec",
                    "meanNumNeighs", "prop", "indWithin", "indFull"),
         NULL)
@@ -211,8 +258,27 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     } else {
       advectionMag
     }
-    b[active, abundSettled := pexp(q = distance,
-                                   rate = pi / (meanDist + advectionMagTmp)^1.5) * sumAbund] # kernel is 1 dimensional,
+    if (startsWith(tolower(dispersalKernel), prefix = "expon")) {
+      cumProb <- pexp(q = b[["distance"]][active],
+                      rate = pi / (meanDist + advectionMagTmp)^1.5)
+    } else if (startsWith(tolower(dispersalKernel), prefix = "weib")) {
+      mn <- (meanDist + advectionMagTmp)
+      sd <- mn/sdDist # 0.8 to 2.0 range
+      shape <- (sd/mn)^(-1.086)
+      scale <- mn/exp(lgamma(1+1/shape))
+      cumProb <- pweibull(b[["distance"]][active], shape, scale = scale)
+      if (plot.it > 0) {
+        par(mfrow = c(1,2))
+        x <- seq(mn/5)*10; plot(x, cumProb)
+        plot(x, dweibull(x, shape, scale = scale))
+      }
+
+    } else {
+      stop("dispersalKernel must be either exponential or weibull")
+    }
+    set(b, active, "abundSettled", cumProb * b[["sumAbund"]][active])
+    #b[active, abundSettled := pexp(q = distance,
+    #                               rate = pi / (meanDist + advectionMagTmp)^1.5) * sumAbund] # kernel is 1 dimensional,
     # b[active, abundSettled :=
     #     dexp(x = distance, rate = 1/(meanDist+advectionMag)) * sumAbund] # kernel is 1 dimensional,
     # but spreading is dropping agents in 2 dimensions
@@ -221,9 +287,13 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     # is not actually the full square on a 1 dimensional line ... I might be wrong
     # Some of the estimated dropped will not drop because of quality
     #   First place to round to whole numbers
-    b[active, abundSettled := abundSettled  * rasQuality[][pixels]]
-    b[active, abundActive := sumAbund - abundSettled]
-    b[active[active %in% which(b$abundActive < 1)], abundActive := 0]
+    set(b, active, "abundSettled", b[["abundSettled"]][active] * rasQuality[][b[["pixels"]][active]])
+    # b[active, abundSettled := abundSettled  * rasQuality[][pixels]]
+    set(b, active, "abundActive", b[["sumAbund"]][active] - b[["abundSettled"]][active])
+    # b[active, abundActive := sumAbund - abundSettled]
+    set(b, active[active %in% which(b$abundActive < 1)], "abundActive", 0)
+    # b[active[active %in% which(b$abundActive < 1)], abundActive := 0]
+
 
     abundanceDispersing <- sum(b[active]$abundActive, na.rm = TRUE)
     if (verbose > 1) message("Number still dispersing ", abundanceDispersing)
@@ -239,8 +309,10 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
            legendRange = c(0, plotMultiplier), title = "Abundance")
     }
 
-    newInactive <- b[active]$abundActive == 0
-    b[active[newInactive], state := "inactive"]
+    newInactive <- b[["abundActive"]][active] == 0
+
+    set(b, active[newInactive], "state", "inactive")
+    # b[active[newInactive], state := "inactive"]
     spreadState$whActive <- active[!newInactive]
     spreadState$whInactive <- c(spreadState$whInactive, active[newInactive])
     setattr(b, "spreadState", spreadState)

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split and re-merge <code>RasterLayer</code>(s) — mergeRaster • SpaDES.tools</title>
+<title>Split and re-merge RasterLayer(s) — mergeRaster • SpaDES.tools</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Split and re-merge <code>RasterLayer</code>(s) — mergeRaster" />
+<meta property="og:title" content="Split and re-merge RasterLayer(s) — mergeRaster" />
 <meta property="og:description" content="splitRaster divides up a raster into an arbitrary number of pieces (tiles).
 Split rasters can be recombined using do.call(merge, y) or mergeRaster(y),
 where y &amp;lt;- splitRaster(x)." />
@@ -74,7 +74,7 @@ where y &amp;lt;- splitRaster(x)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@ where y &amp;lt;- splitRaster(x)." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -96,7 +96,7 @@ where y &amp;lt;- splitRaster(x)." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -124,31 +124,33 @@ Split rasters can be recombined using <code><a href='https://rdrr.io/r/base/do.c
 where <code>y &lt;- splitRaster(x)</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mergeRaster</span>(<span class='no'>x</span>, <span class='kw'>fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>mergeRaster</span><span class='op'>(</span><span class='va'>x</span>, fun <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
 <span class='co'># S4 method for list</span>
-<span class='fu'>mergeRaster</span>(<span class='no'>x</span>, <span class='kw'>fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>mergeRaster</span><span class='op'>(</span><span class='va'>x</span>, fun <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
-<span class='fu'>splitRaster</span>(
-  <span class='no'>r</span>,
-  <span class='kw'>nx</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>ny</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
-  <span class='kw'>path</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='no'>cl</span>,
-  <span class='kw'>rType</span> <span class='kw'>=</span> <span class='st'>"FLT4S"</span>
-)
+<span class='fu'>splitRaster</span><span class='op'>(</span>
+  <span class='va'>r</span>,
+  nx <span class='op'>=</span> <span class='fl'>1</span>,
+  ny <span class='op'>=</span> <span class='fl'>1</span>,
+  buffer <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span><span class='op'>)</span>,
+  path <span class='op'>=</span> <span class='cn'>NA</span>,
+  <span class='va'>cl</span>,
+  rType <span class='op'>=</span> <span class='st'>"FLT4S"</span>,
+  fExt <span class='op'>=</span> <span class='st'>".grd"</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for RasterLayer</span>
-<span class='fu'>splitRaster</span>(
-  <span class='no'>r</span>,
-  <span class='kw'>nx</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>ny</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
-  <span class='kw'>path</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='no'>cl</span>,
-  <span class='kw'>rType</span> <span class='kw'>=</span> <span class='st'>"FLT4S"</span>
-)</pre>
+<span class='fu'>splitRaster</span><span class='op'>(</span>
+  <span class='va'>r</span>,
+  nx <span class='op'>=</span> <span class='fl'>1</span>,
+  ny <span class='op'>=</span> <span class='fl'>1</span>,
+  buffer <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span><span class='op'>)</span>,
+  path <span class='op'>=</span> <span class='cn'>NA</span>,
+  <span class='va'>cl</span>,
+  rType <span class='op'>=</span> <span class='st'>"FLT4S"</span>,
+  fExt <span class='op'>=</span> <span class='st'>".grd"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,7 +183,7 @@ If these values less than or equal to <code>1</code> are used, this
 is interpreted as the number of pixels (cells) to use as a buffer.
 Values between <code>0</code> and <code>1</code> are interpreted as proportions
 of the number of pixels in each tile (rounded up to an integer value).
-Default is <code><a href='https://rdrr.io/r/base/c.html'>c(0, 0)</a></code>, which means no buffer.</p></td>
+Default is <code><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c(0, 0)</a></code>, which means no buffer.</p></td>
     </tr>
     <tr>
       <th>path</th>
@@ -192,12 +194,16 @@ If missing, the function will write to memory.</p></td>
       <th>cl</th>
       <td><p>A cluster object. Optional. This would generally be created using
 parallel::makeCluster or equivalent. This is an alternative way, instead
-of <code>beginCluster()</code>, to use parallelism for this function, allowing for
+of <code><a href='https://rdrr.io/pkg/raster/man/cluster.html'>beginCluster()</a></code>, to use parallelism for this function, allowing for
 more control over cluster use.</p></td>
     </tr>
     <tr>
       <th>rType</th>
       <td><p>Data type of the split rasters. Defaults to FLT4S.</p></td>
+    </tr>
+    <tr>
+      <th>fExt</th>
+      <td><p>file extension (e.g., <code>".grd"</code> or <code>".tif"</code>) specifying the file format.</p></td>
     </tr>
     </table>
 
@@ -234,61 +240,72 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/raster/man/merge.html'>merge</a></code>, <code><a href='https://rdrr.io/pkg/raster/man/mosaic.html'>mosaic</a></code></p>
 <p><code><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></code>, <code><a href='https://rdrr.io/pkg/raster/man/merge.html'>merge</a></code>.</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Yong Luo, Alex Chubaty, Tati Micheletti &amp; Ian Eddy</p>
+<p>Alex Chubaty and Yong Luo</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
 
 <span class='co'># an example with dimensions:</span>
 <span class='co'># nrow: 77</span>
 <span class='co'># ncol: 101</span>
 <span class='co'># nlayers: 3</span>
-<span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/brick.html'>brick</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"external/rlogo.grd"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"raster"</span>))
-<span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='no'>b</span><span class='kw'>[[</span><span class='fl'>1</span>]] <span class='co'># use first layer only</span>
-<span class='no'>nx</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='no'>ny</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>
+<span class='va'>b</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/brick.html'>brick</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"external/rlogo.grd"</span>, package <span class='op'>=</span> <span class='st'>"raster"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>r</span> <span class='op'>&lt;-</span> <span class='va'>b</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span> <span class='co'># use first layer only</span>
+<span class='va'>nx</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+<span class='va'>ny</span> <span class='op'>&lt;-</span> <span class='fl'>2</span>
 
-<span class='no'>tmpdir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>(), <span class='st'>"splitRaster-example"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.create</a></span>(<span class='no'>tmpdir</span>)
+<span class='va'>tmpdir</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"splitRaster-example"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.create</a></span><span class='op'>(</span><span class='va'>tmpdir</span><span class='op'>)</span>
 
-<span class='no'>y0</span> <span class='kw'>&lt;-</span> <span class='fu'>splitRaster</span>(<span class='no'>r</span>, <span class='no'>nx</span>, <span class='no'>ny</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='no'>tmpdir</span>, <span class='st'>"y0"</span>)) <span class='co'># no buffer</span>
+<span class='va'>y0</span> <span class='op'>&lt;-</span> <span class='fu'>splitRaster</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>nx</span>, <span class='va'>ny</span>, path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>tmpdir</span>, <span class='st'>"y0"</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># no buffer</span>
 
 <span class='co'># buffer: 10 pixels along both axes</span>
-<span class='no'>y1</span> <span class='kw'>&lt;-</span> <span class='fu'>splitRaster</span>(<span class='no'>r</span>, <span class='no'>nx</span>, <span class='no'>ny</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>10</span>, <span class='fl'>10</span>), <span class='kw'>path</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='no'>tmpdir</span>, <span class='st'>"y1"</span>))
+<span class='va'>y1</span> <span class='op'>&lt;-</span> <span class='fu'>splitRaster</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>nx</span>, <span class='va'>ny</span>, <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>10</span><span class='op'>)</span>, path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>tmpdir</span>, <span class='st'>"y1"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># buffer: half the width and length of each tile</span>
-<span class='no'>y2</span> <span class='kw'>&lt;-</span> <span class='fu'>splitRaster</span>(<span class='no'>r</span>, <span class='no'>nx</span>, <span class='no'>ny</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>), <span class='kw'>path</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='no'>tmpdir</span>, <span class='st'>"y2"</span>))
+<span class='va'>y2</span> <span class='op'>&lt;-</span> <span class='fu'>splitRaster</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>nx</span>, <span class='va'>ny</span>, <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>0.5</span><span class='op'>)</span>, path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>tmpdir</span>, <span class='st'>"y2"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># parallel cropping</span>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>pmin</a></span>(<span class='kw pkg'>parallel</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span>(), <span class='fl'>4</span>) <span class='co'># use up to 4 cores</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/raster/man/cluster.html'>beginCluster</a></span>(<span class='no'>n</span>)
-  <span class='no'>y3</span> <span class='kw'>&lt;-</span> <span class='fu'>splitRaster</span>(<span class='no'>r</span>, <span class='no'>nx</span>, <span class='no'>ny</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.7</span>, <span class='fl'>0.7</span>), <span class='kw'>path</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='no'>tmpdir</span>, <span class='st'>"y3"</span>))
-  <span class='fu'><a href='https://rdrr.io/pkg/raster/man/cluster.html'>endCluster</a></span>()
-}
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>pmin</a></span><span class='op'>(</span><span class='fu'>parallel</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>4</span><span class='op'>)</span> <span class='co'># use up to 4 cores</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/raster/man/cluster.html'>beginCluster</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>
+  <span class='va'>y3</span> <span class='op'>&lt;-</span> <span class='fu'>splitRaster</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>nx</span>, <span class='va'>ny</span>, <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>0.7</span>, <span class='fl'>0.7</span><span class='op'>)</span>, path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>tmpdir</span>, <span class='st'>"y3"</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/raster/man/cluster.html'>endCluster</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 <span class='co'># the original raster:</span>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span>(<span class='no'>r</span>) <span class='co'># may require a call to `dev()` if using RStudio</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span> <span class='co'># may require a call to `dev()` if using RStudio</span>
 
 <span class='co'># the split raster:</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/layout.html'>layout</a></span>(<span class='kw'>mat</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span>(<span class='no'>nx</span> * <span class='no'>ny</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='no'>nx</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='no'>ny</span>))
-<span class='no'>plotOrder</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, <span class='fl'>8</span>, <span class='fl'>12</span>, <span class='fl'>3</span>, <span class='fl'>7</span>, <span class='fl'>11</span>, <span class='fl'>2</span>, <span class='fl'>6</span>, <span class='fl'>10</span>, <span class='fl'>1</span>, <span class='fl'>5</span>, <span class='fl'>9</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'><a href='https://rdrr.io/r/base/invisible.html'>invisible</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>y0</span>[<span class='no'>plotOrder</span>], <span class='no'>plot</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/layout.html'>layout</a></span><span class='op'>(</span>mat <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span><span class='op'>(</span><span class='va'>nx</span> <span class='op'>*</span> <span class='va'>ny</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='va'>nx</span>, nrow <span class='op'>=</span> <span class='va'>ny</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>plotOrder</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>8</span>, <span class='fl'>12</span>, <span class='fl'>3</span>, <span class='fl'>7</span>, <span class='fl'>11</span>, <span class='fl'>2</span>, <span class='fl'>6</span>, <span class='fl'>10</span>, <span class='fl'>1</span>, <span class='fl'>5</span>, <span class='fl'>9</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/invisible.html'>invisible</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>y0</span><span class='op'>[</span><span class='va'>plotOrder</span><span class='op'>]</span>, <span class='va'>plot</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># can be recombined using `raster::merge`</span>
-<span class='no'>m0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span>(<span class='no'>merge</span>, <span class='no'>y0</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='no'>m0</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span>(<span class='no'>merge</span>, <span class='no'>y1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='no'>m1</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span>(<span class='no'>merge</span>, <span class='no'>y2</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='no'>m2</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='va'>m0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span><span class='op'>(</span><span class='va'>merge</span>, <span class='va'>y0</span><span class='op'>)</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html'>all.equal</a></span><span class='op'>(</span><span class='va'>m0</span>, <span class='va'>r</span><span class='op'>)</span> <span class='co'>## TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='va'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span><span class='op'>(</span><span class='va'>merge</span>, <span class='va'>y1</span><span class='op'>)</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html'>all.equal</a></span><span class='op'>(</span><span class='va'>m1</span>, <span class='va'>r</span><span class='op'>)</span> <span class='co'>## TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='va'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span><span class='op'>(</span><span class='va'>merge</span>, <span class='va'>y2</span><span class='op'>)</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html'>all.equal</a></span><span class='op'>(</span><span class='va'>m2</span>, <span class='va'>r</span><span class='op'>)</span> <span class='co'>## TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'># or recombine using mergeRaster</span>
-<span class='no'>n0</span> <span class='kw'>&lt;-</span> <span class='fu'>mergeRaster</span>(<span class='no'>y0</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='no'>n0</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='no'>n1</span> <span class='kw'>&lt;-</span> <span class='fu'>mergeRaster</span>(<span class='no'>y1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='no'>n1</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='no'>n2</span> <span class='kw'>&lt;-</span> <span class='fu'>mergeRaster</span>(<span class='no'>y2</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='no'>n2</span>, <span class='no'>r</span>) <span class='co'>## TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='no'>tmpdir</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div></pre>
+<span class='va'>n0</span> <span class='op'>&lt;-</span> <span class='fu'>mergeRaster</span><span class='op'>(</span><span class='va'>y0</span><span class='op'>)</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html'>all.equal</a></span><span class='op'>(</span><span class='va'>n0</span>, <span class='va'>r</span><span class='op'>)</span> <span class='co'>## TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='va'>n1</span> <span class='op'>&lt;-</span> <span class='fu'>mergeRaster</span><span class='op'>(</span><span class='va'>y1</span><span class='op'>)</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html'>all.equal</a></span><span class='op'>(</span><span class='va'>n1</span>, <span class='va'>r</span><span class='op'>)</span> <span class='co'>## TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='va'>n2</span> <span class='op'>&lt;-</span> <span class='fu'>mergeRaster</span><span class='op'>(</span><span class='va'>y2</span><span class='op'>)</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html'>all.equal</a></span><span class='op'>(</span><span class='va'>n2</span>, <span class='va'>r</span><span class='op'>)</span> <span class='co'>## TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span><span class='op'>(</span><span class='va'>tmpdir</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -304,7 +321,7 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -6,10 +6,7 @@
 .*\.toc$
 ^_ignore$
 ^\.lintr$
-^\.travis\.yml$
 ^_pkgdown\.yml$
-^appveyor\.yml$
-^appveyor_cache\.txt$
 ^CONTRIBUTING\.md$
 ^CRAN-RELEASE$
 ^cran-comments\.md$
@@ -18,3 +15,6 @@
 ^revdep$
 vignettes/.*_cache$
 vignettes/.*\.log$
+^\.github$
+^codecov\.yml$
+tests/manualTests/*

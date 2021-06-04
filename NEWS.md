@@ -1,5 +1,22 @@
 Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
 
+version 0.3.8
+=============
+
+## Dependency changes
+* Dropped support for R 3.5 due to changes in dependency packages. R versions 3.6 and higher are supported.
+
+## Enhancements
+* `distanceFromEachPoint`: `cl` argument can now accept a numeric scalar indicating how many cores to use with an `mclapply` internally
+* `distanceFromEachPoint`: minor speed improvements
+* `spread3` has new arguments (`sdDist`, `dispersalKernel`)
+* improved speed for `spread` under most conditions, especially larger events, possibly up to 2x.
+* `splitRaster()` can now specify file extension, instead of defaulting to `.grd`
+* several under the hood improvements for stability, speed
+
+## bug fixes
+* `distanceFromEachPoint` bugfixes under some cases (some values of `toCells`, `angles` would cause errors)
+
 version 0.3.6
 =============
 
@@ -7,6 +24,7 @@ version 0.3.6
 * none
 
 ## Bugfixes
+* `spread` with `allowOverlap = TRUE` would give wrong results. Fixed.
 * update a test to deal with forthcoming `raster` changes.
 
 ## Enhancements
@@ -26,6 +44,7 @@ We are currently working on a fix, which may take some time.
 * none
 
 ## Enhancements
+* `spread` sped up for `allowOverlap = TRUE`
 * New values for `returnIndices` arg in `spread`, allowing for `numeric`. New option, `2` allows for the fastest return possible, only `pixelIndices`
 
 version 0.3.4

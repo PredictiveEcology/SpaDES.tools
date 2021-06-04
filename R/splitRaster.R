@@ -30,6 +30,8 @@
 #'                more control over cluster use.
 #' @param rType   Data type of the split rasters. Defaults to FLT4S.
 #'
+#' @param fExt    file extension (e.g., \code{".grd"} or \code{".tif"}) specifying the file format.
+#'
 #' @return \code{splitRaster} returns a list (length \code{nx*ny}) of cropped raster tiles.
 #'
 #' @seealso \code{\link{do.call}}, \code{\link[raster]{merge}}.
@@ -47,7 +49,7 @@
 #'
 setGeneric(
   "splitRaster",
-  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rType = "FLT4S") {
+  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rType = "FLT4S", fExt = ".grd") {
   standardGeneric("splitRaster")
 })
 
@@ -56,7 +58,7 @@ setGeneric(
 setMethod(
   "splitRaster",
   signature = signature(r = "RasterLayer"),
-  definition = function(r, nx, ny, buffer, path, cl, rType) {
+  definition = function(r, nx, ny, buffer, path, cl, rType, fExt) {
     if (!is.numeric(nx) | !is.numeric(ny) | !is.numeric(buffer)) {
       stop("nx, ny, and buffer must be numeric")
     }
@@ -101,22 +103,24 @@ setMethod(
     }
 
     tiles <- if (!is.null(cl)) {
-      clusterApplyLB(cl = cl, x = seq_along(extents), fun = .croppy, e = extents, r = r, path = path, rType = rType)
+      clusterApplyLB(cl = cl, x = seq_along(extents), fun = .croppy, e = extents, r = r,
+                     path = path, rType = rType, fext = fExt)
     } else {
-      lapply(X = seq_along(extents), FUN = .croppy, e = extents, r = r, path = path, rType = rType)
+      lapply(X = seq_along(extents), FUN = .croppy, e = extents, r = r, path = path, rType = rType, fExt = fExt)
     }
 
     return(tiles)
 })
 
+#' @importFrom raster extension raster writeRaster
 #' @keywords internal
-.croppy <- function(i, e, r, path, rType) {
+.croppy <- function(i, e, r, path, rType, fExt) {
   ri <- crop(r, e[[i]], datatype = rType)
   crs(ri) <- crs(r)
   if (is.na(path)) {
     return(ri)
   } else {
-    filename <- file.path(path, paste0(names(r), "_tile", i, ".grd"))
+    filename <- extension(file.path(path, paste0(names(r), "_tile", i)), fExt)
     writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
     return(raster(filename))
   }
