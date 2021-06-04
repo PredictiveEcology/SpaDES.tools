@@ -156,7 +156,7 @@ if (interactive()) {
 # On linux; can use numeric passed to cl; will use mclapply with mc.cores = cl
 dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
                                 landscape = rp, distFn = distFn, cumulativeFn = `+`,
-                                cl = 3)
+                                cl = 2)
 }
 \seealso{
 \code{\link{rings}}, \code{\link{cir}}, \code{\link[raster]{distanceFromPoints}},
