@@ -28,14 +28,15 @@ if (getRversion() >= "3.1.0") {
 #'   occur. It is imposed on the total event, i.e., if the \code{meanDist} is
 #'   \code{10000}, and \code{advectionMag} is \code{5000}, then the expected
 #'   distance (i.e., 63\% of agents) will have settled by \code{15000} map units.
-#' @param dispersalKernel Currently character string, with either `exponential` or `weibull`.
+#' @param dispersalKernel One of either \code{"exponential"} or \code{"weibull"}.
 #'   If
 #' @param meanDist A single number indicating the mean distance parameter in map units
 #'    (not pixels), for a negative exponential distribution
 #'    dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
 #'    settled at this \code{meanDist} (still experimental)
-#' @param sdDist A single number indicating the `sd` parameter of a 2 parameter `dispersalKernel`.
-#'   Defaults to `1`, which is the same as the `exponential` distribution.
+#' @param sdDist A single number indicating the \code{sd} parameter of a two-parameter
+#'   \code{dispersalKernel}.
+#'   Defaults to \code{1}, which is the same as the \code{exponential} distribution.
 #' @param verbose Numeric. With increasing numbers above 0, there will be more
 #'     messages produced. Currently, only 0, 1, or 2+ are distinct.
 #' @param plot.it Numeric. With increasing numbers above 0, there will be plots
@@ -44,7 +45,7 @@ if (getRversion() >= "3.1.0") {
 #'    to consider all dispersing finished. Default is 50
 #' @param saveStack If provided as a character string, it will save each iteration
 #'   as part of a \code{rasterStack} to disk upon exit.
-#' @param skipChecks Logical. If `TRUE`, assertions will be skipped (faster, but could miss
+#' @param skipChecks Logical. If \code{TRUE}, assertions will be skipped (faster, but could miss
 #'   problems)
 #'
 #' @return
@@ -172,8 +173,6 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     xDist <- round(sin(advectionDirTmp) * advectionMagTmp + sin(dirs) * dists, 4)
     yDist <- round(cos(advectionDirTmp) * advectionMagTmp + cos(dirs) * dists, 4)
 
-
-
     # This calculates: "what fraction of the distance being moved is along the dirs axis"
     #   This means that negative mags is "along same axis, but in the opposite direction"
     #   which is dealt with next, see "opposite direction"
@@ -218,7 +217,6 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     b[distance %>>% ((iteration - 2) * res(rasAbundance)[1]),
       srcAbundActive := abundActive[match(from, pixels)], by = "initialPixels"]
 
-
     # Expected number, based on advection and standard spread2
     set(b, active, "abund", b[["srcAbundActive"]][active] * b[["prop"]][active])
     # b[active, abund := srcAbundActive * prop]
@@ -239,7 +237,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     active <- na.omit(match(active, b$indFull))
     #b[, indFull := seq(NROW(b))]
 
-    set(b, active, "sumAbund2", b[["sumAbund"]][active] * b[["meanNumNeighs"]][active]/
+    set(b, active, "sumAbund2", b[["sumAbund"]][active] * b[["meanNumNeighs"]][active] /
           mean(b[["mags"]][active]))
     # b[active, sumAbund2 := sumAbund * meanNumNeighs/ mean(mags)]
 
@@ -265,10 +263,10 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
       mn <- (meanDist + advectionMagTmp)
       sd <- mn/sdDist # 0.8 to 2.0 range
       shape <- (sd/mn)^(-1.086)
-      scale <- mn/exp(lgamma(1+1/shape))
+      scale <- mn/exp(lgamma(1 + 1/shape))
       cumProb <- pweibull(b[["distance"]][active], shape, scale = scale)
       if (plot.it > 0) {
-        par(mfrow = c(1,2))
+        par(mfrow = c(1, 2))
         x <- seq(mn/5)*10; plot(x, cumProb)
         plot(x, dweibull(x, shape, scale = scale))
       }
