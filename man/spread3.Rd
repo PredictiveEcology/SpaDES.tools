@@ -46,11 +46,12 @@ distance (i.e., 63\% of agents) will have settled by \code{15000} map units.}
 dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
 settled at this \code{meanDist} (still experimental)}
 
-\item{dispersalKernel}{Currently character string, with either `exponential` or `weibull`.
+\item{dispersalKernel}{One of either \code{"exponential"} or \code{"weibull"}.
 If}
 
-\item{sdDist}{A single number indicating the `sd` parameter of a 2 parameter `dispersalKernel`.
-Defaults to `1`, which is the same as the `exponential` distribution.}
+\item{sdDist}{A single number indicating the \code{sd} parameter of a two-parameter
+\code{dispersalKernel}.
+Defaults to \code{1}, which is the same as the \code{exponential} distribution.}
 
 \item{plot.it}{Numeric. With increasing numbers above 0, there will be plots
 produced during iterations. Currently, only 0, 1, or 2+ are distinct.}
@@ -64,7 +65,7 @@ messages produced. Currently, only 0, 1, or 2+ are distinct.}
 \item{saveStack}{If provided as a character string, it will save each iteration
 as part of a \code{rasterStack} to disk upon exit.}
 
-\item{skipChecks}{Logical. If `TRUE`, assertions will be skipped (faster, but could miss
+\item{skipChecks}{Logical. If \code{TRUE}, assertions will be skipped (faster, but could miss
 problems)}
 }
 \value{
