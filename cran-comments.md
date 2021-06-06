@@ -1,6 +1,6 @@
 ## Updated release
 
-This is a maintenance release, which fixes a problem in an upcoming version of `raster`.
+This is a maintenance release, to restore this package to CRAN following archival of dependency `reproducible`.
 See `NEWS.md`.
 
 ## Test environments
@@ -22,10 +22,10 @@ See `NEWS.md`.
 * Windows                 (win-builder), R 4.1.0
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2021-05-29 r80411)
+* Ubuntu 20.04                 (GitHub), R-devel (2021-06-03 r80452)
 * Ubuntu 20.04                  (local), R-devel (2021-05-31 r80426)
-* Windows                      (GitHub), R-devel (2021-05-30 r80415)
-* Windows                 (win-builder), R-devel (2021-05-30 r80415)
+* Windows                      (GitHub), R-devel (2021-06-03 r80452)
+* Windows                 (win-builder), R-devel (2021-06-03 r80452)
 
 ## R CMD check results
 
