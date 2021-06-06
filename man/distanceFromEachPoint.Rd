@@ -154,7 +154,7 @@ if (interactive()) {
 }
 
 # On linux; can use numeric passed to cl; will use mclapply with mc.cores = cl
-identical(Sys.info()["sysname"], "Linux") {
+if (identical(Sys.info()["sysname"], "Linux")) {
   dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
                                   landscape = rp, distFn = distFn,
                                   cumulativeFn = `+`, cl = 2)
