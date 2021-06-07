@@ -13,7 +13,7 @@ Additional modelling tools for Spatial Discrete Event Simulation (`SpaDES`) modu
 
 Provides GIS/map utilities and additional modeling tools for developing cellular automata and agent based models in `SpaDES`.
 
-**Website:** [http://SpaDES.PredictiveEcology.org](http://SpaDES.PredictiveEcology.org)
+**Website:** [https://SpaDES.PredictiveEcology.org](https://SpaDES.PredictiveEcology.org)
 
 **Wiki:** [https://github.com/PredictiveEcology/SpaDES/wiki](https://github.com/PredictiveEcology/SpaDES/wiki)
 
