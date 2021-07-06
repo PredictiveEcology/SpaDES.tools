@@ -43,12 +43,10 @@ epsg
 excludePixels
 geo
 github
-http
 https
 includePixels
 iteratively
 makeCluster
-maxDistance
 modeling
 multithreading
 numCells

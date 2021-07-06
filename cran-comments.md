@@ -33,7 +33,7 @@ There were no ERRORs or WARNINGs.
 
 There was 1 NOTEs:
 
-1. Some words were flagged as possibly mispelled, but they are false positives:
+1. Some words were flagged as possibly misspelled, but they are false positives:
 
     Possibly mis-spelled words in DESCRIPTION:
       SpaDES (4:27)
