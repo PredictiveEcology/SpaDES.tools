@@ -1,4 +1,16 @@
-Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
+Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
+
+version 0.3.8.9000
+=============
+
+## Dependency changes
+* none
+
+## Enhancements
+* none
+
+## bug fixes
+* none
 
 version 0.3.8
 =============
