@@ -104,7 +104,7 @@ setMethod(
 
     tiles <- if (!is.null(cl)) {
       clusterApplyLB(cl = cl, x = seq_along(extents), fun = .croppy, e = extents, r = r,
-                     path = path, rType = rType, fext = fExt)
+                     path = path, rType = rType, fExt = fExt)
     } else {
       lapply(X = seq_along(extents), FUN = .croppy, e = extents, r = r, path = path, rType = rType, fExt = fExt)
     }

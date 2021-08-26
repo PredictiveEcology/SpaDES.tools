@@ -10,7 +10,7 @@ version 0.3.8.9000
 * none
 
 ## bug fixes
-* none
+* Issue #62 bugfix. Thanks to Anders Bjørn Møller @anbm-dk for finding and suggesting solution.
 
 version 0.3.8
 =============
