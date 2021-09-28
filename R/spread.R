@@ -377,7 +377,6 @@ setMethod(
       samInt <- sample.int
     }
 
-
     if (!is.null(mapID)) {
       warning("mapID is deprecated, use id")
       id <- mapID

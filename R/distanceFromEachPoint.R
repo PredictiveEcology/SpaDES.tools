@@ -7,7 +7,7 @@
 #' Rather this returns the every pair-wise point distance.
 #' As a result, this can be used for doing inverse distance weightings, seed rain,
 #' cumulative effects of distance-based processes etc.
-#' If memory limitation is an issue, maxDistance will keep memory use down,
+#' If memory limitation is an issue, \code{maxDistance} will keep memory use down,
 #' but with the consequences that there will be a maximum distance returned.
 #' This function has the potential to use a lot of memory if there are a lot of
 #' \code{from} and \code{to} points.

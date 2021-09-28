@@ -10,24 +10,25 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2021-06-01
-Version: 0.3.8
+Date: 2021-09-28
+Version: 0.3.9
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
-    role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7146-8135")),
+           role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7146-8135")),
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
-    role = c("aut"), comment=c(ORCID = "0000-0002-6914-8316")),
+           role = c("aut"), comment=c(ORCID = "0000-0002-6914-8316")),
     person("Yong", "Luo", email = "yluo1@lakeheadu.ca",
-    role = c("ctb")),
+           role = c("ctb")),
     person("Steve", "Cumming", email = "Steve.Cumming@sbf.ulaval.ca",
-    role = c("ctb")),
+           role = c("ctb")),
     person("Jean", "Marchal", email = "jean.d.marchal@gmail.com",
-    role = c("ctb")),
-    person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada",
-    role = "cph")
+           role = c("ctb")),
+    person(paste("Her Majesty the Queen in Right of Canada,",
+                 "as represented by the Minister of Natural Resources Canada"),
+           role = "cph")
     )
 Depends:
-    R (>= 3.6.0)
+    R (>= 3.6)
 Imports:
     backports,
     checkmate (>= 1.8.2),
@@ -41,8 +42,7 @@ Imports:
     quickPlot,
     raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
-    reproducible (>= 0.2.0),
-    Require,
+    reproducible (>= 1.2.7),
     rgeos,
     sp (>= 1.2-4),
     stats
@@ -62,6 +62,7 @@ Suggests:
     mgcv,
     RandomFields (>= 3.1.24),
     RColorBrewer (>= 1.1-2),
+    Require,
     rmarkdown,
     sf,
     testthat (>= 1.0.2),
@@ -95,4 +96,4 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

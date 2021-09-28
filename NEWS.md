@@ -1,4 +1,17 @@
-Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
+Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
+
+version 0.3.9
+=============
+
+## Dependency changes
+* `Require` moved to `Suggests`, because it's only used in examples.
+
+## Enhancements
+* none
+
+## bug fixes
+* fixed misc CRAN check issues with Suggested packages
+* fixed bug in `splitRaster()` (#62; @anbm-dk)
 
 version 0.3.8
 =============

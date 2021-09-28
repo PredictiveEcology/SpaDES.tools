@@ -1,10 +1,8 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("distance", "dups",
-                           "from", "i.size", "ind", "indClDT", "initialPixels",
-                           "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
-                           "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
-  ))
-}
+utils::globalVariables(c(
+  "distance", "dups", "from", "i.size", "ind", "indClDT", "initialPixels",
+  "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels", "proportion",
+  "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1"
+))
 
 ################################################################################
 #' Simulate a contagious spread process on a landscape, with data.table internals
