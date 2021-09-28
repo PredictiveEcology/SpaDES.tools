@@ -15,6 +15,7 @@ See `NEWS.md`.
 ### Current R versions
 * macOS 10.15.6 Catalina       (GitHub), R 4.1.1
 * macOS 11.1 Big Sur            (local), R 4.1.1
+* macOs (m1) Big Sur             (rhub), R 4.1.1
 * Ubuntu 20.04                 (GitHub), R 4.1.1
 * Ubuntu 20.04                  (local), R 4.1.1
 * Windows                      (GitHub), R 4.1.1
@@ -22,9 +23,9 @@ See `NEWS.md`.
 * Windows                 (win-builder), R 4.1.1
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2021-05-29 r80411)
-* Ubuntu 20.04                  (local), R-devel (2021-05-31 r80426)
-* Windows                      (GitHub), R-devel (2021-05-30 r80415)
+* Ubuntu 20.04                 (GitHub), R-devel (2021-09-26 r80964)
+* Ubuntu 20.04                  (local), R-devel (2021-09-28 r80978)
+* Windows                      (GitHub), R-devel (2021-09-26 r80964)
 * Windows                 (win-builder), R-devel (2021-09-23 r80951)
 
 ## R CMD check results
