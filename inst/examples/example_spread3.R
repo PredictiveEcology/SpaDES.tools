@@ -1,5 +1,5 @@
 ## these tests are fairly heavy, so don't run during automated tests
-if (interactive()) {
+if (interactive() && require("RandomFields")) {
   #########################################################
   # Simple case, no variation in rasQuality, numeric advectionDir and advectionMag
   #########################################################

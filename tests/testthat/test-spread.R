@@ -1,6 +1,8 @@
 test_that("spread produces legal RasterLayer", {
+  skip_if_not_installed("dqrnq")
+
   set.seed(123)
-  # dqrng::dqset.seed(123)
+  dqrng::dqset.seed(123)
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
 
@@ -63,7 +65,7 @@ test_that("spread produces legal RasterLayer", {
   for (i in 2:4) {
     j <- sample(1:1000, 1);
     set.seed(j);
-    # dqrng::dqset.seed(j)
+    dqrng::dqset.seed(j)
     fires[[i]] <- spread(a, loci = as.integer(sample(1:ncell(a), 10)), returnIndices = TRUE,
                          spreadProb = 0.235, 0, NULL, 1e8, 8, iterations = 2, id = TRUE,
                          spreadState = fires[[i - 1]])
@@ -75,7 +77,7 @@ test_that("spread produces legal RasterLayer", {
 
   # Test that passing NA to loci returns a correct data.table
   set.seed(123)
-  # dqrng::dqset.seed(123)
+  dqrng::dqset.seed(123)
 
   fires <- spread(a, loci = as.integer(sample(1:ncell(a), 10)), returnIndices = TRUE,
                   0.235, 0, NULL, 1e8, 8, iterations = 2, id = TRUE)
@@ -85,17 +87,13 @@ test_that("spread produces legal RasterLayer", {
   expect_true(all(fires2[, unique(id)] %in% fires[, unique(id)]))
   expect_true(all(fires[, unique(id)] %in% fires2[, unique(id)]))
 
-  if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
-    # Skip this because not necessary for older versions. This will be deprecated soon enough
-    #expect_true(all(fires2[, length(initialLocus), by = id][, V1] ==
-    #                  c(4L, 8L, 7L, 9L, 1L, 25L, 13L, 13L, 20L, 1L)))
-  } else {
-    expect_true(all(fires2[, length(initialLocus), by = id][, V1] ==
-                      c(1L, 6L, 8L, 15L, 18L, 21L, 1L, 13L, 17L, 2L)))
-  }
+  expect_true(all(fires2[, length(initialLocus), by = id][, V1] ==
+                    c(1L, 6L, 8L, 15L, 18L, 21L, 1L, 13L, 17L, 2L)))
 })
 
 test_that("allowOverlap -- produces exact result", {
+  skip_if_not_installed("dqrnq")
+
   testInitOut <- testInit(needGoogle = FALSE, c("sp", "raster"))
   on.exit({
     testOnExit(testInitOut)
@@ -162,6 +160,8 @@ test_that("allowOverlap -- produces exact result", {
 })
 
 test_that("spread stopRule does not work correctly", {
+  skip_if_not_installed("RandomFields", "3.1.24")
+
   library(raster)
   library(quickPlot)
 
@@ -434,6 +434,8 @@ test_that("spread stopRule does not work correctly", {
 })
 
 test_that("asymmetry doesn't work properly", {
+  skip_if_not_installed("RandomFields", "3.1.24")
+
   library(CircStats)
   library(raster)
   library(quickPlot)
@@ -507,6 +509,8 @@ test_that("asymmetry doesn't work properly", {
 })
 
 test_that("rings and cir", {
+  skip_if_not_installed("RandomFields", "3.1.24")
+
   library(sp)
   library(raster)
   library(fpCompare)
@@ -634,6 +638,8 @@ test_that("rings and cir", {
 })
 
 test_that("distanceFromPoints does not work correctly", {
+  skip_if_not_installed("RandomFields", "3.1.24")
+
   library(raster)
   library(quickPlot)
   library(fpCompare)

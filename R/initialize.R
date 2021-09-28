@@ -353,8 +353,8 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #' rasAgents <- specificNumPerPatch(ras, patchDT)
 #' rasAgents[is.na(rasAgents)] <- 0
 #'
-#' library(testthat)
-#' expect_true(all(unname(table(ras[rasAgents])) == patchDT$num.in.pop))
+#' if (require(testthat))
+#'   expect_true(all(unname(table(ras[rasAgents])) == patchDT$num.in.pop))
 #'
 #' # Use numPerPatchMap
 #' rasPatches <- ras

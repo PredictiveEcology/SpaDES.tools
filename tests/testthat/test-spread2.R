@@ -1,4 +1,6 @@
 test_that("spread2 tests", {
+  skip_if_not_installed("RandomFields", "3.1.24")
+
   library(raster)
   library(data.table)
   library(fpCompare)
@@ -380,6 +382,8 @@ test_that("spread2 tests", {
 })
 
 test_that("spread2 tests -- asymmetry", {
+  skip_if_not_installed("RandomFields", "3.1.24")
+
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(data.table); on.exit(detach("package:data.table"), add = TRUE)
   library(fpCompare); on.exit(detach("package:fpCompare"), add = TRUE)
@@ -398,10 +402,10 @@ test_that("spread2 tests -- asymmetry", {
   out <- spread2(a, start = sams, 0.215, asRaster = FALSE, asymmetry = 2,
                  asymmetryAngle = 90)
   for (i in 1:20) {
-    expect_silent(
+    expect_silent({
       out <- spread2(a, start = out, 0.215, asRaster = FALSE, asymmetry = 2,
                      asymmetryAngle = 90)
-    )
+    })
   }
 
   a <- raster(extent(0, 1e2, 0, 1e2), res = 1)
