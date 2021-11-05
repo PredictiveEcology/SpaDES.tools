@@ -1,5 +1,17 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
+version 0.3.9.9000
+=============
+
+## Dependency changes
+* drop support for R 3.6 (#65)
+
+## Enhancements
+* none
+
+## bug fixes
+* none
+
 version 0.3.9
 =============
 
