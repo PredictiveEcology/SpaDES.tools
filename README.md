@@ -2,7 +2,7 @@
 [![R build status](https://github.com/PredictiveEcology/SpaDES.tools/workflows/R-CMD-check/badge.svg)](https://github.com/PredictiveEcology/SpaDES.tools/actions)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SpaDES.tools)](https://cran.r-project.org/package=SpaDES.tools)
 [![Downloads](http://cranlogs.r-pkg.org/badges/grand-total/SpaDES.tools)](https://cran.r-project.org/package=SpaDES.tools)
-[![Codecov test coverage](https://codecov.io/gh/PredictiveEcology/SpaDES.tools/branch/master/graph/badge.svg)](https://codecov.io/gh/PredictiveEcology/SpaDES.tools?branch=master)
+[![Codecov test coverage](https://codecov.io/gh/PredictiveEcology/SpaDES.tools/branch/master/graph/badge.svg)](https://app.codecov.io/gh/PredictiveEcology/SpaDES.tools?branch=master)
 <!-- badges: end -->
 
 <img align="right" width="80" vspace="10" hspace="10" src="https://github.com/PredictiveEcology/SpaDES/raw/master/docs/images/SpaDES.png">
