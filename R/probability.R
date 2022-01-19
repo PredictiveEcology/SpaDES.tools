@@ -8,7 +8,6 @@
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom reproducible compareNA
 #' @rdname dwrpnorm2
 #'
 #' @examples
@@ -43,7 +42,7 @@ dwrpnorm2 <- function(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc) {
   delta <- rep(1, length(Last))
   while (any(compareNA(delta > tol, TRUE))) {
     keep <- delta > tol
-    keep <- reproducible::compareNA(keep, TRUE)
+    keep <- compareNA(keep, TRUE)
     k <- k + 1
     Last[keep] <- Next[keep]
     Next[keep] <- Last[keep] + .term(theta[keep], mu[keep], var, k) +

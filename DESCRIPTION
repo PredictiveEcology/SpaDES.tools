@@ -42,7 +42,7 @@ Imports:
     quickPlot,
     raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
-    reproducible (>= 1.2.7),
+    Require,
     rgeos,
     sp (>= 1.2-4),
     stats
@@ -79,6 +79,7 @@ Collate:
     'SELES.R'
     'distanceFromEachPoint.R'
     'environment.R'
+    'helpers.R'
     'initialize.R'
     'mapReduce.R'
     'mergeRaster.R'
