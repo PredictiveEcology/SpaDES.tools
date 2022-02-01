@@ -2,7 +2,7 @@ Package: SpaDES.tools
 Type: Package
 Title: Additional Tools for Developing Spatially Explicit Discrete Event Simulation (SpaDES) Models
 Description: Provides GIS and map utilities, plus additional modeling tools for
-    developing cellular automata, dynamic raster models,  and agent based models
+    developing cellular automata, dynamic raster models, and agent based models
     in 'SpaDES'.
     Included are various methods for spatial spreading, spatial agents, GIS
     operations, random map generation, and others.
@@ -10,8 +10,8 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2021-11-05
-Version: 0.3.9.9000
+Date: 2022-02-01
+Version: 0.3.10
 Authors@R: c(
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7146-8135")),
@@ -62,7 +62,6 @@ Suggests:
     mgcv,
     RandomFields (>= 3.1.24),
     RColorBrewer (>= 1.1-2),
-    Require,
     rmarkdown,
     sf,
     testthat (>= 1.0.2),

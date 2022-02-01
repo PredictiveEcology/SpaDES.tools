@@ -522,7 +522,6 @@ test_that("rings and cir", {
     detach("package:data.table")
     detach("package:fpCompare")
     detach("package:raster")
-    detach("package:sp")
   }, add = TRUE)
 
   a <- raster(extent(0, 1e2, 0, 1e2), res = 1)

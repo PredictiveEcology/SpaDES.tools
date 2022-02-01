@@ -18,13 +18,13 @@ if (interactive()) {
 maxSizes <- sort(sample(1:10, size = length(sams)))
 out <- spread2(a, start = sams, 0.225, maxSize = maxSizes, asRaster = FALSE)
 # check TRUE using data.table .N
-out[, .N, by = "initialPixels"]$n <= maxSizes
+out[, .N, by = "initialPixels"]$N <= maxSizes
 
 # Use exactSize -- gives an exact size, if there is enough space on the Raster
 exactSizes <- maxSizes
 out <- spread2(a, start = sams, spreadProb = 0.225,
                exactSize = exactSizes, asRaster = FALSE)
-out[, .N, by = "initialPixels"]$n == maxSizes # should be TRUE TRUE TRUE
+out[, .N, by = "initialPixels"]$N == maxSizes # should be TRUE TRUE TRUE
 
 # Use exactSize -- but where it can't be achieved
 exactSizes <- sort(sample(100:110, size = length(sams)))

@@ -30,11 +30,11 @@ utils::globalVariables(c(
 #'
 #' This function can be interrupted before all active cells are exhausted if
 #' the \code{iterations} value is reached before there are no more active
-#' cells to spread2 into. The interrupted output (a data.table) can be passed
+#' cells to \code{spread2} into. The interrupted output (a data.table) can be passed
 #' subsequently as an input to this same function (as \code{start}).
 #' This is intended to be used for situations where external events happen during
 #' a spread2 event, or where one or more arguments to the spread2 function
-#' change before a spread2 event is completed.
+#' change before a \code{spread2} event is completed.
 #' For example, if it is desired that the \code{spreadProb} change before a
 #' spread2 event is completed because, for example, a fire is spreading, and a
 #' new set of conditions arise due to a change in weather.
@@ -953,14 +953,12 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         set(dt, NULL, "origIndex", seq_len(NROW(dt)))
         dt1 <- dt[state == "successful"]
         dt1b <- dt1[currentSizetooBigByNCells] # attach tooBigByNCells
-        dt1a <- tryCatch(dt1b[, list(omit = origIndex[sample.int(.N, tooBigByNCells)]),
-                              by = "initialPixels"],
-                         error = function(e) TRUE)
+        dt1a <- dt1b[, list(omit = origIndex[sample.int(.N, tooBigByNCells[1])]), by = "initialPixels"]
 
         dt <- dt[-dt1a$omit][, list(initialPixels, pixels, state)]
         dt[dt1a, state := "inactive"]
-        clusterDT[currentSizetooBigByNCells[, list(initialPixels)],
-                  size := size - tooBigByNCells]
+
+        clusterDT[currentSizetooBigByNCells[, list(initialPixels)], size := size - tooBigByNCells]
       }
 
       # Too small second
