@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://spades-tools.predictiveecology.org/404.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/CONTRIBUTING.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/authors.html</loc>
+  </url>
+  <url>
     <loc>https://spades-tools.predictiveecology.org/index.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/news/index.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/SELESagentLocation.html</loc>
@@ -43,10 +61,25 @@
     <loc>https://spades-tools.predictiveecology.org/reference/distances.html</loc>
   </url>
   <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/downloadFromWebDB.html</loc>
+  </url>
+  <url>
     <loc>https://spades-tools.predictiveecology.org/reference/duplicated.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/dwrpnorm2.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/extractFromArchive.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/fastCrop.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/fastMask.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/faster-rasters.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/findFactors.html</loc>
@@ -61,7 +94,13 @@
     <loc>https://spades-tools.predictiveecology.org/reference/inRange.html</loc>
   </url>
   <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/index.html</loc>
+  </url>
+  <url>
     <loc>https://spades-tools.predictiveecology.org/reference/initiateAgents.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/match.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/matchedPointDirection.html</loc>
@@ -76,10 +115,16 @@
     <loc>https://spades-tools.predictiveecology.org/reference/pkgEnv.html</loc>
   </url>
   <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/prepInputs.html</loc>
+  </url>
+  <url>
     <loc>https://spades-tools.predictiveecology.org/reference/randomPolygons.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/randomStudyArea.html</loc>
+  </url>
+  <url>
+    <loc>https://spades-tools.predictiveecology.org/reference/rasterizeReduce.html</loc>
   </url>
   <url>
     <loc>https://spades-tools.predictiveecology.org/reference/rasterizeReduced.html</loc>
