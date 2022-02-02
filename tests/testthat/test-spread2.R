@@ -9,6 +9,8 @@ test_that("spread2 tests", {
   on.exit(detach("package:data.table"), add = TRUE)
   on.exit(detach("package:fpCompare"), add = TRUE)
 
+  data.table::setDTthreads(1)
+
   # inputs for x
   a <- raster(extent(0, 10, 0, 10), res = 1)
   b <- raster(a)
@@ -54,8 +56,7 @@ test_that("spread2 tests", {
     seed <- sample(1e6, 1)
     set.seed(seed)
     sams <- sample(innerCells, 2)
-    out <- spread2(a, start = sams, spreadProb = 0.225, maxSize = maxSizes,
-                   asRaster = FALSE)
+    out <- spread2(a, start = sams, spreadProb = 0.225, maxSize = maxSizes, asRaster = FALSE)
     expect_true(all(out[, .N, by = "initialPixels"]$N <= maxSizes[order(sams)]))
   }
 
@@ -378,7 +379,6 @@ test_that("spread2 tests", {
                     exactSize = exactSizes, asRaster = FALSE)
   }
   expect_false(identical(data.table(out2), data.table(out)))
-
 })
 
 test_that("spread2 tests -- asymmetry", {

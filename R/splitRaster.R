@@ -42,7 +42,7 @@
 #' @importFrom parallel clusterApplyLB
 #' @importFrom raster crop crs<- extent getCluster returnCluster writeRaster
 #' @importFrom raster xmax xmin xres ymax ymin yres
-#' @importFrom reproducible checkPath
+#' @importFrom Require checkPath
 #' @rdname splitRaster
 #'
 #' @example inst/examples/example_splitRaster.R

@@ -242,7 +242,6 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
 
   #y <- spTransform(x, areaCRS)
 
-
   meanX <- mean(coordinates(x)[, 1]) - radius
   meanY <- mean(coordinates(x)[, 2]) - radius
 
@@ -503,7 +502,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 
 utmCRS <- function(x) {
   zone <- long2UTM(mean(c(xmax(x), xmin(x))))
-  CRS(paste("+proj=utm +zone=",zone," ellps=WGS84",sep=''))
+  CRS(paste0("+proj=utm +zone=", zone, " ellps=WGS84"))
 }
 
 long2UTM <- function(long) {

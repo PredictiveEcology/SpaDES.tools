@@ -6,7 +6,6 @@ test_that("randomPolygon: does not work properly", {
   on.exit({
     detach("package:raster")
     detach("package:rgeos")
-    detach("package:sp")
   }, add = TRUE)
 
   set.seed(1234) ## TODO: some seeds produce failing area test below!!
