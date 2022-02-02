@@ -18,3 +18,4 @@ vignettes/.*\.log$
 ^\.github$
 ^codecov\.yml$
 tests/manualTests/*
+^CRAN-SUBMISSION$
