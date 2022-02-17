@@ -816,9 +816,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
             if (any(numNeighsByPixel$numNeighs > numNeighsByPixel$N))
               set(numNeighsByPixel, NULL, "numNeighs",
                   pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
-            dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
-                                                                      .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
-                                                                      by = "from"]$V1]
+            dtPotential <- dtPotential[numNeighsByPixel[dtPotential][
+              , .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
+              by = "from"]$V1]
           }
         }
         set(dtPotential, NULL, "spreadProbRel", NULL)
