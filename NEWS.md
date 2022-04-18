@@ -7,7 +7,7 @@ version 0.3.10.9000
 * none
 
 ## Enhancements
-* none
+* `mergeRaster()` can deal with rasters with different origins extents (i.e., that weren't produced using `splitRaster()`)
 
 ## bug fixes
 * none
