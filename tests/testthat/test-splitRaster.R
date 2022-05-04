@@ -50,6 +50,13 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   expect_equal(max(values(m0)), max(values(r)))
   expect_equal(min(values(m0)), min(values(r)))
 
+  # as a stack/brick
+  if (requireNamespace("purrr", quietly = TRUE)) {
+    ys0 <- lapply(purrr::transpose(lapply(as.list(b), splitRaster, nx = nx, ny = ny)), stack)
+    ms0 <- mergeRaster(ys0)
+    expect_identical(names(ms0), names(ys0[[1]]))
+  }
+
   # with buffer (integer pixels) and with specified path
   y1 <- splitRaster(r, nx, ny, c(3L, 4L), path = file.path(tmpdir, "red1"))
   expect_true(unique(unlist(lapply(y1, fromDisk))))
@@ -139,17 +146,18 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     }
     rowmaxtemp <- rowmax
   }
-  #compatible with different raster datatypes
+
+  # compatible with different raster datatypes
   y4 <- splitRaster(r, nx, ny, rType = "INT1U")
   expect_identical(dataType(y4[[1]]),"INT1U")
-  #INT now defaults to INT4S, FLT defaults to FLT4S
+  # INT now defaults to INT4S, FLT defaults to FLT4S
   y5 <- splitRaster(r, nx, ny, rType = "INT")
   expect_identical(dataType(y5[[1]]), "INT4S")
-  #defaults to FLT4S
+  # defaults to FLT4S
   y6 <- splitRaster(r, nx, ny)
   expect_true(dataType(y6[[1]]) == "FLT4S")
 
-  #use different file extension
+  ## use different file extension
   y7 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".tif")
   expect_true(extension(filename(y7[[1]])) == ".tif")
 })
@@ -224,8 +232,8 @@ test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   skip_on_appveyor()
   skip("This is very big.")
 
-  tmpdir <- file.path(tempdir(), "splitRaster-test-large") %>% checkPath(create = TRUE)
   library(magrittr)
+  tmpdir <- file.path(tempdir(), "splitRaster-test-large") %>% checkPath(create = TRUE)
   library(raster); on.exit(detach("package:raster"), add = TRUE)
 
   on.exit({
@@ -233,7 +241,7 @@ test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   }, add = TRUE)
 
   ## use a large raster (1.3 GB)
-  url <- "http://www.cec.org/sites/default/files/Atlas/Files/Land_Cover_2010/Land_Cover_2010_TIFF.zip" # nolint
+  url <- "http://www.cec.org/sites/default/files/Atlas/Files/Land_Cover_2010/Land_Cover_2010_TIFF.zip" # TODO: URL doesn't work!
   destfile <- file.path(tmpdir, basename(url))
 
   download.file(url, destfile) # 48.0 MB

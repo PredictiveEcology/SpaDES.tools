@@ -18,7 +18,7 @@
 #' @author Yong Luo, Alex Chubaty, Tati Micheletti & Ian Eddy
 #' @export
 #' @importFrom magrittr %>%
-#' @importFrom raster alignExtent crop extent merge mosaic origin projectRaster
+#' @importFrom raster alignExtent crop extent merge mosaic origin projectRaster stack
 #' @rdname splitRaster
 #'
 setGeneric("mergeRaster", function(x, fun = NULL) {
@@ -68,7 +68,7 @@ setMethod(
         } else {
           rasMosaicArgs$fun <- mean
         }
-        y <- do.call(what = raster::mosaic, args = rasMosaicArgs)
+        y <- do.call(what = raster::mosaic, args = rasMosaicArgs) ## TODO: use alist with do.call for spatial objects!!!
       } else {
         for (i in seq_along(x)) {
           r <- x[[i]]
@@ -94,13 +94,19 @@ setMethod(
           }
           x[[i]] <- crop(r, extent(xminCut, xmaxCut, yminCut, ymaxCut))
         }
-        y <- do.call(raster::merge, x)
+        y <- do.call(raster::merge, x) ## TODO: use alist with do.call for spatial objects!!!
       }
-      regex_tile <- "_tile[0-9].*$"
-      names(y) <- if (any(grepl(regex_tile, sapply(x, names)))) {
-        gsub("regex_tile", "", names(x[[1]]))
-      } else {
-        paste(sapply(x, names), collapse = "_")
+      if (all(sapply(x, is, class2 = "RasterLayer"))) {
+        regex_tile <- "_tile[0-9].*$"
+        names(y) <- if (any(grepl(regex_tile, sapply(x, names)))) {
+          gsub("regex_tile", "", names(x[[1]]))
+        } else {
+          paste(sapply(x[[1]], names), collapse = "_")
+        }
+      } else if (all(sapply(x, is, class2 = "RasterBrick")) |
+                 all(sapply(x, is, class2 = "RasterStack"))) {
+        names(y) <- names(x[[1]])
+        y <- stack(y)
       }
       return(y)
     } else {
