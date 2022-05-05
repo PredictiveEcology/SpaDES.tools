@@ -234,7 +234,7 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
       stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
     x <- spTransform(x, CRSobj = crsInUTM)
     message("The CRS provided is not in meters; ",
-            ". Converting internally to UTM so area will be approximately correct")
+            "converting internally to UTM so area will be approximately correct.")
   }
   # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
   #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
@@ -299,7 +299,7 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
       area <- hectares
   }
   need <- TRUE
-  while(need) {
+  while (need) {
     sp1 <- spsample(x, 1, "random")
     sp2 <- randomPolygon(sp1, area)
     contain <- gContains(sp2, sp1)
@@ -502,7 +502,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 
 utmCRS <- function(x) {
   zone <- long2UTM(mean(c(xmax(x), xmin(x))))
-  CRS(paste0("+proj=utm +zone=", zone, " ellps=WGS84"))
+  sp::CRS(paste0("+proj=utm +zone=", zone, " +datum=WGS84"))
 }
 
 long2UTM <- function(long) {
