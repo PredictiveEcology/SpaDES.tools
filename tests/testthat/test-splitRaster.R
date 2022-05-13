@@ -1,6 +1,10 @@
 test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   library(magrittr)
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
+  library(raster)
+
+  on.exit({
+    detach("package:raster")
+  }, add = TRUE)
 
   owd <- getwd()
   tmpdir <- file.path(tempdir(), "splitRaster-test") %>% checkPath(create = TRUE)
@@ -52,7 +56,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
 
   # as a stack/brick
   if (requireNamespace("purrr", quietly = TRUE)) {
-    ys0 <- lapply(purrr::transpose(lapply(as.list(b), splitRaster, nx = nx, ny = ny)), stack)
+    ys0 <- lapply(purrr::transpose(lapply(X = as.list(b), FUN = splitRaster, nx = nx, ny = ny)), stack)
     ms0 <- mergeRaster(ys0)
     expect_identical(names(ms0), names(ys0[[1]]))
   }
@@ -164,8 +168,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
 
 test_that("splitRaster works in parallel", {
   skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
+  skip_on_ci()
 
   if (interactive()) {
     library(raster); on.exit(detach("package:raster"), add = TRUE)
@@ -173,10 +176,7 @@ test_that("splitRaster works in parallel", {
     tmpdir <- file.path(tempdir(), "splitRaster-test-parallel") %>%
       checkPath(create = TRUE)
 
-    on.exit({
-      #detach("package:raster")
-      unlink(tmpdir, recursive = TRUE)
-    }, add = TRUE)
+    on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
 
     b <- brick(system.file("external/rlogo.grd", package = "raster"))
     r <- b[[1]] # use first layer only
@@ -190,7 +190,7 @@ test_that("splitRaster works in parallel", {
 
     # test parallel cropping
     n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
-    beginCluster(n)
+    raster::beginCluster(n)
     on.exit(raster::endCluster(), add = TRUE)
 
     cl <- getCluster()
@@ -228,8 +228,7 @@ test_that("splitRaster works in parallel", {
 
 test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
+  skip_on_ci()
   skip("This is very big.")
 
   library(magrittr)

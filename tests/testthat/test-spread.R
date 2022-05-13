@@ -830,8 +830,7 @@ test_that("cir angles arg doesn't work", {
 
 test_that("multi-core version of distanceFromEachPoints does not work correctly", {
   skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
+  skip_on_ci()
 
   if (interactive()) {
     library(raster); on.exit(detach("package:raster"), add = TRUE)

@@ -96,12 +96,13 @@ setMethod(
         }
         y <- do.call(raster::merge, x) ## TODO: use alist with do.call for spatial objects!!!
       }
-      if (all(sapply(x, is, class2 = "RasterLayer"))) {
+
+      if (all(vapply(x, is, logical(1), class2 = "RasterLayer"))) {
         regex_tile <- "_tile[0-9].*$"
         names(y) <- if (any(grepl(regex_tile, sapply(x, names)))) {
           gsub("regex_tile", "", names(x[[1]]))
         } else {
-          paste(sapply(x[[1]], names), collapse = "_")
+          paste(unique(vapply(x, names, character(1))), collapse = "_")
         }
       } else if (all(sapply(x, is, class2 = "RasterBrick")) |
                  all(sapply(x, is, class2 = "RasterStack"))) {

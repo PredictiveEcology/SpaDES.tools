@@ -23,7 +23,9 @@ test_that("mergeRaster will return a message if tiles are resampled", {
     return(r)
   })
   expect_is(splitted, "list")
-  expect_message(merged <- mergeRaster(x = splitted))
+  expect_message({
+    merged <- mergeRaster(x = splitted)
+  })
   expect_is(merged, "RasterLayer")
 })
 
@@ -50,8 +52,11 @@ test_that("mergeRaster will produce error if only one raster passed", {
                         resolution = c(30, 30),
                         crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
                         vals = round(runif(n = 14400 , min = 1, max = 10)))
-  expect_error(merged <- mergeRaster(x = ras))
+  expect_error({
+    merged <- mergeRaster(x = ras)
+  })
 })
+
 test_that("mergeRaster will use mosaic with default mean if rasters are resampled and fun if passed", {
   library(raster)
   library(magrittr)
@@ -77,8 +82,12 @@ test_that("mergeRaster will use mosaic with default mean if rasters are resample
     return(r)
   })
   expect_is(splitted, "list")
-  expect_message(merged <- mergeRaster(x = splitted))
-  expect_message(merged2 <- mergeRaster(x = splitted, fun = max))
+  expect_message({
+    merged <- mergeRaster(x = splitted)
+  })
+  expect_message({
+    merged2 <- mergeRaster(x = splitted, fun = max)
+  })
   expect_is(merged, "RasterLayer")
   expect_is(merged2, "RasterLayer")
 })
