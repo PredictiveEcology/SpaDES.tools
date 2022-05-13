@@ -11,7 +11,7 @@ test_that("mergeRaster will return a message if tiles are resampled", {
   splitted <- SpaDES.tools::splitRaster(r = ras, nx = nx, ny = ny, buffer = c(100, 100))
   expect_is(splitted, "list")
   expect_length(splitted, nx*ny)
-  splitted <- lapply(X = 1:length(splitted), FUN = function(tiles){
+  splitted <- lapply(X = 1:length(splitted), FUN = function(tiles) {
     y <- raster::raster(xmn = raster::xmin(splitted[[tiles]]),
                         xmx = raster::xmax(splitted[[tiles]]),
                         ymn = raster::ymin(splitted[[tiles]]),

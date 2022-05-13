@@ -56,7 +56,8 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
 
   # as a stack/brick
   if (requireNamespace("purrr", quietly = TRUE)) {
-    ys0 <- lapply(purrr::transpose(lapply(X = as.list(b), FUN = splitRaster, nx = nx, ny = ny)), stack)
+    asRasterList <- selectMethod("as.list", "Raster") ## ensure the raster method for as.list used (instead of base version)
+    ys0 <- lapply(purrr::transpose(lapply(X = asRasterList(b), FUN = splitRaster, nx = nx, ny = ny)), stack)
     ms0 <- mergeRaster(ys0)
     expect_identical(names(ms0), names(ys0[[1]]))
   }
