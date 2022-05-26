@@ -32,6 +32,21 @@ setMethod(
   signature = signature(x = "list"),
   definition = function(x, fun) {
     if (length(x) > 1) {
+      xminExtent <- sapply(x, xmin) %>% unique() %>% sort() # nolint
+      xmaxExtent <- sapply(x, xmax) %>% unique() %>% sort() # nolint
+      yminExtent <- sapply(x, ymin) %>% unique() %>% sort() # nolint
+      ymaxExtent <- sapply(x, ymax) %>% unique() %>% sort() # nolint
+      xBuffer <- if (any(length(xminExtent) == 1, length(xmaxExtent) == 1)) {
+        0.0
+      } else {
+        unique((xmaxExtent[-length(xmaxExtent)] - xminExtent[-1]) / 2) # nolint
+      }
+      yBuffer <- if (any(length(yminExtent) == 1, length(ymaxExtent) == 1)) {
+        0.0
+      } else {
+        unique((ymaxExtent[-length(ymaxExtent)] - yminExtent[-1]) / 2) # nolint
+      }
+
       ## check that all rasters share same origin (i.e., are aligned)
       origins <- sapply(x, origin)
       if (!do.call(identical , as.list(origins[, 1])) |
@@ -46,18 +61,12 @@ setMethod(
         }))
       }
 
-      xminExtent <- sapply(x, xmin) %>% unique() %>% sort() # nolint
-      xmaxExtent <- sapply(x, xmax) %>% unique() %>% sort() # nolint
-      yminExtent <- sapply(x, ymin) %>% unique() %>% sort() # nolint
-      ymaxExtent <- sapply(x, ymax) %>% unique() %>% sort() # nolint
-      xBuffer <- unique((xmaxExtent[-length(xmaxExtent)] - xminExtent[-1]) / 2) # nolint
-      yBuffer <- unique((ymaxExtent[-length(ymaxExtent)] - yminExtent[-1]) / 2) # nolint
       if (any(length(xBuffer) > 1, length(yBuffer) > 1)) {
         message(paste0("The tiles present different buffers (likely due to resampling).",
                        " mergeRaster() will use raster::mosaic()."))
+        rTemplate <- x[[1]]
         for (i in seq_along(x)) {
           if (i == 1) next
-          rTemplate <- x[[1]]
           raster::extent(x[[i]]) <- raster::alignExtent(extent = raster::extent(x[[i]]),
                                                         object = rTemplate,
                                                         snap = "near")
@@ -94,6 +103,7 @@ setMethod(
           }
           x[[i]] <- crop(r, extent(xminCut, xmaxCut, yminCut, ymaxCut))
         }
+
         y <- do.call(raster::merge, x) ## TODO: use alist with do.call for spatial objects!!!
       }
 
