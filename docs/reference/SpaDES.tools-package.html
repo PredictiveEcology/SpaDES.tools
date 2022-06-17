@@ -6,27 +6,31 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Categorized overview of the <code>SpaDES.tools</code> package — SpaDES.tools-package • SpaDES.tools</title>
+<title>Categorized overview of the SpaDES.tools package — SpaDES.tools-package • SpaDES.tools</title>
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -35,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Categorized overview of the <code>SpaDES.tools</code> package — SpaDES.tools-package" />
+<meta property="og:title" content="Categorized overview of the SpaDES.tools package — SpaDES.tools-package" />
 <meta property="og:description" content="" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.7.9007</span>
       </span>
     </div>
 
@@ -77,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -90,8 +93,8 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/PredictiveEcology/SpaDES.tools">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -132,7 +135,7 @@ Several functions assist with these:</p>
                          <code><a href='https://rdrr.io/pkg/raster/man/adjacent.html'>adjacent</a></code></td></tr>
 <tr><td><code><a href='cir.html'>cir</a></code></td><td>Identify pixels in a circle around a
                          <code><a href='https://rdrr.io/pkg/sp/man/SpatialPoints-class.html'>SpatialPoints*</a></code> object</td></tr>
-<tr><td><code><a href='directions.html'>directionFromEachPoint</a></code></td><td>Fast calculation of direction and
+<tr><td><code><a href='directionFromEachPoint.html'>directionFromEachPoint</a></code></td><td>Fast calculation of direction and
                                             distance surfaces</td></tr>
 <tr><td><code><a href='distanceFromEachPoint.html'>distanceFromEachPoint</a></code></td><td>Fast calculation of distance surfaces</td></tr>
 <tr><td><code><a href='rings.html'>rings</a></code></td><td>Identify rings around focal cells (e.g., buffers and donuts)</td></tr>
@@ -149,12 +152,12 @@ Several functions assist with these:</p>
 
 <p>Agents have several methods and functions specific to them:</p>
 <table class='table'>
-<tr><td><code><a href='crw.html'>crw</a></code></td><td>Simple correlated random walk function</td></tr>
+<tr><td><code><a href='move.html'>crw</a></code></td><td>Simple correlated random walk function</td></tr>
 <tr><td><code><a href='heading.html'>heading</a></code></td><td>Determines the heading between SpatialPoints*</td></tr>
 <tr><td><code><a href='http://quickplot.predictiveecology.org//reference/makeLines.html'>makeLines</a></code></td><td>Makes <code>SpatialLines</code> object for,
                                           e.g., drawing arrows</td></tr>
-<tr><td><code><a href='crw.html'>move</a></code></td><td>A meta function that can currently only take "crw"</td></tr>
-<tr><td><code><a href='specnumperpatch-probs.html'>specificNumPerPatch</a></code></td><td>Initiate a specific number of agents per patch</td></tr>
+<tr><td><code><a href='move.html'>move</a></code></td><td>A meta function that can currently only take "crw"</td></tr>
+<tr><td><code><a href='specificNumPerPatch.html'>specificNumPerPatch</a></code></td><td>Initiate a specific number of agents per patch</td></tr>
 </table>
 
 
@@ -166,7 +169,7 @@ Several functions assist with these:</p>
 <p>In addition to the vast amount of GIS operations available in R (mostly from
 contributed packages such as <code>sp</code>, <code>raster</code>, <code>maps</code>, <code>maptools</code>
 and many others), we provide the following GIS-related functions:</p><table class='table'>
-<tr><td><code>equalExtent</code></td><td>Assess whether a list of extents are all equal</td></tr>
+<tr><td><code><a href='http://quickplot.predictiveecology.org//reference/equalExtent.html'>equalExtent</a></code></td><td>Assess whether a list of extents are all equal</td></tr>
 </table>
 
 
@@ -178,7 +181,7 @@ and many others), we provide the following GIS-related functions:</p><table clas
 <p>These functions convert between reduced and mapped representations of the same data.
 This allows compact representation of, e.g., rasters that have many individual pixels
 that share identical information.</p><table class='table'>
-<tr><td><code><a href='rasterizeReduce.html'>rasterizeReduced</a></code></td><td>Convert reduced representation to full raster</td></tr>
+<tr><td><code><a href='rasterizeReduced.html'>rasterizeReduced</a></code></td><td>Convert reduced representation to full raster</td></tr>
 </table>
 
 
@@ -191,7 +194,7 @@ that share identical information.</p><table class='table'>
 before all data are available.
 These dummy maps can later be replaced with actual data maps.</p>
 <table class='table'>
-<tr><td><code><a href='gaussmap.html'>gaussMap</a></code></td><td>Creates a random map using Gaussian random fields</td></tr>
+<tr><td><code><a href='gaussMap.html'>gaussMap</a></code></td><td>Creates a random map using Gaussian random fields</td></tr>
 <tr><td><code><a href='randomPolygons.html'>randomPolygons</a></code></td><td>Creates a random polygon with specified number of classes</td></tr>
 </table>
 
@@ -204,11 +207,11 @@ These dummy maps can later be replaced with actual data maps.</p>
 <p>These functions are essentially skeletons and are not fully implemented.
 They are intended to make translations from <a href='http://www.gowlland.ca/'>SELES</a>.
 You must know how to use SELES for these to be useful:</p><table class='table'>
-<tr><td><code><a href='SELESagentLocation.html'>agentLocation</a></code></td><td>Agent location</td></tr>
+<tr><td><code><a href='agentLocation.html'>agentLocation</a></code></td><td>Agent location</td></tr>
 <tr><td><code><a href='initiateAgents.html'>initiateAgents</a></code></td><td>Initiate agents into a <code>SpatialPointsDataFrame</code></td></tr>
-<tr><td><code><a href='SELESnumAgents.html'>numAgents</a></code></td><td>Number of agents</td></tr>
-<tr><td><code><a href='SELESprobInit.html'>probInit</a></code></td><td>Probability of initiating an agent or event</td></tr>
-<tr><td><code><a href='SELEStransitions.html'>transitions</a></code></td><td>Transition probability</td></tr>
+<tr><td><code><a href='numAgents.html'>numAgents</a></code></td><td>Number of agents</td></tr>
+<tr><td><code><a href='probInit.html'>probInit</a></code></td><td>Probability of initiating an agent or event</td></tr>
+<tr><td><code><a href='transitions.html'>transitions</a></code></td><td>Transition probability</td></tr>
 </table>
 
 
@@ -232,22 +235,8 @@ You must know how to use SELES for these to be useful:</p><table class='table'>
 </ul>
 
 </div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#-spatial-spreading-distances-methods">1 Spatial spreading/distances methods</a></li>
-      <li><a href="#-spatial-agent-methods">2 Spatial agent methods</a></li>
-      <li><a href="#-gis-operations">3 GIS operations</a></li>
-      <li><a href="#-map-reduce-type-operations">4 Map-reduce - type operations</a></li>
-      <li><a href="#-random-map-generation">5 Random Map Generation</a></li>
-      <li><a href="#-seles-type-approach-to-simulation">6 SELES-type approach to simulation</a></li>
-      <li><a href="#-package-options">7 Package options</a></li>
-      <li><a href="#see-also">See also</a></li>
-    </ul>
-
-    <h2>Author</h2>
     <p><strong>Maintainer</strong>: Alex M Chubaty <a href='mailto:alex.chubaty@gmail.com'>alex.chubaty@gmail.com</a> (<a href='https://orcid.org/0000-0001-7146-8135'>ORCID</a>)</p>
 <p>Authors:</p><ul>
 <li><p>Eliot J B McIntire <a href='mailto:eliot.mcintire@canada.ca'>eliot.mcintire@canada.ca</a> (<a href='https://orcid.org/0000-0002-6914-8316'>ORCID</a>)</p></li>
@@ -261,6 +250,12 @@ You must know how to use SELES for these to be useful:</p><table class='table'>
 </ul>
 
 
+
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -271,7 +266,7 @@ You must know how to use SELES for these to be useful:</p><table class='table'>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

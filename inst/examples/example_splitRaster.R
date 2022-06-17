@@ -1,4 +1,5 @@
 library(raster)
+library(Require)
 
 # an example with dimensions:
 # nrow: 77
@@ -9,8 +10,7 @@ r <- b[[1]] # use first layer only
 nx <- 1
 ny <- 2
 
-tmpdir <- file.path(tempdir(), "splitRaster-example")
-dir.create(tmpdir)
+tmpdir <- checkPath(file.path(tempdir(), "splitRaster-example"), create = TRUE)
 
 y0 <- splitRaster(r, nx, ny, path = file.path(tmpdir, "y0")) # no buffer
 

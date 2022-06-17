@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -53,7 +57,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -67,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.7.9007</span>
       </span>
     </div>
 
@@ -75,7 +79,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -88,8 +92,8 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/PredictiveEcology/SpaDES.tools">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -106,17 +110,114 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Changelog <small></small></h1>
+      <h1 data-toc-skip>Changelog <small></small></h1>
       <small>Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="version-0-3-3" class="section level1">
-<h1 class="page-header">
-<a href="#version-0-3-3" class="anchor"></a>version 0.3.3<small> Unreleased </small>
+    <div id="version-038" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.8">
+<a href="#version-038" class="anchor"></a>version 0.3.8<small> Unreleased </small>
+</h1>
+<div id="enhancements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements" class="anchor"></a>enhancements</h2>
+<ul>
+<li>improved speed for <code>spread</code> under most conditions, especially larger events, possibly up to 2x.</li>
+</ul>
+</div>
+</div>
+    <div id="version-036" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.6">
+<a href="#version-036" class="anchor"></a>version 0.3.6<small> 2020-06-23 </small>
 </h1>
 <div id="dependency-changes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dependency-changes" class="anchor"></a>Dependency changes</h2>
+<ul>
+<li>none</li>
+</ul>
+</div>
+<div id="bugfixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bugfixes" class="anchor"></a>Bugfixes</h2>
+<ul>
+<li>
+<code>spread</code> with <code>allowOverlap = TRUE</code> would give wrong results. Fixed.</li>
+<li>update a test to deal with forthcoming <code>raster</code> changes.</li>
+</ul>
+</div>
+<div id="enhancements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-1" class="anchor"></a>Enhancements</h2>
+<ul>
+<li>none</li>
+</ul>
+</div>
+</div>
+    <div id="version-035" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.5">
+<a href="#version-035" class="anchor"></a>version 0.3.5<small> 2020-05-15 </small>
+</h1>
+<p>We have identified a non-trivial bug in <code>spread</code> when using <code>allowOverlap = TRUE</code>. Until we can patch this bug, using this argument value will generate an error. We are currently working on a fix, which may take some time.</p>
+<div id="dependency-changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dependency-changes-1" class="anchor"></a>Dependency changes</h2>
+<ul>
+<li>removed orphaned package <code>bit</code>; its reverse dependencies, <code>ff</code> and <code>ffbase</code>, moved to Suggests</li>
+</ul>
+</div>
+<div id="bugfixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bugfixes-1" class="anchor"></a>Bugfixes</h2>
+<ul>
+<li>none</li>
+</ul>
+</div>
+<div id="enhancements-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-2" class="anchor"></a>Enhancements</h2>
+<ul>
+<li>
+<code>spread</code> sped up for <code>allowOverlap = TRUE</code>
+</li>
+<li>New values for <code>returnIndices</code> arg in <code>spread</code>, allowing for <code>numeric</code>. New option, <code>2</code> allows for the fastest return possible, only <code>pixelIndices</code>
+</li>
+</ul>
+</div>
+</div>
+    <div id="version-034" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.4">
+<a href="#version-034" class="anchor"></a>version 0.3.4<small> 2019-12-17 </small>
+</h1>
+<div id="dependency-changes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dependency-changes-2" class="anchor"></a>Dependency changes</h2>
+<ul>
+<li>none</li>
+</ul>
+</div>
+<div id="bugfixes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bugfixes-2" class="anchor"></a>Bugfixes</h2>
+<ul>
+<li>fix issues with failing tests on CRAN</li>
+</ul>
+</div>
+<div id="enhancements-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-3" class="anchor"></a>Enhancements</h2>
+<ul>
+<li>none</li>
+</ul>
+</div>
+</div>
+    <div id="version-033" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.3">
+<a href="#version-033" class="anchor"></a>version 0.3.3<small> 2019-11-25 </small>
+</h1>
+<div id="dependency-changes-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dependency-changes-3" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>Requires R &gt;= 3.5</li>
 <li>Added <code>animation</code> since it is used in the <code>spread3</code> example.</li>
@@ -124,43 +225,43 @@
 <li>Removed <code>profvis</code> and <code>microbenchmark</code> from Suggests: all benchmarking is removed from automated tests</li>
 </ul>
 </div>
-<div id="bugfixes" class="section level2">
+<div id="bugfixes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bugfixes" class="anchor"></a>Bugfixes</h2>
+<a href="#bugfixes-3" class="anchor"></a>Bugfixes</h2>
 <ul>
 <li>minor bug fixes</li>
 </ul>
 </div>
-<div id="enhancements" class="section level2">
+<div id="enhancements-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#enhancements" class="anchor"></a>Enhancements</h2>
+<a href="#enhancements-4" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
 <code>spread2</code> speed enhancements</li>
 </ul>
 </div>
 </div>
-    <div id="version-0-3-2" class="section level1">
-<h1 class="page-header">
-<a href="#version-0-3-2" class="anchor"></a>version 0.3.2<small> 2019-03-19 </small>
+    <div id="version-032" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.2">
+<a href="#version-032" class="anchor"></a>version 0.3.2<small> 2019-03-19 </small>
 </h1>
-<div id="dependency-changes-1" class="section level2">
+<div id="dependency-changes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-1" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-4" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li>
 </ul>
 </div>
-<div id="bugfixes-1" class="section level2">
+<div id="bugfixes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bugfixes-1" class="anchor"></a>Bugfixes</h2>
+<a href="#bugfixes-4" class="anchor"></a>Bugfixes</h2>
 <ul>
 <li>minor bug fixes</li>
 </ul>
 </div>
-<div id="enhancements-1" class="section level2">
+<div id="enhancements-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#enhancements-1" class="anchor"></a>Enhancements</h2>
+<a href="#enhancements-5" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
 <code>spread2</code> now takes a numeric for <code>allowOverlap</code>, to allow for 1 more scenario of overlapping, namely, allow between event overlapping, and within event overlapping only if the overlap occurs in the same iteration, otherwise, do not allow overlap within event.</li>
@@ -170,21 +271,21 @@
 </ul>
 </div>
 </div>
-    <div id="version-0-3-1" class="section level1">
-<h1 class="page-header">
-<a href="#version-0-3-1" class="anchor"></a>version 0.3.1<small> 2019-02-01 </small>
+    <div id="version-031" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.1">
+<a href="#version-031" class="anchor"></a>version 0.3.1<small> 2019-02-01 </small>
 </h1>
-<div id="dependency-changes-2" class="section level2">
+<div id="dependency-changes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-2" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-5" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>
 <code>RandomFields</code> moved to Suggests to prevent clashes with <code>data.table</code> multithreading</li>
 </ul>
 </div>
-<div id="enhancements-2" class="section level2">
+<div id="enhancements-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#enhancements-2" class="anchor"></a>Enhancements</h2>
+<a href="#enhancements-6" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>
 <code>randomPolygon</code> now has <code>area</code> argument, instead of <code>hectares</code> (deprecated), and it now succeeds for more cases.</li>
@@ -195,9 +296,9 @@
 </ul>
 </div>
 </div>
-    <div id="version-0-3-0" class="section level1">
-<h1 class="page-header">
-<a href="#version-0-3-0" class="anchor"></a>version 0.3.0<small> 2018-07-14 </small>
+    <div id="version-030" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.0">
+<a href="#version-030" class="anchor"></a>version 0.3.0<small> 2018-07-14 </small>
 </h1>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
@@ -217,9 +318,9 @@
 </ul>
 </div>
 </div>
-    <div id="version-0-2-0" class="section level1">
-<h1 class="page-header">
-<a href="#version-0-2-0" class="anchor"></a>version 0.2.0<small> 2018-06-18 </small>
+    <div id="version-020" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.0">
+<a href="#version-020" class="anchor"></a>version 0.2.0<small> 2018-06-18 </small>
 </h1>
 <div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
@@ -234,7 +335,7 @@
 <a href="#deprecated-functions" class="anchor"></a>Deprecated functions</h2>
 <ul>
 <li>
-<code><a href="../reference/deprecated.html">fastCrop()</a></code>: <code><a href="https://rdrr.io/pkg/raster/man/crop.html">raster::crop</a></code> is faster than <code>velox::crop</code> under many tests.</li>
+<code><a href="../reference/fastCrop.html">fastCrop()</a></code>: <code><a href="https://rdrr.io/pkg/raster/man/crop.html">raster::crop</a></code> is faster than <code>velox::crop</code> under many tests.</li>
 <li>
 <code>fastMask()</code>: moved to the <code>reproducible</code> package.</li>
 </ul>
@@ -247,18 +348,18 @@
 <li>minor test fixes.</li>
 </ul>
 </div>
-<div id="dependency-changes-3" class="section level2">
+<div id="dependency-changes-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dependency-changes-3" class="anchor"></a>Dependency changes</h2>
+<a href="#dependency-changes-6" class="anchor"></a>Dependency changes</h2>
 <ul>
 <li>
 <code>dplyr</code> and <code>mgcv</code> added to Suggests because they are used in tests.</li>
 </ul>
 </div>
 </div>
-    <div id="version-0-1-1" class="section level1">
-<h1 class="page-header">
-<a href="#version-0-1-1" class="anchor"></a>version 0.1.1<small> 2018-02-01 </small>
+    <div id="version-011" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.1">
+<a href="#version-011" class="anchor"></a>version 0.1.1<small> 2018-02-01 </small>
 </h1>
 <ul>
 <li>add more detailed information to package Description, per CRAN.</li>
@@ -267,9 +368,9 @@
 <li>minor bug fixes.</li>
 </ul>
 </div>
-    <div id="version-0-1-0" class="section level1">
-<h1 class="page-header">
-<a href="#version-0-1-0" class="anchor"></a>version 0.1.0<small> 2017-08-12 </small>
+    <div id="version-010" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.0">
+<a href="#version-010" class="anchor"></a>version 0.1.0<small> 2017-08-12 </small>
 </h1>
 <ul>
 <li>
@@ -282,19 +383,10 @@
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <div id="tocnav">
-      <h2>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-        <li><a href="#version-0-3-3">0.3.3</a></li>
-        <li><a href="#version-0-3-2">0.3.2</a></li>
-        <li><a href="#version-0-3-1">0.3.1</a></li>
-        <li><a href="#version-0-3-0">0.3.0</a></li>
-        <li><a href="#version-0-2-0">0.2.0</a></li>
-        <li><a href="#version-0-1-1">0.1.1</a></li>
-        <li><a href="#version-0-1-0">0.1.0</a></li>
-      </ul>
-    </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 
 </div>
@@ -306,7 +398,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

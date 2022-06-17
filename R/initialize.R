@@ -41,7 +41,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
-#' @rdname gaussmap
+#' @rdname gaussMap
 #'
 #' @examples
 #' \dontrun{
@@ -122,11 +122,11 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #'
 #' These are built with the \code{\link{spread}} function internally.
 #'
-#' @param ras A raster that whose extent will be used for the randomPolygons.
+#' @param ras A raster that whose extent will be used for the random polygons.
 #'
 #' @param numTypes Numeric value. The number of unique polygon types to use.
 #'
-#' @param ...      Other arguments passed to spread. No known uses currently.
+#' @param ...      Other arguments passed to \code{spread}. No known uses currently.
 #'
 #' @return A map of extent \code{ext} with random polygons.
 #'
@@ -150,8 +150,8 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' library(raster)
 #' # more complex patterning, with a range of patch sizes
 #' a <- randomPolygons(numTypes = 400, raster(extent(0, 50, 0, 50), res = 1, vals = 0))
-#' a[a<320] <- 0
-#' a[a>=320] <- 1
+#' a[a < 320] <- 0
+#' a[a >= 320] <- 1
 #' suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important
 #' aHist <- hist(table(getValues(clumped)), plot = FALSE)
 #' if (interactive()) {
@@ -234,14 +234,13 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
       stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
     x <- spTransform(x, CRSobj = crsInUTM)
     message("The CRS provided is not in meters; ",
-            ". Converting internally to UTM so area will be approximately correct")
+            "converting internally to UTM so area will be approximately correct.")
   }
   # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
   #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
   #                       " +units=m +no_defs"))
 
   #y <- spTransform(x, areaCRS)
-
 
   meanX <- mean(coordinates(x)[, 1]) - radius
   meanY <- mean(coordinates(x)[, 2]) - radius
@@ -300,7 +299,7 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
       area <- hectares
   }
   need <- TRUE
-  while(need) {
+  while (need) {
     sp1 <- spsample(x, 1, "random")
     sp2 <- randomPolygon(sp1, area)
     contain <- gContains(sp2, sp1)
@@ -353,8 +352,8 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #' rasAgents <- specificNumPerPatch(ras, patchDT)
 #' rasAgents[is.na(rasAgents)] <- 0
 #'
-#' library(testthat)
-#' expect_true(all(unname(table(ras[rasAgents])) == patchDT$num.in.pop))
+#' if (require(testthat))
+#'   expect_true(all(unname(table(ras[rasAgents])) == patchDT$num.in.pop))
 #'
 #' # Use numPerPatchMap
 #' rasPatches <- ras
@@ -503,7 +502,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 
 utmCRS <- function(x) {
   zone <- long2UTM(mean(c(xmax(x), xmin(x))))
-  CRS(paste("+proj=utm +zone=",zone," ellps=WGS84",sep=''))
+  sp::CRS(paste0("+proj=utm +zone=", zone, " +datum=WGS84"))
 }
 
 long2UTM <- function(long) {

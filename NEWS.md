@@ -1,16 +1,88 @@
-Known issues: https://github.com/PredictiveEcology/SpaDES.tools/issues
+Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
-version 0.3.4.9000
+version 0.3.10.9000
+=============
+
+## Dependency changes
+* none
+
+## Enhancements
+* `mergeRaster()` can deal with rasters with different origins extents (i.e., that weren't produced using `splitRaster()`)
+
+## bug fixes
+* none
+
+version 0.3.10
+=============
+
+## Dependency changes
+* drop support for R 3.6 (#65)
+
+## Enhancements
+* none
+
+## bug fixes
+* fix error in `spread2()` causing failures on R-devel
+
+version 0.3.9
+=============
+
+## Dependency changes
+* `Require` moved to `Suggests`, because it's only used in examples.
+
+## Enhancements
+* none
+
+## bug fixes
+* fixed misc CRAN check issues with Suggested packages
+* fixed bug in `splitRaster()` (#62; @anbm-dk)
+
+version 0.3.8
+=============
+
+## Dependency changes
+* Dropped support for R 3.5 due to changes in dependency packages. R versions 3.6 and higher are supported.
+
+## Enhancements
+* `distanceFromEachPoint`: `cl` argument can now accept a numeric scalar indicating how many cores to use with an `mclapply` internally
+* `distanceFromEachPoint`: minor speed improvements
+* `spread3` has new arguments (`sdDist`, `dispersalKernel`)
+* improved speed for `spread` under most conditions, especially larger events, possibly up to 2x.
+* `splitRaster()` can now specify file extension, instead of defaulting to `.grd`
+* several under the hood improvements for stability, speed
+
+## bug fixes
+* `distanceFromEachPoint` bugfixes under some cases (some values of `toCells`, `angles` would cause errors)
+
+version 0.3.6
 =============
 
 ## Dependency changes
 * none
 
 ## Bugfixes
-* none
+* `spread` with `allowOverlap = TRUE` would give wrong results. Fixed.
+* update a test to deal with forthcoming `raster` changes.
 
 ## Enhancements
 * none
+
+version 0.3.5
+=============
+
+We have identified a non-trivial bug in `spread` when using `allowOverlap = TRUE`.
+Until we can patch this bug, using this argument value will generate an error.
+We are currently working on a fix, which may take some time.
+
+## Dependency changes
+* removed orphaned package `bit`; its reverse dependencies, `ff` and `ffbase`, moved to Suggests
+
+## Bugfixes
+* none
+
+## Enhancements
+* `spread` sped up for `allowOverlap = TRUE`
+* New values for `returnIndices` arg in `spread`, allowing for `numeric`. New option, `2` allows for the fastest return possible, only `pixelIndices`
 
 version 0.3.4
 =============

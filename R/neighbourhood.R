@@ -123,10 +123,14 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     numCell <- as.integer(ncell(x))
   }
 
-  if (directions == "bishop")  {
-    dirs <- 4
-    needCorners <- TRUE
-  } else {
+  if (is.character(directions)) {
+    if (directions == "bishop")  {
+      dirs <- 4
+      needCorners <- TRUE
+    } else {
+      stop("directions must be numeric or 'bishop'")
+    }
+} else {
     needCorners <- if (directions == 8) TRUE else FALSE
     dirs <- directions
   }
@@ -202,7 +206,7 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     if (!is.null(id)) adj <- cbind(adj, id = rep.int(id, times = numToCells))
   } else {
     adj <- data.table(from = fromCells, to = toCells)
-    if (!is.null(id)) set(adj, , "id", rep.int(id, times = numToCells))
+    if (!is.null(id)) set(adj, NULL, "id", rep.int(id, times = numToCells))
   }
 
   if (useMatrix) {
@@ -228,10 +232,18 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     keepCols <- if (is.null(id)) "to" else c("to", "id")
     if (!torus) {
       if (pairs) {
-        return(adj[
-          !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
+        # orig <- adj[
+        #   !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
+        #       ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
+        #   , , drop = FALSE]
+        # return(orig)
+        #possNew <-
+          return(adj[
+          !((adj[, "to"] <= 0 | adj[, "to"] > numCell)  | # top or bottom of raster
               ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
           , , drop = FALSE])
+        # if (!identical(orig, possNew)) stop("the new adj algorithm is not the same as the old")
+        #return(possNew)
       } else {
         adj <- adj[
           !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
@@ -720,7 +732,7 @@ cir <- function(landscape, coords, loci,
     }
     matDT <- matDT[, -which(colnames(matDT) == "rads"), drop = FALSE]
   }
-  if (!returnIndices) {
+  if (!(returnIndices > 0)) {
     ras <- raster(landscape)
     ras[] <- 0
     if (!allowOverlap) {

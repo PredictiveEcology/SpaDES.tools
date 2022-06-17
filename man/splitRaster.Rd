@@ -5,7 +5,7 @@
 \alias{mergeRaster,list-method}
 \alias{splitRaster}
 \alias{splitRaster,RasterLayer-method}
-\title{Split and re-merge RasterLayer(s)}
+\title{Split and re-merge \code{RasterLayer}(s)}
 \usage{
 mergeRaster(x, fun = NULL)
 
@@ -18,7 +18,8 @@ splitRaster(
   buffer = c(0, 0),
   path = NA,
   cl,
-  rType = "FLT4S"
+  rType = "FLT4S",
+  fExt = ".grd"
 )
 
 \S4method{splitRaster}{RasterLayer}(
@@ -28,7 +29,8 @@ splitRaster(
   buffer = c(0, 0),
   path = NA,
   cl,
-  rType = "FLT4S"
+  rType = "FLT4S",
+  fExt = ".grd"
 )
 }
 \arguments{
@@ -58,7 +60,9 @@ parallel::makeCluster or equivalent. This is an alternative way, instead
 of \code{beginCluster()}, to use parallelism for this function, allowing for
 more control over cluster use.}
 
-\item{rType}{Datatype of the split rasters. Defaults to FLT4S.}
+\item{rType}{Data type of the split rasters. Defaults to FLT4S.}
+
+\item{fExt}{file extension (e.g., \code{".grd"} or \code{".tif"}) specifying the file format.}
 }
 \value{
 \code{mergeRaster} returns a \code{RasterLayer} object.
@@ -71,33 +75,23 @@ Split rasters can be recombined using \code{do.call(merge, y)} or \code{mergeRas
 where \code{y <- splitRaster(x)}.
 }
 \details{
-\code{mergeRaster} differs from \code{merge} in how overlapping tile
-regions are handled: \code{merge} retains the values of the first raster in
-the list. This has the consequence of retaining the values from the buffered
+\code{mergeRaster} differs from \code{merge} in how overlapping tile regions
+are handled: \code{merge} retains the values of the first raster in the list.
+This has the consequence of retaining the values from the buffered
 region in the first tile in place of the values from the neighbouring tile.
 On the other hand, \code{mergeRaster} retains the values of the tile region,
-over the values in any buffered regions. This is useful for reducing edge
-effects when performing raster operations involving contagious processes.
-To use the average of cell values, or do another computation, use
-\code{\link[raster]{mosaic}}.
-\code{mergeRaster} is also faster than \code{merge}. \code{mergeRaster} also
-differs from \code{\link[raster]{mosaic}} in speed and ability to take a
-raster list. It can, however, use the average of cell values, or do other
-computations. At last, \code{mergeRaster} can also merge tiles of a split
-raster that were resampled and, therefore, could have had different changes
-in the buffer sizes on each side of the raster. If the user resamples the
-tiles and the new resolution is not a multiple of the original one,
-\code{mergeRaster} will use mosaic with the max function to merge the tiles
-with a message. The user can also pass the function to be used when mosaic
-is triggered.
+over the values in any buffered regions.
+This is useful for reducing edge effects when performing raster operations involving
+contagious processes.
 
-This function is parallel-aware, using the same mechanism as used in the \code{raster}
-package. Specifically, if you start a cluster using \code{\link{beginCluster}}, then
-this function will automatically use that cluster. It is always a good
-idea to stop the cluster when finished, using \code{\link{endCluster}}.
+This function is parallel-aware, using the same mechanism as used in \pkg{raster}.
+Specifically, if you start a cluster using \code{\link{beginCluster}},
+then this function will automatically use that cluster.
+It is always a good idea to stop the cluster when finished, using \code{\link{endCluster}}.
 }
 \examples{
 library(raster)
+library(Require)
 
 # an example with dimensions:
 # nrow: 77
@@ -108,8 +102,7 @@ r <- b[[1]] # use first layer only
 nx <- 1
 ny <- 2
 
-tmpdir <- file.path(tempdir(), "splitRaster-example")
-dir.create(tmpdir)
+tmpdir <- checkPath(file.path(tempdir(), "splitRaster-example"), create = TRUE)
 
 y0 <- splitRaster(r, nx, ny, path = file.path(tmpdir, "y0")) # no buffer
 

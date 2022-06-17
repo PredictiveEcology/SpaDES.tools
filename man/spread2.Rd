@@ -36,7 +36,7 @@ locations for spreading events to start and spread2 into. Required.}
 data.table that is the output of a previous \code{spread2}.
 If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
-\code{\link[raster]{cellFromXY}}.}
+\code{\link[raster:cellFrom]{cellFromXY}}.}
 
 \item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
 a \code{RasterLayer} that is the identical dimensions as
@@ -227,11 +227,11 @@ the same event (i.e., "it won't go backwards"). 2. If \code{allowOverlap} is
 
 This function can be interrupted before all active cells are exhausted if
 the \code{iterations} value is reached before there are no more active
-cells to spread2 into. The interrupted output (a data.table) can be passed
+cells to \code{spread2} into. The interrupted output (a data.table) can be passed
 subsequently as an input to this same function (as \code{start}).
 This is intended to be used for situations where external events happen during
 a spread2 event, or where one or more arguments to the spread2 function
-change before a spread2 event is completed.
+change before a \code{spread2} event is completed.
 For example, if it is desired that the \code{spreadProb} change before a
 spread2 event is completed because, for example, a fire is spreading, and a
 new set of conditions arise due to a change in weather.
@@ -376,13 +376,13 @@ if (interactive()) {
 maxSizes <- sort(sample(1:10, size = length(sams)))
 out <- spread2(a, start = sams, 0.225, maxSize = maxSizes, asRaster = FALSE)
 # check TRUE using data.table .N
-out[, .N, by = "initialPixels"]$n <= maxSizes
+out[, .N, by = "initialPixels"]$N <= maxSizes
 
 # Use exactSize -- gives an exact size, if there is enough space on the Raster
 exactSizes <- maxSizes
 out <- spread2(a, start = sams, spreadProb = 0.225,
                exactSize = exactSizes, asRaster = FALSE)
-out[, .N, by = "initialPixels"]$n == maxSizes # should be TRUE TRUE TRUE
+out[, .N, by = "initialPixels"]$N == maxSizes # should be TRUE TRUE TRUE
 
 # Use exactSize -- but where it can't be achieved
 exactSizes <- sort(sample(100:110, size = length(sams)))

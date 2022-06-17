@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // duplicatedInt
 LogicalVector duplicatedInt(IntegerVector x);
 RcppExport SEXP _SpaDES_tools_duplicatedInt(SEXP xSEXP) {
@@ -13,33 +18,6 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(duplicatedInt(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pointDistance2
-NumericMatrix pointDistance2(NumericMatrix to, NumericMatrix from);
-RcppExport SEXP _SpaDES_tools_pointDistance2(SEXP toSEXP, SEXP fromSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type to(toSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type from(fromSEXP);
-    rcpp_result_gen = Rcpp::wrap(pointDistance2(to, from));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pointDistance3
-NumericMatrix pointDistance3(NumericVector fromX, NumericVector toX, NumericVector fromY, NumericVector toY, double maxDistance);
-RcppExport SEXP _SpaDES_tools_pointDistance3(SEXP fromXSEXP, SEXP toXSEXP, SEXP fromYSEXP, SEXP toYSEXP, SEXP maxDistanceSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type fromX(fromXSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type toX(toXSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type fromY(fromYSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type toY(toYSEXP);
-    Rcpp::traits::input_parameter< double >::type maxDistance(maxDistanceSEXP);
-    rcpp_result_gen = Rcpp::wrap(pointDistance3(fromX, toX, fromY, toY, maxDistance));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -53,4 +31,15 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(runifC(N));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
+    {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_SpaDES_tools(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

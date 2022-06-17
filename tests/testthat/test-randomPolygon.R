@@ -6,7 +6,6 @@ test_that("randomPolygon: does not work properly", {
   on.exit({
     detach("package:raster")
     detach("package:rgeos")
-    detach("package:sp")
   }, add = TRUE)
 
   set.seed(1234) ## TODO: some seeds produce failing area test below!!
@@ -15,11 +14,12 @@ test_that("randomPolygon: does not work properly", {
   area <- 1e4
   center <- cbind(-110, 59)
   poly1 <- randomPolygon(center, area = area)
-  if (interactive())
+  if (interactive()) {
     plot(poly1)
+  }
 
   poly1InUTM <- sp::spTransform(poly1, utmCRS(poly1))
-  ## check that polygon area approkimately matches that given by hectares
+  ## check that polygon area approximately matches that given by hectares
   polyArea <- rgeos::gArea(poly1InUTM)
   expect_true(base::abs(base::abs(polyArea - area)) <  area/4) ## TODO: why is this area/4?
 

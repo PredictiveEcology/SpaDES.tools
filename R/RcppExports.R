@@ -17,44 +17,6 @@ duplicatedInt <- function(x) {
 }
 
 #' @title
-#' Point distance with C++
-#' @description
-#' \code{pointDistance2} performs Pythagorean Theorem and \code{cbind}s all
-#' columns from \code{to} to new dists column.
-#' It is only defined for one point (\code{from}) to many (\code{to}) points.
-#' \code{pointDistance3} performs Pythagorean Theorem and is to be used internally
-#' within \code{distanceFromEachPoint} as an alternative to \code{.pointDistance},
-#' where it does many points (\code{from}) to many (\code{to}) points, one
-#' \code{from} point at a time. The results are then \code{rbind}ed internally.
-#' It does not \code{cbind} extra columns from \code{to}.
-#'
-#' @inheritParams distanceFromEachPoint
-#' @return
-#' \code{pointDistance2}: a matrix with all the \code{to} columns plus one extra
-#' \code{dists} column.
-#' \code{pointDistance3}: a matrix with \code{x} and \code{y} columns from
-#' \code{to} plus one extra \code{dists} column.
-#'
-#' @rdname distances
-pointDistance2 <- function(to, from) {
-    .Call(`_SpaDES_tools_pointDistance2`, to, from)
-}
-
-#' @param fromX Numeric vector of x coordinates for 'from' points
-#' @param fromY Numeric vector of y coordinates for 'from' points
-#' @param toX Numeric vector of x coordinates for 'to' points
-#' @param toY Numeric vector of y coordinates for 'to' points
-#' @param maxDistance Numeric scalar. The maximum distance cutoff for returned distances.
-#' @return
-#' A matrix with 3 columns, x0, y0 and dists.
-#' @rdname distances
-#' @details
-#' A slightly faster way to calculate distances.
-pointDistance3 <- function(fromX, toX, fromY, toY, maxDistance) {
-    .Call(`_SpaDES_tools_pointDistance3`, fromX, toX, fromY, toY, maxDistance)
-}
-
-#' @title
 #' Rcpp Sugar version of runif
 #' @description
 #' Slightly faster than runif, and used a lot

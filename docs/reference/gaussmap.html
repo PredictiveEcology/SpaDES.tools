@@ -6,27 +6,31 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Produce a <code>raster</code> of a random Gaussian process. — gaussMap • SpaDES.tools</title>
+<title>Produce a raster of a random Gaussian process. — gaussMap • SpaDES.tools</title>
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -35,13 +39,12 @@
 
 
 
-<meta property="og:title" content="Produce a <code>raster</code> of a random Gaussian process. — gaussMap" />
+<meta property="og:title" content="Produce a raster of a random Gaussian process. — gaussMap" />
 <meta property="og:description" content="This is a wrapper for the RFsimulate function in the RandomFields
 package. The main addition is the speedup argument which allows
 for faster map generation. A speedup of 1 is normal and will get
 progressively faster as the number increases, at the expense of coarser
 pixel resolution of the pattern generated." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -59,7 +62,7 @@ pixel resolution of the pattern generated." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -73,7 +76,7 @@ pixel resolution of the pattern generated." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.7.9007</span>
       </span>
     </div>
 
@@ -81,7 +84,7 @@ pixel resolution of the pattern generated." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -94,8 +97,8 @@ pixel resolution of the pattern generated." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/PredictiveEcology/SpaDES.tools">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -114,7 +117,7 @@ pixel resolution of the pattern generated." />
     <div class="page-header">
     <h1>Produce a <code>raster</code> of a random Gaussian process.</h1>
     <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/SpaDES.tools/blob/master/R/initialize.R'><code>R/initialize.R</code></a></small>
-    <div class="hidden name"><code>gaussmap.Rd</code></div>
+    <div class="hidden name"><code>gaussMap.Rd</code></div>
     </div>
 
     <div class="ref-description">
@@ -125,16 +128,16 @@ progressively faster as the number increases, at the expense of coarser
 pixel resolution of the pattern generated.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gaussMap</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>var</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"RMexp"</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>inMemory</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>gaussMap</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  scale <span class='op'>=</span> <span class='fl'>10</span>,
+  var <span class='op'>=</span> <span class='fl'>1</span>,
+  speedup <span class='op'>=</span> <span class='fl'>1</span>,
+  method <span class='op'>=</span> <span class='st'>"RMexp"</span>,
+  alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  inMemory <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,29 +192,26 @@ Default <code>FALSE</code>.</p></td>
     <div class='dont-index'><p><code>RFsimulate</code> and <code><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>RandomFields</span>)) {
-  <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)
-  <span class='no'>nx</span> <span class='kw'>&lt;-</span> <span class='no'>ny</span> <span class='kw'>&lt;-</span> <span class='fl'>100L</span>
-  <span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span>(<span class='kw'>nrows</span> <span class='kw'>=</span> <span class='no'>ny</span>, <span class='kw'>ncols</span> <span class='kw'>=</span> <span class='no'>nx</span>, <span class='kw'>xmn</span> <span class='kw'>=</span> -<span class='no'>nx</span>/<span class='fl'>2</span>, <span class='kw'>xmx</span> <span class='kw'>=</span> <span class='no'>nx</span>/<span class='fl'>2</span>, <span class='kw'>ymn</span> <span class='kw'>=</span> -<span class='no'>ny</span>/<span class='fl'>2</span>, <span class='kw'>ymx</span> <span class='kw'>=</span> <span class='no'>ny</span>/<span class='fl'>2</span>)
-  <span class='no'>speedup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>max</a></span>(<span class='fl'>1</span>, <span class='no'>nx</span>/<span class='fl'>5e2</span>)
-  <span class='no'>map1</span> <span class='kw'>&lt;-</span> <span class='fu'>gaussMap</span>(<span class='no'>r</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>300</span>, <span class='kw'>var</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='no'>speedup</span>, <span class='kw'>inMemory</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'>Plot</span>(<span class='no'>map1</span>)
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='http://ms.math.uni-mannheim.de/de/publications/software/randomfields'>RandomFields</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
+  <span class='va'>nx</span> <span class='op'>&lt;-</span> <span class='va'>ny</span> <span class='op'>&lt;-</span> <span class='fl'>100L</span>
+  <span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>nrows <span class='op'>=</span> <span class='va'>ny</span>, ncols <span class='op'>=</span> <span class='va'>nx</span>, xmn <span class='op'>=</span> <span class='op'>-</span><span class='va'>nx</span><span class='op'>/</span><span class='fl'>2</span>, xmx <span class='op'>=</span> <span class='va'>nx</span><span class='op'>/</span><span class='fl'>2</span>, ymn <span class='op'>=</span> <span class='op'>-</span><span class='va'>ny</span><span class='op'>/</span><span class='fl'>2</span>, ymx <span class='op'>=</span> <span class='va'>ny</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span>
+  <span class='va'>speedup</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/RandomFields/man/QMath.html'>max</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='va'>nx</span><span class='op'>/</span><span class='fl'>5e2</span><span class='op'>)</span>
+  <span class='va'>map1</span> <span class='op'>&lt;-</span> <span class='fu'>gaussMap</span><span class='op'>(</span><span class='va'>r</span>, scale <span class='op'>=</span> <span class='fl'>300</span>, var <span class='op'>=</span> <span class='fl'>0.03</span>, speedup <span class='op'>=</span> <span class='va'>speedup</span>, inMemory <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+  <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='fu'><a href='http://quickplot.predictiveecology.org//reference/Plot.html'>Plot</a></span><span class='op'>(</span><span class='va'>map1</span><span class='op'>)</span>
 
   <span class='co'># with non-default method</span>
-  <span class='no'>map1</span> <span class='kw'>&lt;-</span> <span class='fu'>gaussMap</span>(<span class='no'>r</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>300</span>, <span class='kw'>var</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"RMgauss"</span>)
-}
-}</div></pre>
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+  <span class='va'>map1</span> <span class='op'>&lt;-</span> <span class='fu'>gaussMap</span><span class='op'>(</span><span class='va'>r</span>, scale <span class='op'>=</span> <span class='fl'>300</span>, var <span class='op'>=</span> <span class='fl'>0.03</span>, method <span class='op'>=</span> <span class='st'>"RMgauss"</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='op'>}</span>
 
+</div></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -222,7 +222,7 @@ Default <code>FALSE</code>.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -1,10 +1,8 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("distance", "dups",
-                           "from", "i.size", "ind", "indClDT", "initialPixels",
-                           "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels",
-                           "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1", "proportion"
-  ))
-}
+utils::globalVariables(c(
+  "distance", "dups", "from", "i.size", "ind", "indClDT", "initialPixels",
+  "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels", "proportion",
+  "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1"
+))
 
 ################################################################################
 #' Simulate a contagious spread process on a landscape, with data.table internals
@@ -32,11 +30,11 @@ if (getRversion() >= "3.1.0") {
 #'
 #' This function can be interrupted before all active cells are exhausted if
 #' the \code{iterations} value is reached before there are no more active
-#' cells to spread2 into. The interrupted output (a data.table) can be passed
+#' cells to \code{spread2} into. The interrupted output (a data.table) can be passed
 #' subsequently as an input to this same function (as \code{start}).
 #' This is intended to be used for situations where external events happen during
 #' a spread2 event, or where one or more arguments to the spread2 function
-#' change before a spread2 event is completed.
+#' change before a \code{spread2} event is completed.
 #' For example, if it is desired that the \code{spreadProb} change before a
 #' spread2 event is completed because, for example, a fire is spreading, and a
 #' new set of conditions arise due to a change in weather.
@@ -99,7 +97,7 @@ if (getRversion() >= "3.1.0") {
 #'              data.table that is the output of a previous \code{spread2}.
 #'              If a vector, they should be cell indices (pixels) on the \code{landscape}.
 #'              If user has x and y coordinates, these can be converted with
-#'              \code{\link[raster]{cellFromXY}}.
+#'              \code{\link[raster:cellFrom]{cellFromXY}}.
 #'
 #' @param spreadProb  Numeric of length 1 or length \code{ncell(landscape)} or
 #'                    a \code{RasterLayer} that is the identical dimensions as
@@ -327,14 +325,12 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
-#' @importFrom bit bit
 #' @importFrom checkmate assert assertClass assertNumeric
 #' @importFrom checkmate checkClass checkDataTable checkLogical checkNumeric checkScalarNA
 #' @importFrom checkmate qassert
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
 #' @importFrom fastmatch fmatch
-#' @importFrom ff ff
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom magrittr %>%
 #' @importFrom quickPlot Plot
@@ -433,7 +429,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   # Step 0 - set up objects -- main ones: dt, clusterDT -- get them from attributes
   ## on start or initiate them
-  smallRaster <- ncells < 4e7 # should use bit vector (RAM) or ff raster (Disk)
+  smallRaster <- ncells < 4e7 # should use bit vector (RAM)
   canUseAvailable <- !(isTRUE(allowOverlap > 0) | is.na(allowOverlap))
   if (missing(maxSize)) {
     maxSize <- NA_real_
@@ -464,11 +460,14 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   if (!is.data.table(start)) {
     # A "new" entry into spread2 -- need to set up stuff
     if (canUseAvailable) {
-      if (smallRaster) {
-        notAvailable <- bit(ncells)
-      } else {
-        notAvailable <- ff(vmode = "boolean", FALSE, length = ncells)
-      }
+      #if (smallRaster) {
+      notAvailable <- if (requireNamespace("bit", quietly = TRUE))
+        bit::bit(ncells)
+      else
+        logical(ncells)
+      #} else {
+      #  notAvailable <- ff(vmode = "boolean", FALSE, length = ncells)
+      #}
       notAvailable[start] <- TRUE
     }
 
@@ -817,9 +816,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
             if (any(numNeighsByPixel$numNeighs > numNeighsByPixel$N))
               set(numNeighsByPixel, NULL, "numNeighs",
                   pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
-            dtPotential <- dtPotential[numNeighsByPixel[dtPotential][,
-                                                                      .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
-                                                                      by = "from"]$V1]
+            dtPotential <- dtPotential[numNeighsByPixel[dtPotential][
+              , .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
+              by = "from"]$V1]
           }
         }
         set(dtPotential, NULL, "spreadProbRel", NULL)
@@ -954,14 +953,12 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         set(dt, NULL, "origIndex", seq_len(NROW(dt)))
         dt1 <- dt[state == "successful"]
         dt1b <- dt1[currentSizetooBigByNCells] # attach tooBigByNCells
-        dt1a <- tryCatch(dt1b[, list(omit = origIndex[sample.int(.N, tooBigByNCells)]),
-                              by = "initialPixels"],
-                         error = function(e) TRUE)
+        dt1a <- dt1b[, list(omit = origIndex[sample.int(.N, tooBigByNCells[1])]), by = "initialPixels"]
 
         dt <- dt[-dt1a$omit][, list(initialPixels, pixels, state)]
         dt[dt1a, state := "inactive"]
-        clusterDT[currentSizetooBigByNCells[, list(initialPixels)],
-                  size := size - tooBigByNCells]
+
+        clusterDT[currentSizetooBigByNCells[, list(initialPixels)], size := size - tooBigByNCells]
       }
 
       # Too small second

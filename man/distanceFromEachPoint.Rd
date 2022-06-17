@@ -43,7 +43,9 @@ values in each \code{to} location, as the function iterates
 through each \code{from}. See Details.}
 
 \item{distFn}{A function. This can be a function of \code{landscape},
-\code{fromCells}, \code{toCells}, and \code{dist}.
+\code{fromCell} (single integer value of a from pixel),
+\code{toCells} (integer vector value of all the to pixel indices),
+and \code{dist}.
 If \code{cumulativeFn} is supplied, this will be used to convert
 the distances to some other set of units that will be accumulated
 by the \code{cumulativeFn}. See Details and examples.}
@@ -68,14 +70,14 @@ minimum distance from the set of points to all cells.
 Rather this returns the every pair-wise point distance.
 As a result, this can be used for doing inverse distance weightings, seed rain,
 cumulative effects of distance-based processes etc.
-If memory limitation is an issue, maxDistance will keep memory use down,
+If memory limitation is an issue, \code{maxDistance} will keep memory use down,
 but with the consequences that there will be a maximum distance returned.
 This function has the potential to use a lot of memory if there are a lot of
 \code{from} and \code{to} points.
 }
 \details{
 This function is cluster aware. If there is a cluster running, it will use it.
-To start a cluster use \code{\link[raster]{beginCluster}}, with \code{N} being
+To start a cluster use \code{\link[raster:cluster]{beginCluster}}, with \code{N} being
 the number of cores to use. See examples in \code{SpaDES.core::experiment}.
 
 
@@ -122,7 +124,7 @@ if (interactive()) {
 dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
                                 landscape = distRas, cumulativeFn = `+`)
 idwRaster <- raster(distRas)
-idwRaster[] <- dists1[, "val"]
+idwRaster[] <- dists1[, "dists"]
 if (interactive()) Plot(idwRaster)
 
 all(idwRaster[] == distRas[]) # TRUE
@@ -142,13 +144,20 @@ dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
 #endCluster() # if beginCluster was run
 
 idwRaster <- raster(ras)
-idwRaster[] <- dists1[, "val"]
+idwRaster[] <- dists1[, "dists"]
 if (interactive()) {
   clearPlot()
   Plot(rp, idwRaster)
   sp1 <- SpatialPoints(coords)
   Plot(sp1, addTo = "rp")
   Plot(sp1, addTo = "idwRaster")
+}
+
+# On linux; can use numeric passed to cl; will use mclapply with mc.cores = cl
+if (identical(Sys.info()["sysname"], "Linux")) {
+  dists1 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
+                                  landscape = rp, distFn = distFn,
+                                  cumulativeFn = `+`, cl = 2)
 }
 }
 \seealso{

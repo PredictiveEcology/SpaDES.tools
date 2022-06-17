@@ -1,4 +1,6 @@
 test_that("spread2 tests", {
+  skip_if_not_installed("RandomFields", "3.1.24")
+
   library(raster)
   library(data.table)
   library(fpCompare)
@@ -6,6 +8,8 @@ test_that("spread2 tests", {
   on.exit(detach("package:raster"), add = TRUE)
   on.exit(detach("package:data.table"), add = TRUE)
   on.exit(detach("package:fpCompare"), add = TRUE)
+
+  data.table::setDTthreads(1)
 
   # inputs for x
   a <- raster(extent(0, 10, 0, 10), res = 1)
@@ -52,8 +56,7 @@ test_that("spread2 tests", {
     seed <- sample(1e6, 1)
     set.seed(seed)
     sams <- sample(innerCells, 2)
-    out <- spread2(a, start = sams, spreadProb = 0.225, maxSize = maxSizes,
-                   asRaster = FALSE)
+    out <- spread2(a, start = sams, spreadProb = 0.225, maxSize = maxSizes, asRaster = FALSE)
     expect_true(all(out[, .N, by = "initialPixels"]$N <= maxSizes[order(sams)]))
   }
 
@@ -376,10 +379,11 @@ test_that("spread2 tests", {
                     exactSize = exactSizes, asRaster = FALSE)
   }
   expect_false(identical(data.table(out2), data.table(out)))
-
 })
 
 test_that("spread2 tests -- asymmetry", {
+  skip_if_not_installed("RandomFields", "3.1.24")
+
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(data.table); on.exit(detach("package:data.table"), add = TRUE)
   library(fpCompare); on.exit(detach("package:fpCompare"), add = TRUE)
@@ -398,10 +402,10 @@ test_that("spread2 tests -- asymmetry", {
   out <- spread2(a, start = sams, 0.215, asRaster = FALSE, asymmetry = 2,
                  asymmetryAngle = 90)
   for (i in 1:20) {
-    expect_silent(
+    expect_silent({
       out <- spread2(a, start = out, 0.215, asRaster = FALSE, asymmetry = 2,
                      asymmetryAngle = 90)
-    )
+    })
   }
 
   a <- raster(extent(0, 1e2, 0, 1e2), res = 1)
@@ -657,7 +661,6 @@ test_that("spread2 tests -- persistence", {
   library(raster)
   library(data.table)
   library(checkmate)
-  library(bit)
   library(fastmatch)
 
   landscape <- raster::raster(nrows = 50, ncols = 50)
@@ -685,13 +688,12 @@ test_that("spread2 tests -- persistence", {
 
   set.seed(5)
   wRasPersist <- spread2(landscape = landscape, start = start,
-                        spreadProb = 0.23, persistProb = persistRas, iterations = 10, directions = 8L,
-                        asRaster = TRUE, plot.it = FALSE)
+                        spreadProb = 0.23, persistProb = persistRas, iterations = 10,
+                        directions = 8L, asRaster = TRUE, plot.it = FALSE)
 
   expect_true(sum(wRasPersist[] == 1, na.rm = TRUE) > sum(wRasPersist[] == 2, na.rm = TRUE))
 
 })
-
 
 test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   library(raster)
