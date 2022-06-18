@@ -510,7 +510,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
       ## make sure maxSize column exists when maxSize argument is passed.
       if (!anyNA(maxSize) & is.null(clusterDT$maxSize)) {
-        message("maxSize provided, but not present in attr(start, 'spreadState')$maxSize.",
+        message("maxSize provided, but not present in attr(start, 'spreadState')$maxSize. ",
                 "Using the maxSize provided: ", maxSize)
         set(clusterDT, NULL, "maxSize", maxSize)
       }
