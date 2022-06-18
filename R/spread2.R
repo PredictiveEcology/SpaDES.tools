@@ -507,6 +507,14 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     dt <- start
     if (!is.null(attr(start, "spreadState"))) {
       clusterDT <- attr(start, "spreadState")$clusterDT
+
+      ## make sure maxSize column exists when maxSize argument is passed.
+      if (!anyNA(maxSize) & is.null(clusterDT$maxSize)) {
+        message("maxSize provided, but not present in attr(start, 'spreadState')$maxSize.",
+                "Using the maxSize provided: ", maxSize)
+        set(clusterDT, NULL, "maxSize", maxSize)
+      }
+
       if (!key(clusterDT) == "initialPixels")
         # should have key if it came directly from output of spread2
         setkeyv(clusterDT, "initialPixels")
