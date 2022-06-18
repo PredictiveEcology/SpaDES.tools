@@ -506,7 +506,8 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # a "return" entry into spread2
     dt <- start
     if (!is.null(attr(start, "spreadState"))) {
-      clusterDT <- attr(start, "spreadState")$clusterDT
+      ## as.data.table is necessary to use `set` to add new columns.
+      clusterDT <- as.data.table(attr(start, "spreadState")$clusterDT)
 
       ## make sure maxSize column exists when maxSize argument is passed.
       if (!anyNA(maxSize) & is.null(clusterDT$maxSize)) {
