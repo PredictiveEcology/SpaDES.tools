@@ -523,7 +523,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           sizeType <- if (!anyNA(exactSize)) "exactSize" else "maxSize"
           message(
             sizeType, " provided. ",
-            "It does not match with size attr(start, 'cluster')$maxSize. ",
+            "It does not match with size attr(start, 'spreadState')$maxSize. ",
             "Using the new ", sizeType, " provided. Perhaps sorted differently?",
             "Try sorting initial call to spread2 so that pixel number of start ",
             "cells is strictly increasing")
