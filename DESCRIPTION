@@ -15,9 +15,9 @@ Version: 0.3.10.9002
 Authors@R: c(
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7146-8135")),
-    person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
+    person("Eliot J B", "McIntire", email = "eliot.mcintire@nrcan-rncan.gc.ca",
            role = c("aut"), comment=c(ORCID = "0000-0002-6914-8316")),
-    person("Yong", "Luo", email = "yluo1@lakeheadu.ca",
+    person("Yong", "Luo", email = "Yong.Luo@gov.bc.ca",
            role = c("ctb")),
     person("Steve", "Cumming", email = "Steve.Cumming@sbf.ulaval.ca",
            role = c("ctb")),
@@ -96,4 +96,4 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
