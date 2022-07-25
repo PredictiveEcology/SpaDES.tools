@@ -10,7 +10,7 @@ version 0.3.10.9000
 * `mergeRaster()` can deal with rasters with different origins extents (i.e., that weren't produced using `splitRaster()`)
 
 ## bug fixes
-* none
+* `spread2` was unable to use `maxSize` when `start` was the output of a previous `spread2` call to which `maxSize` had not been supplied. This has now been fixed.
 
 version 0.3.10
 =============

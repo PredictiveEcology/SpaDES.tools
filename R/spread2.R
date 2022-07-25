@@ -506,7 +506,16 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # a "return" entry into spread2
     dt <- start
     if (!is.null(attr(start, "spreadState"))) {
-      clusterDT <- attr(start, "spreadState")$clusterDT
+      ## as.data.table is necessary to use `set` to add new columns.
+      clusterDT <- as.data.table(attr(start, "spreadState")$clusterDT)
+
+      ## make sure maxSize column exists when maxSize argument is passed.
+      if (!anyNA(maxSize) & is.null(clusterDT$maxSize)) {
+        message("maxSize provided, but not present in attr(start, 'spreadState')$maxSize. ",
+                "Using the maxSize provided: ", maxSize)
+        set(clusterDT, NULL, "maxSize", maxSize)
+      }
+
       if (!key(clusterDT) == "initialPixels")
         # should have key if it came directly from output of spread2
         setkeyv(clusterDT, "initialPixels")
@@ -515,7 +524,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           sizeType <- if (!anyNA(exactSize)) "exactSize" else "maxSize"
           message(
             sizeType, " provided. ",
-            "It does not match with size attr(start, 'cluster')$maxSize. ",
+            "It does not match with size attr(start, 'spreadState')$maxSize. ",
             "Using the new ", sizeType, " provided. Perhaps sorted differently?",
             "Try sorting initial call to spread2 so that pixel number of start ",
             "cells is strictly increasing")
