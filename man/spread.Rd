@@ -269,6 +269,7 @@ are internal.
 For large rasters, a combination of \code{lowMemory = TRUE} and
 \code{returnIndices = TRUE} or \code{returnIndices = 2}
 will be fastest and use the least amount of memory.
+**2022-07-25: `lowMemory = TRUE` is deprecated due to removal of package `ffbase` from CRAN.**
 
 This function can be interrupted before all active cells are exhausted if
 the \code{iterations} value is reached before there are no more active
