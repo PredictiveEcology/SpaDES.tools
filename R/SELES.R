@@ -83,7 +83,6 @@ numAgents <- function(N, probInit) {
 #' @author Eliot McIntire
 #' @export
 #' @include heading.R
-#' @importFrom magrittr %>%
 #' @importFrom raster getValues ncell raster xyFromCell
 #' @importFrom stats runif
 #' @rdname initiateAgents

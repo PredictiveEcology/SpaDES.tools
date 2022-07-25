@@ -309,7 +309,6 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom data.table := data.table setcolorder set
 #' @importFrom fastmatch %fin%
 #' @importFrom fpCompare %<=%
-#' @importFrom magrittr %>%
 #' @importFrom quickPlot clearPlot Plot
 #' @importFrom raster extent maxValue minValue ncell ncol nrow raster res setValues
 #' @importFrom stats runif
@@ -1188,7 +1187,7 @@ setMethod(
     # Convert the data back to raster
     if (!allowOverlap & !returnDistances & !spreadStateExists) {
       # if (lowMemory) {
-      #   wh <- ffwhich(spreads, spreads > 0) %>% as.ram()
+      #   wh <- as.ram(ffwhich(spreads, spreads > 0))
       #   if (returnIndices > 0) {
       #     wh <- wh[!(wh %in% potentials[,2L])]
       #     completed <- data.table(indices = wh, id = spreads[wh], active = FALSE)
@@ -1211,7 +1210,7 @@ setMethod(
         # wh already contains the potentials for next iteration -- these should be not duplicated
         #   inside "completed"
         wh <- wh[!(wh %in% potentials[,2L])]
-        completed <- wh %>% data.table(indices = ., id = spreadsDT$spreads[.], active = FALSE)
+        completed <- data.table(indices = wh, id = spreadsDT$spreads[wh], active = FALSE)
         if (NROW(potentials) > 0) {
           active <- data.table(indices = as.integer(potentials[, 2L]),
                                id = spreadsDT$spreads[potentials[, 1L]],

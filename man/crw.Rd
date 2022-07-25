@@ -73,6 +73,4 @@ McIntire, E. J. B., C. B. Schultz, and E. E. Crone. 2007.
 }
 \author{
 Eliot McIntire
-
-Eliot McIntire
 }

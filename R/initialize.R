@@ -60,44 +60,8 @@ if (getRversion() >= "3.1.0") {
 #'
 gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
                      alpha = 1, inMemory = FALSE, ...) {
-  if (requireNamespace("RandomFields", quietly = FALSE)) {
-    RandomFields::RFoptions(spConform = FALSE)
-    ext <- extent(x)
-    resol <- res(x)
-    nc <- (ext@xmax - ext@xmin) / resol[1]
-    nr <- (ext@ymax - ext@ymin) / resol[2]
-    wholeNumsCol <- .findFactors(nc)
-    wholeNumsRow <- .findFactors(nr)
-    ncSpeedup <- wholeNumsCol[which.min(abs(wholeNumsCol - nc / speedup))]
-    nrSpeedup <- wholeNumsRow[which.min(abs(wholeNumsRow - nr / speedup))]
-    speedupEffectiveCol <- nc / ncSpeedup
-    speedupEffectiveRow <- nr / nrSpeedup
-    if (method == "RMgauss") {
-      model <- RandomFields::RMgauss(scale = scale, var = var, ...)
-    } else if (method == "RMstable") {
-      if (!inRange(alpha, 0, 2)) {
-        stop("alpha must be between 0 and 2")
-      }
-      model <- RandomFields::RMstable(scale = scale, var = var, alpha = alpha)
-    } else {
-      if ( method != "RMexp") {
-        message("method is not yet implemented, defaulting to RMexp.")
-      }
-      model <- RandomFields::RMexp(scale = scale, var = var, ...)
-    }
-    map <- raster(RandomFields::RFsimulate(model, y = 1:ncSpeedup, x = 1:nrSpeedup, grid = TRUE, ...))
-
-    if (inMemory) map <- setValues(map, getValues(map))
-
-    map <- map - cellStats(map, "min")
-    extent(map) <- ext
-    if (speedup > 1)
-      return(disaggregate(map, c(speedupEffectiveCol, speedupEffectiveRow)))
-    else
-      return(invisible(map))
-  } else {
-    stop("The 'RandomFields' package is required but not installed.")
-  }
+  .Defunct(msg = paste("random landscape generation functionality has been removed",
+                       "because the RandomFields packages is no longer maintained."))
 }
 
 ################################################################################

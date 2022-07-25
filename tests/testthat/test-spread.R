@@ -170,8 +170,7 @@ test_that("spread stopRule does not work correctly", {
     detach("package:raster")
   }, add = TRUE)
 
-  a <- raster(extent(0, 1e2, 0, 1e2), res = 1)
-  hab <- gaussMap(a, speedup = 1) # if raster is large (>1e6 pixels), use speedup>1
+  hab <- raster(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
   names(hab) <- "hab"
   hab2 <- hab > 0
   maxRadius <- 25
@@ -446,8 +445,7 @@ test_that("asymmetry doesn't work properly", {
     detach("package:CircStats")
   }, add = TRUE)
 
-  a <- raster(extent(0, 1e2, 0, 1e2), res = 1)
-  hab <- gaussMap(a, speedup = 1) # if raster is large (>1e6 pixels), use speedup>1
+  hab <- raster(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
   names(hab) <- "hab"
   hab2 <- hab > 0
   maxRadius <- 25
@@ -524,8 +522,7 @@ test_that("rings and cir", {
     detach("package:raster")
   }, add = TRUE)
 
-  a <- raster(extent(0, 1e2, 0, 1e2), res = 1)
-  hab <- gaussMap(a, speedup = 1) # if raster is large (>1e6 pixels), use speedup>1
+  hab <- raster(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
   names(hab) <- "hab"
   hab2 <- hab > 0
   n <- 2
@@ -651,8 +648,7 @@ test_that("distanceFromPoints does not work correctly", {
     detach("package:raster")
   }, add = TRUE)
 
-  hab <- raster(extent(0, 1e2, 0, 1e2), res = 1)
-  hab <- gaussMap(hab, speedup = 1) # if raster is large (>1e6 pixels), use speedup > 1
+  hab <- raster(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
   names(hab) <- "hab"
   n <- 1
   coords <- cbind(x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
