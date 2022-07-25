@@ -121,12 +121,12 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Eliot J B McIntire \email{eliot.mcintire@canada.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
+  \item Eliot J B McIntire \email{eliot.mcintire@nrcan-rncan.gc.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
 }
 
 Other contributors:
 \itemize{
-  \item Yong Luo \email{yluo1@lakeheadu.ca} [contributor]
+  \item Yong Luo \email{Yong.Luo@gov.bc.ca} [contributor]
   \item Steve Cumming \email{Steve.Cumming@sbf.ulaval.ca} [contributor]
   \item Jean Marchal \email{jean.d.marchal@gmail.com} [contributor]
   \item Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada [copyright holder]
