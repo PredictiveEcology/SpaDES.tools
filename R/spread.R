@@ -24,6 +24,7 @@ if (getRversion() >= "3.1.0") {
 #' For large rasters, a combination of \code{lowMemory = TRUE} and
 #' \code{returnIndices = TRUE} or \code{returnIndices = 2}
 #' will be fastest and use the least amount of memory.
+#' **2022-07-25: `lowMemory = TRUE` is deprecated due to removal of package `ffbase` from CRAN.**
 #'
 #' This function can be interrupted before all active cells are exhausted if
 #' the \code{iterations} value is reached before there are no more active
@@ -388,8 +389,9 @@ setMethod(
              paste(allowedRules, collapse = "\", \""), "\".")
     }
     if (isTRUE(lowMemory)) {
-      requireNamespace("ff", quietly = TRUE)
-      requireNamespace("ffbase", quietly = TRUE)
+      stop("lowMemory is no longer supported due to removal of ffbase from CRAN.")
+      # requireNamespace("ff", quietly = TRUE)
+      # requireNamespace("ffbase", quietly = TRUE)
     }
 
     spreadStateExists <- is(spreadState, "data.table")
@@ -477,7 +479,7 @@ setMethod(
       }
     } else {
       if (!is.null(lowMemory)) {
-        message("lowMemory argument is now deprecated; using standard spread")
+        message("lowMemory argument is now deprecated; using standard spread.")
       }
       # The experimental new spread function has some changes for speed. 1) The
       # bottleneck amazingly, was the creation of a new empty vector of length
