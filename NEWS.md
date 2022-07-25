@@ -4,7 +4,7 @@ version 0.3.10.9000
 =============
 
 ## Dependency changes
-* none
+* remove dependency on `RandomFields` since it is no longer maintained
 
 ## Enhancements
 * `mergeRaster()` can deal with rasters with different origins extents (i.e., that weren't produced using `splitRaster()`)
