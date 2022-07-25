@@ -49,6 +49,7 @@ Imports:
 Suggests:
     animation,
     bit (>= 1.1-12),
+    covr,
     DBI,
     DEoptim (>= 2.2-4),
     dplyr,
@@ -63,8 +64,7 @@ Suggests:
     RColorBrewer (>= 1.1-2),
     rmarkdown,
     sf,
-    testthat (>= 1.0.2),
-    covr
+    testthat (>= 1.0.2)
 Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
