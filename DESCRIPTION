@@ -54,8 +54,6 @@ Suggests:
     dplyr,
     dqrng,
     fasterize,
-    ff (>= 2.2-13),
-    ffbase (>= 0.12.3),
     googledrive,
     knitr,
     mgcv,
@@ -96,4 +94,3 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
-RoxygenNote: 7.2.0
