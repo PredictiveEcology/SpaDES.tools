@@ -26,8 +26,8 @@ if (getRversion() >= "3.1.0") {
 #'                 to generate maps. It may be necessary to give a value larger
 #'                 than 1 for large maps. Default is 1.
 #'
-#' @param alpha    A required parameter of the 'RMstable' model.
-#'                 Should be in the interval [0,2] to provide a valid covariance function.
+#' @param alpha    A required parameter of the `"RMstable"` model.
+#'                 Should be in the interval `[0,2]` to provide a valid covariance function.
 #'                 Default is 1.
 #'
 #' @param inMemory Should the RasterLayer be forced to be in memory?
