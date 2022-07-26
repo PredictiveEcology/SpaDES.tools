@@ -1,10 +1,9 @@
-if (require(RandomFields)) {
-  library(magrittr)
+if (require("sf", quietly = TRUE)) {
   library(raster)
   library(quickPlot)
 
-  map <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10, val = 0, res = 1)
-  map <- gaussMap(map, scale = 1, var = 4, speedup = 1)
+  map <- raster(system.file("extdata", "map.tif", package = "SpaDES.tools"))
+  names(map) <- "layer"
   pr <- probInit(map, p = (map/maxValue(map))^2)
   agents <- initiateAgents(map, 100, pr)
   if (interactive()) {
@@ -18,7 +17,7 @@ if (require(RandomFields)) {
   setnames(dt1, old = "N", new = "count")
   dt2 <- data.table(table(round(map[], 0)))
   setnames(dt2, old = "N", new = "available")
-  dt <-dt1[dt2, on = "V1"]  # join the counts and available data.tables
+  dt <- dt1[dt2, on = "V1"]  # join the counts and available data.tables
   setnames(dt, old = "V1", new = "mapValue")
   dt[, selection := count/available]
   dt[is.na(selection), selection := 0]
@@ -31,7 +30,7 @@ if (require(RandomFields)) {
   agentsRas <- initiateAgents(map, 30, pr, asSpatialPoints = FALSE)
   if (interactive()) Plot(agentsRas)
   #'
-  if (require(dplyr) && getRversion() >= 3.4) {
+  if (require(dplyr)) {
     # Check that the agents are more often at the higher probability areas based on pr
     if (utils::packageVersion("raster") >= "2.8-11") {
       out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) %>%

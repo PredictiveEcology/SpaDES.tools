@@ -10,8 +10,8 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2022-06-17
-Version: 0.3.10.9003
+Date: 2022-07-25
+Version: 1.0.0
 Authors@R: c(
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7146-8135")),
@@ -49,6 +49,7 @@ Imports:
 Suggests:
     animation,
     bit (>= 1.1-12),
+    covr,
     DBI,
     DEoptim (>= 2.2-4),
     dplyr,
@@ -58,12 +59,10 @@ Suggests:
     knitr,
     mgcv,
     purrr,
-    RandomFields (>= 3.1.24),
     RColorBrewer (>= 1.1-2),
     rmarkdown,
     sf,
-    testthat (>= 1.0.2),
-    covr
+    testthat (>= 1.0.2)
 Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
@@ -94,3 +93,5 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
+RoxygenNote: 7.2.1
+Roxygen: list(markdown = TRUE)

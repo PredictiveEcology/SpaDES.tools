@@ -1,21 +1,21 @@
 ################################################################################
-#' \code{SELES} - Transitioning to next time step
+#' `SELES` - Transitioning to next time step
 #'
 #' @description
 #' Describes the probability of an agent successfully persisting until next
 #' time step. THIS IS NOT YET FULLY IMPLEMENTED.
 #'
-#' A \code{SELES}-like function to maintain conceptual backwards compatibility
+#' A `SELES`-like function to maintain conceptual backwards compatibility
 #' with that simulation tool. This is intended to ease transitions from
-#' \href{http://www.gowlland.ca/}{SELES}.
+#' [SELES](http://www.gowlland.ca/).
 #'
 #' You must know how to use SELES for these to be useful.
 #'
 #' @param p realized probability of persisting (i.e., either 0 or 1).
 #'
-#' @param agent \code{SpatialPoints*} object.
+#' @param agent `SpatialPoints*` object.
 #'
-#' @return Returns new \code{SpatialPoints*} object with potentially fewer agents.
+#' @return Returns new `SpatialPoints*` object with potentially fewer agents.
 #'
 #' @export
 #' @importFrom sp 'coordinates<-'
@@ -34,9 +34,9 @@ transitions <- function(p, agent) {
 #' @description
 #' Sets the the number of agents to initiate. THIS IS NOT YET FULLY IMPLEMENTED.
 #'
-#' A \code{SELES}-like function to maintain conceptual backwards compatibility
+#' A `SELES`-like function to maintain conceptual backwards compatibility
 #' with that simulation tool. This is intended to ease transitions from
-#' \href{http://www.gowlland.ca/}{SELES}.
+#' [SELES](http://www.gowlland.ca/).
 #'
 #' You must know how to use SELES for these to be useful.
 #'
@@ -56,25 +56,25 @@ numAgents <- function(N, probInit) {
 }
 
 ##############################################################
-#' \code{SELES} - Initiate agents
+#' `SELES` - Initiate agents
 #'
 #' @description
 #' Sets the the number of agents to initiate. THIS IS NOT FULLY IMPLEMENTED.
 #'
-#' A \code{SELES}-like function to maintain conceptual backwards compatibility
+#' A `SELES`-like function to maintain conceptual backwards compatibility
 #' with that simulation tool. This is intended to ease transitions from
-#' \href{http://www.gowlland.ca/}{SELES}.
+#' [SELES](http://www.gowlland.ca/).
 #'
 #' You must know how to use SELES for these to be useful.
 #'
 #' @param map RasterLayer with extent and resolution of desired return object
 #'
-#' @param numAgents numeric resulting from a call to \code{\link{numAgents}}
+#' @param numAgents numeric resulting from a call to [numAgents()]
 #'
-#' @param probInit a Raster resulting from a \code{\link{probInit}} call
+#' @param probInit a Raster resulting from a [probInit()] call
 #'
-#' @param asSpatialPoints logical. Should returned object be \code{RasterLayer}
-#'                        or \code{SpatialPointsDataFrame} (default)
+#' @param asSpatialPoints logical. Should returned object be `RasterLayer`
+#'                        or `SpatialPointsDataFrame` (default)
 #'
 #' @param indices numeric. Indices of where agents should start
 #'
@@ -83,7 +83,6 @@ numAgents <- function(N, probInit) {
 #' @author Eliot McIntire
 #' @export
 #' @include heading.R
-#' @importFrom magrittr %>%
 #' @importFrom raster getValues ncell raster xyFromCell
 #' @importFrom stats runif
 #' @rdname initiateAgents
@@ -161,21 +160,21 @@ setMethod(
 })
 
 ################################################################################
-#' \code{SELES} - Agent Location at initiation
+#' `SELES` - Agent Location at initiation
 #'
 #' @description
 #' Sets the the location of the initiating agents. NOT YET FULLY IMPLEMENTED.
 #'
-#' A \code{SELES}-like function to maintain conceptual backwards compatibility
+#' A `SELES`-like function to maintain conceptual backwards compatibility
 #' with that simulation tool. This is intended to ease transitions from
-#' \href{http://www.gowlland.ca/}{SELES}.
+#' [SELES](http://www.gowlland.ca/).
 #'
 #' You must know how to use SELES for these to be useful.
 #'
-#' @param map A \code{SpatialPoints*}, \code{SpatialPolygons*}, or \code{Raster*} object.
+#' @param map A `SpatialPoints*`, `SpatialPolygons*`, or `Raster*` object.
 #'
 #' @return Object of same class as provided as input.
-#'          If a \code{Raster*}, then zeros are converted to \code{NA}.
+#'          If a `Raster*`, then zeros are converted to `NA`.
 #'
 #' @author Eliot McIntire
 #' @include heading.R
@@ -195,37 +194,37 @@ agentLocation <- function(map) {
 }
 
 ##############################################################
-#' \code{SELES} - Probability of Initiation
+#' `SELES` - Probability of Initiation
 #'
 #' @description
 #' Describes the probability of initiation of agents or events.
-#' \emph{THIS IS NOT FULLY IMPLEMENTED.}
+#' *THIS IS NOT FULLY IMPLEMENTED.*
 #'
-#' A \code{SELES}-like function to maintain conceptual backwards compatibility
+#' A `SELES`-like function to maintain conceptual backwards compatibility
 #' with that simulation tool. This is intended to ease transitions from
-#' \href{http://www.gowlland.ca/}{SELES}.
+#' [SELES](http://www.gowlland.ca/).
 #'
 #' You must know how to use SELES for these to be useful.
 #'
-#' @param map A \code{spatialObjects} object. Currently, only provides CRS and, if p is not
+#' @param map A `spatialObjects` object. Currently, only provides CRS and, if p is not
 #' a raster, then all the raster dimensions.
 #'
 #' @param p probability, provided as a numeric or raster
 #'
-#' @param absolute logical. Is \code{p} absolute probabilities or relative?
+#' @param absolute logical. Is `p` absolute probabilities or relative?
 #'
-#' @return A \code{RasterLayer} with probabilities of initialization.
+#' @return A `RasterLayer` with probabilities of initialization.
 #'        There are several combinations of inputs possible and they each result
 #'        in different behaviours.
 #'
-#' If \code{p} is numeric or \code{Raster} and between 0 and 1, it is treated as an
+#' If `p` is numeric or `Raster` and between 0 and 1, it is treated as an
 #' absolute probability, and a map will be produced with the p value(s) everywhere.
 #'
-#' If \code{p} is numeric or \code{Raster} and not between 0 and 1, it is treated as a
-#' relative probability, and a map will be produced with \code{p/max(p)} value(s) everywhere.
+#' If `p` is numeric or `Raster` and not between 0 and 1, it is treated as a
+#' relative probability, and a map will be produced with `p/max(p)` value(s) everywhere.
 #'
-#' If \code{absolute} is provided, it will override the previous statements, unless
-#' \code{absolute = TRUE} and p is not between 0 and 1 (i.e., is not a probability).
+#' If `absolute` is provided, it will override the previous statements, unless
+#' `absolute = TRUE` and p is not between 0 and 1 (i.e., is not a probability).
 #'
 #' @author Eliot McIntire
 #' @export

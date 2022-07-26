@@ -2,7 +2,7 @@
 % Please edit documentation in R/numerical-comparisons.R
 \name{inRange}
 \alias{inRange}
-\title{Test whether a number lies within range \code{[a,b]}}
+\title{Test whether a number lies within range \verb{[a,b]}}
 \usage{
 inRange(x, a = 0, b = 1)
 }
@@ -17,7 +17,7 @@ inRange(x, a = 0, b = 1)
 Logical vectors. \code{NA} values in \code{x} are retained.
 }
 \description{
-Default values of \code{a=0; b=1} allow for quick test if
+Default values of \verb{a=0; b=1} allow for quick test if
 \code{x} is a probability.
 }
 \examples{

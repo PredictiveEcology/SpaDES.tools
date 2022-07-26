@@ -36,16 +36,16 @@ If \code{matrix}, then longitude and latitude are assumed (epsg:4326)}
 
 \item{hectares}{Deprecated. Use \code{area} in meters squared.}
 
-\item{area}{A numeric, the approximate area in \code{meters squared} of the random polygon.}
+\item{area}{A numeric, the approximate area in \verb{meters squared} of the random polygon.}
 }
 \value{
 A map of extent \code{ext} with random polygons.
 
 A \code{SpatialPolygons} object, with approximately the area request,
-        centred approximately at the coordinates requested, in the projection of \code{x}
+centred approximately at the coordinates requested, in the projection of \code{x}
 }
 \description{
-These are built with the \code{\link{spread}} function internally.
+These are built with the \code{\link[=spread]{spread()}} function internally.
 
 Produces a \code{SpatialPolygons} object with 1 feature that will have approximately an area
 equal to \code{area} (expecting area in hectares), #' and a centre at approximately \code{x}.
@@ -84,7 +84,7 @@ if (interactive()) {
 
 }
 \seealso{
-\code{\link{spread}}, \code{\link{raster}}, \code{\link{randomPolygons}}
+\code{\link[=spread]{spread()}}, \code{\link[=raster]{raster()}}, \code{\link[=randomPolygons]{randomPolygons()}}
 
-\code{\link{gaussMap}} and \code{\link{randomPolygons}}
+\code{\link[=gaussMap]{gaussMap()}} and \code{\link[=randomPolygons]{randomPolygons()}}
 }

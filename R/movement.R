@@ -5,9 +5,9 @@
 #'
 #' @param hypothesis  Character vector, length one, indicating which movement
 #'                    hypothesis/method to test/use. Currently defaults to
-#'                    'crw' (correlated random walk) using \code{crw}.
+#'                    'crw' (correlated random walk) using `crw`.
 #'
-#' @param ... arguments passed to the function in \code{hypothesis}
+#' @param ... arguments passed to the function in `hypothesis`
 #'
 #' @author Eliot McIntire
 #' @export
@@ -28,32 +28,32 @@ move <- function(hypothesis = "crw", ...) {
 #' was presented in Turchin 1998, but it was also used with bias modifications
 #' in McIntire, Schultz, Crone 2007.
 #'
-#' @param agent       A \code{SpatialPoints*} object.
-#'                    If a \code{SpatialPointsDataFrame}, 2 of the columns must
-#'                    be \code{x1} and \code{y1}, indicating the previous location.
-#'                    If a \code{SpatialPoints} object, then \code{x1} and
-#'                    \code{y1} will be assigned randomly.
+#' @param agent       A `SpatialPoints*` object.
+#'                    If a `SpatialPointsDataFrame`, 2 of the columns must
+#'                    be `x1` and `y1`, indicating the previous location.
+#'                    If a `SpatialPoints` object, then `x1` and
+#'                    `y1` will be assigned randomly.
 #'
 #' @param stepLength  Numeric vector of length 1 or number of agents describing
 #'                    step length.
 #'
-#' @param extent      An optional \code{Extent} object that will be used for \code{torus}.
+#' @param extent      An optional `Extent` object that will be used for `torus`.
 #'
 #' @param torus       Logical. Should the movement be wrapped to the opposite
-#'                    side of the map, as determined by the \code{extent} argument.
-#'                    Default \code{FALSE}.
+#'                    side of the map, as determined by the `extent` argument.
+#'                    Default `FALSE`.
 #'
 #' @param stddev      Numeric vector of length 1 or number of agents describing
 #'                    standard deviation of wrapped normal turn angles.
 #'
-#' @param lonlat      Logical. If \code{TRUE}, coordinates should be in degrees.
-#'                    If \code{FALSE} coordinates represent planar ('Euclidean')
+#' @param lonlat      Logical. If `TRUE`, coordinates should be in degrees.
+#'                    If `FALSE` coordinates represent planar ('Euclidean')
 #'                    space (e.g. units of meters)
 #'
 #' @return A SpatialPointsDataFrame object with updated spatial position defined
 #'         by a single occurrence of step length(s) and turn angle(s).
 #'
-#' @seealso \code{\link{pointDistance}}
+#' @seealso [pointDistance()]
 #'
 #' @references Turchin, P. 1998. Quantitative analysis of movement: measuring and
 #'             modeling population redistribution in animals and plants.

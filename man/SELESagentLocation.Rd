@@ -7,11 +7,11 @@
 agentLocation(map)
 }
 \arguments{
-\item{map}{A \code{SpatialPoints*}, \code{SpatialPolygons*}, or \code{Raster*} object.}
+\item{map}{A \verb{SpatialPoints*}, \verb{SpatialPolygons*}, or \verb{Raster*} object.}
 }
 \value{
 Object of same class as provided as input.
-         If a \code{Raster*}, then zeros are converted to \code{NA}.
+If a \verb{Raster*}, then zeros are converted to \code{NA}.
 }
 \description{
 Sets the the location of the initiating agents. NOT YET FULLY IMPLEMENTED.

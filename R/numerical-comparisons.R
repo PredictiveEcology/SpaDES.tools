@@ -1,14 +1,14 @@
 ###############################################################################
-#' Test whether a number lies within range \code{[a,b]}
+#' Test whether a number lies within range `[a,b]`
 #'
-#' Default values of \code{a=0; b=1} allow for quick test if
-#' \code{x} is a probability.
+#' Default values of `a=0; b=1` allow for quick test if
+#' `x` is a probability.
 #'
 #' @param x   values to be tested
 #' @param a   lower bound (default 0)
 #' @param b   upper bound (default 1)
 #'
-#' @return Logical vectors. \code{NA} values in \code{x} are retained.
+#' @return Logical vectors. `NA` values in `x` are retained.
 #'
 #' @author Alex Chubaty
 #' @export

@@ -8,7 +8,7 @@ if (getRversion() >= "3.1.0") {
 
 #' An alternative spread function, conceived for insects
 #'
-#' This is built with \code{\link{spread2}} and is still experimental.
+#' This is built with [spread2()] and is still experimental.
 #' This one differs from other attempts in that it treats the advection and
 #' dispersal as mathematical vectors that are added together.
 #' They are "rounded" to pixel centres.
@@ -20,46 +20,43 @@ if (getRversion() >= "3.1.0") {
 #'   of "agents" or pseudo-agents contained. This number of agents, will
 #'   be spread horizontally, and distributed from each pixel
 #'   that contains a non-zero non NA value.
-#' @param advectionDir A single number or \code{RasterLayer} in degrees from North = 0
-#'   (though it will use radians if all values are \code{abs(advectionDir) > 2 * pi)}.
+#' @param advectionDir A single number or `RasterLayer` in degrees from North = 0
+#'   (though it will use radians if all values are `abs(advectionDir) > 2 * pi)`.
 #'   This indicates the direction of advective forcing (i.e., wind).
-#' @param advectionMag A single number or \code{RasterLayer} in distance units of the
-#'   \code{rasQuality}, e.g., meters, indicating the relative forcing that will
-#'   occur. It is imposed on the total event, i.e., if the \code{meanDist} is
-#'   \code{10000}, and \code{advectionMag} is \code{5000}, then the expected
-#'   distance (i.e., 63\% of agents) will have settled by \code{15000} map units.
-#' @param dispersalKernel One of either \code{"exponential"} or \code{"weibull"}.
-#'   If
+#' @param advectionMag A single number or `RasterLayer` in distance units of the
+#'   `rasQuality`, e.g., meters, indicating the relative forcing that will
+#'   occur. It is imposed on the total event, i.e., if the `meanDist` is
+#'   `10000`, and `advectionMag` is `5000`, then the expected
+#'   distance (i.e., `63%` of agents) will have settled by `15000` map units.
+#' @param dispersalKernel One of either `"exponential"` or `"weibull"`.
 #' @param meanDist A single number indicating the mean distance parameter in map units
 #'    (not pixels), for a negative exponential distribution
-#'    dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
-#'    settled at this \code{meanDist} (still experimental)
-#' @param sdDist A single number indicating the \code{sd} parameter of a two-parameter
-#'   \code{dispersalKernel}.
-#'   Defaults to \code{1}, which is the same as the \code{exponential} distribution.
+#'    dispersal kernel (e.g., `dexp`). This will mean that `63%` of agents will have
+#'    settled at this `meanDist` (still experimental).
+#' @param sdDist A single number indicating the `sd` parameter of a two-parameter
+#'   `dispersalKernel`.
+#'   Defaults to `1`, which is the same as the `exponential` distribution.
 #' @param verbose Numeric. With increasing numbers above 0, there will be more
 #'     messages produced. Currently, only 0, 1, or 2+ are distinct.
 #' @param plot.it Numeric. With increasing numbers above 0, there will be plots
 #'     produced during iterations. Currently, only 0, 1, or 2+ are distinct.
 #' @param minNumAgents Single numeric indicating the minimum number of agents
-#'    to consider all dispersing finished. Default is 50
+#'    to consider all dispersing finished. Default is 50.
 #' @param saveStack If provided as a character string, it will save each iteration
-#'   as part of a \code{rasterStack} to disk upon exit.
-#' @param skipChecks Logical. If \code{TRUE}, assertions will be skipped (faster, but could miss
+#'   as part of a `rasterStack` to disk upon exit.
+#' @param skipChecks Logical. If `TRUE`, assertions will be skipped (faster, but could miss
 #'   problems)
 #'
-#' @return
-#' A \code{data.table} with all information used during the spreading
+#' @return A `data.table` with all information used during the spreading
 #'
 #' @export
 #' @importFrom CircStats deg rad
 #' @importFrom data.table := setattr
 #' @importFrom fpCompare %>=% %>>%
+#' @importFrom graphics par
 #' @importFrom quickPlot clearPlot Plot
 #' @importFrom raster pointDistance xyFromCell
 #' @importFrom stats pexp dweibull pweibull
-#' @importFrom graphics par
-#'
 #'
 #' @example inst/examples/example_spread3.R
 #'
@@ -346,11 +343,11 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 #' Return the (approximate) middle pixel on a raster
 #'
 #' This calculation is slightly different depending on whether
-#' the \code{nrow(ras)} and \code{ncol(ras)} are even or odd.
+#' the `nrow(ras)` and `ncol(ras)` are even or odd.
 #' It will return the exact middle pixel if these are odd, and
 #' the pixel just left and/or above the middle pixel if either
 #' dimension is even, respectively.
-#' @param ras A \code{Raster}
+#' @param ras A `Raster`
 #'
 #' @export
 middlePixel <- function(ras) {
@@ -364,7 +361,7 @@ middlePixel <- function(ras) {
 #' Test that metadata of 2 or more objects is the same
 #'
 #' Currently, only Raster class has a useful method. Defaults to
-#' \code{all(sapply(list(...)[-1], function(x) identical(list(...)[1], x)))}
+#' `all(sapply(list(...)[-1], function(x) identical(list(...)[1], x)))`
 #' @param ... 2 or more of the same type of object to test
 #'   for equivalent metadata
 #' @export

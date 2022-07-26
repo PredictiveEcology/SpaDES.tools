@@ -36,7 +36,7 @@ locations for spreading events to start and spread2 into. Required.}
 data.table that is the output of a previous \code{spread2}.
 If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
-\code{\link[raster:cellFrom]{cellFromXY}}.}
+\code{\link[raster:cellFrom]{cellFromXY()}}.}
 
 \item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
 a \code{RasterLayer} that is the identical dimensions as
@@ -68,7 +68,7 @@ value is the initial starting pixel.}
 all events to be spread2. Recycled to match \code{start} length,
 if it is not as long as \code{start}. This will be overridden if
 \code{exactSize} also provided.
-See section on \code{Breaking out of spread2 events}.}
+See section on \verb{Breaking out of spread2 events}.}
 
 \item{exactSize}{Numeric vector, length 1 or \code{length(start)}.
 Similar to \code{maxSize}, but these will be the exact
@@ -140,7 +140,7 @@ See details.  Default is 0, i.e., no overlapping.}
 
 \item{neighProbs}{An optional numeric vector, whose sum is 1. It indicates the
 probabilities that an individual
-spread iteration will spread to \code{1, 2, ..., length(neighProbs)}
+spread iteration will spread to \verb{1, 2, ..., length(neighProbs)}
 neighbours, respectively. If this is used (i.e., something other than
 NA), \code{circle} and \code{returnDistances} will not work currently.}
 
@@ -168,30 +168,30 @@ If \code{asRaster} is \code{FALSE}, then this function returns a
 \code{data.table} with 3 (or 4 if \code{returnFrom} is \code{TRUE}) columns:
 
 \tabular{ll}{
-  \code{initialPixels} \tab the initial cell number of that particular
-                           spread2 event.\cr
-  \code{pixels} \tab The cell indices of cells that have
-                       been touched by the spread2 algorithm.\cr
-  \code{state} \tab a logical indicating whether the cell is active (i.e.,
-                       could still be a source for spreading) or not (no
-                       spreading will occur from these cells).\cr
-  \code{from} \tab The pixel indices that were the immediately preceeding
-                   "source" for each \code{pixels}, i.e., the lag 1 pixels.
-                   Only returned if \code{returnFrom} is \code{TRUE} \cr
+\code{initialPixels} \tab the initial cell number of that particular
+spread2 event.\cr
+\code{pixels} \tab The cell indices of cells that have
+been touched by the spread2 algorithm.\cr
+\code{state} \tab a logical indicating whether the cell is active (i.e.,
+could still be a source for spreading) or not (no
+spreading will occur from these cells).\cr
+\code{from} \tab The pixel indices that were the immediately preceeding
+"source" for each \code{pixels}, i.e., the lag 1 pixels.
+Only returned if \code{returnFrom} is \code{TRUE} \cr
 }
 
 The attribute saved with the name "spreadState" (e.g., \code{attr(output, "spreadState")})
 includes a \code{data.table} with columns:
 \tabular{ll}{
-  \code{id} \tab An arbitrary code, from 1 to \code{length(start)} for each "event".\cr
-  \code{initialPixels} \tab the initial cell number of that particular
-                           spread2 event.\cr
-  \code{numRetries} \tab The number of re-starts the event did because it got
-                         stuck (normally only because \code{exactSize} was used
-                         and was not achieved.\cr
-  \code{maxSize} \tab The number of pixels that were provided as inputs via
-                     \code{maxSize} or \code{exactSize}.\cr
-  \code{size} \tab The current size, in pixels, of each event.\cr
+\code{id} \tab An arbitrary code, from 1 to \code{length(start)} for each "event".\cr
+\code{initialPixels} \tab the initial cell number of that particular
+spread2 event.\cr
+\code{numRetries} \tab The number of re-starts the event did because it got
+stuck (normally only because \code{exactSize} was used
+and was not achieved.\cr
+\code{maxSize} \tab The number of pixels that were provided as inputs via
+\code{maxSize} or \code{exactSize}.\cr
+\code{size} \tab The current size, in pixels, of each event.\cr
 }
 and several other objects that provide significant speed ups in iterative calls to
 spread2. If the user runs \code{spread2} iteratively, there will likely be significant
@@ -199,7 +199,7 @@ speed gains if the \code{data.table} passed in to \code{start} should have the a
 attached, or re-attached if it was lost, e.g., via
 \code{setattr(outInput, "spreadState", attr(out, "spreadState"))}, where \code{out} is the
 returned \code{data.table} from the previous call to \code{spread2}, and \code{outInput} is
-the modified \code{data.table}. Currently, the modified \code{data.table} \bold{must} have the
+the modified \code{data.table}. Currently, the modified \code{data.table} \strong{must} have the
 same order as \code{out}.
 }
 \description{
@@ -207,7 +207,7 @@ This can be used to simulate fires, seed dispersal, calculation of iterative,
 concentric, symmetric (currently) landscape values and many other things.
 Essentially, it starts from a collection of cells (\code{start}, called "events")
 and spreads to neighbours, according to the \code{directions}
-and \code{spreadProb} with modifications due to other arguments. \bold{NOTE:}
+and \code{spreadProb} with modifications due to other arguments. \strong{NOTE:}
 the \code{spread} function is similar, but sometimes slightly faster, but less
 robust, and more difficult to use iteratively.
 }
@@ -220,10 +220,12 @@ whichever neighbours successfully pass independent calls to
 \code{runif(1,0,1)<spreadProb}.
 The algorithm will iterate again and again, each time starting from the newly
 "activated" cells. Several built-in decisions are as follows.
-1. no active cell can active a cell that was already activated by
+\enumerate{
+\item no active cell can active a cell that was already activated by
 the same event (i.e., "it won't go backwards"). 2. If \code{allowOverlap} is
 \code{FALSE}, then the previous rule will also apply, regardless of which
 "event" caused the pixels to be previously active.
+}
 
 This function can be interrupted before all active cells are exhausted if
 the \code{iterations} value is reached before there are no more active
@@ -254,8 +256,6 @@ which is multiplied to get an angle-adjusted spreadProb:
 which is then rescaled:
 \deqn{adjustedSpreadProb = (spreadProbAdj - min(spreadProbAdj)) * par2 + par1},
 where par1 and par2 are parameters calculated internally to make the 2 conditions above true.
-
-
 
 If \code{exactSize} or \code{maxSize} are used, then spreading will continue and stop
 before or at \code{maxSize} or at \code{exactSize}. If \code{iterations} is specified,
@@ -290,25 +290,25 @@ Therefore, it is the user's responsibility to make sure the different rules
 are interacting with each other correctly.
 
 \tabular{ll}{
-  \code{spreadProb} \tab Probabilistically, if spreadProb is low enough,
-                         active spreading events will stop. In practice,
-                         this number generally should be below 0.3 to actually
-                         see an event stop\cr
-  \code{maxSize} \tab This is the number of cells that are "successfully" turned
-                      on during a spreading event. \code{spreadProb} will still
-                      be active, so, it is possible that the end size of each event
-                      is smaller than \code{maxSize}, but they will not be greater
-                      than \code{maxSize}\cr
-  \code{exactSize} \tab This is the number of cells that are "successfully" turned
-                      on during a spreading event. This will override an event that
-                      stops probabilistically via \code{spreadProb}, but forcing
-                      its last set of active cells to try again to find neighbours.
-                      It will try \code{maxRetriesPerID} times per event, before giving up.
-                      During those \code{maxRetriesPerID} times, it will try to "jump" up to
-                      4 cells outwards from each of the active cells, every 5 retries.\cr
-  \code{iterations} \tab This is a hard cap on the number of internal iterations to
-                         complete before returning the current state of the system
-                         as a \code{data.table}.\cr
+\code{spreadProb} \tab Probabilistically, if spreadProb is low enough,
+active spreading events will stop. In practice,
+this number generally should be below 0.3 to actually
+see an event stop\cr
+\code{maxSize} \tab This is the number of cells that are "successfully" turned
+on during a spreading event. \code{spreadProb} will still
+be active, so, it is possible that the end size of each event
+is smaller than \code{maxSize}, but they will not be greater
+than \code{maxSize}\cr
+\code{exactSize} \tab This is the number of cells that are "successfully" turned
+on during a spreading event. This will override an event that
+stops probabilistically via \code{spreadProb}, but forcing
+its last set of active cells to try again to find neighbours.
+It will try \code{maxRetriesPerID} times per event, before giving up.
+During those \code{maxRetriesPerID} times, it will try to "jump" up to
+4 cells outwards from each of the active cells, every 5 retries.\cr
+\code{iterations} \tab This is a hard cap on the number of internal iterations to
+complete before returning the current state of the system
+as a \code{data.table}.\cr
 }
 }
 
@@ -331,28 +331,28 @@ To get the same order, the easiest thing to do is sort the initial \code{start}
 objects by their pixel location, increasing.
 Then, of course, sorting any vectorized arguments (e.g., \code{maxSize}) accordingly.
 
-\bold{NOTE}: the \code{data.table} or \code{RasterLayer} should not use be altered
+\strong{NOTE}: the \code{data.table} or \code{RasterLayer} should not use be altered
 when passed back into \code{spread2}.
 }
 
 \section{\code{allowOverlap}}{
 
 If \code{1} (or \code{TRUE}),
- then individual events can overlap with one another, i.e., allow
- overlap between events. If \code{2} (or \code{NA}), then each pixel
- is essentially independent, allowing overlap between and within
- events. This likely requires a user to intervene as it is possible
- to spread back onto itself. If \code{3} (did not exist previously),
- individual events can overlap, and there can be overlap within an
- event, but only within an iteration, i.e., once an iteration is
- finished, and a pixel was activated, then the spreading will not
- return onto these pixels. If \code{0} (or \code{FALSE}), then once a
- pixel is activated, it cannot be re-activated, within or between event.
- This allows events to not interfere with one another i.e.,
- they do not interact (this is slower than if
- allowOverlap = FALSE). Default is 0. In the case of 2 or 3,
- this would be, perhaps, useful for dispersal of,
- say, insect swarms.
+then individual events can overlap with one another, i.e., allow
+overlap between events. If \code{2} (or \code{NA}), then each pixel
+is essentially independent, allowing overlap between and within
+events. This likely requires a user to intervene as it is possible
+to spread back onto itself. If \code{3} (did not exist previously),
+individual events can overlap, and there can be overlap within an
+event, but only within an iteration, i.e., once an iteration is
+finished, and a pixel was activated, then the spreading will not
+return onto these pixels. If \code{0} (or \code{FALSE}), then once a
+pixel is activated, it cannot be re-activated, within or between event.
+This allows events to not interfere with one another i.e.,
+they do not interact (this is slower than if
+allowOverlap = FALSE). Default is 0. In the case of 2 or 3,
+this would be, perhaps, useful for dispersal of,
+say, insect swarms.
 }
 
 \examples{
@@ -490,7 +490,7 @@ circs <- spread2(a, spreadProb = 0.213, start = sams,
 }
 }
 \seealso{
-\code{\link{spread}} for a different implementation of the same algorithm.
+\code{\link[=spread]{spread()}} for a different implementation of the same algorithm.
 \code{spread} is less robust but it is often slightly faster.
 }
 \author{

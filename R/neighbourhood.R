@@ -6,14 +6,14 @@ if (getRversion() >= "3.1.0") {
 #' Fast `adjacent` function, and Just In Time compiled version
 #'
 #' Faster function for determining the cells of the 4, 8 or bishop
-#'  neighbours of the \code{cells}. This is a hybrid function that uses
+#'  neighbours of the `cells`. This is a hybrid function that uses
 #'  matrix for small numbers of loci (<1e4) and data.table for larger numbers of loci
 #'
 #' Between 4x (large number loci) to 200x (small number loci) speed gains over
-#' \code{adjacent} in raster package. There is some extra speed gain if
-#' \code{NumCol} and \code{NumCells} are passed rather than a raster.
+#' `adjacent` in raster package. There is some extra speed gain if
+#' `NumCol` and `NumCells` are passed rather than a raster.
 #' Efficiency gains come from:
-#'  1. use \code{data.table} internally
+#'  1. use `data.table` internally
 #'     - no need to remove NAs because wrapped or outside points are
 #'       just removed directly with data.table
 #'     - use data.table to sort and fast select (though not fastest possible)
@@ -29,37 +29,37 @@ if (getRversion() >= "3.1.0") {
 #'    - or where the modulo of the "to" cells is equal to 0 if "from" cells are 1 (wrapped
 #'      left to right)
 #'
-#' @param x \code{Raster*} object for which adjacency will be calculated.
+#' @param x `Raster*` object for which adjacency will be calculated.
 #'
 #' @param cells vector of cell numbers for which adjacent cells should be found.
 #'              Cell numbers start with 1 in the upper-left corner and increase
 #'              from left to right and from top to bottom.
 #'
 #' @param directions the number of directions in which cells should be connected:
-#'                   4 (rook's case), 8 (queen's case), or \code{"bishop"} to connect
+#'                   4 (rook's case), 8 (queen's case), or `"bishop"` to connect
 #'                   cells with one-cell diagonal moves.
 #'                   Or a neighbourhood matrix (see Details).
 #'
 #' @param sort logical. Whether the outputs should be sorted or not, using cell ids
-#'             of the \code{from} cells (and \code{to} cells, if \code{match.adjacent}
-#'             is \code{TRUE}).
+#'             of the `from` cells (and `to` cells, if `match.adjacent`
+#'             is `TRUE`).
 #'
-#' @param pairs logical. If \code{TRUE}, a matrix of pairs of adjacent cells is returned.
-#'              If \code{FALSE}, a vector of cells adjacent to cells is returned
+#' @param pairs logical. If `TRUE`, a matrix of pairs of adjacent cells is returned.
+#'              If `FALSE`, a vector of cells adjacent to cells is returned
 #'
 #' @param include logical. Should the focal cells be included in the result?
 #'
 #' @param target a vector of cells that can be spread to. This is the inverse of a mask.
 #'
 #' @param numCol numeric indicating number of columns in the raster.
-#'               Using this with \code{numCell} is a bit faster execution time.
+#'               Using this with `numCell` is a bit faster execution time.
 #'
 #' @param numCell numeric indicating number of cells in the raster.
-#'                Using this with \code{numCol} is a bit faster execution time.
+#'                Using this with `numCol` is a bit faster execution time.
 #'
 #' @param match.adjacent logical. Should the returned object be the same as
-#'                       \code{raster::adjacent}.
-#'                       Default \code{FALSE}, which is faster.
+#'                       `raster::adjacent`.
+#'                       Default `FALSE`, which is faster.
 #'
 #' @param cutoff.for.data.table numeric. If the number of cells is above this value,
 #'                              the function uses data.table which is faster with
@@ -67,30 +67,30 @@ if (getRversion() >= "3.1.0") {
 #'                              to be the turning point where data.table becomes faster.
 #'
 #' @param torus Logical. Should the spread event wrap around to the other side of the raster?
-#'                       Default is \code{FALSE}.
+#'                       Default is `FALSE`.
 #'
-#' @param id numeric If not \code{NULL} (default), then function will return \code{"id"} column.
+#' @param id numeric If not `NULL` (default), then function will return `"id"` column.
 #'
 #' @param numNeighs A numeric scalar, indicating how many neighbours to return. Must be
-#'                  less than or equal to \code{directions}; which neighbours are random
+#'                  less than or equal to `directions`; which neighbours are random
 #'                  with equal probabilities.
 #' @param returnDT A logical. If TRUE, then the function will return the result
-#'                 as a \code{data.table}, if the internals used \code{data.table},
-#'                 i.e., if number of cells is greater than \code{cutoff.for.data.table}.
+#'                 as a `data.table`, if the internals used `data.table`,
+#'                 i.e., if number of cells is greater than `cutoff.for.data.table`.
 #'                 User should be warned that this will therefore cause the output
-#'                 format to change depending \code{cutoff.for.data.table}.
-#'                 This will be faster for situations where \code{cutoff.for.data.table = TRUE}.
+#'                 format to change depending `cutoff.for.data.table`.
+#'                 This will be faster for situations where `cutoff.for.data.table = TRUE`.
 #'
-#' @return Either a matrix (if more than 1 column, i.e., \code{pairs = TRUE},
-#' and/or \code{id} is provided), a vector (if only one column), or a \code{data.table}
-#' (if \code{cutoff.for.data.table} is less than \code{length(cells)} \emph{and}
-#' \code{returnDT} is \code{TRUE}.
+#' @return Either a matrix (if more than 1 column, i.e., `pairs = TRUE`,
+#' and/or `id` is provided), a vector (if only one column), or a `data.table`
+#' (if `cutoff.for.data.table` is less than `length(cells)` *and*
+#' `returnDT` is `TRUE`.
 #' To get a consistent output, say a matrix, it would be wise to test the output
 #' for its class.
 #' The variable output is done to minimize coercion to maintain speed.
-#' The columns will be one or more of \code{id}, \code{from}, \code{to}.
+#' The columns will be one or more of `id`, `from`, `to`.
 #'
-#' @seealso \code{\link[raster]{adjacent}}
+#' @seealso [raster::adjacent()]
 #'
 #' @author Eliot McIntire
 #' @export
@@ -368,29 +368,29 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' Identify pixels in a circle or ring (donut) around an object.
 #'
 #' Identify the pixels and coordinates that are at a (set of) buffer distance(s)
-#' of the objects passed into \code{coords}.
-#' This is similar to \code{rgeos::gBuffer} but much faster and without
+#' of the objects passed into `coords`.
+#' This is similar to `rgeos::gBuffer` but much faster and without
 #' the geo referencing information.
 #' In other words, it can be used for similar problems, but where speed is important.
-#' This code is substantially adapted from \code{PlotRegionHighlighter::createCircle}.
+#' This code is substantially adapted from `PlotRegionHighlighter::createCircle`.
 #'
 #' @param landscape    Raster on which the circles are built.
 #'
 #' @param coords Either a matrix with 2 (or 3) columns, x and y (and id), representing the
 #'               coordinates (and an associated id, like cell index),
-#'               or a \code{SpatialPoints*} object around which to make circles. Must be same
-#'               coordinate system as the \code{landscape} argument. Default is missing,
-#'               meaning it uses the default to \code{loci}
+#'               or a `SpatialPoints*` object around which to make circles. Must be same
+#'               coordinate system as the `landscape` argument. Default is missing,
+#'               meaning it uses the default to `loci`
 #'
-#' @param loci   Numeric. An alternative to \code{coords}. These are the indices on
-#'               \code{landscape} to initiate this function. See \code{coords}. Default is one
-#'               point in centre of \code{landscape}..
+#' @param loci   Numeric. An alternative to `coords`. These are the indices on
+#'               `landscape` to initiate this function. See `coords`. Default is one
+#'               point in centre of `landscape`..
 #'
 #' @param maxRadius  Numeric vector of length 1 or same length as coords
 #'
-#' @param minRadius  Numeric vector of length 1 or same length as \code{coords}. Default is
-#'                   \code{maxRadius}, meaning return all cells that are touched
-#'                   by the narrow ring at that exact radius. If smaller than \code{maxRadius},
+#' @param minRadius  Numeric vector of length 1 or same length as `coords`. Default is
+#'                   `maxRadius`, meaning return all cells that are touched
+#'                   by the narrow ring at that exact radius. If smaller than `maxRadius`,
 #'                   then this will create a buffer or donut or ring.
 #'
 #' @param allowOverlap Logical. Should duplicates across id be removed or kept. Default TRUE.
@@ -404,8 +404,8 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'                        and "excludePixels". See details.
 #'
 #' @param returnDistances Logical. If TRUE, then a column will be added to the returned
-#'                        data.table that reports the distance from \code{coords} to every
-#'                        point that was in the circle/donut surrounding \code{coords}. Default
+#'                        data.table that reports the distance from `coords` to every
+#'                        point that was in the circle/donut surrounding `coords`. Default
 #'                        FALSE, which is faster.
 #'
 #' @param angles Numeric. Optional vector of angles, in radians, to use. This will create
@@ -413,12 +413,12 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'               derived angles that will "fill" the circle.
 #'
 #' @param returnAngles Logical. If TRUE, then a column will be added to the returned
-#'                        data.table that reports the angle from \code{coords} to every
-#'                        point that was in the circle/donut surrounding \code{coords}. Default
+#'                        data.table that reports the angle from `coords` to every
+#'                        point that was in the circle/donut surrounding `coords`. Default
 #'                        FALSE.
 #'
 #' @param closest Logical. When determining non-overlapping circles, should the function
-#'                give preference to the closest \code{loci} or the first one (much faster).
+#'                give preference to the closest `loci` or the first one (much faster).
 #'                Default is FALSE, meaning the faster, though maybe not desired behaviour.
 #'
 #' @param simplify logical. If TRUE, then all duplicate pixels are removed. This means
@@ -427,17 +427,17 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' @inheritParams spread
 #'
 #' @details This function identifies all the pixels as defined by a donut
-#' with inner radius \code{minRadius} and outer radius of \code{maxRadius}.
-#' The \code{includeBehavior} defines whether the cells that intersect the radii
-#' but whose centres are not inside the donut are included \code{includePixels}
-#' or not \code{excludePixels} in the returned pixels identified.
-#' If this is \code{excludePixels}, and if a \code{minRadius} and
-#' \code{maxRadius} are equal, this will return no pixels.
+#' with inner radius `minRadius` and outer radius of `maxRadius`.
+#' The `includeBehavior` defines whether the cells that intersect the radii
+#' but whose centres are not inside the donut are included `includePixels`
+#' or not `excludePixels` in the returned pixels identified.
+#' If this is `excludePixels`, and if a `minRadius` and
+#' `maxRadius` are equal, this will return no pixels.
 #'
 #'
-#' @return A \code{matrix} with 4 columns, \code{id}, \code{indices},
-#' \code{x}, \code{y}. The \code{x} and \code{y} indicate the exact coordinates of
-#' the \code{indices} (i.e., cell number) of the \code{landscape}
+#' @return A `matrix` with 4 columns, `id`, `indices`,
+#' `x`, `y`. The `x` and `y` indicate the exact coordinates of
+#' the `indices` (i.e., cell number) of the `landscape`
 #' associated with the ring or circle being identified by this function.
 #'
 #' @importFrom data.table data.table set setkeyv
@@ -447,15 +447,15 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' @export
 #' @rdname cir
 #'
-#' @seealso \code{\link{rings}} which uses \code{spread} internally.
-#' \code{cir} tends to be faster when there are few starting points, \code{rings}
-#' tends to be faster when there are many starting points. \code{cir} scales with
-#' \code{maxRadius} ^ 2 and \code{coords}. Another difference
-#' between the two functions is that \code{rings} takes the centre of the pixel
-#' as the centre of a circle, whereas \code{cir} takes the exact coordinates.
+#' @seealso [rings()] which uses `spread` internally.
+#' `cir` tends to be faster when there are few starting points, `rings`
+#' tends to be faster when there are many starting points. `cir` scales with
+#' `maxRadius` ^ 2 and `coords`. Another difference
+#' between the two functions is that `rings` takes the centre of the pixel
+#' as the centre of a circle, whereas `cir` takes the exact coordinates.
 #' See example. For the specific case of creating distance surfaces from specific
-#' points, see \code{\link{distanceFromEachPoint}}, which is often faster.
-#' For the more general GIS buffering, see \code{rgeos::gBuffer}.
+#' points, see [distanceFromEachPoint()], which is often faster.
+#' For the more general GIS buffering, see `rgeos::gBuffer`.
 #'
 #' @example inst/examples/example_cir.R
 #'
@@ -760,20 +760,20 @@ cir <- function(landscape, coords, loci,
 #'
 #' Generally useful for model development purposes.
 #'
-#' If \code{withHeading} used, then \code{X} must be a \code{SpatialPointsDataFrame}
-#' that contains two columns, \code{x1} and \code{y1}, with the immediately
+#' If `withHeading` used, then `X` must be a `SpatialPointsDataFrame`
+#' that contains two columns, `x1` and `y1`, with the immediately
 #' previous agent locations.
 #'
-#' @param X A \code{SpatialPoints*} object, or matrix of coordinates.
+#' @param X A `SpatialPoints*` object, or matrix of coordinates.
 #'
-#' @param bounds Either a \code{Raster*}, \code{Extent}, or \code{bbox} object
+#' @param bounds Either a `Raster*`, `Extent`, or `bbox` object
 #'               defining bounds to wrap around.
 #'
-#' @param withHeading logical. If \code{TRUE}, the previous points must be wrapped
+#' @param withHeading logical. If `TRUE`, the previous points must be wrapped
 #'                    also so that the subsequent heading calculation will work.
-#'                    Default \code{FALSE}. See details.
+#'                    Default `FALSE`. See details.
 #'
-#' @return Object of the same class as \code{X}, but with coordinates updated to
+#' @return Object of the same class as `X`, but with coordinates updated to
 #'         reflect the wrapping.
 #'
 #' @author Eliot McIntire
@@ -939,24 +939,24 @@ setMethod(
 #' @inheritParams cir
 #'
 #' @param stopRule A function. If the spokes are to stop. This can be a function
-#'                 of \code{landscape}, \code{fromCell}, \code{toCell}, \code{x}
+#'                 of `landscape`, `fromCell`, `toCell`, `x`
 #'                 (distance from coords cell), or any other named argument passed
-#'                 into the \code{...} of this function. See examples.
+#'                 into the `...` of this function. See examples.
 #'
 #' @param nAngles Numeric, length one. Alternative to angles. If provided, the function
-#'                will create a sequence of angles from \code{0} to \code{2*pi},
-#'                with a length \code{nAngles}, and not including \code{2*pi}.
-#'                Will not be used if \code{angles} is provided, and will show
+#'                will create a sequence of angles from `0` to `2*pi`,
+#'                with a length `nAngles`, and not including `2*pi`.
+#'                Will not be used if `angles` is provided, and will show
 #'                warning of both are given.
 #'
-#' @param ... Objects to be used by \code{stopRule()}. See examples.
+#' @param ... Objects to be used by `stopRule()`. See examples.
 #'
-#' @return A matrix containing columns id (representing the row numbers of \code{coords}),
-#' angles (from \code{coords} to each point along the spokes), x and y coordinates
-#' of each point along the spokes, the corresponding indices on the \code{landscape}
-#' Raster, dists (the distances between each \code{coords} and each point along the
+#' @return A matrix containing columns id (representing the row numbers of `coords`),
+#' angles (from `coords` to each point along the spokes), x and y coordinates
+#' of each point along the spokes, the corresponding indices on the `landscape`
+#' Raster, dists (the distances between each `coords` and each point along the
 #' spokes), and stop, indicating if it was a point that caused a spoke to stop
-#' going outwards due to \code{stopRule}.
+#' going outwards due to `stopRule`.
 #'
 #' @author Eliot McIntire
 #' @export
@@ -1031,11 +1031,11 @@ setMethod(
   }
 })
 
-#' This is a very fast version of \code{cir} with \code{allowOverlap = TRUE},
-#' \code{allowDuplicates = FALSE}, \code{returnIndices = TRUE}, \code{returnDistances = TRUE}, and
-#' \code{includeBehavior = "excludePixels"}.
-#' It is used inside \code{spread2}, when asymmetry is active.
-#' The basic algorithm is to run \code{cir} just once, then add to the x,y coordinates of every locus.
+#' This is a very fast version of `cir` with `allowOverlap = TRUE`,
+#' `allowDuplicates = FALSE`, `returnIndices = TRUE`, `returnDistances = TRUE`, and
+#' `includeBehavior = "excludePixels"`.
+#' It is used inside `spread2`, when asymmetry is active.
+#' The basic algorithm is to run `cir` just once, then add to the x,y coordinates of every locus.
 #'
 #' @name cirSpecialQuick
 #' @inheritParams cir
