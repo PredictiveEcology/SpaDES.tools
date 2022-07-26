@@ -32,7 +32,7 @@ Should be one of \code{"RMgauss"} (Gaussian covariance model),
 or the default, \code{"RMexp"} (exponential covariance model).}
 
 \item{alpha}{A required parameter of the 'RMstable' model.
-Should be in the interval [0,2] to provide a valid covariance function.
+Should be in the interval \link{0,2} to provide a valid covariance function.
 Default is 1.}
 
 \item{inMemory}{Should the RasterLayer be forced to be in memory?
@@ -67,5 +67,5 @@ if (require(RandomFields)) {
 
 }
 \seealso{
-\code{RFsimulate} and \code{\link{extent}}
+\code{RFsimulate} and \code{\link[=extent]{extent()}}
 }

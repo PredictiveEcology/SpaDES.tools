@@ -16,8 +16,8 @@ a raster, then all the raster dimensions.}
 }
 \value{
 A \code{RasterLayer} with probabilities of initialization.
-       There are several combinations of inputs possible and they each result
-       in different behaviours.
+There are several combinations of inputs possible and they each result
+in different behaviours.
 
 If \code{p} is numeric or \code{Raster} and between 0 and 1, it is treated as an
 absolute probability, and a map will be produced with the p value(s) everywhere.

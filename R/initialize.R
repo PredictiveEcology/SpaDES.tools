@@ -3,24 +3,24 @@ if (getRversion() >= "3.1.0") {
 }
 
 ################################################################################
-#' Produce a \code{raster} of a random Gaussian process.
+#' Produce a `raster` of a random Gaussian process.
 #'
-#' This is a wrapper for the \code{RFsimulate} function in the \code{RandomFields}
-#' package. The main addition is the \code{speedup} argument which allows
-#' for faster map generation. A \code{speedup} of 1 is normal and will get
+#' This is a wrapper for the `RFsimulate` function in the `RandomFields`
+#' package. The main addition is the `speedup` argument which allows
+#' for faster map generation. A `speedup` of 1 is normal and will get
 #' progressively faster as the number increases, at the expense of coarser
 #' pixel resolution of the pattern generated.
 #'
-#' @param x        A spatial object (e.g., a \code{RasterLayer}).
+#' @param x        A spatial object (e.g., a `RasterLayer`).
 #'
 #' @param scale    The spatial scale in map units of the Gaussian pattern.
 #'
 #' @param var      Spatial variance.
 #'
 #' @param method   The type of model used to produce the Gaussian pattern.
-#'                 Should be one of \code{"RMgauss"} (Gaussian covariance model),
-#'                 \code{"RMstable"} (the stable powered exponential model),
-#'                 or the default, \code{"RMexp"} (exponential covariance model).
+#'                 Should be one of `"RMgauss"` (Gaussian covariance model),
+#'                 `"RMstable"` (the stable powered exponential model),
+#'                 or the default, `"RMexp"` (exponential covariance model).
 #'
 #' @param speedup  An numeric value indicating how much faster than 'normal'
 #'                 to generate maps. It may be necessary to give a value larger
@@ -31,13 +31,13 @@ if (getRversion() >= "3.1.0") {
 #'                 Default is 1.
 #'
 #' @param inMemory Should the RasterLayer be forced to be in memory?
-#'                 Default \code{FALSE}.
+#'                 Default `FALSE`.
 #'
-#' @param ... Additional arguments to \code{raster}.
+#' @param ... Additional arguments to `raster`.
 #'
-#' @return A raster map with same extent as \code{x}, with a Gaussian random pattern.
+#' @return A raster map with same extent as `x`, with a Gaussian random pattern.
 #'
-#' @seealso \code{RFsimulate} and \code{\link{extent}}
+#' @seealso `RFsimulate` and [extent()]
 #'
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
@@ -67,7 +67,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 ################################################################################
 #' Find factors
 #'
-#' Internal function (used in \code{link{gaussMap}}).
+#' Internal function (used in [gaussMap()]).
 #' Finds the integer factors of an integer.
 #'
 #' @param x An integer to factorize
@@ -82,19 +82,19 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   return(div[x %% div == 0L])
 }
 
-#' Produce a \code{RasterLayer} of  random polygons
+#' Produce a `RasterLayer` of  random polygons
 #'
-#' These are built with the \code{\link{spread}} function internally.
+#' These are built with the [spread()] function internally.
 #'
 #' @param ras A raster that whose extent will be used for the random polygons.
 #'
 #' @param numTypes Numeric value. The number of unique polygon types to use.
 #'
-#' @param ...      Other arguments passed to \code{spread}. No known uses currently.
+#' @param ...      Other arguments passed to `spread`. No known uses currently.
 #'
-#' @return A map of extent \code{ext} with random polygons.
+#' @return A map of extent `ext` with random polygons.
 #'
-#' @seealso \code{\link{spread}}, \code{\link{raster}}, \code{\link{randomPolygons}}
+#' @seealso [spread()], [raster()], [randomPolygons()]
 #'
 #' @export
 #' @importFrom raster cellFromXY extent raster xmax xmin ymax ymin
@@ -141,21 +141,21 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 
 #' Create a single random polygon object
 #'
-#' Produces a \code{SpatialPolygons} object with 1 feature that will have approximately an area
-#' equal to \code{area} (expecting area in hectares), #' and a centre at approximately \code{x}.
+#' Produces a `SpatialPolygons` object with 1 feature that will have approximately an area
+#' equal to `area` (expecting area in hectares), #' and a centre at approximately `x`.
 #'
-#' @param x Either a \code{SpatialPoints}, \code{SpatialPolygons}, or \code{matrix} with two
+#' @param x Either a `SpatialPoints`, `SpatialPolygons`, or `matrix` with two
 #'          dimensions, 1 row, with the approximate centre of the new random polygon to create.
-#'          If \code{matrix}, then longitude and latitude are assumed (epsg:4326)
+#'          If `matrix`, then longitude and latitude are assumed (epsg:4326)
 #'
-#' @param area A numeric, the approximate area in \code{meters squared} of the random polygon.
+#' @param area A numeric, the approximate area in `meters squared` of the random polygon.
 #'
-#' @param hectares Deprecated. Use \code{area} in meters squared.
+#' @param hectares Deprecated. Use `area` in meters squared.
 #'
-#' @return A \code{SpatialPolygons} object, with approximately the area request,
-#'         centred approximately at the coordinates requested, in the projection of \code{x}
+#' @return A `SpatialPolygons` object, with approximately the area request,
+#'         centred approximately at the coordinates requested, in the projection of `x`
 #'
-#' @seealso \code{\link{gaussMap}} and \code{\link{randomPolygons}}
+#' @seealso [gaussMap()] and [randomPolygons()]
 #'
 #' @importFrom raster crs crs<-
 #' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
@@ -278,15 +278,15 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #'
 #' Instantiate a specific number of agents per patch.
 #' The user can either supply a table of how many to initiate in each patch,
-#' linked by a column in that table called \code{pops}.
+#' linked by a column in that table called `pops`.
 #'
-#' @param patches \code{RasterLayer} of patches, with some sort of a patch id.
+#' @param patches `RasterLayer` of patches, with some sort of a patch id.
 #'
-#' @param numPerPatchTable A \code{data.frame} or \code{data.table} with a
-#'  column named \code{pops} that matches the \code{patches} patch ids, and a
-#'  second column \code{num.in.pop} with population size in each patch.
+#' @param numPerPatchTable A `data.frame` or `data.table` with a
+#'  column named `pops` that matches the `patches` patch ids, and a
+#'  second column `num.in.pop` with population size in each patch.
 #'
-#' @param numPerPatchMap A \code{RasterLayer} exactly the same as \code{patches}
+#' @param numPerPatchMap A `RasterLayer` exactly the same as `patches`
 #' but with agent numbers rather than ids as the cell values per patch.
 #'
 #' @return A raster with 0s and 1s, where the 1s indicate starting locations of

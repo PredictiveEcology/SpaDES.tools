@@ -85,9 +85,9 @@ This is useful for reducing edge effects when performing raster operations invol
 contagious processes.
 
 This function is parallel-aware, using the same mechanism as used in \pkg{raster}.
-Specifically, if you start a cluster using \code{\link{beginCluster}},
+Specifically, if you start a cluster using \code{\link[=beginCluster]{beginCluster()}},
 then this function will automatically use that cluster.
-It is always a good idea to stop the cluster when finished, using \code{\link{endCluster}}.
+It is always a good idea to stop the cluster when finished, using \code{\link[=endCluster]{endCluster()}}.
 }
 \examples{
 library(raster)
@@ -151,9 +151,9 @@ all.equal(n2, r) ## TRUE
 unlink(tmpdir, recursive = TRUE)
 }
 \seealso{
-\code{\link[raster]{merge}}, \code{\link[raster]{mosaic}}
+\code{\link[raster:merge]{raster::merge()}}, \code{\link[raster:mosaic]{raster::mosaic()}}
 
-\code{\link{do.call}}, \code{\link[raster]{merge}}.
+\code{\link[=do.call]{do.call()}}, \code{\link[raster:merge]{raster::merge()}}.
 }
 \author{
 Yong Luo, Alex Chubaty, Tati Micheletti & Ian Eddy

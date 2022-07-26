@@ -23,8 +23,8 @@ dwrpnorm2(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc)
 \item{tol}{the same as \code{acc}.}
 }
 \description{
-This is a modified version of \code{\link{dwrpnorm}} found in \code{CircStats}
- to allow for multiple angles at once (i.e., vectorized on theta and mu).
+This is a modified version of \link[CircStats:dwrpnorm]{dwrpnorm}.
+to allow for multiple angles at once (i.e., vectorized on \code{theta} and \code{mu}).
 }
 \examples{
 # Values for which to evaluate density

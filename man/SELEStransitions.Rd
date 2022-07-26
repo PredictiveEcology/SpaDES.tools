@@ -9,10 +9,10 @@ transitions(p, agent)
 \arguments{
 \item{p}{realized probability of persisting (i.e., either 0 or 1).}
 
-\item{agent}{\code{SpatialPoints*} object.}
+\item{agent}{\verb{SpatialPoints*} object.}
 }
 \value{
-Returns new \code{SpatialPoints*} object with potentially fewer agents.
+Returns new \verb{SpatialPoints*} object with potentially fewer agents.
 }
 \description{
 Describes the probability of an agent successfully persisting until next

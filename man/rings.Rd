@@ -37,7 +37,7 @@ This can also be used as part of \code{stopRule}.}
 \item{loci}{A vector of locations in \code{landscape}.
 These should be cell indices.
 If user has x and y coordinates, these can be converted
-with \code{\link[raster:cellFrom]{cellFromXY}}.}
+with \code{\link[raster:cellFrom]{cellFromXY()}}.}
 
 \item{id}{Logical. If \code{TRUE}, returns a raster of events ids.
 If \code{FALSE}, returns a raster of iteration numbers,
@@ -72,12 +72,12 @@ started. Default is \code{FALSE}. See Details.}
 }
 \value{
 This will return  a \code{data.table} with columns as described in
-        \code{spread} when \code{returnIndices = TRUE}.
+\code{spread} when \code{returnIndices = TRUE}.
 }
 \description{
 Identifies the cell numbers of all cells within a ring defined by  minimum
 and maximum distances from focal cells.
-Uses \code{\link{spread}} under the hood, with specific values set.
+Uses \code{\link[=spread]{spread()}} under the hood, with specific values set.
 Under many situations, this will be faster than using \code{rgeos::gBuffer}
 twice (once for smaller ring and once for larger ring, then removing the
 smaller ring cells).
@@ -124,7 +124,7 @@ if (interactive()) {
 }
 }
 \seealso{
-\code{\link{cir}} which uses a different algorithm.
+\code{\link[=cir]{cir()}} which uses a different algorithm.
 \code{cir} tends to be faster when there are few starting points, \code{rings}
 tends to be faster when there are many starting points. Another difference
 between the two functions is that \code{rings} takes the centre of the pixel

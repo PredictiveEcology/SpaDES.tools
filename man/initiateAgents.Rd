@@ -24,9 +24,9 @@ initiateAgents(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
 \arguments{
 \item{map}{RasterLayer with extent and resolution of desired return object}
 
-\item{numAgents}{numeric resulting from a call to \code{\link{numAgents}}}
+\item{numAgents}{numeric resulting from a call to \code{\link[=numAgents]{numAgents()}}}
 
-\item{probInit}{a Raster resulting from a \code{\link{probInit}} call}
+\item{probInit}{a Raster resulting from a \code{\link[=probInit]{probInit()}} call}
 
 \item{asSpatialPoints}{logical. Should returned object be \code{RasterLayer}
 or \code{SpatialPointsDataFrame} (default)}

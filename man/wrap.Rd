@@ -30,9 +30,9 @@ wrap(X, bounds, withHeading)
 \S4method{wrap}{SpatialPointsDataFrame,matrix,logical}(X, bounds, withHeading)
 }
 \arguments{
-\item{X}{A \code{SpatialPoints*} object, or matrix of coordinates.}
+\item{X}{A \verb{SpatialPoints*} object, or matrix of coordinates.}
 
-\item{bounds}{Either a \code{Raster*}, \code{Extent}, or \code{bbox} object
+\item{bounds}{Either a \verb{Raster*}, \code{Extent}, or \code{bbox} object
 defining bounds to wrap around.}
 
 \item{withHeading}{logical. If \code{TRUE}, the previous points must be wrapped
@@ -41,7 +41,7 @@ Default \code{FALSE}. See details.}
 }
 \value{
 Object of the same class as \code{X}, but with coordinates updated to
-        reflect the wrapping.
+reflect the wrapping.
 }
 \description{
 Generally useful for model development purposes.

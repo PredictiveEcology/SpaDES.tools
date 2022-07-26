@@ -1,89 +1,89 @@
 #' Calculate distances and directions between many points and many grid cells
 #'
-#' This is a modification of \code{\link[raster]{distanceFromPoints}} for the case of many points.
+#' This is a modification of [raster::distanceFromPoints()] for the case of many points.
 #' This version can often be faster for a single point because it does not return a RasterLayer.
-#' This is different than \code{\link[raster]{distanceFromPoints}} because it does not take the
+#' This is different than [raster::distanceFromPoints()] because it does not take the
 #' minimum distance from the set of points to all cells.
 #' Rather this returns the every pair-wise point distance.
 #' As a result, this can be used for doing inverse distance weightings, seed rain,
 #' cumulative effects of distance-based processes etc.
-#' If memory limitation is an issue, \code{maxDistance} will keep memory use down,
+#' If memory limitation is an issue, `maxDistance` will keep memory use down,
 #' but with the consequences that there will be a maximum distance returned.
 #' This function has the potential to use a lot of memory if there are a lot of
-#' \code{from} and \code{to} points.
+#' `from` and `to` points.
 #'
 #' This function is cluster aware. If there is a cluster running, it will use it.
-#' To start a cluster use \code{\link[raster:cluster]{beginCluster}}, with \code{N} being
-#' the number of cores to use. See examples in \code{SpaDES.core::experiment}.
+#' To start a cluster use [`beginCluster()`][raster::beginCluster], with `N` being
+#' the number of cores to use. See examples in `SpaDES.core::experiment`.
 #'
 #' @param from Numeric matrix with 2 or 3 or more columns. They must include x and y,
 #'             representing x and y coordinates of "from" cell. If there is a column
-#'             named "id", it will be "id" from \code{to}, i.e,. specific pair distances.
+#'             named "id", it will be "id" from `to`, i.e,. specific pair distances.
 #'             All other columns will be included in the return value of the function.
 #'
 #' @param to Numeric matrix with 2  or 3 columns (or optionally more, all of which
 #'           will be returned),
 #'           x and y, representing x and y coordinates of "to" cells, and
-#'           optional "id" which will be matched with "id" from \code{from}. Default is all cells.
+#'           optional "id" which will be matched with "id" from `from`. Default is all cells.
 #'
-#' @param landscape RasterLayer. optional. This is only used if \code{to} is NULL, in which case
-#'                  all cells are considered \code{to}.
+#' @param landscape RasterLayer. optional. This is only used if `to` is NULL, in which case
+#'                  all cells are considered `to`.
 #'
-#' @param angles Logical. If \code{TRUE}, then the function will return angles in radians,
+#' @param angles Logical. If `TRUE`, then the function will return angles in radians,
 #'               as well as distances.
 #'
 #' @param maxDistance Numeric in units of number of cells. The algorithm will build
-#'                    the whole surface (from \code{from} to \code{to}), but will
+#'                    the whole surface (from `from` to `to`), but will
 #'                    remove all distances that are above this distance.
 #'                    Using this will keep memory use down.
 #'
 #' @param cumulativeFn A function that can be used to incrementally accumulate
-#'                     values in each \code{to} location, as the function iterates
-#'                     through each \code{from}. See Details.
+#'                     values in each `to` location, as the function iterates
+#'                     through each `from`. See Details.
 #'
-#' @param distFn A function. This can be a function of \code{landscape},
-#'               \code{fromCell} (single integer value of a from pixel),
-#'               \code{toCells} (integer vector value of all the to pixel indices),
-#'               and \code{dist}.
-#'               If \code{cumulativeFn} is supplied, this will be used to convert
+#' @param distFn A function. This can be a function of `landscape`,
+#'               `fromCell` (single integer value of a from pixel),
+#'               `toCells` (integer vector value of all the to pixel indices),
+#'               and `dist`.
+#'               If `cumulativeFn` is supplied, this will be used to convert
 #'               the distances to some other set of units that will be accumulated
-#'               by the \code{cumulativeFn}. See Details and examples.
+#'               by the `cumulativeFn`. See Details and examples.
 #'
-#' @param ... Any additional objects needed for \code{distFn}.
+#' @param ... Any additional objects needed for `distFn`.
 #'
 #' @inheritParams splitRaster
 #'
-#' @return A sorted matrix on \code{id} with same number of rows as \code{to},
-#'         but with one extra column, \code{"dists"}, indicating the distance
-#'         between \code{from} and \code{to}.
+#' @return A sorted matrix on `id` with same number of rows as `to`,
+#'         but with one extra column, `"dists"`, indicating the distance
+#'         between `from` and `to`.
 #'
-#' @seealso \code{\link{rings}}, \code{\link{cir}}, \code{\link[raster]{distanceFromPoints}},
+#' @seealso [rings()], [cir()], [raster::distanceFromPoints()],
 #' which can all be made to do the same thing, under specific combinations of arguments.
 #' But each has different primary use cases. Each is also faster under different conditions.
-#' For instance, if \code{maxDistance} is relatively small compared to the number of cells
-#' in the \code{landscape}, then \code{\link{cir}} will likely be faster. If a minimum
-#' distance from all cells in the \code{landscape} to any cell in \code{from}, then
-#' \code{distanceFromPoints} will be fastest. This function scales best when there are
-#' many \code{to} points or all cells are used \code{to = NULL} (which is default).
+#' For instance, if `maxDistance` is relatively small compared to the number of cells
+#' in the `landscape`, then [cir()] will likely be faster. If a minimum
+#' distance from all cells in the `landscape` to any cell in `from`, then
+#' `distanceFromPoints` will be fastest. This function scales best when there are
+#' many `to` points or all cells are used `to = NULL` (which is default).
 #'
 #' @details
 #'
-#' If the user requires an id (indicating the \code{from} cell for each \code{to} cell)
+#' If the user requires an id (indicating the `from` cell for each `to` cell)
 #' to be returned with the function, the user must add an identifier to the
-#' \code{from} matrix, such as \code{"id"}.
+#' `from` matrix, such as `"id"`.
 #' Otherwise, the function will only return the coordinates and distances.
 #'
-#' \code{distanceFromEachPoint} calls \code{.pointDistance}, which is not intended to be called
+#' `distanceFromEachPoint` calls `.pointDistance`, which is not intended to be called
 #' directly by the user.
 #'
 #' This function has the potential to return a very large object, as it is doing pairwise
 #' distances (and optionally directions) between from and to. If there are memory
 #' limitations because there are many
-#' \code{from} and many \code{to} points, then \code{cumulativeFn} and \code{distFn} can be used.
-#' These two functions together will be used iteratively through the \code{from} points. The
-#' \code{distFn} should be a transformation of distances to be used by the
-#' \code{cumulativeFn} function. For example, if \code{distFn} is \code{1 / (1+x)},
-#' the default, and \code{cumulativeFn} is \code{`+`}, then it will do a sum of
+#' `from` and many `to` points, then `cumulativeFn` and `distFn` can be used.
+#' These two functions together will be used iteratively through the `from` points. The
+#' `distFn` should be a transformation of distances to be used by the
+#' `cumulativeFn` function. For example, if `distFn` is `1 / (1+x)`,
+#' the default, and `cumulativeFn` is ``+``, then it will do a sum of
 #' inverse distance weights.
 #' See examples.
 #'
@@ -342,48 +342,48 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
 #' Calculate distances and directions between many points and many grid cells
 #'
-#' This is a modification of \code{\link[raster]{distanceFromPoints}} for the case
+#' This is a modification of [raster::distanceFromPoints()] for the case
 #' of many points.
 #' This version can often be faster for a single point because it does not return
-#' a \code{RasterLayer}.
-#' This is different than \code{\link[raster]{distanceFromPoints}} because it does
+#' a `RasterLayer`.
+#' This is different than [raster::distanceFromPoints()] because it does
 #' not take the minimum distance from the set of points to all cells.
 #' Rather this returns the every pair-wise point distance.
 #' As a result, this can be used for doing inverse distance weightings, seed rain,
 #' cumulative effects of distance-based processes etc.
-#' If memory limitation is an issue, \code{maxDistance} will keep memory use down,
+#' If memory limitation is an issue, `maxDistance` will keep memory use down,
 #' but with the consequences that there will be a maximum distance returned.
 #' This function has the potential to use a lot of memory if there are a lot of
-#' \code{from} and \code{to} points.
+#' `from` and `to` points.
 #'
-#' \code{directionFromEachPoint} calls \code{.pointDirection}, which is
+#' `directionFromEachPoint` calls `.pointDirection`, which is
 #' not intended to be called directly by the user.
 #'
 #' If knowing the which from cell matches with which to cell is important,
-#' put a column "id" (e.g., starting cell) in the \code{from} matrix.
+#' put a column "id" (e.g., starting cell) in the `from` matrix.
 #'
 #' @param from matrix with 2 or 3 columns, x and y, representing x and y coordinates
-#'             of \code{from} cell, and optional \code{id}, which will be returned,
-#'             and if \code{id} column is in \code{to}, it will be matched with that.
+#'             of `from` cell, and optional `id`, which will be returned,
+#'             and if `id` column is in `to`, it will be matched with that.
 #' @param to matrix with 2  or 3 columns (or optionally more, all of which will be returned),
-#'           x and y, representing x and y coordinates of \code{to} cells, and
-#'           optional \code{id} which will be matched with \code{id} from \code{from}.
-#'           It makes no sense to have \code{id} column here with no \code{id} column
-#'           in \code{from}.
-#' @param landscape (optional) \code{RasterLayer}. This is only used if \code{to = NULL},
-#'                  in which case all cells are considered \code{to}.
+#'           x and y, representing x and y coordinates of `to` cells, and
+#'           optional `id` which will be matched with `id` from `from`.
+#'           It makes no sense to have `id` column here with no `id` column
+#'           in `from`.
+#' @param landscape (optional) `RasterLayer`. This is only used if `to = NULL`,
+#'                  in which case all cells are considered `to`.
 #'
-#' @return A sorted matrix on \code{id} with same number of rows as \code{to},
-#'         but with one extra column, \code{angles} indicating the angle in radians
-#'         between from and to. For speed, this angle will be between \code{-pi/2}
-#'         and \code{3*pi/2}.
-#'         If the user wants this between say, \code{0} and \code{2*pi},
-#'         then \code{angles \%\% (2*pi)} will do the trick. See example.
+#' @return A sorted matrix on `id` with same number of rows as `to`,
+#'         but with one extra column, `angles` indicating the angle in radians
+#'         between from and to. For speed, this angle will be between `-pi/2`
+#'         and `3*pi/2`.
+#'         If the user wants this between say, `0` and `2*pi`,
+#'         then `angles \%\% (2*pi)` will do the trick. See example.
 #'
 #' @export
 #' @rdname directions
-#' @seealso \code{\link{distanceFromEachPoint}}, which will also return directions
-#'          if \code{angles = TRUE}.
+#' @seealso [distanceFromEachPoint()], which will also return directions
+#'          if `angles = TRUE`.
 #'
 #' @examples
 #' library(raster)

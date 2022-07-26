@@ -13,7 +13,7 @@
 A vector of integer factors
 }
 \description{
-Internal function (used in \code{link{gaussMap}}).
+Internal function (used in \code{\link[=gaussMap]{gaussMap()}}).
 Finds the integer factors of an integer.
 }
 \keyword{internal}

@@ -9,47 +9,47 @@ utils::globalVariables(c(
 #'
 #' This can be used to simulate fires, seed dispersal, calculation of iterative,
 #' concentric, symmetric (currently) landscape values and many other things.
-#' Essentially, it starts from a collection of cells (\code{start}, called "events")
-#' and spreads to neighbours, according to the \code{directions}
-#' and \code{spreadProb} with modifications due to other arguments. \bold{NOTE:}
-#' the \code{spread} function is similar, but sometimes slightly faster, but less
+#' Essentially, it starts from a collection of cells (`start`, called "events")
+#' and spreads to neighbours, according to the `directions`
+#' and `spreadProb` with modifications due to other arguments. **NOTE:**
+#' the `spread` function is similar, but sometimes slightly faster, but less
 #' robust, and more difficult to use iteratively.
 #'
 #' There are 2 main underlying algorithms for active cells to "spread" to
-#' nearby cells (adjacent cells): \code{spreadProb} and \code{neighProb}.
-#' Using \code{spreadProb}, every "active" pixel will assess all
-#' neighbours (either 4 or 8, depending on  \code{directions}), and will "activate"
+#' nearby cells (adjacent cells): `spreadProb` and `neighProb`.
+#' Using `spreadProb`, every "active" pixel will assess all
+#' neighbours (either 4 or 8, depending on  `directions`), and will "activate"
 #' whichever neighbours successfully pass independent calls to
-#' \code{runif(1,0,1)<spreadProb}.
+#' `runif(1,0,1)<spreadProb`.
 #' The algorithm will iterate again and again, each time starting from the newly
 #' "activated" cells. Several built-in decisions are as follows.
 #' 1. no active cell can active a cell that was already activated by
-#' the same event (i.e., "it won't go backwards"). 2. If \code{allowOverlap} is
-#' \code{FALSE}, then the previous rule will also apply, regardless of which
+#' the same event (i.e., "it won't go backwards"). 2. If `allowOverlap` is
+#' `FALSE`, then the previous rule will also apply, regardless of which
 #' "event" caused the pixels to be previously active.
 #'
 #' This function can be interrupted before all active cells are exhausted if
-#' the \code{iterations} value is reached before there are no more active
-#' cells to \code{spread2} into. The interrupted output (a data.table) can be passed
-#' subsequently as an input to this same function (as \code{start}).
+#' the `iterations` value is reached before there are no more active
+#' cells to `spread2` into. The interrupted output (a data.table) can be passed
+#' subsequently as an input to this same function (as `start`).
 #' This is intended to be used for situations where external events happen during
 #' a spread2 event, or where one or more arguments to the spread2 function
-#' change before a \code{spread2} event is completed.
-#' For example, if it is desired that the \code{spreadProb} change before a
+#' change before a `spread2` event is completed.
+#' For example, if it is desired that the `spreadProb` change before a
 #' spread2 event is completed because, for example, a fire is spreading, and a
 #' new set of conditions arise due to a change in weather.
 #'
-#' \code{asymmetry} here is slightly different than in the \code{spread} function,
-#' so that it can deal with a \code{RasterLayer} of \code{asymmetryAngle}.
-#' Here, the \code{spreadProb} values of a given set of neighbours around each active pixel
-#' are adjusted to create \code{adjustedSpreadProb} which is calculated maintain the
+#' `asymmetry` here is slightly different than in the `spread` function,
+#' so that it can deal with a `RasterLayer` of `asymmetryAngle`.
+#' Here, the `spreadProb` values of a given set of neighbours around each active pixel
+#' are adjusted to create `adjustedSpreadProb` which is calculated maintain the
 #' following two qualities: \deqn{mean(spreadProb) = mean(ajustedSpreadProb)} and
 #' \deqn{max(spreadProb)/min(spreadProb) = asymmetry} along the axis of
-#' \code{asymmetryAngle}. NOTE: this means that the 8 neighbours around an active
-#' cell may not fulfill the preceeding equality if \code{asymmetryAngle} is not
+#' `asymmetryAngle`. NOTE: this means that the 8 neighbours around an active
+#' cell may not fulfill the preceeding equality if `asymmetryAngle` is not
 #' exactly one of the 8 angles of the 8 neighbours. This means that
 #' \deqn{max(spreadProb)/min(spreadProb)} will generally be less than
-#' \code{asymmetry}, for the 8 neighbours. The exact adjustment to the spreadProb
+#' `asymmetry`, for the 8 neighbours. The exact adjustment to the spreadProb
 #' is calculated with:
 #' \deqn{angleQuality <- (cos(angles - rad(asymmetryAngle))+1)/2}
 #' which is multiplied to get an angle-adjusted spreadProb:
@@ -62,101 +62,101 @@ utils::globalVariables(c(
 #'
 #' There are 3 ways for the spread2 to "stop" spreading.
 #' Here, each "event" is defined as all cells that are spawned from each unique
-#' \code{start} location.
+#' `start` location.
 #' The ways outlined below are all acting at all times, i.e., they are not
 #' mutually exclusive.
 #' Therefore, it is the user's responsibility to make sure the different rules
 #' are interacting with each other correctly.
 #'
 #' \tabular{ll}{
-#'   \code{spreadProb} \tab Probabilistically, if spreadProb is low enough,
+#'   `spreadProb` \tab Probabilistically, if spreadProb is low enough,
 #'                          active spreading events will stop. In practice,
 #'                          this number generally should be below 0.3 to actually
 #'                          see an event stop\cr
-#'   \code{maxSize} \tab This is the number of cells that are "successfully" turned
-#'                       on during a spreading event. \code{spreadProb} will still
+#'   `maxSize` \tab This is the number of cells that are "successfully" turned
+#'                       on during a spreading event. `spreadProb` will still
 #'                       be active, so, it is possible that the end size of each event
-#'                       is smaller than \code{maxSize}, but they will not be greater
-#'                       than \code{maxSize}\cr
-#'   \code{exactSize} \tab This is the number of cells that are "successfully" turned
+#'                       is smaller than `maxSize`, but they will not be greater
+#'                       than `maxSize`\cr
+#'   `exactSize` \tab This is the number of cells that are "successfully" turned
 #'                       on during a spreading event. This will override an event that
-#'                       stops probabilistically via \code{spreadProb}, but forcing
+#'                       stops probabilistically via `spreadProb`, but forcing
 #'                       its last set of active cells to try again to find neighbours.
-#'                       It will try \code{maxRetriesPerID} times per event, before giving up.
-#'                       During those \code{maxRetriesPerID} times, it will try to "jump" up to
+#'                       It will try `maxRetriesPerID` times per event, before giving up.
+#'                       During those `maxRetriesPerID` times, it will try to "jump" up to
 #'                       4 cells outwards from each of the active cells, every 5 retries.\cr
-#'   \code{iterations} \tab This is a hard cap on the number of internal iterations to
+#'   `iterations` \tab This is a hard cap on the number of internal iterations to
 #'                          complete before returning the current state of the system
-#'                          as a \code{data.table}.\cr
+#'                          as a `data.table`.\cr
 #' }
 #'
-#' @param landscape Required. A \code{RasterLayer} object. This defines the possible
+#' @param landscape Required. A `RasterLayer` object. This defines the possible
 #'                  locations for spreading events to start and spread2 into. Required.
 #'
 #' @param start Required. Either a vector of pixel numbers to initiate spreading, or a
-#'              data.table that is the output of a previous \code{spread2}.
-#'              If a vector, they should be cell indices (pixels) on the \code{landscape}.
+#'              data.table that is the output of a previous `spread2`.
+#'              If a vector, they should be cell indices (pixels) on the `landscape`.
 #'              If user has x and y coordinates, these can be converted with
-#'              \code{\link[raster:cellFrom]{cellFromXY}}.
+#'              [`cellFromXY()`][raster::cellFromXY].
 #'
-#' @param spreadProb  Numeric of length 1 or length \code{ncell(landscape)} or
-#'                    a \code{RasterLayer} that is the identical dimensions as
-#'                    \code{landscape}.
+#' @param spreadProb  Numeric of length 1 or length `ncell(landscape)` or
+#'                    a `RasterLayer` that is the identical dimensions as
+#'                    `landscape`.
 #'                    If numeric of length 1, then this is the global (absolute)
 #'                    probability of spreading into each cell from a neighbour.
-#'                    If a numeric of length \code{ncell(landscape)} or a raster,
+#'                    If a numeric of length `ncell(landscape)` or a raster,
 #'                    then this must be the cell-specific (absolute)
-#'                    probability of a "receiving" potential cell. Default is \code{0.23}.
-#'                    If relative probabilities are required, use \code{spreadProbRel}.
+#'                    probability of a "receiving" potential cell. Default is `0.23`.
+#'                    If relative probabilities are required, use `spreadProbRel`.
 #'                    If used together, then the relative probabilities will be
 #'                    re-scaled so that the mean relative probability of potential
-#'                    neighbours is equal to the mean of \code{spreadProb} of
+#'                    neighbours is equal to the mean of `spreadProb` of
 #'                    the potential neighbours.
 #'
-#' @param persistProb Numeric of length 1 or \code{RasterLayer}.
+#' @param persistProb Numeric of length 1 or `RasterLayer`.
 #'                    If numeric of length 1, then this is the global (absolute)
 #'                    probability of cell continuing to burn per time step.
 #'                    If a raster, then this must be the cell-specific (absolute)
 #'                    probability of a fire persisting.
-#'                    Default is \code{NA}, which is the same as 0, i.e. a cell only burns
+#'                    Default is `NA`, which is the same as 0, i.e. a cell only burns
 #'                    for one time step.
 #'
-#' @param spreadProbRel Optional \code{RasterLayer} indicating a surface of relative
-#'                      probabilities useful when using \code{neighProbs} (which
+#' @param spreadProbRel Optional `RasterLayer` indicating a surface of relative
+#'                      probabilities useful when using `neighProbs` (which
 #'                      provides a mechanism for selecting a specific number of
 #'                      cells at each iteration).
 #'                      This indicates the relative probabilities for the selection
 #'                      of successful neighbours.
-#'                      \code{spreadProb} will still be evaluated \emph{after}
-#'                      the relative probabilities and \code{neighProbs} has been
+#'                      `spreadProb` will still be evaluated *after*
+#'                      the relative probabilities and `neighProbs` has been
 #'                      evaluated, i.e., potential cells will be identified, then
-#'                      some could be rejected via \code{spreadProb}.
-#'                      If absolute \code{spreadProb} is not desired,
-#'                      \emph{be sure to set} \code{spreadProb = 1}.
-#'                      Ignored if \code{neighProbs} is not provided.
+#'                      some could be rejected via `spreadProb`.
+#'                      If absolute `spreadProb` is not desired,
+#'                      *be sure to set* `spreadProb = 1`.
+#'                      Ignored if `neighProbs` is not provided.
 #'
-#' @param asRaster Logical, length 1. If \code{TRUE}, the function will return a \code{Raster}
+#' @param asRaster Logical, length 1. If `TRUE`, the function will return a `Raster`
 #'                 where raster non NA values indicate the cells that were "active", and the
 #'                 value is the initial starting pixel.
 #'
 #' @param maxSize       Numeric. Maximum number of cells for a single or
-#'                      all events to be spread2. Recycled to match \code{start} length,
-#'                      if it is not as long as \code{start}. This will be overridden if
-#'                      \code{exactSize} also provided.
-#'                      See section on \code{Breaking out of spread2 events}.
+#'                      all events to be spread2. Recycled to match `start` length,
+#'                      if it is not as long as `start`. This will be overridden if
+#'                      `exactSize` also provided.
+#'                      See section on `Breaking out of spread2 events`.
 #'
-#' @param exactSize Numeric vector, length 1 or \code{length(start)}.
-#'                  Similar to \code{maxSize}, but these will be the exact
+#' @param exactSize Numeric vector, length 1 or `length(start)`.
+#'                  Similar to `maxSize`, but these will be the exact
 #'                  final sizes of the events.  i.e., the spread2 events
-#'                  will continue until they are \code{floor(exactSize)}.
-#'                  This will override \code{maxSize} if both provided.
+#'                  will continue until they are `floor(exactSize)`.
+#'                  This will override `maxSize` if both provided.
 #'                  See Details.
 #'
 #' @param directions    The number adjacent cells in which to look;
 #'                      default is 8 (Queen case). Can only be 4 or 8.
 #'
 #' @param iterations    Number of iterations to spread2.
-#'                      Leaving this \code{NULL} allows the spread2 to continue
+#'                      Leaving this `NULL` allows the spread2 to continue
 #'                      until stops spreading itself (i.e., exhausts itself).
 #'
 #' @param returnDistances Logical. Should the function include a column with the
@@ -171,10 +171,10 @@ utils::globalVariables(c(
 #'                      source, i.e, the lag 1 "from" pixel, for each iteration.
 #'
 #' @param circle  Logical. If TRUE, then outward spread2 will be by equidistant rings,
-#'                rather than solely by adjacent cells (via \code{directions} arg.).
-#'                Default is \code{FALSE}.
-#'                Using \code{circle = TRUE} can be dramatically slower for large problems.
-#'                Note, this will likely create unexpected results if \code{spreadProb < 1}.
+#'                rather than solely by adjacent cells (via `directions` arg.).
+#'                Default is `FALSE`.
+#'                Using `circle = TRUE` can be dramatically slower for large problems.
+#'                Note, this will likely create unexpected results if `spreadProb < 1`.
 #'
 #' @param skipChecks Logical. If TRUE, the argument checking (i.e., assertions) will be
 #'              skipped. This should likely only be used once it is clear that the function
@@ -184,26 +184,26 @@ utils::globalVariables(c(
 #'
 #' @param neighProbs An optional numeric vector, whose sum is 1. It indicates the
 #'                   probabilities that an individual
-#'                   spread iteration will spread to \code{1, 2, ..., length(neighProbs)}
+#'                   spread iteration will spread to `1, 2, ..., length(neighProbs)`
 #'                   neighbours, respectively. If this is used (i.e., something other than
-#'                   NA), \code{circle} and \code{returnDistances} will not work currently.
-#' @param maxRetriesPerID Only active if \code{exactSize} is used. This is the number of attempts
+#'                   NA), `circle` and `returnDistances` will not work currently.
+#' @param maxRetriesPerID Only active if `exactSize` is used. This is the number of attempts
 #'                        that will be made per event ID, before abandoning, therefore completing
 #'                        the spread2 for that event with a size that is smaller than
-#'                        \code{exactSize}. Default 10 times.
+#'                        `exactSize`. Default 10 times.
 #'
-#' @param asymmetry     A numeric or \code{RasterLayer} indicating the ratio of the
+#' @param asymmetry     A numeric or `RasterLayer` indicating the ratio of the
 #'                      asymmetry to be used. i.e., 1 is no asymmetry; 2 means that the
-#'                      angles in the direction of the \code{asymmetryAngle} are 2x the
-#'                      \code{spreadProb}
-#'                      of the angles opposite tot he \code{asymmetryAngle}  Default is
+#'                      angles in the direction of the `asymmetryAngle` are 2x the
+#'                      `spreadProb`
+#'                      of the angles opposite tot he `asymmetryAngle`  Default is
 #'                      NA, indicating no asymmetry. See details. This is still experimental.
 #'                      Use with caution.
 #'
-#' @param asymmetryAngle A numeric or \code{RasterLayer} indicating the angle in degrees
+#' @param asymmetryAngle A numeric or `RasterLayer` indicating the angle in degrees
 #'                      (0 is "up", as in North on a map),
-#'                      that describes which way the \code{asymmetry} is.
-#' @param allowOverlap \code{numeric} (\code{logical} will work for backwards compatibility).
+#'                      that describes which way the `asymmetry` is.
+#' @param allowOverlap `numeric` (`logical` will work for backwards compatibility).
 #'                     See details.  Default is 0, i.e., no overlapping.
 #'
 #' @param plot.it  If TRUE, then plot the raster at every iteration,
@@ -211,18 +211,18 @@ utils::globalVariables(c(
 #'
 #' @details
 #'
-#' If \code{exactSize} or \code{maxSize} are used, then spreading will continue and stop
-#' before or at \code{maxSize} or at \code{exactSize}. If \code{iterations} is specified,
-#' then the function will end, and the returned \code{data.table} will still
-#' may (if \code{maxSize}) or will (if \code{exactSize}) have at least one active
-#' cell per event that did not already achieve \code{maxSize} or \code{exactSize}. This
+#' If `exactSize` or `maxSize` are used, then spreading will continue and stop
+#' before or at `maxSize` or at `exactSize`. If `iterations` is specified,
+#' then the function will end, and the returned `data.table` will still
+#' may (if `maxSize`) or will (if `exactSize`) have at least one active
+#' cell per event that did not already achieve `maxSize` or `exactSize`. This
 #' will be very useful to build new, customized higher-level wrapper functions that iteratively
-#' call \code{spread2}.
+#' call `spread2`.
 #'
 #' @note
-#' \code{exactSize} may not be achieved if there aren't enough cells in the map.
-#' Also, \code{exactSize} may not be achieved because the active cells are "stuck",
-#' i.e., they have no unactivated cells to move to; or the \code{spreadProb} is low.
+#' `exactSize` may not be achieved if there aren't enough cells in the map.
+#' Also, `exactSize` may not be achieved because the active cells are "stuck",
+#' i.e., they have no unactivated cells to move to; or the `spreadProb` is low.
 #' In the latter two cases, the algorithm will retry again, but it will only
 #' re-try from the last iterations active cells.
 #' The algorithm will only retry 10 times before quitting.
@@ -230,40 +230,40 @@ utils::globalVariables(c(
 #' the active cells to try to continue spreading.
 #'
 #' A common way to use this function is to build wrappers around this, followed
-#' by iterative calls in a \code{while} loop. See example.
+#' by iterative calls in a `while` loop. See example.
 #'
 #' @section Building custom spreading events:
 #'
 #' This function can be used iteratively, with relatively little overhead compared to using
 #' it non-iteratively. In general, this function can be called with arguments set as user
 #' needs, and with specifying iterations = 1 (say). This means that the function will spread
-#' outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
-#' \code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
-#' call to \code{spread2}. This means that every argument can be updated at each iteration.
+#' outwards 1 iteration, then stop. The returned object will be a `data.table` or
+#' `RasterLayer` that can be passed immediately back as the start argument into a subsequent
+#' call to `spread2`. This means that every argument can be updated at each iteration.
 #'
 #' When using this function iteratively, there are several things to keep in mind.
 #' The output will likely be sorted differently than the input (i.e., the
 #' order of start, if a vector, may not be the same order as that returned).
 #' This means that when passing the same object back into the next iteration of the
-#' function call, \code{maxSize} or \code{exactSize} may not be in the same order.
-#' To get the same order, the easiest thing to do is sort the initial \code{start}
+#' function call, `maxSize` or `exactSize` may not be in the same order.
+#' To get the same order, the easiest thing to do is sort the initial `start`
 #' objects by their pixel location, increasing.
-#' Then, of course, sorting any vectorized arguments (e.g., \code{maxSize}) accordingly.
+#' Then, of course, sorting any vectorized arguments (e.g., `maxSize`) accordingly.
 #'
-#' \bold{NOTE}: the \code{data.table} or \code{RasterLayer} should not use be altered
-#' when passed back into \code{spread2}.
+#' **NOTE**: the `data.table` or `RasterLayer` should not use be altered
+#' when passed back into `spread2`.
 #'
-#' @section \code{allowOverlap}:
-#' If \code{1} (or \code{TRUE}),
+#' @section `allowOverlap`:
+#' If `1` (or `TRUE`),
 #'  then individual events can overlap with one another, i.e., allow
-#'  overlap between events. If \code{2} (or \code{NA}), then each pixel
+#'  overlap between events. If `2` (or `NA`), then each pixel
 #'  is essentially independent, allowing overlap between and within
 #'  events. This likely requires a user to intervene as it is possible
-#'  to spread back onto itself. If \code{3} (did not exist previously),
+#'  to spread back onto itself. If `3` (did not exist previously),
 #'  individual events can overlap, and there can be overlap within an
 #'  event, but only within an iteration, i.e., once an iteration is
 #'  finished, and a pixel was activated, then the spreading will not
-#'  return onto these pixels. If \code{0} (or \code{FALSE}), then once a
+#'  return onto these pixels. If `0` (or `FALSE`), then once a
 #'  pixel is activated, it cannot be re-activated, within or between event.
 #'  This allows events to not interfere with one another i.e.,
 #'  they do not interact (this is slower than if
@@ -272,56 +272,56 @@ utils::globalVariables(c(
 #'  say, insect swarms.
 #'
 #' @return
-#' Either a \code{data.table} (\code{asRaster=FALSE}) or a \code{RasterLayer}
-#' (\code{asRaster=TRUE}, the default).
-#' The \code{data.table} will have one attribute named \code{spreadState}, which
-#' is a list containing a \code{data.table} of current cluster-level information
+#' Either a `data.table` (`asRaster=FALSE`) or a `RasterLayer`
+#' (`asRaster=TRUE`, the default).
+#' The `data.table` will have one attribute named `spreadState`, which
+#' is a list containing a `data.table` of current cluster-level information
 #' about the spread events.
-#' If \code{asRaster=TRUE}, then the \code{data.table} (with its \code{spreadState}
-#' attribute) will be attached to the \code{Raster} as an attribute named \code{pixel} as it
+#' If `asRaster=TRUE`, then the `data.table` (with its `spreadState`
+#' attribute) will be attached to the `Raster` as an attribute named `pixel` as it
 #' provides pixel-level information about the spread events.
 #'
-#' The \code{RasterLayer} represents every cell in which a successful spread2 event occurred.
+#' The `RasterLayer` represents every cell in which a successful spread2 event occurred.
 #' For the case of, say, a fire this would represent every cell that burned.
-#' If \code{allowOverlap} is \code{TRUE}, the return will always be a \code{data.table}.
+#' If `allowOverlap` is `TRUE`, the return will always be a `data.table`.
 #'
-#' If \code{asRaster} is \code{FALSE}, then this function returns a
-#' \code{data.table} with 3 (or 4 if \code{returnFrom} is \code{TRUE}) columns:
+#' If `asRaster` is `FALSE`, then this function returns a
+#' `data.table` with 3 (or 4 if `returnFrom` is `TRUE`) columns:
 #'
 #' \tabular{ll}{
-#'   \code{initialPixels} \tab the initial cell number of that particular
+#'   `initialPixels` \tab the initial cell number of that particular
 #'                            spread2 event.\cr
-#'   \code{pixels} \tab The cell indices of cells that have
+#'   `pixels` \tab The cell indices of cells that have
 #'                        been touched by the spread2 algorithm.\cr
-#'   \code{state} \tab a logical indicating whether the cell is active (i.e.,
+#'   `state` \tab a logical indicating whether the cell is active (i.e.,
 #'                        could still be a source for spreading) or not (no
 #'                        spreading will occur from these cells).\cr
-#'   \code{from} \tab The pixel indices that were the immediately preceeding
-#'                    "source" for each \code{pixels}, i.e., the lag 1 pixels.
-#'                    Only returned if \code{returnFrom} is \code{TRUE} \cr
+#'   `from` \tab The pixel indices that were the immediately preceeding
+#'                    "source" for each `pixels`, i.e., the lag 1 pixels.
+#'                    Only returned if `returnFrom` is `TRUE` \cr
 #' }
 #'
-#' The attribute saved with the name "spreadState" (e.g., \code{attr(output, "spreadState")})
-#' includes a \code{data.table} with columns:
+#' The attribute saved with the name "spreadState" (e.g., `attr(output, "spreadState")`)
+#' includes a `data.table` with columns:
 #' \tabular{ll}{
-#'   \code{id} \tab An arbitrary code, from 1 to \code{length(start)} for each "event".\cr
-#'   \code{initialPixels} \tab the initial cell number of that particular
+#'   `id` \tab An arbitrary code, from 1 to `length(start)` for each "event".\cr
+#'   `initialPixels` \tab the initial cell number of that particular
 #'                            spread2 event.\cr
-#'   \code{numRetries} \tab The number of re-starts the event did because it got
-#'                          stuck (normally only because \code{exactSize} was used
+#'   `numRetries` \tab The number of re-starts the event did because it got
+#'                          stuck (normally only because `exactSize` was used
 #'                          and was not achieved.\cr
-#'   \code{maxSize} \tab The number of pixels that were provided as inputs via
-#'                      \code{maxSize} or \code{exactSize}.\cr
-#'   \code{size} \tab The current size, in pixels, of each event.\cr
+#'   `maxSize` \tab The number of pixels that were provided as inputs via
+#'                      `maxSize` or `exactSize`.\cr
+#'   `size` \tab The current size, in pixels, of each event.\cr
 #' }
 #' and several other objects that provide significant speed ups in iterative calls to
-#' spread2. If the user runs \code{spread2} iteratively, there will likely be significant
-#' speed gains if the \code{data.table} passed in to \code{start} should have the attribute
+#' spread2. If the user runs `spread2` iteratively, there will likely be significant
+#' speed gains if the `data.table` passed in to `start` should have the attribute
 #' attached, or re-attached if it was lost, e.g., via
-#' \code{setattr(outInput, "spreadState", attr(out, "spreadState"))}, where \code{out} is the
-#' returned \code{data.table} from the previous call to \code{spread2}, and \code{outInput} is
-#' the modified \code{data.table}. Currently, the modified \code{data.table} \bold{must} have the
-#' same order as \code{out}.
+#' `setattr(outInput, "spreadState", attr(out, "spreadState"))`, where `out` is the
+#' returned `data.table` from the previous call to `spread2`, and `outInput` is
+#' the modified `data.table`. Currently, the modified `data.table` **must** have the
+#' same order as `out`.
 #'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
@@ -337,8 +337,8 @@ utils::globalVariables(c(
 #' @importFrom raster fromDisk ncell raster res ncol pointDistance
 #' @importFrom stats runif
 #'
-#' @seealso \code{\link{spread}} for a different implementation of the same algorithm.
-#' \code{spread} is less robust but it is often slightly faster.
+#' @seealso [spread()] for a different implementation of the same algorithm.
+#' `spread` is less robust but it is often slightly faster.
 #'
 #' @example inst/examples/example_spread2.R
 #'
@@ -1112,10 +1112,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 #' Internal helpers
 #'
 #' Not for users.
-#' A function to \code{setnames} and \code{rbindlist} that is used in \code{spread2}.
+#' A function to `setnames` and `rbindlist` that is used in `spread2`.
 #'
-#' @param dt a \code{data.table} object
-#' @param dtPotential a \code{data.table} object
+#' @param dt a `data.table` object
+#' @param dtPotential a `data.table` object
 #' @param returnFrom logical
 #' @param needDistance logical
 #' @param dtPotentialColNames character vector.
@@ -1144,7 +1144,7 @@ rbindlistDtDtpot <- function(dt, dtPotential, returnFrom, needDistance, dtPotent
   return(dt)
 }
 
-#' Internal helpers for \code{spread2}
+#' Internal helpers for `spread2`
 #'
 #' @keywords internal
 #' @rdname spread2-internals
@@ -1159,10 +1159,10 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
 }
 
 #' @param from vector of cell locations which are the "from" or starting cells
-#' @param to vector of same length as \code{from} which are the "to" or receiving cells
-#' @param landscape \code{RasterLayer} passed from \code{spread2}.
+#' @param to vector of same length as `from` which are the "to" or receiving cells
+#' @param landscape `RasterLayer` passed from `spread2`.
 #' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or vector
-#'                             \code{NROW(dtPotential)}.
+#'                             `NROW(dtPotential)`.
 #'
 #' @keywords internal
 #' @rdname spread2-internals
@@ -1175,9 +1175,9 @@ angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
   angleQuality
 }
 
-#' @param angleQualities Matrix. The output from \code{angleQuality}
-#' @param quantity Variable of interest to adjust, e.g., \code{spreadProb}
-#' @param actualAsymmetry Asymmetry intensity. Derived from \code{asymmetry} arg in \code{spread2}
+#' @param angleQualities Matrix. The output from `angleQuality`
+#' @param quantity Variable of interest to adjust, e.g., `spreadProb`
+#' @param actualAsymmetry Asymmetry intensity. Derived from `asymmetry` arg in `spread2`
 #'
 #' @keywords internal
 #' @rdname spread2-internals

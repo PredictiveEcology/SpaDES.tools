@@ -2,33 +2,33 @@
 #'
 #' Identifies the cell numbers of all cells within a ring defined by  minimum
 #' and maximum distances from focal cells.
-#' Uses \code{\link{spread}} under the hood, with specific values set.
-#' Under many situations, this will be faster than using \code{rgeos::gBuffer}
+#' Uses [spread()] under the hood, with specific values set.
+#' Under many situations, this will be faster than using `rgeos::gBuffer`
 #' twice (once for smaller ring and once for larger ring, then removing the
 #' smaller ring cells).
 #'
 #' @inheritParams spread
 #'
 #' @param minRadius Numeric. Minimum radius to be included in the ring.
-#'                  Note: this is inclusive, i.e., \code{>=}.
+#'                  Note: this is inclusive, i.e., `>=`.
 #' @param maxRadius Numeric. Maximum radius to be included in the ring.
-#'                  Note: this is inclusive, i.e., \code{<=}.
-#' @param ... Any other argument passed to \code{spread}
+#'                  Note: this is inclusive, i.e., `<=`.
+#' @param ... Any other argument passed to `spread`
 #'
-#' @return This will return  a \code{data.table} with columns as described in
-#'         \code{spread} when \code{returnIndices = TRUE}.
+#' @return This will return  a `data.table` with columns as described in
+#'         `spread` when `returnIndices = TRUE`.
 #'
 #' @author Eliot McIntire
 #' @export
 #' @rdname rings
-#' @seealso \code{\link{cir}} which uses a different algorithm.
-#' \code{cir} tends to be faster when there are few starting points, \code{rings}
+#' @seealso [cir()] which uses a different algorithm.
+#' `cir` tends to be faster when there are few starting points, `rings`
 #' tends to be faster when there are many starting points. Another difference
-#' between the two functions is that \code{rings} takes the centre of the pixel
-#' as the centre of a circle, whereas \code{cir} takes the exact coordinates.
+#' between the two functions is that `rings` takes the centre of the pixel
+#' as the centre of a circle, whereas `cir` takes the exact coordinates.
 #' See example.
 #'
-#' @seealso \code{rgeos::gBuffer}
+#' @seealso `rgeos::gBuffer`
 #'
 #' @example inst/examples/example_rings.R
 #'

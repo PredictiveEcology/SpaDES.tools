@@ -1,19 +1,19 @@
-#' @details \code{mergeRaster} differs from \code{merge} in how overlapping tile regions
-#' are handled: \code{merge} retains the values of the first raster in the list.
+#' @details `mergeRaster` differs from `merge` in how overlapping tile regions
+#' are handled: `merge` retains the values of the first raster in the list.
 #' This has the consequence of retaining the values from the buffered
 #' region in the first tile in place of the values from the neighbouring tile.
-#' On the other hand, \code{mergeRaster} retains the values of the tile region,
+#' On the other hand, `mergeRaster` retains the values of the tile region,
 #' over the values in any buffered regions.
 #' This is useful for reducing edge effects when performing raster operations involving
 #' contagious processes.
 #'
-#' @param x    A list of split raster tiles (i.e., from \code{splitRaster}).
-#' @param fun  Function (e.g. \code{mean}, \code{min}, or \code{max} that
-#'             accepts a \code{na.rm} argument. The default is \code{mean}.
+#' @param x    A list of split raster tiles (i.e., from `splitRaster`).
+#' @param fun  Function (e.g. `mean`, `min`, or `max` that
+#'             accepts a `na.rm` argument. The default is `mean`.
 #'
-#' @return \code{mergeRaster} returns a \code{RasterLayer} object.
+#' @return `mergeRaster` returns a `RasterLayer` object.
 #'
-#' @seealso \code{\link[raster]{merge}}, \code{\link[raster]{mosaic}}
+#' @seealso [raster::merge()], [raster::mosaic()]
 #'
 #' @author Yong Luo, Alex Chubaty, Tati Micheletti & Ian Eddy
 #' @export

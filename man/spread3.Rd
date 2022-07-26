@@ -32,22 +32,21 @@ be spread horizontally, and distributed from each pixel
 that contains a non-zero non NA value.}
 
 \item{advectionDir}{A single number or \code{RasterLayer} in degrees from North = 0
-(though it will use radians if all values are \code{abs(advectionDir) > 2 * pi)}.
+(though it will use radians if all values are \verb{abs(advectionDir) > 2 * pi)}.
 This indicates the direction of advective forcing (i.e., wind).}
 
 \item{advectionMag}{A single number or \code{RasterLayer} in distance units of the
 \code{rasQuality}, e.g., meters, indicating the relative forcing that will
 occur. It is imposed on the total event, i.e., if the \code{meanDist} is
 \code{10000}, and \code{advectionMag} is \code{5000}, then the expected
-distance (i.e., 63\% of agents) will have settled by \code{15000} map units.}
+distance (i.e., \verb{63\%} of agents) will have settled by \code{15000} map units.}
 
 \item{meanDist}{A single number indicating the mean distance parameter in map units
 (not pixels), for a negative exponential distribution
-dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
-settled at this \code{meanDist} (still experimental)}
+dispersal kernel (e.g., \code{dexp}). This will mean that \verb{63\%} of agents will have
+settled at this \code{meanDist} (still experimental).}
 
-\item{dispersalKernel}{One of either \code{"exponential"} or \code{"weibull"}.
-If}
+\item{dispersalKernel}{One of either \code{"exponential"} or \code{"weibull"}.}
 
 \item{sdDist}{A single number indicating the \code{sd} parameter of a two-parameter
 \code{dispersalKernel}.
@@ -57,7 +56,7 @@ Defaults to \code{1}, which is the same as the \code{exponential} distribution.}
 produced during iterations. Currently, only 0, 1, or 2+ are distinct.}
 
 \item{minNumAgents}{Single numeric indicating the minimum number of agents
-to consider all dispersing finished. Default is 50}
+to consider all dispersing finished. Default is 50.}
 
 \item{verbose}{Numeric. With increasing numbers above 0, there will be more
 messages produced. Currently, only 0, 1, or 2+ are distinct.}
@@ -72,7 +71,7 @@ problems)}
 A \code{data.table} with all information used during the spreading
 }
 \description{
-This is built with \code{\link{spread2}} and is still experimental.
+This is built with \code{\link[=spread2]{spread2()}} and is still experimental.
 This one differs from other attempts in that it treats the advection and
 dispersal as mathematical vectors that are added together.
 They are "rounded" to pixel centres.

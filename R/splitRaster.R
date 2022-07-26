@@ -1,13 +1,13 @@
-#' Split and re-merge \code{RasterLayer}(s)
+#' Split and re-merge `RasterLayer`(s)
 #'
-#' \code{splitRaster} divides up a raster into an arbitrary number of pieces (tiles).
-#' Split rasters can be recombined using \code{do.call(merge, y)} or \code{mergeRaster(y)},
-#' where \code{y <- splitRaster(x)}.
+#' `splitRaster` divides up a raster into an arbitrary number of pieces (tiles).
+#' Split rasters can be recombined using `do.call(merge, y)` or `mergeRaster(y)`,
+#' where `y <- splitRaster(x)`.
 #'
 #' This function is parallel-aware, using the same mechanism as used in \pkg{raster}.
-#' Specifically, if you start a cluster using \code{\link{beginCluster}},
+#' Specifically, if you start a cluster using [beginCluster()],
 #' then this function will automatically use that cluster.
-#' It is always a good idea to stop the cluster when finished, using \code{\link{endCluster}}.
+#' It is always a good idea to stop the cluster when finished, using [endCluster()].
 #'
 #' @param r       The raster to be split.
 #'
@@ -16,25 +16,25 @@
 #' @param ny      The number of tiles to make along the y-axis.
 #'
 #' @param buffer  Numeric vector of length 2 giving the size of the buffer along the x and y axes.
-#'                If these values less than or equal to \code{1} are used, this
+#'                If these values less than or equal to `1` are used, this
 #'                is interpreted as the number of pixels (cells) to use as a buffer.
-#'                Values between \code{0} and \code{1} are interpreted as proportions
+#'                Values between `0` and `1` are interpreted as proportions
 #'                of the number of pixels in each tile (rounded up to an integer value).
-#'                Default is \code{c(0, 0)}, which means no buffer.
+#'                Default is `c(0, 0)`, which means no buffer.
 #'
 #' @param path    Character specifying the directory to which the split tiles will be saved.
 #'                If missing, the function will write to memory.
 #' @param cl      A cluster object. Optional. This would generally be created using
 #'                parallel::makeCluster or equivalent. This is an alternative way, instead
-#'                of \code{beginCluster()}, to use parallelism for this function, allowing for
+#'                of `beginCluster()`, to use parallelism for this function, allowing for
 #'                more control over cluster use.
 #' @param rType   Data type of the split rasters. Defaults to FLT4S.
 #'
-#' @param fExt    file extension (e.g., \code{".grd"} or \code{".tif"}) specifying the file format.
+#' @param fExt    file extension (e.g., `".grd"` or `".tif"`) specifying the file format.
 #'
-#' @return \code{splitRaster} returns a list (length \code{nx*ny}) of cropped raster tiles.
+#' @return `splitRaster` returns a list (length `nx*ny`) of cropped raster tiles.
 #'
-#' @seealso \code{\link{do.call}}, \code{\link[raster]{merge}}.
+#' @seealso [do.call()], [raster::merge()].
 #'
 #' @author Alex Chubaty and Yong Luo
 #' @export

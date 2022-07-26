@@ -2,7 +2,7 @@
 % Please edit documentation in R/neighbourhood.R
 \name{adj}
 \alias{adj}
-\title{Fast `adjacent` function, and Just In Time compiled version}
+\title{Fast \code{adjacent} function, and Just In Time compiled version}
 \usage{
 adj(
   x = NULL,
@@ -23,7 +23,7 @@ adj(
 )
 }
 \arguments{
-\item{x}{\code{Raster*} object for which adjacency will be calculated.}
+\item{x}{\verb{Raster*} object for which adjacency will be calculated.}
 
 \item{cells}{vector of cell numbers for which adjacent cells should be found.
 Cell numbers start with 1 in the upper-left corner and increase
@@ -88,29 +88,37 @@ The columns will be one or more of \code{id}, \code{from}, \code{to}.
 }
 \description{
 Faster function for determining the cells of the 4, 8 or bishop
- neighbours of the \code{cells}. This is a hybrid function that uses
- matrix for small numbers of loci (<1e4) and data.table for larger numbers of loci
+neighbours of the \code{cells}. This is a hybrid function that uses
+matrix for small numbers of loci (<1e4) and data.table for larger numbers of loci
 }
 \details{
 Between 4x (large number loci) to 200x (small number loci) speed gains over
 \code{adjacent} in raster package. There is some extra speed gain if
 \code{NumCol} and \code{NumCells} are passed rather than a raster.
 Efficiency gains come from:
- 1. use \code{data.table} internally
-    - no need to remove NAs because wrapped or outside points are
-      just removed directly with data.table
-    - use data.table to sort and fast select (though not fastest possible)
- 2. don't make intermediate objects; just put calculation into return statement
+\enumerate{
+\item use \code{data.table} internally
+\itemize{
+\item no need to remove NAs because wrapped or outside points are
+just removed directly with data.table
+\item use data.table to sort and fast select (though not fastest possible)
+}
+\item don't make intermediate objects; just put calculation into return statement
+}
 
 The steps used in the algorithm are:
-1. Calculate indices of neighbouring cells
-2. Remove "to" cells that are
-   - <1 or >numCells (i.e., they are above or below raster), using a single modulo
-     calculation
-   - where the modulo of "to" cells is equal to 1 if "from" cells are 0 (wrapped right
-     to left)
-   - or where the modulo of the "to" cells is equal to 0 if "from" cells are 1 (wrapped
-     left to right)
+\enumerate{
+\item Calculate indices of neighbouring cells
+\item Remove "to" cells that are
+\itemize{
+\item <1 or >numCells (i.e., they are above or below raster), using a single modulo
+calculation
+\item where the modulo of "to" cells is equal to 1 if "from" cells are 0 (wrapped right
+to left)
+\item or where the modulo of the "to" cells is equal to 0 if "from" cells are 1 (wrapped
+left to right)
+}
+}
 }
 \examples{
 library(raster)
@@ -124,7 +132,7 @@ adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8,
 
 }
 \seealso{
-\code{\link[raster]{adjacent}}
+\code{\link[raster:adjacent]{raster::adjacent()}}
 }
 \author{
 Eliot McIntire
