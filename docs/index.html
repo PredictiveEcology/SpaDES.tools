@@ -13,7 +13,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Additional Tools for Developing Spatially Explicit Discrete Event Simulation (SpaDES) Models">
 <meta property="og:description" content="Provides GIS and map utilities, plus additional modeling tools for
-    developing cellular automata, dynamic raster models,  and agent based models
+    developing cellular automata, dynamic raster models, and agent based models
     in SpaDES.
     Included are various methods for spatial spreading, spatial agents, GIS
     operations, random map generation, and others.
@@ -24,6 +24,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -36,18 +38,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.7.9007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -57,7 +53,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/PredictiveEcology/SpaDES.tools/">
+  <a href="https://github.com/PredictiveEcology/SpaDES.tools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -77,42 +73,42 @@
 
 
 <p><img align="right" width="80" vspace="10" hspace="10" src="https://github.com/PredictiveEcology/SpaDES/raw/master/docs/images/SpaDES.png"></p>
-<div id="spadestools" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#spadestools" class="anchor"></a>SpaDES.tools</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="spadestools">SpaDES.tools<a class="anchor" aria-label="anchor" href="#spadestools"></a>
+</h1></div>
 <p>Additional modelling tools for Spatial Discrete Event Simulation (<code>SpaDES</code>) module development.</p>
 <p>Provides GIS/map utilities and additional modeling tools for developing cellular automata and agent based models in <code>SpaDES</code>.</p>
-<p><strong>Website:</strong> <a href="http://SpaDES.PredictiveEcology.org">http://SpaDES.PredictiveEcology.org</a></p>
-<p><strong>Wiki:</strong> <a href="https://github.com/PredictiveEcology/SpaDES/wiki">https://github.com/PredictiveEcology/SpaDES/wiki</a></p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>Building packages from source requires the appropriate development libraries for your operating system (<em>e.g.</em>, Windows users should install <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>).</p>
-<div id="current-stable-release" class="section level3">
-<h3 class="hasAnchor">
-<a href="#current-stable-release" class="anchor"></a>Current stable release</h3>
+<p><strong>Website:</strong> <a href="https://SpaDES.PredictiveEcology.org" class="external-link">https://SpaDES.PredictiveEcology.org</a></p>
+<p><strong>Wiki:</strong> <a href="https://github.com/PredictiveEcology/SpaDES/wiki" class="external-link">https://github.com/PredictiveEcology/SpaDES/wiki</a></p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Building packages from source requires the appropriate development libraries for your operating system (<em>e.g.</em>, Windows users should install <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a>).</p>
+<div class="section level3">
+<h3 id="current-stable-release">Current stable release<a class="anchor" aria-label="anchor" href="#current-stable-release"></a>
+</h3>
 <p><strong>Install from CRAN:</strong></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"SpaDES.tools"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"SpaDES.tools"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Install from GitHub:</strong></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#install.packages("devtools")</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/">"devtools"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"PredictiveEcology/SpaDES.tools"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># master</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#install.packages("devtools")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"PredictiveEcology/SpaDES.tools"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># master</span></span></code></pre></div>
 </div>
-<div id="development-version-unstable" class="section level3">
-<h3 class="hasAnchor">
-<a href="#development-version-unstable" class="anchor"></a>Development version (unstable)</h3>
+<div class="section level3">
+<h3 id="development-version-unstable">Development version (unstable)<a class="anchor" aria-label="anchor" href="#development-version-unstable"></a>
+</h3>
 <p><strong>Install from GitHub:</strong></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#install.packages("devtools")</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/">"devtools"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"PredictiveEcology/SpaDES.tools"</span>, ref <span class="op">=</span> <span class="st">"development"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#install.packages("devtools")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"PredictiveEcology/SpaDES.tools"</span>, ref <span class="op">=</span> <span class="st">"development"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div id="contributions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contributions" class="anchor"></a>Contributions</h2>
+<div class="section level2">
+<h2 id="contributions">Contributions<a class="anchor" aria-label="anchor" href="#contributions"></a>
+</h2>
 <p>Please see <code>CONTRIBUTING.md</code> for information on how to contribute to this project.</p>
 </div>
 </div>
@@ -121,56 +117,66 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=SpaDES.tools">https://​cloud.r-project.org/​package=SpaDES.tools</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/PredictiveEcology/SpaDES.tools/">https://​github.com/​PredictiveEcology/​SpaDES.tools/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/PredictiveEcology/SpaDES.tools/issues">https://​github.com/​PredictiveEcology/​SpaDES.tools/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=SpaDES.tools" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/PredictiveEcology/SpaDES.tools/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/PredictiveEcology/SpaDES.tools/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></li>
+<li><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></li>
 </ul>
 </div>
+
 <div class="community">
-<h2>Community</h2>
+<h2 data-toc-skip>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>Alex M Chubaty <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-7146-8135" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Eliot J B McIntire <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-6914-8316" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing SpaDES.tools</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/PredictiveEcology/SpaDES.tools/actions"><img src="https://github.com/PredictiveEcology/SpaDES.tools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://cran.r-project.org/package=SpaDES.tools"><img src="http://www.r-pkg.org/badges/version/SpaDES.tools" alt="CRAN_Status_Badge"></a></li>
-<li><a href="https://cran.r-project.org/package=SpaDES.tools"><img src="http://cranlogs.r-pkg.org/badges/grand-total/SpaDES.tools" alt="Downloads"></a></li>
-<li><a href="https://codecov.io/gh/PredictiveEcology/SpaDES.tools?branch=master"><img src="https://codecov.io/gh/PredictiveEcology/SpaDES.tools/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li>Alex M Chubaty <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-7146-8135" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Eliot J B McIntire <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-6914-8316" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/PredictiveEcology/SpaDES.tools/actions" class="external-link"><img src="https://github.com/PredictiveEcology/SpaDES.tools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://cran.r-project.org/package=SpaDES.tools" class="external-link"><img src="http://www.r-pkg.org/badges/version/SpaDES.tools" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://cran.r-project.org/package=SpaDES.tools" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/grand-total/SpaDES.tools" alt="Downloads"></a></li>
+<li><a href="https://app.codecov.io/gh/PredictiveEcology/SpaDES.tools?branch=master" class="external-link"><img src="https://codecov.io/gh/PredictiveEcology/SpaDES.tools/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p>
+<p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -178,6 +184,8 @@
 
   
 
+
+  
 
   </body>
 </html>

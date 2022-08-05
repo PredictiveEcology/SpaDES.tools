@@ -1,8 +1,8 @@
-pandoc: 2.11.2
-pkgdown: 1.6.1
+pandoc: '2.18'
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles: {}
-last_built: 2021-02-26T16:55Z
+last_built: 2022-08-05T18:58Z
 urls:
   reference: https://spades-tools.predictiveecology.org/reference
   article: https://spades-tools.predictiveecology.org/articles
