@@ -22,6 +22,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r@master
         with:
+          extra-repositories: 'https://predictiveecology.r-universe.dev'
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-pandoc@master

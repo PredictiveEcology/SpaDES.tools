@@ -10,7 +10,7 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2022-07-25
+Date: 2022-08-10
 Version: 1.0.0
 Authors@R: c(
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
@@ -59,6 +59,7 @@ Suggests:
     knitr,
     mgcv,
     purrr,
+    RandomFields,
     RColorBrewer (>= 1.1-2),
     rmarkdown,
     sf,
@@ -67,6 +68,7 @@ Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
 License: GPL-3
+Additional_repositories: https://predictiveecology.r-universe.dev/
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 ByteCompile: yes
 Collate: 
