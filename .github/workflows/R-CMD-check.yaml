@@ -51,6 +51,7 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
+            github::s-u/fastshp
             github::PredictiveEcology/Require@development
             github::PredictiveEcology/reproducible@development
             github::PredictiveEcology/quickPlot@development
