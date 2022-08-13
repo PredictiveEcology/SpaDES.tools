@@ -60,8 +60,11 @@ if (getRversion() >= "3.1.0") {
 #'
 gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
                      alpha = 1, inMemory = FALSE, ...) {
-  .Defunct(msg = paste("random landscape generation functionality has been removed",
-                       "because the RandomFields packages is no longer maintained."))
+  .Defunct(msg = paste(
+    "Random landscape generation functionality has been removed",
+    "because the RandomFields packages is no longer maintained.\n",
+    "See the NLMR package for tools to generate various random/neutral landscapes."
+  ))
 }
 
 ################################################################################
@@ -154,8 +157,6 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #'
 #' @return A `SpatialPolygons` object, with approximately the area request,
 #'         centred approximately at the coordinates requested, in the projection of `x`
-#'
-#' @seealso [gaussMap()] and [randomPolygons()]
 #'
 #' @importFrom raster crs crs<-
 #' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform

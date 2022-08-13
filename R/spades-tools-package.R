@@ -69,9 +69,10 @@
 #' These dummy maps can later be replaced with actual data maps.
 #'
 #' \tabular{ll}{
-#'   [gaussMap()] \tab Creates a random map using Gaussian random fields\cr
-#'   [randomPolygons()] \tab Creates a random polygon with specified number of classes\cr
+#'   [randomPolygons()] \tab Creates a random polygon with specified number of classes.\cr
 #' }
+#'
+#' See the \pkg{NLMR} package for tools to generate random landscapes (rasters).
 #'
 #' @section 6 SELES-type approach to simulation:
 #'

@@ -51,7 +51,7 @@ if (interactive()) {
   ### The case of variable quality raster
   #########################################################
   if (require(sf) && require(fasterize)) {
-    library(SpaDES.tools) # for gaussMap
+    library(SpaDES.tools)
     mask <- fasterize(st_as_sf(a), ras) # faster than raster::rasterize
     rasQuality <- raster(system.file("extdata", "rasQuality.tif", package = "SpaDES.tools"))
     crs(rasQuality) <- readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools"))
