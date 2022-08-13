@@ -12,7 +12,6 @@ Micheletti
 ORCID
 PredictiveEcology
 Probabilistically
-RMstable
 RasterLayer
 Rcpp
 Rtools
@@ -39,6 +38,7 @@ crw
 dists
 doesn
 donut
+dwrpnorm
 epsg
 excludePixels
 geo

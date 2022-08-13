@@ -1,4 +1,3 @@
-################################################################################
 #' Vectorized wrapped normal density function
 #'
 #'  This is a modified version of [dwrpnorm][CircStats::dwrpnorm].
