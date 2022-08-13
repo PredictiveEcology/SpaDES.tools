@@ -50,11 +50,15 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            any::rcmdcheck
-            github::s-u/fastshp
-            github::PredictiveEcology/Require@development
-            github::PredictiveEcology/reproducible@development
-            github::PredictiveEcology/quickPlot@development
+            any::covr
+            fastshp=?ignore
+            PredictiveEcology/Require@development
+            PredictiveEcology/reproducible@development
+
+      - name: Install additional package dependencies
+        run: |
+          pak::pkg_install("s-u/fastshp")
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
 
