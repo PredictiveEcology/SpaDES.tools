@@ -30,7 +30,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          extra-packages: |
+            any::pkgdown
+            local::.
+            fastshp=?ignore
+            PredictiveEcology/Require@development
+            PredictiveEcology/reproducible@development
           needs: website
 
       - name: Build site
