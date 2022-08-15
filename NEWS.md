@@ -1,5 +1,20 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
+version 1.0.0
+=============
+
+This is a major version update causing breaking changes due to multiple CRAN packages no longer available as of R version 4.2 released April 2022.
+
+## Dependency changes
+* Removed dependencies `ffbase` and `ff` and deprecated use of `lowMemory` argument in `spread` (`ffbase` was removed from CRAN April 2022).
+* Removed dependency `RandomFields` which is no longer maintained. We had to drop support for random landscape generation via `gaussMap()`; but see the `NLMR` package for tools to create random neutral landscapes.
+
+## Enhancements
+* `mergeRaster()` can deal with rasters with different origins extents (i.e., that were not produced using `splitRaster()`)
+
+## bug fixes
+* `spread2` was unable to use `maxSize` when `start` was the output of a previous `spread2` call to which `maxSize` had not been supplied. This has now been fixed.
+
 version 0.3.10
 =============
 

@@ -1,6 +1,10 @@
 test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   library(magrittr)
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
+  library(raster)
+
+  on.exit({
+    detach("package:raster")
+  }, add = TRUE)
 
   owd <- getwd()
   tmpdir <- file.path(tempdir(), "splitRaster-test") %>% checkPath(create = TRUE)
@@ -46,10 +50,17 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   m0 <- mergeRaster(y0)
   expect_equal(dim(m0), dim(r))
   expect_equal(extent(m0), extent(r))
-  expect_equal(names(m0), names(r))
   expect_equal(res(m0), res(r))
   expect_equal(max(values(m0)), max(values(r)))
   expect_equal(min(values(m0)), min(values(r)))
+
+  # as a stack/brick
+  if (requireNamespace("purrr", quietly = TRUE)) {
+    asRasterList <- selectMethod("as.list", "Raster") ## ensure the raster method for as.list used (instead of base version)
+    ys0 <- lapply(purrr::transpose(lapply(X = asRasterList(b), FUN = splitRaster, nx = nx, ny = ny)), stack)
+    ms0 <- mergeRaster(ys0)
+    expect_identical(names(ms0), names(ys0[[1]]))
+  }
 
   # with buffer (integer pixels) and with specified path
   y1 <- splitRaster(r, nx, ny, c(3L, 4L), path = file.path(tmpdir, "red1"))
@@ -75,7 +86,6 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   m1 <- mergeRaster(y1)
   expect_equal(dim(m1), dim(r))
   expect_equal(extent(m1), extent(r))
-  expect_equal(names(m1), names(r))
   expect_equal(res(m1), res(r))
   expect_equal(max(values(m1)), max(values(r)))
   expect_equal(min(values(m1)), min(values(r)))
@@ -105,7 +115,6 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   m2 <- mergeRaster(y2)
   expect_equal(dim(m2), dim(r))
   expect_equal(extent(m2), extent(r))
-  expect_equal(names(m2), names(r))
   expect_equal(res(m2), res(r))
   expect_equal(max(values(m2)), max(values(r)))
   expect_equal(min(values(m2)), min(values(r)))
@@ -142,25 +151,25 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     }
     rowmaxtemp <- rowmax
   }
-  #compatible with different raster datatypes
+
+  # compatible with different raster datatypes
   y4 <- splitRaster(r, nx, ny, rType = "INT1U")
   expect_identical(dataType(y4[[1]]),"INT1U")
-  #INT now defaults to INT4S, FLT defaults to FLT4S
+  # INT now defaults to INT4S, FLT defaults to FLT4S
   y5 <- splitRaster(r, nx, ny, rType = "INT")
   expect_identical(dataType(y5[[1]]), "INT4S")
-  #defaults to FLT4S
+  # defaults to FLT4S
   y6 <- splitRaster(r, nx, ny)
   expect_true(dataType(y6[[1]]) == "FLT4S")
 
-  #use different file extension
+  ## use different file extension
   y7 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".tif")
   expect_true(extension(filename(y7[[1]])) == ".tif")
 })
 
 test_that("splitRaster works in parallel", {
   skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
+  skip_on_ci()
 
   if (interactive()) {
     library(raster); on.exit(detach("package:raster"), add = TRUE)
@@ -168,10 +177,7 @@ test_that("splitRaster works in parallel", {
     tmpdir <- file.path(tempdir(), "splitRaster-test-parallel") %>%
       checkPath(create = TRUE)
 
-    on.exit({
-      #detach("package:raster")
-      unlink(tmpdir, recursive = TRUE)
-    }, add = TRUE)
+    on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
 
     b <- brick(system.file("external/rlogo.grd", package = "raster"))
     r <- b[[1]] # use first layer only
@@ -185,7 +191,7 @@ test_that("splitRaster works in parallel", {
 
     # test parallel cropping
     n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
-    beginCluster(n)
+    raster::beginCluster(n)
     on.exit(raster::endCluster(), add = TRUE)
 
     cl <- getCluster()
@@ -223,12 +229,11 @@ test_that("splitRaster works in parallel", {
 
 test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
+  skip_on_ci()
   skip("This is very big.")
 
-  tmpdir <- file.path(tempdir(), "splitRaster-test-large") %>% checkPath(create = TRUE)
   library(magrittr)
+  tmpdir <- file.path(tempdir(), "splitRaster-test-large") %>% checkPath(create = TRUE)
   library(raster); on.exit(detach("package:raster"), add = TRUE)
 
   on.exit({
@@ -236,7 +241,7 @@ test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   }, add = TRUE)
 
   ## use a large raster (1.3 GB)
-  url <- "http://www.cec.org/sites/default/files/Atlas/Files/Land_Cover_2010/Land_Cover_2010_TIFF.zip" # nolint
+  url <- "http://www.cec.org/sites/default/files/Atlas/Files/Land_Cover_2010/Land_Cover_2010_TIFF.zip" # TODO: URL doesn't work!
   destfile <- file.path(tmpdir, basename(url))
 
   download.file(url, destfile) # 48.0 MB

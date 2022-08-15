@@ -62,7 +62,7 @@ if (interactive()) {
 }
 }
 \seealso{
-\code{\link{raster}}
+\code{\link[=raster]{raster()}}
 }
 \author{
 Eliot McIntire

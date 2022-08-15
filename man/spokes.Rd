@@ -44,7 +44,7 @@ spokes(
 
 \item{coords}{Either a matrix with 2 (or 3) columns, x and y (and id), representing the
 coordinates (and an associated id, like cell index),
-or a \code{SpatialPoints*} object around which to make circles. Must be same
+or a \verb{SpatialPoints*} object around which to make circles. Must be same
 coordinate system as the \code{landscape} argument. Default is missing,
 meaning it uses the default to \code{loci}}
 

@@ -25,18 +25,18 @@ in which case all cells are considered \code{to}.}
 }
 \value{
 A sorted matrix on \code{id} with same number of rows as \code{to},
-        but with one extra column, \code{angles} indicating the angle in radians
-        between from and to. For speed, this angle will be between \code{-pi/2}
-        and \code{3*pi/2}.
-        If the user wants this between say, \code{0} and \code{2*pi},
-        then \code{angles \%\% (2*pi)} will do the trick. See example.
+but with one extra column, \code{angles} indicating the angle in radians
+between from and to. For speed, this angle will be between \code{-pi/2}
+and \code{3*pi/2}.
+If the user wants this between say, \code{0} and \code{2*pi},
+then \verb{angles \\\%\\\% (2*pi)} will do the trick. See example.
 }
 \description{
-This is a modification of \code{\link[raster]{distanceFromPoints}} for the case
+This is a modification of \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} for the case
 of many points.
 This version can often be faster for a single point because it does not return
 a \code{RasterLayer}.
-This is different than \code{\link[raster]{distanceFromPoints}} because it does
+This is different than \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} because it does
 not take the minimum distance from the set of points to all cells.
 Rather this returns the every pair-wise point distance.
 As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -80,8 +80,8 @@ if (interactive()) {
 }
 }
 \seealso{
-\code{\link{distanceFromEachPoint}}, which will also return directions
-         if \code{angles = TRUE}.
+\code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}}, which will also return directions
+if \code{angles = TRUE}.
 }
 \author{
 Eliot McIntire

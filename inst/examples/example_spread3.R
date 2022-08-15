@@ -1,5 +1,5 @@
 ## these tests are fairly heavy, so don't run during automated tests
-if (interactive() && require("RandomFields")) {
+if (interactive()) {
   #########################################################
   # Simple case, no variation in rasQuality, numeric advectionDir and advectionMag
   #########################################################
@@ -18,47 +18,43 @@ if (interactive() && require("RandomFields")) {
   advectionMag <- 4 * res(rasAbundance)[1]
   meanDist <- 2600
 
-   if (interactive()) {
-     # Test the dispersal kernel -- create a function
-     plotDispersalKernel <- function(out, meanAdvectionMag) {
-       out[, disGroup := round(distance / 100) * 100]
-       freqs <- out[, .N, by = "disGroup"]
-       freqs[, `:=`(cumSum = cumsum(N), N = N)]
-       Plot(freqs$disGroup, freqs$cumSum, addTo = "CumulativeNumberSettled",
-            title = "Cumulative Number Settled") # can plot the distance X number
-       abline(v = meanAdvectionMag + meanDist)
-       newTitle <- "Number Settled By Distance"
-       Plot(freqs$disGroup, freqs$N, addTo = gsub(" ", "", newTitle),
-            title = newTitle) # can plot the distance X number
-       abline(v = meanAdvectionMag + meanDist)
-       # should be 0.63:
-       freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
-       mtext(side = 3, paste("Average habitat quality: ",
-             round(mean(rasQuality[], na.rm = TRUE), 2)),
-             outer = TRUE, line = -2, cex = 2)
-    }
-    dev() # don't use Rstudio windows, which is very slow
-    clearPlot()
-    out <- spread3(rasAbundance = rasAbundance,
-                   rasQuality = rasQuality,
-                   advectionDir = advectionDir,
-                   advectionMag = advectionMag,
-                   meanDist = meanDist, verbose = 2,
-                   plot.it = 2)
-
-    plotDispersalKernel(out, advectionMag)
+   # Test the dispersal kernel -- create a function
+   plotDispersalKernel <- function(out, meanAdvectionMag) {
+     out[, disGroup := round(distance / 100) * 100]
+     freqs <- out[, .N, by = "disGroup"]
+     freqs[, `:=`(cumSum = cumsum(N), N = N)]
+     Plot(freqs$disGroup, freqs$cumSum, addTo = "CumulativeNumberSettled",
+          title = "Cumulative Number Settled") # can plot the distance X number
+     abline(v = meanAdvectionMag + meanDist)
+     newTitle <- "Number Settled By Distance"
+     Plot(freqs$disGroup, freqs$N, addTo = gsub(" ", "", newTitle),
+          title = newTitle) # can plot the distance X number
+     abline(v = meanAdvectionMag + meanDist)
+     # should be 0.63:
+     freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
+     mtext(side = 3, paste("Average habitat quality: ",
+           round(mean(rasQuality[], na.rm = TRUE), 2)),
+           outer = TRUE, line = -2, cex = 2)
   }
+  dev() # don't use Rstudio windows, which is very slow
+  clearPlot()
+  out <- spread3(rasAbundance = rasAbundance,
+                 rasQuality = rasQuality,
+                 advectionDir = advectionDir,
+                 advectionMag = advectionMag,
+                 meanDist = meanDist, verbose = 2,
+                 plot.it = 2)
+
+  plotDispersalKernel(out, advectionMag)
 
   #########################################################
   ### The case of variable quality raster
   #########################################################
   if (require(sf) && require(fasterize)) {
-    library(SpaDES.tools) # for gaussMap
-    a <- randomStudyArea(size = 1e9)
-    ras <- raster(extent(a), res = 100)
+    library(SpaDES.tools)
     mask <- fasterize(st_as_sf(a), ras) # faster than raster::rasterize
-    rasQuality <- gaussMap(ras)
-    crs(rasQuality) <- crs(a)
+    rasQuality <- raster(system.file("extdata", "rasQuality.tif", package = "SpaDES.tools"))
+    crs(rasQuality) <- readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools"))
     rasQuality[is.na(mask)] <- NA
     # rescale so min is 0.75 and max is 1
     rasQuality[] <- rasQuality[] / (maxValue(rasQuality) * 4 ) + 1/4
@@ -98,13 +94,13 @@ if (interactive() && require("RandomFields")) {
   rasAbundance[startPixel] <- 1000
 
   # raster for advectionDir
-  advectionDir <- gaussMap(ras)
+  advectionDir <- raster(system.file("extdata", "advectionDir.tif", package = "SpaDES.tools"))
   crs(advectionDir) <- crs(rasQuality)
   # rescale so min is 0.75 and max is 1
   advectionDir[] <- advectionDir[] / (maxValue(advectionDir)) * 180
 
   # raster for advectionMag
-  advectionMag <- gaussMap(ras)
+  advectionMag <- raster(system.file("extdata", "advectionMag.tif", package = "SpaDES.tools"))
   crs(advectionMag) <- crs(rasQuality)
   # rescale so min is 0.75 and max is 1
   advectionMag[] <- advectionMag[] / (maxValue(advectionMag)) * 600

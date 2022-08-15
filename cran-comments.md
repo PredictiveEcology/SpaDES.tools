@@ -1,31 +1,32 @@
 ## Updated release
 
-This release fixes problems highlighted by CRAN checks.
+This release fixes various problems with packages dependencies and CRAN check problems.
 See `NEWS.md`.
 
 ## Test environments
 
 ### Previous R versions
 * Ubuntu 20.04                 (GitHub), R 4.0.5
-* Windows                      (GitHub), R 3.6.3
+* Ubuntu 20.04                 (GitHub), R 4.1.3
 * Windows                      (GitHub), R 4.0.5
-* Windows                 (win-builder), R 4.0.5
+* Windows                      (GitHub), R 4.1.3
+* Windows                 (win-builder), R 4.1.3
 
 ### Current R versions
-* macOS 10.15.6 Catalina       (GitHub), R 4.1.2
-* macOS 11.1 Big Sur            (local), R 4.1.2
-* macOs (m1) Big Sur             (rhub), R 4.1.2
-* Ubuntu 20.04                 (GitHub), R 4.1.2
-* Ubuntu 20.04                  (local), R 4.1.2
-* Windows                      (GitHub), R 4.1.2
-* Windows                       (local), R 4.1.2
-* Windows                 (win-builder), R 4.1.2
-R
+* macOS 11.6 Big Sur           (GitHub), R 4.2.1
+* macOS 11.6 Big Sur            (local), R 4.2.1
+* macOs (m1) Big Sur             (rhub), R 4.2.1
+* Ubuntu 20.04                 (GitHub), R 4.2.1
+* Ubuntu 20.04                  (local), R 4.2.1
+* Windows                      (GitHub), R 4.2.1
+* Windows                       (local), R 4.2.1
+* Windows                 (win-builder), R 4.2.1
+
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel ()
-* Ubuntu 20.04                  (local), R-devel (2022-02-01 r81619)
-* Windows                      (GitHub), R-devel ()
-* Windows                 (win-builder), R-devel (2022-02-01 r81619 ucrt)
+* Ubuntu 20.04                 (GitHub), R-devel (2022-08-11 r82713)
+* Ubuntu 20.04                  (local), R-devel (2022-08-11 r82713)
+* Windows                      (GitHub), R-devel (2022-08-11 r82713)
+* Windows                 (win-builder), R-devel (2022-08-11 r82713 ucrt)
 
 ## R CMD check results
 

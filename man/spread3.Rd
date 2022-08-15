@@ -32,22 +32,21 @@ be spread horizontally, and distributed from each pixel
 that contains a non-zero non NA value.}
 
 \item{advectionDir}{A single number or \code{RasterLayer} in degrees from North = 0
-(though it will use radians if all values are \code{abs(advectionDir) > 2 * pi)}.
+(though it will use radians if all values are \verb{abs(advectionDir) > 2 * pi)}.
 This indicates the direction of advective forcing (i.e., wind).}
 
 \item{advectionMag}{A single number or \code{RasterLayer} in distance units of the
 \code{rasQuality}, e.g., meters, indicating the relative forcing that will
 occur. It is imposed on the total event, i.e., if the \code{meanDist} is
 \code{10000}, and \code{advectionMag} is \code{5000}, then the expected
-distance (i.e., 63\% of agents) will have settled by \code{15000} map units.}
+distance (i.e., \verb{63\%} of agents) will have settled by \code{15000} map units.}
 
 \item{meanDist}{A single number indicating the mean distance parameter in map units
 (not pixels), for a negative exponential distribution
-dispersal kernel (e.g., \code{dexp}). This will mean that 63% of agents will have
-settled at this \code{meanDist} (still experimental)}
+dispersal kernel (e.g., \code{dexp}). This will mean that \verb{63\%} of agents will have
+settled at this \code{meanDist} (still experimental).}
 
-\item{dispersalKernel}{One of either \code{"exponential"} or \code{"weibull"}.
-If}
+\item{dispersalKernel}{One of either \code{"exponential"} or \code{"weibull"}.}
 
 \item{sdDist}{A single number indicating the \code{sd} parameter of a two-parameter
 \code{dispersalKernel}.
@@ -57,7 +56,7 @@ Defaults to \code{1}, which is the same as the \code{exponential} distribution.}
 produced during iterations. Currently, only 0, 1, or 2+ are distinct.}
 
 \item{minNumAgents}{Single numeric indicating the minimum number of agents
-to consider all dispersing finished. Default is 50}
+to consider all dispersing finished. Default is 50.}
 
 \item{verbose}{Numeric. With increasing numbers above 0, there will be more
 messages produced. Currently, only 0, 1, or 2+ are distinct.}
@@ -72,14 +71,14 @@ problems)}
 A \code{data.table} with all information used during the spreading
 }
 \description{
-This is built with \code{\link{spread2}} and is still experimental.
+This is built with \code{\link[=spread2]{spread2()}} and is still experimental.
 This one differs from other attempts in that it treats the advection and
 dispersal as mathematical vectors that are added together.
 They are "rounded" to pixel centres.
 }
 \examples{
 ## these tests are fairly heavy, so don't run during automated tests
-if (interactive() && require("RandomFields")) {
+if (interactive()) {
   #########################################################
   # Simple case, no variation in rasQuality, numeric advectionDir and advectionMag
   #########################################################
@@ -98,47 +97,43 @@ if (interactive() && require("RandomFields")) {
   advectionMag <- 4 * res(rasAbundance)[1]
   meanDist <- 2600
 
-   if (interactive()) {
-     # Test the dispersal kernel -- create a function
-     plotDispersalKernel <- function(out, meanAdvectionMag) {
-       out[, disGroup := round(distance / 100) * 100]
-       freqs <- out[, .N, by = "disGroup"]
-       freqs[, `:=`(cumSum = cumsum(N), N = N)]
-       Plot(freqs$disGroup, freqs$cumSum, addTo = "CumulativeNumberSettled",
-            title = "Cumulative Number Settled") # can plot the distance X number
-       abline(v = meanAdvectionMag + meanDist)
-       newTitle <- "Number Settled By Distance"
-       Plot(freqs$disGroup, freqs$N, addTo = gsub(" ", "", newTitle),
-            title = newTitle) # can plot the distance X number
-       abline(v = meanAdvectionMag + meanDist)
-       # should be 0.63:
-       freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
-       mtext(side = 3, paste("Average habitat quality: ",
-             round(mean(rasQuality[], na.rm = TRUE), 2)),
-             outer = TRUE, line = -2, cex = 2)
-    }
-    dev() # don't use Rstudio windows, which is very slow
-    clearPlot()
-    out <- spread3(rasAbundance = rasAbundance,
-                   rasQuality = rasQuality,
-                   advectionDir = advectionDir,
-                   advectionMag = advectionMag,
-                   meanDist = meanDist, verbose = 2,
-                   plot.it = 2)
-
-    plotDispersalKernel(out, advectionMag)
+   # Test the dispersal kernel -- create a function
+   plotDispersalKernel <- function(out, meanAdvectionMag) {
+     out[, disGroup := round(distance / 100) * 100]
+     freqs <- out[, .N, by = "disGroup"]
+     freqs[, `:=`(cumSum = cumsum(N), N = N)]
+     Plot(freqs$disGroup, freqs$cumSum, addTo = "CumulativeNumberSettled",
+          title = "Cumulative Number Settled") # can plot the distance X number
+     abline(v = meanAdvectionMag + meanDist)
+     newTitle <- "Number Settled By Distance"
+     Plot(freqs$disGroup, freqs$N, addTo = gsub(" ", "", newTitle),
+          title = newTitle) # can plot the distance X number
+     abline(v = meanAdvectionMag + meanDist)
+     # should be 0.63:
+     freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
+     mtext(side = 3, paste("Average habitat quality: ",
+           round(mean(rasQuality[], na.rm = TRUE), 2)),
+           outer = TRUE, line = -2, cex = 2)
   }
+  dev() # don't use Rstudio windows, which is very slow
+  clearPlot()
+  out <- spread3(rasAbundance = rasAbundance,
+                 rasQuality = rasQuality,
+                 advectionDir = advectionDir,
+                 advectionMag = advectionMag,
+                 meanDist = meanDist, verbose = 2,
+                 plot.it = 2)
+
+  plotDispersalKernel(out, advectionMag)
 
   #########################################################
   ### The case of variable quality raster
   #########################################################
   if (require(sf) && require(fasterize)) {
-    library(SpaDES.tools) # for gaussMap
-    a <- randomStudyArea(size = 1e9)
-    ras <- raster(extent(a), res = 100)
+    library(SpaDES.tools)
     mask <- fasterize(st_as_sf(a), ras) # faster than raster::rasterize
-    rasQuality <- gaussMap(ras)
-    crs(rasQuality) <- crs(a)
+    rasQuality <- raster(system.file("extdata", "rasQuality.tif", package = "SpaDES.tools"))
+    crs(rasQuality) <- readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools"))
     rasQuality[is.na(mask)] <- NA
     # rescale so min is 0.75 and max is 1
     rasQuality[] <- rasQuality[] / (maxValue(rasQuality) * 4 ) + 1/4
@@ -178,13 +173,13 @@ if (interactive() && require("RandomFields")) {
   rasAbundance[startPixel] <- 1000
 
   # raster for advectionDir
-  advectionDir <- gaussMap(ras)
+  advectionDir <- raster(system.file("extdata", "advectionDir.tif", package = "SpaDES.tools"))
   crs(advectionDir) <- crs(rasQuality)
   # rescale so min is 0.75 and max is 1
   advectionDir[] <- advectionDir[] / (maxValue(advectionDir)) * 180
 
   # raster for advectionMag
-  advectionMag <- gaussMap(ras)
+  advectionMag <- raster(system.file("extdata", "advectionMag.tif", package = "SpaDES.tools"))
   crs(advectionMag) <- crs(rasQuality)
   # rescale so min is 0.75 and max is 1
   advectionMag[] <- advectionMag[] / (maxValue(advectionMag)) * 600

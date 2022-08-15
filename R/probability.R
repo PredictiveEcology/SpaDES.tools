@@ -1,8 +1,7 @@
-################################################################################
 #' Vectorized wrapped normal density function
 #'
-#'  This is a modified version of \code{\link{dwrpnorm}} found in \code{CircStats}
-#'  to allow for multiple angles at once (i.e., vectorized on theta and mu).
+#'  This is a modified version of [dwrpnorm][CircStats::dwrpnorm].
+#'  to allow for multiple angles at once (i.e., vectorized on `theta` and `mu`).
 #'
 #' @inheritParams CircStats::dwrpnorm
 #'

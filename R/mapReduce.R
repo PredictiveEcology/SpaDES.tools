@@ -5,27 +5,27 @@ if (getRversion() >= "3.1.0") {
 ################################################################################
 #' Convert reduced representation to full raster
 #'
-#' @param reduced \code{data.frame} or \code{data.table} that has at least one
-#' column of codes that are represented in the \code{fullRaster}.
+#' @param reduced `data.frame` or `data.table` that has at least one
+#' column of codes that are represented in the `fullRaster`.
 #'
-#' @param fullRaster \code{RasterLayer} of codes used in \code{reduced} that
+#' @param fullRaster `RasterLayer` of codes used in `reduced` that
 #'                   represents a spatial representation of the data.
 #'
 #' @param newRasterCols Character vector, length 1 or more, with the name(s) of
-#'                      the column(s) in \code{reduced} whose value will be
-#'                      returned as a \code{Raster} or list of \code{Raster}s.
+#'                      the column(s) in `reduced` whose value will be
+#'                      returned as a `Raster` or list of `Raster`s.
 #'
-#' @param mapcode a character, length 1, with the name of the column in \code{reduced}
-#'                that is represented in \code{fullRaster}.
+#' @param mapcode a character, length 1, with the name of the column in `reduced`
+#'                that is represented in `fullRaster`.
 #'
 #' @param ... Other arguments. None used yet.
 #'
-#' @return A \code{RasterLayer} or list of \code{RasterLayer} of with same
-#' dimensions as \code{fullRaster} representing
-#' \code{newRasterCols} spatially, according to the join between the \code{mapcode}
-#' contained within \code{reduced} and \code{fullRaster}
+#' @return A `RasterLayer` or list of `RasterLayer` of with same
+#' dimensions as `fullRaster` representing
+#' `newRasterCols` spatially, according to the join between the `mapcode`
+#' contained within `reduced` and `fullRaster`
 #'
-#' @seealso \code{\link{raster}}
+#' @seealso [raster()]
 #'
 #' @author Eliot McIntire
 #' @export

@@ -59,13 +59,13 @@ more control over cluster use.}
 }
 \value{
 A sorted matrix on \code{id} with same number of rows as \code{to},
-        but with one extra column, \code{"dists"}, indicating the distance
-        between \code{from} and \code{to}.
+but with one extra column, \code{"dists"}, indicating the distance
+between \code{from} and \code{to}.
 }
 \description{
-This is a modification of \code{\link[raster]{distanceFromPoints}} for the case of many points.
+This is a modification of \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} for the case of many points.
 This version can often be faster for a single point because it does not return a RasterLayer.
-This is different than \code{\link[raster]{distanceFromPoints}} because it does not take the
+This is different than \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} because it does not take the
 minimum distance from the set of points to all cells.
 Rather this returns the every pair-wise point distance.
 As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -77,10 +77,8 @@ This function has the potential to use a lot of memory if there are a lot of
 }
 \details{
 This function is cluster aware. If there is a cluster running, it will use it.
-To start a cluster use \code{\link[raster:cluster]{beginCluster}}, with \code{N} being
+To start a cluster use \code{\link[raster:cluster]{beginCluster()}}, with \code{N} being
 the number of cores to use. See examples in \code{SpaDES.core::experiment}.
-
-
 
 If the user requires an id (indicating the \code{from} cell for each \code{to} cell)
 to be returned with the function, the user must add an identifier to the
@@ -97,7 +95,7 @@ limitations because there are many
 These two functions together will be used iteratively through the \code{from} points. The
 \code{distFn} should be a transformation of distances to be used by the
 \code{cumulativeFn} function. For example, if \code{distFn} is \code{1 / (1+x)},
-the default, and \code{cumulativeFn} is \code{`+`}, then it will do a sum of
+the default, and \code{cumulativeFn} is \code{+}, then it will do a sum of
 inverse distance weights.
 See examples.
 }
@@ -161,11 +159,11 @@ if (identical(Sys.info()["sysname"], "Linux")) {
 }
 }
 \seealso{
-\code{\link{rings}}, \code{\link{cir}}, \code{\link[raster]{distanceFromPoints}},
+\code{\link[=rings]{rings()}}, \code{\link[=cir]{cir()}}, \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}},
 which can all be made to do the same thing, under specific combinations of arguments.
 But each has different primary use cases. Each is also faster under different conditions.
 For instance, if \code{maxDistance} is relatively small compared to the number of cells
-in the \code{landscape}, then \code{\link{cir}} will likely be faster. If a minimum
+in the \code{landscape}, then \code{\link[=cir]{cir()}} will likely be faster. If a minimum
 distance from all cells in the \code{landscape} to any cell in \code{from}, then
 \code{distanceFromPoints} will be fastest. This function scales best when there are
 many \code{to} points or all cells are used \code{to = NULL} (which is default).

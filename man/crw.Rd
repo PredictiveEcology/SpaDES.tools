@@ -22,7 +22,7 @@ hypothesis/method to test/use. Currently defaults to
 
 \item{...}{arguments passed to the function in \code{hypothesis}}
 
-\item{agent}{A \code{SpatialPoints*} object.
+\item{agent}{A \verb{SpatialPoints*} object.
 If a \code{SpatialPointsDataFrame}, 2 of the columns must
 be \code{x1} and \code{y1}, indicating the previous location.
 If a \code{SpatialPoints} object, then \code{x1} and
@@ -46,7 +46,7 @@ Default \code{FALSE}.}
 }
 \value{
 A SpatialPointsDataFrame object with updated spatial position defined
-        by a single occurrence of step length(s) and turn angle(s).
+by a single occurrence of step length(s) and turn angle(s).
 }
 \description{
 Wrapper for selecting different animal movement methods.
@@ -60,19 +60,17 @@ in McIntire, Schultz, Crone 2007.
 }
 \references{
 Turchin, P. 1998. Quantitative analysis of movement: measuring and
-            modeling population redistribution in animals and plants.
-            Sinauer Associates, Sunderland, MA.
+modeling population redistribution in animals and plants.
+Sinauer Associates, Sunderland, MA.
 
 McIntire, E. J. B., C. B. Schultz, and E. E. Crone. 2007.
-            Designing a network for butterfly habitat restoration: where
-            individuals, populations and landscapes interact.
-            Journal of Applied Ecology 44:725-736.
+Designing a network for butterfly habitat restoration: where
+individuals, populations and landscapes interact.
+Journal of Applied Ecology 44:725-736.
 }
 \seealso{
-\code{\link{pointDistance}}
+\code{\link[=pointDistance]{pointDistance()}}
 }
 \author{
-Eliot McIntire
-
 Eliot McIntire
 }

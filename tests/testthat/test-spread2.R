@@ -1,6 +1,4 @@
 test_that("spread2 tests", {
-  skip_if_not_installed("RandomFields", "3.1.24")
-
   library(raster)
   library(data.table)
   library(fpCompare)
@@ -12,10 +10,10 @@ test_that("spread2 tests", {
   data.table::setDTthreads(1)
 
   # inputs for x
-  a <- raster(extent(0, 10, 0, 10), res = 1)
+  a <- raster(system.file("extdata", "a.tif", package = "SpaDES.tools"))
   b <- raster(a)
   sp <- 0.225
-  spRas <- gaussMap(b)
+  spRas <- raster(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
   spRas[] <- spRas[] / maxValue(spRas) * sp / 2 + sp / 2 * 1.5
   b[] <- 1
   bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
@@ -253,7 +251,7 @@ test_that("spread2 tests", {
   message("Scales with number of starts, not maxSize of raster")
   set.seed(21)
   b <- raster(extent(0, 10, 0, 10), res = 1)
-  bProb <- gaussMap(b, speedup = 1)
+  bProb <- raster(system.file("extdata", "bProb.tif", package = "SpaDES.tools"))
 
   set.seed(1232)
   out <- spread2(spreadProb = 0.5, landscape = b, asRaster = FALSE,
@@ -408,8 +406,7 @@ test_that("spread2 tests -- asymmetry", {
     })
   }
 
-  a <- raster(extent(0, 1e2, 0, 1e2), res = 1)
-  hab <- gaussMap(a, speedup = 1) # if raster is large (>1e6 pixels), use speedup>1
+  hab <- raster(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
   names(hab) <- "hab"
   hab2 <- hab > 0
   maxRadius <- 25

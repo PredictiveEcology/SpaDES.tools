@@ -6,7 +6,7 @@
 \alias{SpaDES.tools-package}
 \title{Categorized overview of the \code{SpaDES.tools} package}
 \description{
-\if{html}{\figure{SpaDES.png}{options: width=100 alt="SpaDES logo" align="right"}}
+\if{html}{\figure{SpaDES.png}{options: width=100 alt="SpaDES logo" style="float: right;"}}
 \if{latex}{\figure{SpaDES.png}{options: width=0.5in}}
 }
 \section{1 Spatial spreading/distances methods}{
@@ -17,17 +17,17 @@ Contagion can be modelled using discrete approaches or continuous approaches.
 Several functions assist with these:
 
 \tabular{ll}{
-  \code{\link{adj}} \tab An optimized (i.e., faster) version of
-                         \code{\link[raster]{adjacent}}\cr
-  \code{\link{cir}} \tab Identify pixels in a circle around a
-                         \code{\link[sp:SpatialPoints-class]{SpatialPoints*}} object\cr
-  \code{\link{directionFromEachPoint}} \tab Fast calculation of direction and
-                                            distance surfaces\cr
-  \code{\link{distanceFromEachPoint}} \tab Fast calculation of distance surfaces\cr
-  \code{\link{rings}} \tab Identify rings around focal cells (e.g., buffers and donuts)\cr
-  \code{\link{spokes}} \tab TO DO: need description\cr
-  \code{\link{spread}} \tab Contagious cellular automata\cr
-  \code{\link{wrap}} \tab Create a torus from a grid\cr
+\code{\link[=adj]{adj()}} \tab An optimized (i.e., faster) version of
+\code{\link[raster:adjacent]{raster::adjacent()}}\cr
+\code{\link[=cir]{cir()}} \tab Identify pixels in a circle around a
+\code{\link[sp:SpatialPoints-class]{SpatialPoints*()}} object\cr
+\code{\link[=directionFromEachPoint]{directionFromEachPoint()}} \tab Fast calculation of direction and
+distance surfaces\cr
+\code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}} \tab Fast calculation of distance surfaces\cr
+\code{\link[=rings]{rings()}} \tab Identify rings around focal cells (e.g., buffers and donuts)\cr
+\code{\link[=spokes]{spokes()}} \tab TO DO: need description\cr
+\code{\link[=spread]{spread()}} \tab Contagious cellular automata\cr
+\code{\link[=wrap]{wrap()}} \tab Create a torus from a grid\cr
 }
 }
 
@@ -37,12 +37,12 @@ Several functions assist with these:
 Agents have several methods and functions specific to them:
 
 \tabular{ll}{
-  \code{\link{crw}} \tab Simple correlated random walk function\cr
-  \code{\link{heading}} \tab Determines the heading between SpatialPoints*\cr
-  \code{\link[quickPlot]{makeLines}} \tab Makes \code{SpatialLines} object for,
-                                          e.g., drawing arrows\cr
-  \code{\link{move}} \tab A meta function that can currently only take "crw"\cr
-  \code{\link{specificNumPerPatch}} \tab Initiate a specific number of agents per patch\cr
+\code{\link[=crw]{crw()}} \tab Simple correlated random walk function\cr
+\code{\link[=heading]{heading()}} \tab Determines the heading between SpatialPoints*\cr
+\code{\link[quickPlot:makeLines]{quickPlot::makeLines()}} \tab Makes \code{SpatialLines} object for,
+e.g., drawing arrows\cr
+\code{\link[=move]{move()}} \tab A meta function that can currently only take "crw"\cr
+\code{\link[=specificNumPerPatch]{specificNumPerPatch()}} \tab Initiate a specific number of agents per patch\cr
 }
 }
 
@@ -53,7 +53,7 @@ In addition to the vast amount of GIS operations available in R (mostly from
 contributed packages such as \code{sp}, \code{raster}, \code{maps}, \code{maptools}
 and many others), we provide the following GIS-related functions:
 \tabular{ll}{
-  \code{\link{equalExtent}} \tab Assess whether a list of extents are all equal\cr
+\code{\link[=equalExtent]{equalExtent()}} \tab Assess whether a list of extents are all equal\cr
 }
 }
 
@@ -64,7 +64,7 @@ These functions convert between reduced and mapped representations of the same d
 This allows compact representation of, e.g., rasters that have many individual pixels
 that share identical information.
 \tabular{ll}{
-  \code{\link{rasterizeReduced}} \tab Convert reduced representation to full raster\cr
+\code{\link[=rasterizeReduced]{rasterizeReduced()}} \tab Convert reduced representation to full raster\cr
 }
 }
 
@@ -76,9 +76,10 @@ before all data are available.
 These dummy maps can later be replaced with actual data maps.
 
 \tabular{ll}{
-  \code{\link{gaussMap}} \tab Creates a random map using Gaussian random fields\cr
-  \code{\link{randomPolygons}} \tab Creates a random polygon with specified number of classes\cr
+\code{\link[=randomPolygons]{randomPolygons()}} \tab Creates a random polygon with specified number of classes.\cr
 }
+
+See the \pkg{NLMR} package for tools to generate random landscapes (rasters).
 }
 
 \section{6 SELES-type approach to simulation}{
@@ -88,22 +89,22 @@ These functions are essentially skeletons and are not fully implemented.
 They are intended to make translations from \href{http://www.gowlland.ca/}{SELES}.
 You must know how to use SELES for these to be useful:
 \tabular{ll}{
-  \code{\link{agentLocation}} \tab Agent location\cr
-  \code{\link{initiateAgents}} \tab Initiate agents into a \code{SpatialPointsDataFrame}\cr
-  \code{\link{numAgents}} \tab Number of agents\cr
-  \code{\link{probInit}} \tab Probability of initiating an agent or event\cr
-  \code{\link{transitions}} \tab Transition probability\cr
+\code{\link[=agentLocation]{agentLocation()}} \tab Agent location\cr
+\code{\link[=initiateAgents]{initiateAgents()}} \tab Initiate agents into a \code{SpatialPointsDataFrame}\cr
+\code{\link[=numAgents]{numAgents()}} \tab Number of agents\cr
+\code{\link[=probInit]{probInit()}} \tab Probability of initiating an agent or event\cr
+\code{\link[=transitions]{transitions()}} \tab Transition probability\cr
 }
 }
 
 \section{7 Package options}{
 
 
-\code{SpaDES} packages use the following \code{\link{options}} to configure behaviour:
+\code{SpaDES} packages use the following \code{\link[=options]{options()}} to configure behaviour:
 
 \itemize{
-  \item \code{spades.lowMemory}: If true, some functions will use more memory
-    efficient (but slower) algorithms. Default \code{FALSE}.
+\item \code{spades.lowMemory}: If true, some functions will use more memory
+efficient (but slower) algorithms. Default \code{FALSE}.
 }
 }
 
@@ -117,16 +118,16 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Alex M Chubaty \email{alex.chubaty@gmail.com} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
+\strong{Maintainer}: Alex M Chubaty \email{achubaty@for-cast.ca} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
 
 Authors:
 \itemize{
-  \item Eliot J B McIntire \email{eliot.mcintire@canada.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
+  \item Eliot J B McIntire \email{eliot.mcintire@nrcan-rncan.gc.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
 }
 
 Other contributors:
 \itemize{
-  \item Yong Luo \email{yluo1@lakeheadu.ca} [contributor]
+  \item Yong Luo \email{Yong.Luo@gov.bc.ca} [contributor]
   \item Steve Cumming \email{Steve.Cumming@sbf.ulaval.ca} [contributor]
   \item Jean Marchal \email{jean.d.marchal@gmail.com} [contributor]
   \item Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada [copyright holder]

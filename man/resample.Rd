@@ -3,7 +3,7 @@
 \name{resample}
 \alias{resample}
 \alias{resampleZeroProof}
-\title{Adapted directly from the \code{\link[base]{sample}} help file.}
+\title{Adapted directly from the \code{\link[base:sample]{base::sample()}} help file.}
 \usage{
 resample(x, ...)
 
@@ -13,7 +13,7 @@ resampleZeroProof(spreadProbHas0, x, n, prob)
 \item{x}{either a vector of one or more elements from which to choose,
     or a positive integer.  See \sQuote{Details.}}
 
-\item{...}{Passed to \code{\link[base]{sample}}}
+\item{...}{Passed to \code{\link[base:sample]{base::sample()}}}
 
 \item{spreadProbHas0}{logical. Does \code{spreadProb} have any zeros on it.}
 
@@ -24,7 +24,7 @@ resampleZeroProof(spreadProbHas0, x, n, prob)
     of the vector being sampled.}
 }
 \description{
-Adapted directly from the \code{\link[base]{sample}} help file.
+Adapted directly from the \code{\link[base:sample]{base::sample()}} help file.
 
 \code{resampleZeroProof} is a version that works even if sum of all
 probabilities passed to \code{sample.int} is zero.
