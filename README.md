@@ -5,7 +5,7 @@
 [![Codecov test coverage](https://codecov.io/gh/PredictiveEcology/SpaDES.tools/branch/master/graph/badge.svg)](https://app.codecov.io/gh/PredictiveEcology/SpaDES.tools?branch=master)
 <!-- badges: end -->
 
-<img style="float: right;" width="80" vspace="10" hspace="10" src="https://github.com/PredictiveEcology/SpaDES/raw/master/docs/images/SpaDES.png">
+<img align="right" width="80" pad="20" src="https://github.com/PredictiveEcology/SpaDES/raw/master/man/figures/SpaDES.png">
 
 # SpaDES.tools
 
