@@ -1,5 +1,12 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
+version 1.0.1
+=============
+
+## Enhancements
+* a new function, `neutralLandscapeMap`, replaces the deprecated `gaussMap` in creating a neutral landscape map using the midpoint displacement algorithm available in `NLMR::nlm_mpd`.
+
+
 version 1.0.0
 =============
 
