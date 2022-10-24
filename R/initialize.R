@@ -507,29 +507,37 @@ long2UTM <- function(long) {
 #'     if (interactive()) Plot(map1)
 #'   }
 #' }
-neutralLandscapeMap <- function(x, ...) {
+neutralLandscapeMap <- function(x, pad = 10L, ...) {
   if (requireNamespace("NLMR", quietly = TRUE)) {
     dummyVals <- NLMR::nlm_mpd(
-      ncol = ncol(x),
-      nrow = nrow(x),
+      ncol = ncol(x) + pad, ## pad the raster so any lost cols won't affect crop etc.
+      nrow = nrow(x) + pad, ## pad the raster so any lost rows won't affect crop etc.
       resolution = unique(res(x)),
       ...
     )
-    if (ncol(dummyVals) < ncol(x) | nrow(dummyVals) < nrow(x)) {
-      ## because dummyVals has no CRS and its extent doesn't match x's (but the resolution does)
-      ## we can't reproject or use x to define the extent.
-      ## We need to add rows/cols by multiplying the final number by res.
-      dummyVals <- raster::extend(dummyVals,
-                                  raster::extent(c(0, ncol(x)*unique(raster::res(x)),
-                                                   0, nrow(x)*unique(raster::res(x)))),
-                          values = NA)
-      ## now replace added NAs
-      dummyVals <- raster::focal(dummyVals, w = matrix(1, 3, 3),
-                                 fun = mean, NAonly = TRUE, na.rm = TRUE)
-    }
+
+    ## NOTE: dummyVals doesn't match dimensions etc. of x:
+    ## - no CRS and its extent doesn't match x's (but the resolution does);
+    ## - we can't reproject or use x to define the extent;
+    ## - need to add rows/cols by multiplying the final number by res;
+    ## - crop to ensure the extra rows/cols are removed
+    dummyExt <- raster::extent(c(0, ncol(x)*unique(raster::res(x)),
+                                 0, nrow(x)*unique(raster::res(x))))
+    dummyVals <- raster::extend(dummyVals, dummyExt, values = NA)
+    dummyVals <- raster::crop(dummyVals, dummyExt)
+
+    # ## now replace added NAs
+    # maxIts <- max(nMissingColsRows) + 1L
+    # it <- 1L
+    # while (any(is.na(dummyVals[])) & (it < maxIts)) {
+    #   dummyVals <- raster::focal(dummyVals, w = matrix(1, 3, 3),
+    #                              fun = mean, NAonly = TRUE, na.rm = TRUE)
+    #   it <- it + 1L
+    # }
 
     dummyLandscape <- x
     dummyLandscape[] <- dummyVals[]
+
     return(dummyLandscape)
   } else {
     stop("Package 'NLMR' not available. Please install it using:\n",

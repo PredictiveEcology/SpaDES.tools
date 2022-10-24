@@ -4,7 +4,7 @@
 \alias{neutralLandscapeMap}
 \title{Produce a neutral landscape using a midpoint displacement algorithm}
 \usage{
-neutralLandscapeMap(x, ...)
+neutralLandscapeMap(x, pad = 10L, ...)
 }
 \arguments{
 \item{x}{A \code{RasterLayer} to use as a template.}
