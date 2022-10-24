@@ -1,6 +1,6 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
-version 1.0.1
+version 1.0.0.9000
 =============
 
 ## Enhancements
