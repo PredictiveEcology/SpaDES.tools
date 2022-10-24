@@ -483,6 +483,9 @@ long2UTM <- function(long) {
 #'
 #' @param x        A `RasterLayer` to use as a template.
 #'
+#' @param pad      Integer. Number of cells by which to pad `x` internally to ensure
+#'                 `nlm_mpd` produces a raster corresponding to the dimensions of `x`.
+#'
 #' @param ...      Further arguments passed to `NLMR::nlm_mpd`
 #'
 #' @importFrom raster res ncol nrow extent extend focal

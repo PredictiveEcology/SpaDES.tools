@@ -9,6 +9,9 @@ neutralLandscapeMap(x, pad = 10L, ...)
 \arguments{
 \item{x}{A \code{RasterLayer} to use as a template.}
 
+\item{pad}{Integer. Number of cells by which to pad \code{x} internally to ensure
+\code{nlm_mpd} produces a raster corresponding to the dimensions of \code{x}.}
+
 \item{...}{Further arguments passed to \code{NLMR::nlm_mpd}}
 }
 \value{
