@@ -72,6 +72,7 @@ Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
 License: GPL-3
+Additional_repositories: https://predictiveecology.r-universe.dev/
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 ByteCompile: yes
 Collate: 

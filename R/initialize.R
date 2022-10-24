@@ -63,7 +63,8 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   .Defunct(msg = paste(
     "Random landscape generation functionality has been removed",
     "because the RandomFields packages is no longer maintained.\n",
-    "See the NLMR package for tools to generate various random/neutral landscapes."
+    "See neutralLandscapeMap() or use the NLMR package for tools to generate various",
+    "random/neutral landscapes."
   ))
 }
 
@@ -474,16 +475,13 @@ long2UTM <- function(long) {
   (floor((long + 180)/6) %% 60) + 1
 }
 
-
-################################################################################
 #' Produce a neutral landscape using a midpoint displacement algorithm
 #'
-#' This is a wrapper for the `nlm_mpd` function in the `NLMR`
-#' package. The main addition is that it makes sure that the
-#' output raster conforms in extent with the input raster `x`,
-#' since `nlm_mpd` can output a smaller raster
+#' This is a wrapper for the `nlm_mpd` function in the `NLMR` package.
+#' The main addition is that it makes sure that the output raster conforms
+#' in extent with the input raster `x`, since `nlm_mpd` can output a smaller raster.
 #'
-#' @param x        A spatial object (e.g., a `RasterLayer`).
+#' @param x        A `RasterLayer` to use as a template.
 #'
 #' @param ...      Further arguments passed to `NLMR::nlm_mpd`
 #'
@@ -497,20 +495,19 @@ long2UTM <- function(long) {
 #'
 #' @examples
 #' \dontrun{
-#' if (require(NLMR)) {
-#'   library(raster)
-#'   nx <- ny <- 100L
-#'   r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
-#'   speedup <- max(1, nx/5e2)
-#'   map1 <- neutralLandscapeMap(r, roughness = 0.65,
-#'                        rand_dev = 200,
-#'                        rescale = FALSE,
-#'                        verbose = FALSE)
-#'   if (interactive()) Plot(map1)
+#'   if (require(NLMR)) {
+#'     library(raster)
+#'     nx <- ny <- 100L
+#'     r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+#'     speedup <- max(1, nx/5e2)
+#'     map1 <- neutralLandscapeMap(r,
+#'                                 roughness = 0.65,
+#'                                 rand_dev = 200,
+#'                                 rescale = FALSE,
+#'                                 verbose = FALSE)
+#'     if (interactive()) Plot(map1)
+#'   }
 #' }
-#' }
-#'
-
 neutralLandscapeMap <- function(x, ...) {
   if (requireNamespace("NLMR", quietly = TRUE)) {
     dummyVals <- NLMR::nlm_mpd(
@@ -519,24 +516,24 @@ neutralLandscapeMap <- function(x, ...) {
       resolution = unique(res(x)),
       ...
     )
-    if (ncol(dummyVals) < ncol(x) |
-        nrow(dummyVals) < nrow(x)) {
-      ## because dummyVals has no CRS and its extent doesn't match RTM's (but the resolution does)
-      ## we can't reproject or use RTM to define the extent. We need to add rows/cols
-      ## by multiplying the final number by res
-      dummyVals <- extend(dummyVals,
-                          extent(c(0, ncol(x)*unique(res(x)),
-                                   0, nrow(x)*unique(res(x)))),
+    if (ncol(dummyVals) < ncol(x) | nrow(dummyVals) < nrow(x)) {
+      ## because dummyVals has no CRS and its extent doesn't match x's (but the resolution does)
+      ## we can't reproject or use x to define the extent.
+      ## We need to add rows/cols by multiplying the final number by res.
+      dummyVals <- raster::extend(dummyVals,
+                                  raster::extent(c(0, ncol(x)*unique(raster::res(x)),
+                                                   0, nrow(x)*unique(raster::res(x)))),
                           values = NA)
       ## now replace added NAs
-      dummyVals <- focal(dummyVals, w = matrix(1,3,3),
-                         fun = mean, NAonly = TRUE, na.rm = TRUE)
+      dummyVals <- raster::focal(dummyVals, w = matrix(1, 3, 3),
+                                 fun = mean, NAonly = TRUE, na.rm = TRUE)
     }
 
     dummyLandscape <- x
     dummyLandscape[] <- dummyVals[]
     return(dummyLandscape)
   } else {
-    stop("Package 'NLMR' not installed. Please install it to make dummy landscapes.")
+    stop("Package 'NLMR' not available. Please install it using:\n",
+         "  install.packages('NLMR', repos = 'https://predictiveecology.r-universe.dev')")
   }
 }
