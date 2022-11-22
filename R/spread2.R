@@ -206,6 +206,12 @@ utils::globalVariables(c(
 #' @param allowOverlap `numeric` (`logical` will work for backwards compatibility).
 #'                     See details.  Default is 0, i.e., no overlapping.
 #'
+#' @param oneNeighbourOnly Logical. Default is `FALSE`. If `TRUE`, then this
+#'                         spread algorithm will allow exactly one neighbour to be
+#'                         spread to (not fewer or more). This could be used, e.g.,
+#'                         for an animal moving. If this is `TRUE`, then `allowOverlap`
+#'                         will be set to `2` if it is `0` or `1`.
+#'
 #' @param plot.it  If TRUE, then plot the raster at every iteration,
 #'                   so one can watch the spread2 event grow.
 #'
@@ -349,7 +355,8 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                     returnFrom = FALSE, maxRetriesPerID = 10,
                     spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
                     asymmetry = NA_real_, asymmetryAngle = NA_real_,
-                    allowOverlap = 0, neighProbs = NA_real_, skipChecks = FALSE) {
+                    allowOverlap = 0, neighProbs = NA_real_, oneNeighbourOnly = FALSE,
+                    skipChecks = FALSE) {
 
   #### assertions ###############
   assertClass(landscape, "Raster")
@@ -561,6 +568,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   dtPotentialColNames <- c("id", "from", "to", "state", "distance"[needDistance],
                            "effectiveDistance"[usingAsymmetry])
 
+  if (isTRUE(oneNeighbourOnly)) {
+    if (allowOverlap %in% 0:1) {
+      message("oneNeighbourOnly is TRUE; allowOverlap was ", allowOverlap, " which is not allowed; ",
+              "setting allowOverlap to 2")
+      allowOverlap <- 2
+    }
+  }
   # start at iteration 0, note: totalIterations is also maintained,
   # which persists during iterative calls to spread2
   its <- 0
@@ -844,9 +858,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # remove NA values that may come from a spreadProb raster
       NAaSP <- !is.na(actualSpreadProb)
       if (any(NAaSP)) {
+        if (!all(NAaSP)) {
         dtPotential <- dtPotential[NAaSP,]
         actualSpreadProb <- actualSpreadProb[NAaSP]
       }
+    }
     }
 
     # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle
@@ -875,7 +891,22 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     }
 
     # Step 7 <- calculate spread success based on actualSpreadProb
-    spreadProbSuccess <- runifC(NROW(dtPotential)) <= actualSpreadProb
+    if (isTRUE(oneNeighbourOnly)) {
+      set(dtPotential, NULL, "actualSpreadProb", actualSpreadProb)
+      randoms <- runifC(length(unique(dtPotential$from)))
+      dtPotential[, keep := {
+        cumProb = cumsum(actualSpreadProb)/sum(actualSpreadProb)
+        draw <- randoms[.GRP]
+        .I[min(which(draw <= cumProb))]},
+        by = "from"]
+      spreadProbSuccess <- rep(FALSE, NROW(dtPotential))
+      spreadProbSuccess[dtPotential$keep] <- TRUE
+      set(dtPotential, NULL, c("keep", "actualSpreadProb"), NULL)
+
+    } else {
+      randVars <- runifC(NROW(dtPotential))
+      spreadProbSuccess <- randVars <= actualSpreadProb
+    }
 
     # Step 8 - Remove duplicates & bind dt and dtPotential
     if (anyNAneighProbs) {
