@@ -482,7 +482,12 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     whActive <- seq_along(start)
     whInactive <- integer()
+    if (any(duplicated(start)))
+      stop("start has duplicates; duplicates are not currently allowed; ",
+           "if that behaviour is desired, perhaps run this function multiple ",
+           "times with duplicates separated? ")
     dt <- data.table(initialPixels = start)
+
     if (returnFrom) {
       set(dt, NULL, "from", NA_integer_)
     }
@@ -862,7 +867,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         dtPotential <- dtPotential[NAaSP,]
         actualSpreadProb <- actualSpreadProb[NAaSP]
       }
-    }
+      }
     }
 
     # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle
@@ -924,9 +929,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
             dt[, dups := {
               successes <- state == "successful"
               c(rep(FALSE, length.out = sum(!successes)),
-              pixels[successes] %in% pixels[!successes])
-              },
-                     by = "initialPixels"]
+                pixels[successes] %in% pixels[!successes])
+            },
+            by = "initialPixels"]
             #dt[!successes, dups := FALSE]
           }
           dupes <- dt$dups
@@ -1014,7 +1019,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           # so they don't need any special treatment
           currentSizeTooSmall <- currentSizeTooSmall[
             !dt[dt$state %in% c("successful", "holding"), nomatch = 0]
-            ]
+          ]
 
         }
         # if the ones that are too small are unsuccessful, make them "tooSmall"
