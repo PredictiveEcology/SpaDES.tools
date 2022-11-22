@@ -1,5 +1,6 @@
 utils::globalVariables(c(
-  "distance", "dups", "from", "i.size", "ind", "indClDT", "initialPixels",
+  ".GRP", "distance", "dups", "from", "i.size", "ind", "indClDT", "initialPixels",
+  "keep",
   "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels", "proportion",
   "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1"
 ))
