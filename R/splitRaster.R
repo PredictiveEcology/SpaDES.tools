@@ -111,7 +111,7 @@ setMethod(
     return(tiles)
 })
 
-#' @importFrom raster extension raster writeRaster
+#' @importFrom raster crop crs extension raster writeRaster
 #' @keywords internal
 .croppy <- function(i, e, r, path, rType, fExt) {
   ri <- crop(r, e[[i]], datatype = rType)
