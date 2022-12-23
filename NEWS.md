@@ -1,6 +1,6 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
-version 1.0.0.9000
+version 1.0.1
 =============
 
 ## Enhancements
@@ -22,7 +22,7 @@ This is a major version update causing breaking changes due to multiple CRAN pac
 * `spread2` was unable to use `maxSize` when `start` was the output of a previous `spread2` call to which `maxSize` had not been supplied. This has now been fixed.
 
 version 0.3.10
-=============
+==============
 
 ## Dependency changes
 * drop support for R 3.6 (#65)
