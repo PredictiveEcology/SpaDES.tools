@@ -39,6 +39,12 @@ There was 1 NOTEs:
       SpaDES (4:27)
       automata (6:25)
 
+2. We provide instructions for installing suggested package `NLMR` from another repository:
+
+    The Description field contains
+        "https://PredictiveEcology.r-universe.dev")'.
+    Please enclose URLs in angle brackets (<...>).
+
 ## Downstream dependencies
 
 Currently none, but we are working to resubmit our other packages that depend on this one, and they are passing.
