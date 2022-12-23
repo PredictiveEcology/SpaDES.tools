@@ -1,15 +1,13 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
-version 1.0.1
-=============
+# SpaDES.tools 1.0.1
 
 ## Enhancements
 * a new function, `neutralLandscapeMap`, replaces the defunct `gaussMap` in creating a neutral landscape map using the midpoint displacement algorithm available in `NLMR::nlm_mpd`.
 
-version 1.0.0
-=============
+# SpaDES.tools 1.0.0
 
-This is a major version update causing breaking changes due to multiple CRAN packages no longer available as of R version 4.2 released April 2022.
+This is a major # SpaDES.tools update causing breaking changes due to multiple CRAN packages no longer available as of R # SpaDES.tools 4.2 released April 2022.
 
 ## Dependency changes
 * Removed dependencies `ffbase` and `ff` and deprecated use of `lowMemory` argument in `spread` (`ffbase` was removed from CRAN April 2022).
@@ -21,8 +19,7 @@ This is a major version update causing breaking changes due to multiple CRAN pac
 ## bug fixes
 * `spread2` was unable to use `maxSize` when `start` was the output of a previous `spread2` call to which `maxSize` had not been supplied. This has now been fixed.
 
-version 0.3.10
-==============
+# SpaDES.tools 0.3.10
 
 ## Dependency changes
 * drop support for R 3.6 (#65)
@@ -33,8 +30,7 @@ version 0.3.10
 ## bug fixes
 * fix error in `spread2()` causing failures on R-devel
 
-version 0.3.9
-=============
+# SpaDES.tools 0.3.9
 
 ## Dependency changes
 * `Require` moved to `Suggests`, because it's only used in examples.
@@ -46,8 +42,7 @@ version 0.3.9
 * fixed misc CRAN check issues with Suggested packages
 * fixed bug in `splitRaster()` (#62; @anbm-dk)
 
-version 0.3.8
-=============
+# SpaDES.tools 0.3.8
 
 ## Dependency changes
 * Dropped support for R 3.5 due to changes in dependency packages. R versions 3.6 and higher are supported.
@@ -63,8 +58,7 @@ version 0.3.8
 ## bug fixes
 * `distanceFromEachPoint` bugfixes under some cases (some values of `toCells`, `angles` would cause errors)
 
-version 0.3.6
-=============
+# SpaDES.tools 0.3.6
 
 ## Dependency changes
 * none
@@ -76,8 +70,7 @@ version 0.3.6
 ## Enhancements
 * none
 
-version 0.3.5
-=============
+# SpaDES.tools 0.3.5
 
 We have identified a non-trivial bug in `spread` when using `allowOverlap = TRUE`.
 Until we can patch this bug, using this argument value will generate an error.
@@ -93,8 +86,7 @@ We are currently working on a fix, which may take some time.
 * `spread` sped up for `allowOverlap = TRUE`
 * New values for `returnIndices` arg in `spread`, allowing for `numeric`. New option, `2` allows for the fastest return possible, only `pixelIndices`
 
-version 0.3.4
-=============
+# SpaDES.tools 0.3.4
 
 ## Dependency changes
 * none
@@ -105,8 +97,7 @@ version 0.3.4
 ## Enhancements
 * none
 
-version 0.3.3
-=============
+# SpaDES.tools 0.3.3
 
 ## Dependency changes
 * Requires R >= 3.5
@@ -120,8 +111,7 @@ version 0.3.3
 ## Enhancements
 * `spread2` speed enhancements
 
-version 0.3.2
-=============
+# SpaDES.tools 0.3.2
 
 ## Dependency changes
 * Added `animation`, `fasterize`, and `sf` to suggests (used in examples)
@@ -134,8 +124,7 @@ version 0.3.2
 * new function `spread3` for simulating *e.g.*, insect spread
 * `pointDistance` is now exported
 
-version 0.3.1
-=============
+# SpaDES.tools 0.3.1
 
 ## Dependency changes
 * `RandomFields` moved to Suggests to prevent clashes with `data.table` multithreading
@@ -145,8 +134,7 @@ version 0.3.1
 * `mergeRaster` now accepts a function passed by the user when `mosaic` is triggered (#55, @tati-micheletti)
 * `initiateAgents` example fixed to work with newer `raster` package versions (@rhijmans)
 
-version 0.3.0
-=============
+# SpaDES.tools 0.3.0
 
 ## New features
 * `splitRaster` defaults to in-memory rasters when no file path specified (#47, @ianmseddy).
@@ -155,8 +143,7 @@ version 0.3.0
 * Previously deprecated functions removed to fix CRAN check WARNINGs. These are now located in the `reproducible` package.
 * `compiler` package no longer used; is automatic in R >= 3.5
 
-version 0.2.0
-=============
+# SpaDES.tools 0.2.0
 
 ## New features
 * new arguments added to `gaussMap` (#20, @ianmseddy).
@@ -173,16 +160,14 @@ version 0.2.0
 ## Dependency changes
 * `dplyr` and `mgcv` added to Suggests because they are used in tests.
 
-version 0.1.1
-=============
+# SpaDES.tools 0.1.1
 
 * add more detailed information to package Description, per CRAN.
 * add `randomPolygon` function for single random polygon.
 * speed improvements with `spread2` when `asymmetry` used.
 * minor bug fixes.
 
-version 0.1.0
-=============
+# SpaDES.tools 0.1.0
 
 * A new package, which takes all auxiliary modelling functions out of the `SpaDES` package:
 
