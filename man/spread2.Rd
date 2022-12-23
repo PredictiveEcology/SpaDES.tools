@@ -25,6 +25,7 @@ spread2(
   asymmetryAngle = NA_real_,
   allowOverlap = 0,
   neighProbs = NA_real_,
+  oneNeighbourOnly = FALSE,
   skipChecks = FALSE
 )
 }
@@ -143,6 +144,12 @@ probabilities that an individual
 spread iteration will spread to \verb{1, 2, ..., length(neighProbs)}
 neighbours, respectively. If this is used (i.e., something other than
 NA), \code{circle} and \code{returnDistances} will not work currently.}
+
+\item{oneNeighbourOnly}{Logical. Default is \code{FALSE}. If \code{TRUE}, then this
+spread algorithm will allow exactly one neighbour to be
+spread to (not fewer or more). This could be used, e.g.,
+for an animal moving. If this is \code{TRUE}, then \code{allowOverlap}
+will be set to \code{2} if it is \code{0} or \code{1}.}
 
 \item{skipChecks}{Logical. If TRUE, the argument checking (i.e., assertions) will be
 skipped. This should likely only be used once it is clear that the function

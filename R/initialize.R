@@ -63,7 +63,8 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   .Defunct(msg = paste(
     "Random landscape generation functionality has been removed",
     "because the RandomFields packages is no longer maintained.\n",
-    "See the NLMR package for tools to generate various random/neutral landscapes."
+    "See neutralLandscapeMap() or use the NLMR package for tools to generate various",
+    "random/neutral landscapes."
   ))
 }
 
@@ -472,4 +473,77 @@ utmCRS <- function(x) {
 
 long2UTM <- function(long) {
   (floor((long + 180)/6) %% 60) + 1
+}
+
+#' Produce a neutral landscape using a midpoint displacement algorithm
+#'
+#' This is a wrapper for the `nlm_mpd` function in the `NLMR` package.
+#' The main addition is that it makes sure that the output raster conforms
+#' in extent with the input raster `x`, since `nlm_mpd` can output a smaller raster.
+#'
+#' @param x        A `RasterLayer` to use as a template.
+#'
+#' @param pad      Integer. Number of cells by which to pad `x` internally to ensure
+#'                 `nlm_mpd` produces a raster corresponding to the dimensions of `x`.
+#'
+#' @param ...      Further arguments passed to `NLMR::nlm_mpd`
+#'
+#' @importFrom raster res ncol nrow extent extend focal
+#' @export
+#' @rdname neutralLandscapeMap
+#'
+#' @return A `RasterLayer` with same extent as `x`, with randomly generated values.
+#'
+#' @seealso `nlm_mpd`
+#'
+#' @examples
+#' \dontrun{
+#'   if (require(NLMR)) {
+#'     library(raster)
+#'     nx <- ny <- 100L
+#'     r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+#'     map1 <- neutralLandscapeMap(r,
+#'                                 roughness = 0.65,
+#'                                 rand_dev = 200,
+#'                                 rescale = FALSE,
+#'                                 verbose = FALSE)
+#'     if (interactive()) Plot(map1)
+#'   }
+#' }
+neutralLandscapeMap <- function(x, pad = 10L, ...) {
+  if (requireNamespace("NLMR", quietly = TRUE)) {
+    dummyVals <- NLMR::nlm_mpd(
+      ncol = ncol(x) + pad, ## pad the raster so any lost cols won't affect crop etc.
+      nrow = nrow(x) + pad, ## pad the raster so any lost rows won't affect crop etc.
+      resolution = unique(res(x)),
+      ...
+    )
+
+    ## NOTE: dummyVals doesn't match dimensions etc. of x:
+    ## - no CRS and its extent doesn't match x's (but the resolution does);
+    ## - we can't reproject or use x to define the extent;
+    ## - need to add rows/cols by multiplying the final number by res;
+    ## - crop to ensure the extra rows/cols are removed
+    dummyExt <- raster::extent(c(0, ncol(x)*unique(raster::res(x)),
+                                 0, nrow(x)*unique(raster::res(x))))
+    dummyVals <- raster::extend(dummyVals, dummyExt, values = NA)
+    dummyVals <- raster::crop(dummyVals, dummyExt)
+
+    # ## now replace added NAs
+    # maxIts <- max(nMissingColsRows) + 1L
+    # it <- 1L
+    # while (any(is.na(dummyVals[])) & (it < maxIts)) {
+    #   dummyVals <- raster::focal(dummyVals, w = matrix(1, 3, 3),
+    #                              fun = mean, NAonly = TRUE, na.rm = TRUE)
+    #   it <- it + 1L
+    # }
+
+    dummyLandscape <- x
+    dummyLandscape[] <- dummyVals[]
+
+    return(dummyLandscape)
+  } else {
+    stop("Package 'NLMR' not available. Please install it using:\n",
+         "  install.packages('NLMR', repos = 'https://predictiveecology.r-universe.dev')")
+  }
 }

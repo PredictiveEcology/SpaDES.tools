@@ -9,6 +9,7 @@ CRS
 Codecov
 FLT4S
 Micheletti
+NLMR
 ORCID
 PredictiveEcology
 Probabilistically
@@ -35,6 +36,7 @@ benchmarking
 bugfixes
 coords
 crw
+dev
 dists
 doesn
 donut
@@ -56,6 +58,7 @@ par2
 preceeding
 probabilistically
 rasters
+repos
 rescaled
 runif
 spread2
