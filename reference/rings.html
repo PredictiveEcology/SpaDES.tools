@@ -22,7 +22,7 @@ smaller ring cells)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@ smaller ring cells)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
     <p>Identifies the cell numbers of all cells within a ring defined by  minimum
 and maximum distances from focal cells.
 Uses <code><a href="spread.html">spread()</a></code> under the hood, with specific values set.
-Under many situations, this will be faster than using <code><a href="https://rdrr.io/pkg/rgeos/man/misc-gBuffer.html" class="external-link">rgeos::gBuffer</a></code>
+Under many situations, this will be faster than using <code><a href="https://rdrr.io/pkg/rgeos/man/rgeos-deprecated.html" class="external-link">rgeos::gBuffer</a></code>
 twice (once for smaller ring and once for larger ring, then removing the
 smaller ring cells).</p>
     </div>
@@ -164,7 +164,7 @@ tends to be faster when there are many starting points. Another difference
 between the two functions is that <code>rings</code> takes the centre of the pixel
 as the centre of a circle, whereas <code>cir</code> takes the exact coordinates.
 See example.</p>
-<p><code><a href="https://rdrr.io/pkg/rgeos/man/misc-gBuffer.html" class="external-link">rgeos::gBuffer</a></code></p></div>
+<p><code><a href="https://rdrr.io/pkg/rgeos/man/rgeos-deprecated.html" class="external-link">rgeos::gBuffer</a></code></p></div>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -226,7 +226,7 @@ See example.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

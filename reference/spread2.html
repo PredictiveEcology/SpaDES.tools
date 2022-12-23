@@ -23,7 +23,7 @@ robust, and more difficult to use iteratively.'><!-- mathjax --><script src="htt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -86,6 +86,7 @@ robust, and more difficult to use iteratively.</p>
 <span>  asymmetryAngle <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
 <span>  allowOverlap <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  neighProbs <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
+<span>  oneNeighbourOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  skipChecks <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -245,6 +246,14 @@ probabilities that an individual
 spread iteration will spread to <code>1, 2, ..., length(neighProbs)</code>
 neighbours, respectively. If this is used (i.e., something other than
 NA), <code>circle</code> and <code>returnDistances</code> will not work currently.</p></dd>
+
+
+<dt>oneNeighbourOnly</dt>
+<dd><p>Logical. Default is <code>FALSE</code>. If <code>TRUE</code>, then this
+spread algorithm will allow exactly one neighbour to be
+spread to (not fewer or more). This could be used, e.g.,
+for an animal moving. If this is <code>TRUE</code>, then <code>allowOverlap</code>
+will be set to <code>2</code> if it is <code>0</code> or <code>1</code>.</p></dd>
 
 
 <dt>skipChecks</dt>
@@ -608,7 +617,7 @@ say, insect swarms.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

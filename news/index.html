@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -48,8 +48,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.0.0" id="version-100">version 1.0.0<small>2022-08-16</small><a class="anchor" aria-label="anchor" href="#version-100"></a></h2>
-<p>This is a major version update causing breaking changes due to multiple CRAN packages no longer available as of R version 4.2 released April 2022.</p>
+<h2 class="page-header" data-toc-text="1.0.1" id="spadestools-101">SpaDES.tools 1.0.1<a class="anchor" aria-label="anchor" href="#spadestools-101"></a></h2>
+<div class="section level3">
+<h3 id="enhancements-1-0-1">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-1-0-1"></a></h3>
+<ul><li>a new function, <code>neutralLandscapeMap</code>, replaces the defunct <code>gaussMap</code> in creating a neutral landscape map using the midpoint displacement algorithm available in <code><a href="https://ropensci.github.io/NLMR/reference/nlm_mpd.html" class="external-link">NLMR::nlm_mpd</a></code>.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.0" id="spadestools-100">SpaDES.tools 1.0.0<small>2022-08-16</small><a class="anchor" aria-label="anchor" href="#spadestools-100"></a></h2>
+<p>This is a major # SpaDES.tools update causing breaking changes due to multiple CRAN packages no longer available as of R # SpaDES.tools 4.2 released April 2022.</p>
 <div class="section level3">
 <h3 id="dependency-changes-1-0-0">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-1-0-0"></a></h3>
 <ul><li>Removed dependencies <code>ffbase</code> and <code>ff</code> and deprecated use of <code>lowMemory</code> argument in <code>spread</code> (<code>ffbase</code> was removed from CRAN April 2022).</li>
@@ -58,33 +65,40 @@
 <div class="section level3">
 <h3 id="enhancements-1-0-0">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-1-0-0"></a></h3>
 <ul><li>
-<code><a href="../reference/splitRaster.html">mergeRaster()</a></code> can deal with rasters with different origins extents (i.e., that were not produced using <code><a href="../reference/splitRaster.html">splitRaster()</a></code>)</li></ul></div>
+<code><a href="../reference/splitRaster.html">mergeRaster()</a></code> can deal with rasters with different origins extents (i.e., that were not produced using <code><a href="../reference/splitRaster.html">splitRaster()</a></code>)</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-0-0">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-0"></a></h3>
 <ul><li>
-<code>spread2</code> was unable to use <code>maxSize</code> when <code>start</code> was the output of a previous <code>spread2</code> call to which <code>maxSize</code> had not been supplied. This has now been fixed.</li></ul></div>
+<code>spread2</code> was unable to use <code>maxSize</code> when <code>start</code> was the output of a previous <code>spread2</code> call to which <code>maxSize</code> had not been supplied. This has now been fixed.</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.10" id="version-0310">version 0.3.10<small>2022-02-03</small><a class="anchor" aria-label="anchor" href="#version-0310"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.10" id="spadestools-0310">SpaDES.tools 0.3.10<small>2022-02-03</small><a class="anchor" aria-label="anchor" href="#spadestools-0310"></a></h2>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-10">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-10"></a></h3>
-<ul><li>drop support for R 3.6 (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/65" class="external-link">#65</a>)</li></ul></div>
+<ul><li>drop support for R 3.6 (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/65" class="external-link">#65</a>)</li>
+</ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-10">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-10"></a></h3>
-<ul><li>none</li></ul></div>
+<ul><li>none</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-3-10">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-10"></a></h3>
-<ul><li>fix error in <code><a href="../reference/spread2.html">spread2()</a></code> causing failures on R-devel</li></ul></div>
+<ul><li>fix error in <code><a href="../reference/spread2.html">spread2()</a></code> causing failures on R-devel</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.9" id="version-039">version 0.3.9<small>2021-09-29</small><a class="anchor" aria-label="anchor" href="#version-039"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.9" id="spadestools-039">SpaDES.tools 0.3.9<small>2021-09-29</small><a class="anchor" aria-label="anchor" href="#spadestools-039"></a></h2>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-9">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-9"></a></h3>
 <ul><li>
-<code>Require</code> moved to <code>Suggests</code>, because it’s only used in examples.</li></ul></div>
+<code>Require</code> moved to <code>Suggests</code>, because it’s only used in examples.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-9">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-9"></a></h3>
-<ul><li>none</li></ul></div>
+<ul><li>none</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-3-9">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-9"></a></h3>
 <ul><li>fixed misc CRAN check issues with Suggested packages</li>
@@ -92,10 +106,11 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.8" id="version-038">version 0.3.8<small>2021-06-07</small><a class="anchor" aria-label="anchor" href="#version-038"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.8" id="spadestools-038">SpaDES.tools 0.3.8<small>2021-06-07</small><a class="anchor" aria-label="anchor" href="#spadestools-038"></a></h2>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-8">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-8"></a></h3>
-<ul><li>Dropped support for R 3.5 due to changes in dependency packages. R versions 3.6 and higher are supported.</li></ul></div>
+<ul><li>Dropped support for R 3.5 due to changes in dependency packages. R versions 3.6 and higher are supported.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-8">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-8"></a></h3>
 <ul><li>
@@ -113,13 +128,15 @@
 <div class="section level3">
 <h3 id="bug-fixes-0-3-8">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-8"></a></h3>
 <ul><li>
-<code>distanceFromEachPoint</code> bugfixes under some cases (some values of <code>toCells</code>, <code>angles</code> would cause errors)</li></ul></div>
+<code>distanceFromEachPoint</code> bugfixes under some cases (some values of <code>toCells</code>, <code>angles</code> would cause errors)</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.6" id="version-036">version 0.3.6<small>2020-06-23</small><a class="anchor" aria-label="anchor" href="#version-036"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.6" id="spadestools-036">SpaDES.tools 0.3.6<small>2020-06-23</small><a class="anchor" aria-label="anchor" href="#spadestools-036"></a></h2>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-6">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-6"></a></h3>
-<ul><li>none</li></ul></div>
+<ul><li>none</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bugfixes-0-3-6">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-3-6"></a></h3>
 <ul><li>
@@ -128,17 +145,20 @@
 </ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-6">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-6"></a></h3>
-<ul><li>none</li></ul></div>
+<ul><li>none</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.5" id="version-035">version 0.3.5<small>2020-05-15</small><a class="anchor" aria-label="anchor" href="#version-035"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.5" id="spadestools-035">SpaDES.tools 0.3.5<small>2020-05-15</small><a class="anchor" aria-label="anchor" href="#spadestools-035"></a></h2>
 <p>We have identified a non-trivial bug in <code>spread</code> when using <code>allowOverlap = TRUE</code>. Until we can patch this bug, using this argument value will generate an error. We are currently working on a fix, which may take some time.</p>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-5">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-5"></a></h3>
-<ul><li>removed orphaned package <code>bit</code>; its reverse dependencies, <code>ff</code> and <code>ffbase</code>, moved to Suggests</li></ul></div>
+<ul><li>removed orphaned package <code>bit</code>; its reverse dependencies, <code>ff</code> and <code>ffbase</code>, moved to Suggests</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bugfixes-0-3-5">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-3-5"></a></h3>
-<ul><li>none</li></ul></div>
+<ul><li>none</li>
+</ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-5">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-5"></a></h3>
 <ul><li>
@@ -149,19 +169,22 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.4" id="version-034">version 0.3.4<small>2019-12-17</small><a class="anchor" aria-label="anchor" href="#version-034"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.4" id="spadestools-034">SpaDES.tools 0.3.4<small>2019-12-17</small><a class="anchor" aria-label="anchor" href="#spadestools-034"></a></h2>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-4">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-4"></a></h3>
-<ul><li>none</li></ul></div>
+<ul><li>none</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bugfixes-0-3-4">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-3-4"></a></h3>
-<ul><li>fix issues with failing tests on CRAN</li></ul></div>
+<ul><li>fix issues with failing tests on CRAN</li>
+</ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-4">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-4"></a></h3>
-<ul><li>none</li></ul></div>
+<ul><li>none</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.3" id="version-033">version 0.3.3<small>2019-11-25</small><a class="anchor" aria-label="anchor" href="#version-033"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.3" id="spadestools-033">SpaDES.tools 0.3.3<small>2019-11-25</small><a class="anchor" aria-label="anchor" href="#spadestools-033"></a></h2>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-3">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-3"></a></h3>
 <ul><li>Requires R &gt;= 3.5</li>
@@ -171,20 +194,24 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bugfixes-0-3-3">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-3-3"></a></h3>
-<ul><li>minor bug fixes</li></ul></div>
+<ul><li>minor bug fixes</li>
+</ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-3">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-3"></a></h3>
 <ul><li>
-<code>spread2</code> speed enhancements</li></ul></div>
+<code>spread2</code> speed enhancements</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.2" id="version-032">version 0.3.2<small>2019-03-19</small><a class="anchor" aria-label="anchor" href="#version-032"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.2" id="spadestools-032">SpaDES.tools 0.3.2<small>2019-03-19</small><a class="anchor" aria-label="anchor" href="#spadestools-032"></a></h2>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-2">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-2"></a></h3>
-<ul><li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li></ul></div>
+<ul><li>Added <code>animation</code>, <code>fasterize</code>, and <code>sf</code> to suggests (used in examples)</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bugfixes-0-3-2">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-3-2"></a></h3>
-<ul><li>minor bug fixes</li></ul></div>
+<ul><li>minor bug fixes</li>
+</ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-2">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-2"></a></h3>
 <ul><li>
@@ -195,11 +222,12 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.1" id="version-031">version 0.3.1<small>2019-02-01</small><a class="anchor" aria-label="anchor" href="#version-031"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.1" id="spadestools-031">SpaDES.tools 0.3.1<small>2019-02-01</small><a class="anchor" aria-label="anchor" href="#spadestools-031"></a></h2>
 <div class="section level3">
 <h3 id="dependency-changes-0-3-1">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-3-1"></a></h3>
 <ul><li>
-<code>RandomFields</code> moved to Suggests to prevent clashes with <code>data.table</code> multithreading</li></ul></div>
+<code>RandomFields</code> moved to Suggests to prevent clashes with <code>data.table</code> multithreading</li>
+</ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-1">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-1"></a></h3>
 <ul><li>
@@ -211,11 +239,12 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.0" id="version-030">version 0.3.0<small>2018-07-14</small><a class="anchor" aria-label="anchor" href="#version-030"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.0" id="spadestools-030">SpaDES.tools 0.3.0<small>2018-07-14</small><a class="anchor" aria-label="anchor" href="#spadestools-030"></a></h2>
 <div class="section level3">
 <h3 id="new-features-0-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
 <ul><li>
-<code>splitRaster</code> defaults to in-memory rasters when no file path specified (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/47" class="external-link">#47</a>, <a href="https://github.com/ianmseddy" class="external-link">@ianmseddy</a>).</li></ul></div>
+<code>splitRaster</code> defaults to in-memory rasters when no file path specified (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/47" class="external-link">#47</a>, <a href="https://github.com/ianmseddy" class="external-link">@ianmseddy</a>).</li>
+</ul></div>
 <div class="section level3">
 <h3 id="removed-features-0-3-0">Removed features<a class="anchor" aria-label="anchor" href="#removed-features-0-3-0"></a></h3>
 <ul><li>Previously deprecated functions removed to fix CRAN check WARNINGs. These are now located in the <code>reproducible</code> package.</li>
@@ -224,7 +253,7 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.2.0" id="version-020">version 0.2.0<small>2018-06-18</small><a class="anchor" aria-label="anchor" href="#version-020"></a></h2>
+<h2 class="page-header" data-toc-text="0.2.0" id="spadestools-020">SpaDES.tools 0.2.0<small>2018-06-18</small><a class="anchor" aria-label="anchor" href="#spadestools-020"></a></h2>
 <div class="section level3">
 <h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
 <ul><li>new arguments added to <code>gaussMap</code> (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/20" class="external-link">#20</a>, <a href="https://github.com/ianmseddy" class="external-link">@ianmseddy</a>).</li>
@@ -245,20 +274,23 @@
 <div class="section level3">
 <h3 id="dependency-changes-0-2-0">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-0-2-0"></a></h3>
 <ul><li>
-<code>dplyr</code> and <code>mgcv</code> added to Suggests because they are used in tests.</li></ul></div>
+<code>dplyr</code> and <code>mgcv</code> added to Suggests because they are used in tests.</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.1.1" id="version-011">version 0.1.1<small>2018-02-01</small><a class="anchor" aria-label="anchor" href="#version-011"></a></h2>
+<h2 class="page-header" data-toc-text="0.1.1" id="spadestools-011">SpaDES.tools 0.1.1<small>2018-02-01</small><a class="anchor" aria-label="anchor" href="#spadestools-011"></a></h2>
 <ul><li>add more detailed information to package Description, per CRAN.</li>
 <li>add <code>randomPolygon</code> function for single random polygon.</li>
 <li>speed improvements with <code>spread2</code> when <code>asymmetry</code> used.</li>
 <li>minor bug fixes.</li>
 </ul></div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.1.0" id="version-010">version 0.1.0<small>2017-08-12</small><a class="anchor" aria-label="anchor" href="#version-010"></a></h2>
+<h2 class="page-header" data-toc-text="0.1.0" id="spadestools-010">SpaDES.tools 0.1.0<small>2017-08-12</small><a class="anchor" aria-label="anchor" href="#spadestools-010"></a></h2>
 <ul><li>
 <p>A new package, which takes all auxiliary modelling functions out of the <code>SpaDES</code> package:</p>
-<ul><li>see <code><a href="../reference/SpaDES.tools-package.html">?SpaDES.tools::SpaDES.tools</a></code> for an overview of included functionality.</li></ul></li></ul></div>
+<ul><li>see <code><a href="../reference/SpaDES.tools-package.html">?SpaDES.tools::SpaDES.tools</a></code> for an overview of included functionality.</li>
+</ul></li>
+</ul></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -273,7 +305,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
