@@ -121,11 +121,9 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' a[a < 320] <- 0
 #' a[a >= 320] <- 1
 #' suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important
-#' aHist <- hist(table(getValues(clumped)), plot = FALSE)
 #' if (interactive()) {
 #'   clearPlot()
 #'   Plot(a)
-#'   Plot(aHist)
 #' }
 #'
 randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
