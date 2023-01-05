@@ -230,14 +230,15 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
   outPolygon <- SpatialPolygons(list(Srs1), 1L)
   crs(outPolygon) <- crs(x)
   wasSpatial <- is(outPolygon, "Spatial")
-  if (wasSpatial) {
-    outPolygon <- sf::st_as_sf(outPolygon)
+  if (exists("origCRS", inherits = FALSE))  {
+    if (requireNamespace("sf", quietly = TRUE)) {
+      outPolygon <- sf::st_as_sf(outPolygon)
+      outPolygon <- sf::st_transform(outPolygon, origCRS)
+      outPolygon <- as(outPolygon, "Spatial")
+    } else {
+      outPolygon <- suppressWarnings(spTransform(outPolygon, origCRS)) # this should use reproducible:::suppressWarningsSpecific
+    }
   }
-  if (exists("origCRS", inherits = FALSE)) {
-    outPolygon <- sf::st_transform(outPolygon, origCRS)
-  }
-  if (wasSpatial)
-    outPolygon <- as(outPolygon, "Spatial")
   outPolygon
 }
 
