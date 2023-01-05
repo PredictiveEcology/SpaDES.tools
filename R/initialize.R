@@ -229,9 +229,15 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
   Srs1 <- Polygons(list(Sr1), "s1")
   outPolygon <- SpatialPolygons(list(Srs1), 1L)
   crs(outPolygon) <- crs(x)
-  if (exists("origCRS", inherits = FALSE)) {
-    outPolygon <- spTransform(outPolygon, origCRS)
+  wasSpatial <- is(outPolygon, "Spatial")
+  if (wasSpatial) {
+    outPolygon <- sf::st_as_sf(outPolygon)
   }
+  if (exists("origCRS", inherits = FALSE)) {
+    outPolygon <- sf::st_transform(outPolygon, origCRS)
+  }
+  if (wasSpatial)
+    outPolygon <- as(outPolygon, "Spatial")
   outPolygon
 }
 
