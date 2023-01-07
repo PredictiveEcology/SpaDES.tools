@@ -2,7 +2,7 @@
 % Please edit documentation in R/spread2.R
 \name{spread2}
 \alias{spread2}
-\title{Simulate a contagious spread process on a landscape, with data.table internals}
+\title{Simulate a contagious spread process on a landscape, with \code{data.table} internals}
 \usage{
 spread2(
   landscape,
@@ -34,7 +34,7 @@ spread2(
 locations for spreading events to start and spread2 into. Required.}
 
 \item{start}{Required. Either a vector of pixel numbers to initiate spreading, or a
-data.table that is the output of a previous \code{spread2}.
+\code{data.table} that is the output of a previous \code{spread2}.
 If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
 \code{\link[raster:cellFrom]{cellFromXY()}}.}
@@ -65,11 +65,10 @@ for one time step.}
 where raster non NA values indicate the cells that were "active", and the
 value is the initial starting pixel.}
 
-\item{maxSize}{Numeric. Maximum number of cells for a single or
-all events to be spread2. Recycled to match \code{start} length,
-if it is not as long as \code{start}. This will be overridden if
-\code{exactSize} also provided.
-See section on \verb{Breaking out of spread2 events}.}
+\item{maxSize}{Numeric. Maximum number of cells for a single or all events to be \code{spread2}.
+Recycled to match \code{start} length, if it is not as long as \code{start}.
+This will be overridden if \code{exactSize} also provided.
+See section on 'Breaking out of \code{spread2} events'.}
 
 \item{exactSize}{Numeric vector, length 1 or \code{length(start)}.
 Similar to \code{maxSize}, but these will be the exact
@@ -98,7 +97,7 @@ source, i.e, the lag 1 "from" pixel, for each iteration.}
 
 \item{maxRetriesPerID}{Only active if \code{exactSize} is used. This is the number of attempts
 that will be made per event ID, before abandoning, therefore completing
-the spread2 for that event with a size that is smaller than
+the \code{spread2} for that event with a size that is smaller than
 \code{exactSize}. Default 10 times.}
 
 \item{spreadProbRel}{Optional \code{RasterLayer} indicating a surface of relative
@@ -139,11 +138,11 @@ that describes which way the \code{asymmetry} is.}
 \item{allowOverlap}{\code{numeric} (\code{logical} will work for backwards compatibility).
 See details.  Default is 0, i.e., no overlapping.}
 
-\item{neighProbs}{An optional numeric vector, whose sum is 1. It indicates the
-probabilities that an individual
-spread iteration will spread to \verb{1, 2, ..., length(neighProbs)}
-neighbours, respectively. If this is used (i.e., something other than
-NA), \code{circle} and \code{returnDistances} will not work currently.}
+\item{neighProbs}{An optional numeric vector, whose sum is 1.
+It indicates the probabilities that an individual spread iteration
+will spread to \verb{1, 2, ..., length(neighProbs)} neighbours, respectively.
+If this is used (i.e., something other than \code{NA}), \code{circle} and
+\code{returnDistances} will not work currently.}
 
 \item{oneNeighbourOnly}{Logical. Default is \code{FALSE}. If \code{TRUE}, then this
 spread algorithm will allow exactly one neighbour to be
@@ -224,11 +223,11 @@ nearby cells (adjacent cells): \code{spreadProb} and \code{neighProb}.
 Using \code{spreadProb}, every "active" pixel will assess all
 neighbours (either 4 or 8, depending on  \code{directions}), and will "activate"
 whichever neighbours successfully pass independent calls to
-\code{runif(1,0,1)<spreadProb}.
+\code{runif(1,0,1) < spreadProb}.
 The algorithm will iterate again and again, each time starting from the newly
 "activated" cells. Several built-in decisions are as follows.
 \enumerate{
-\item no active cell can active a cell that was already activated by
+\item no active cell can activate a cell that was already activated by
 the same event (i.e., "it won't go backwards"). 2. If \code{allowOverlap} is
 \code{FALSE}, then the previous rule will also apply, regardless of which
 "event" caused the pixels to be previously active.
@@ -236,7 +235,7 @@ the same event (i.e., "it won't go backwards"). 2. If \code{allowOverlap} is
 
 This function can be interrupted before all active cells are exhausted if
 the \code{iterations} value is reached before there are no more active
-cells to \code{spread2} into. The interrupted output (a data.table) can be passed
+cells to \code{spread2} into. The interrupted output (a \code{data.table}) can be passed
 subsequently as an input to this same function (as \code{start}).
 This is intended to be used for situations where external events happen during
 a spread2 event, or where one or more arguments to the spread2 function
@@ -275,9 +274,9 @@ call \code{spread2}.
 \note{
 \code{exactSize} may not be achieved if there aren't enough cells in the map.
 Also, \code{exactSize} may not be achieved because the active cells are "stuck",
-i.e., they have no unactivated cells to move to; or the \code{spreadProb} is low.
+i.e., they have no inactivated cells to move to; or the \code{spreadProb} is low.
 In the latter two cases, the algorithm will retry again, but it will only
-re-try from the last iterations active cells.
+re-try from the last iteration's active cells.
 The algorithm will only retry 10 times before quitting.
 Currently, there will also be an attempt to "jump" up to four cells away from
 the active cells to try to continue spreading.
@@ -285,10 +284,10 @@ the active cells to try to continue spreading.
 A common way to use this function is to build wrappers around this, followed
 by iterative calls in a \code{while} loop. See example.
 }
-\section{Breaking out of spread2 events}{
+\section{Breaking out of \code{spread2} events}{
 
 
-There are 3 ways for the spread2 to "stop" spreading.
+There are 3 ways for the \code{spread2} to "stop" spreading.
 Here, each "event" is defined as all cells that are spawned from each unique
 \code{start} location.
 The ways outlined below are all acting at all times, i.e., they are not
@@ -324,7 +323,7 @@ as a \code{data.table}.\cr
 
 This function can be used iteratively, with relatively little overhead compared to using
 it non-iteratively. In general, this function can be called with arguments set as user
-needs, and with specifying iterations = 1 (say). This means that the function will spread
+needs, and with specifying e.g., \code{iterations = 1}. This means that the function will spread
 outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
 \code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
 call to \code{spread2}. This means that every argument can be updated at each iteration.
@@ -338,7 +337,7 @@ To get the same order, the easiest thing to do is sort the initial \code{start}
 objects by their pixel location, increasing.
 Then, of course, sorting any vectorized arguments (e.g., \code{maxSize}) accordingly.
 
-\strong{NOTE}: the \code{data.table} or \code{RasterLayer} should not use be altered
+\strong{NOTE}: the \code{data.table} or \code{RasterLayer} should not be altered
 when passed back into \code{spread2}.
 }
 
