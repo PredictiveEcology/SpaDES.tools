@@ -80,7 +80,7 @@ See Details.}
 \item{directions}{The number adjacent cells in which to look;
 default is 8 (Queen case). Can only be 4 or 8.}
 
-\item{iterations}{Number of iterations to spread2.
+\item{iterations}{Number of iterations to \code{spread2}.
 Leaving this \code{NULL} allows the spread2 to continue
 until stops spreading itself (i.e., exhausts itself).}
 
@@ -166,7 +166,7 @@ If \code{asRaster=TRUE}, then the \code{data.table} (with its \code{spreadState}
 attribute) will be attached to the \code{Raster} as an attribute named \code{pixel} as it
 provides pixel-level information about the spread events.
 
-The \code{RasterLayer} represents every cell in which a successful spread2 event occurred.
+The \code{RasterLayer} represents every cell in which a successful \code{spread2} event occurred.
 For the case of, say, a fire this would represent every cell that burned.
 If \code{allowOverlap} is \code{TRUE}, the return will always be a \code{data.table}.
 
@@ -175,13 +175,13 @@ If \code{asRaster} is \code{FALSE}, then this function returns a
 
 \tabular{ll}{
 \code{initialPixels} \tab the initial cell number of that particular
-spread2 event.\cr
+\code{spread2} event.\cr
 \code{pixels} \tab The cell indices of cells that have
-been touched by the spread2 algorithm.\cr
+been touched by the \code{spread2} algorithm.\cr
 \code{state} \tab a logical indicating whether the cell is active (i.e.,
 could still be a source for spreading) or not (no
 spreading will occur from these cells).\cr
-\code{from} \tab The pixel indices that were the immediately preceeding
+\code{from} \tab The pixel indices that were the immediately preceding
 "source" for each \code{pixels}, i.e., the lag 1 pixels.
 Only returned if \code{returnFrom} is \code{TRUE} \cr
 }
@@ -191,7 +191,7 @@ includes a \code{data.table} with columns:
 \tabular{ll}{
 \code{id} \tab An arbitrary code, from 1 to \code{length(start)} for each "event".\cr
 \code{initialPixels} \tab the initial cell number of that particular
-spread2 event.\cr
+\code{spread2} event.\cr
 \code{numRetries} \tab The number of re-starts the event did because it got
 stuck (normally only because \code{exactSize} was used
 and was not achieved.\cr
@@ -200,7 +200,7 @@ and was not achieved.\cr
 \code{size} \tab The current size, in pixels, of each event.\cr
 }
 and several other objects that provide significant speed ups in iterative calls to
-spread2. If the user runs \code{spread2} iteratively, there will likely be significant
+\code{spread2}. If the user runs \code{spread2} iteratively, there will likely be significant
 speed gains if the \code{data.table} passed in to \code{start} should have the attribute
 attached, or re-attached if it was lost, e.g., via
 \code{setattr(outInput, "spreadState", attr(out, "spreadState"))}, where \code{out} is the
@@ -263,20 +263,20 @@ which is then rescaled:
 \deqn{adjustedSpreadProb = (spreadProbAdj - min(spreadProbAdj)) * par2 + par1},
 where par1 and par2 are parameters calculated internally to make the 2 conditions above true.
 
-If \code{exactSize} or \code{maxSize} are used, then spreading will continue and stop
-before or at \code{maxSize} or at \code{exactSize}. If \code{iterations} is specified,
-then the function will end, and the returned \code{data.table} will still
+If \code{maxSize} or \code{exactSize} are used, then spreading will continue and stop
+before or at \code{maxSize} or at \code{exactSize}, respectively.
+If \code{iterations} is specified, then the function will end, and the returned \code{data.table}
 may (if \code{maxSize}) or will (if \code{exactSize}) have at least one active
-cell per event that did not already achieve \code{maxSize} or \code{exactSize}. This
-will be very useful to build new, customized higher-level wrapper functions that iteratively
-call \code{spread2}.
+cell per event that did not already achieve \code{maxSize} or \code{exactSize}.
+This will be very useful to build new, customized higher-level wrapper functions that
+iteratively call \code{spread2}.
 }
 \note{
 \code{exactSize} may not be achieved if there aren't enough cells in the map.
 Also, \code{exactSize} may not be achieved because the active cells are "stuck",
 i.e., they have no inactivated cells to move to; or the \code{spreadProb} is low.
 In the latter two cases, the algorithm will retry again, but it will only
-re-try from the last iteration's active cells.
+retry from the last iteration's active cells.
 The algorithm will only retry 10 times before quitting.
 Currently, there will also be an attempt to "jump" up to four cells away from
 the active cells to try to continue spreading.
@@ -296,10 +296,10 @@ Therefore, it is the user's responsibility to make sure the different rules
 are interacting with each other correctly.
 
 \tabular{ll}{
-\code{spreadProb} \tab Probabilistically, if spreadProb is low enough,
-active spreading events will stop. In practice,
-this number generally should be below 0.3 to actually
-see an event stop\cr
+\code{spreadProb} \tab Probabilistically, if \code{spreadProb} is low enough,
+active spreading events will stop.
+In practice, this number generally should be below 0.3
+to actually see an event stop.\cr
 \code{maxSize} \tab This is the number of cells that are "successfully" turned
 on during a spreading event. \code{spreadProb} will still
 be active, so, it is possible that the end size of each event
