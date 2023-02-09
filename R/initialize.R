@@ -121,11 +121,9 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' a[a < 320] <- 0
 #' a[a >= 320] <- 1
 #' suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important
-#' aHist <- hist(table(getValues(clumped)), plot = FALSE)
 #' if (interactive()) {
 #'   clearPlot()
 #'   Plot(a)
-#'   Plot(aHist)
 #' }
 #'
 randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
@@ -231,8 +229,15 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
   Srs1 <- Polygons(list(Sr1), "s1")
   outPolygon <- SpatialPolygons(list(Srs1), 1L)
   crs(outPolygon) <- crs(x)
-  if (exists("origCRS", inherits = FALSE)) {
-    outPolygon <- spTransform(outPolygon, origCRS)
+  wasSpatial <- is(outPolygon, "Spatial")
+  if (exists("origCRS", inherits = FALSE))  {
+    if (requireNamespace("sf", quietly = TRUE)) {
+      outPolygon <- sf::st_as_sf(outPolygon)
+      outPolygon <- sf::st_transform(outPolygon, origCRS)
+      outPolygon <- as(outPolygon, "Spatial")
+    } else {
+      outPolygon <- suppressWarnings(spTransform(outPolygon, origCRS)) # this should use reproducible:::suppressWarningsSpecific
+    }
   }
   outPolygon
 }

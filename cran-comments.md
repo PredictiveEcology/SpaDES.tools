@@ -1,7 +1,7 @@
-## Updated release
+## Release information
 
-This release fixes various problems with packages dependencies and CRAN check problems.
-See `NEWS.md`.
+This is a resubmission to restore the package to CRAN following archival due to removal of dependency package `Require`, which has now been restored to CRAN.
+See `NEWS.md` for a full list of changes.
 
 ## Test environments
 
@@ -13,21 +13,20 @@ See `NEWS.md`.
 * Windows                 (win-builder), R 4.1.3
 
 ### Current R versions
-* macOS 11.6 Big Sur           (GitHub), R 4.2.1
-* macOS 11.6 Big Sur            (local), R 4.2.1
-* macOs (m1) Big Sur             (rhub), R 4.2.1
-* Ubuntu 20.04                 (GitHub), R 4.2.1
-* Ubuntu 20.04                  (local), R 4.2.1
-* Windows                      (GitHub), R 4.2.1
-* Windows                       (local), R 4.2.1
-* Windows                 (win-builder), R 4.2.1
+* macOS 11.7 Big Sur           (GitHub), R 4.2.2
+* macOS 11.7 Big Sur            (local), R 4.2.2
+* macOs (m1) Big Sur             (rhub), R 4.2.2
+* Ubuntu 20.04                 (GitHub), R 4.2.2
+* Ubuntu 20.04                  (local), R 4.2.2 Patched (2022-11-10 r83330)
+* Windows                      (GitHub), R 4.2.2
+* Windows                       (local), R 4.2.2
+* Windows                 (win-builder), R 4.2.2
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2022-08-11 r82713)
-* Ubuntu 20.04                  (local), R-devel (2022-08-11 r82713)
-* Windows                      (GitHub), R-devel (2022-08-14 r82716 ucrt)
-* Windows                 (win-builder), R-devel (2022-08-14 r82716 ucrt)
-
+* Ubuntu 20.04                 (GitHub), R-devel (2022-12-20 r83482)
+* Ubuntu 20.04                  (local), R-devel (2022-12-19 r83478)
+* Windows                      (GitHub), R-devel (2022-12-20 r83482 ucrt)
+* Windows                 (win-builder), R-devel (2022-12-21 r83491 ucrt)
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
@@ -40,11 +39,12 @@ There was 1 NOTEs:
       SpaDES (4:27)
       automata (6:25)
 
+2. We provide instructions for installing suggested package `NLMR` from another repository:
+
+    The Description field contains
+        "https://PredictiveEcology.r-universe.dev")'.
+    Please enclose URLs in angle brackets (<...>).
+
 ## Downstream dependencies
 
-We checked 3 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
-
- * We saw 0 new problems
- * We failed to check 0 packages
- 
-Summary at <https://github.com/PredictiveEcology/SpaDES.tools/blob/master/revdep/README.md>.
+Currently none, but we are working to resubmit our other packages that depend on this one, and they are passing.

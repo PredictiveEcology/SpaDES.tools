@@ -3,11 +3,6 @@ test_that("randomPolygon: does not work properly", {
   library(rgeos)
   library(raster)
 
-  on.exit({
-    detach("package:raster")
-    detach("package:rgeos")
-  }, add = TRUE)
-
   set.seed(1234) ## TODO: some seeds produce failing area test below!!
   latLong <-   sp::CRS("+init=epsg:4326")
 

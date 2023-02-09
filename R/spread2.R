@@ -1,11 +1,11 @@
 utils::globalVariables(c(
-  "distance", "dups", "from", "i.size", "ind", "indClDT", "initialPixels",
+  ".GRP", "distance", "dups", "from", "i.size", "ind", "indClDT", "initialPixels", "keep",
   "n", "newQuantity", "numNeighs", "numRetries", "origIndex", "pixels", "proportion",
   "quantityAdj", "quantityAdj2", "state", "size", "tooBigByNCells", "V1"
 ))
 
 ################################################################################
-#' Simulate a contagious spread process on a landscape, with data.table internals
+#' Simulate a contagious spread process on a landscape, with `data.table` internals
 #'
 #' This can be used to simulate fires, seed dispersal, calculation of iterative,
 #' concentric, symmetric (currently) landscape values and many other things.
@@ -20,17 +20,17 @@ utils::globalVariables(c(
 #' Using `spreadProb`, every "active" pixel will assess all
 #' neighbours (either 4 or 8, depending on  `directions`), and will "activate"
 #' whichever neighbours successfully pass independent calls to
-#' `runif(1,0,1)<spreadProb`.
+#' `runif(1,0,1) < spreadProb`.
 #' The algorithm will iterate again and again, each time starting from the newly
 #' "activated" cells. Several built-in decisions are as follows.
-#' 1. no active cell can active a cell that was already activated by
+#' 1. no active cell can activate a cell that was already activated by
 #' the same event (i.e., "it won't go backwards"). 2. If `allowOverlap` is
 #' `FALSE`, then the previous rule will also apply, regardless of which
 #' "event" caused the pixels to be previously active.
 #'
 #' This function can be interrupted before all active cells are exhausted if
 #' the `iterations` value is reached before there are no more active
-#' cells to `spread2` into. The interrupted output (a data.table) can be passed
+#' cells to `spread2` into. The interrupted output (a `data.table`) can be passed
 #' subsequently as an input to this same function (as `start`).
 #' This is intended to be used for situations where external events happen during
 #' a spread2 event, or where one or more arguments to the spread2 function
@@ -58,9 +58,9 @@ utils::globalVariables(c(
 #' \deqn{adjustedSpreadProb = (spreadProbAdj - min(spreadProbAdj)) * par2 + par1},
 #' where par1 and par2 are parameters calculated internally to make the 2 conditions above true.
 #'
-#' @section Breaking out of spread2 events:
+#' @section Breaking out of `spread2` events:
 #'
-#' There are 3 ways for the spread2 to "stop" spreading.
+#' There are 3 ways for the `spread2` to "stop" spreading.
 #' Here, each "event" is defined as all cells that are spawned from each unique
 #' `start` location.
 #' The ways outlined below are all acting at all times, i.e., they are not
@@ -69,10 +69,10 @@ utils::globalVariables(c(
 #' are interacting with each other correctly.
 #'
 #' \tabular{ll}{
-#'   `spreadProb` \tab Probabilistically, if spreadProb is low enough,
-#'                          active spreading events will stop. In practice,
-#'                          this number generally should be below 0.3 to actually
-#'                          see an event stop\cr
+#'   `spreadProb` \tab Probabilistically, if `spreadProb` is low enough,
+#'                          active spreading events will stop.
+#'                          In practice, this number generally should be below 0.3
+#'                          to actually see an event stop.\cr
 #'   `maxSize` \tab This is the number of cells that are "successfully" turned
 #'                       on during a spreading event. `spreadProb` will still
 #'                       be active, so, it is possible that the end size of each event
@@ -94,7 +94,7 @@ utils::globalVariables(c(
 #'                  locations for spreading events to start and spread2 into. Required.
 #'
 #' @param start Required. Either a vector of pixel numbers to initiate spreading, or a
-#'              data.table that is the output of a previous `spread2`.
+#'              `data.table` that is the output of a previous `spread2`.
 #'              If a vector, they should be cell indices (pixels) on the `landscape`.
 #'              If user has x and y coordinates, these can be converted with
 #'              [`cellFromXY()`][raster::cellFromXY].
@@ -139,11 +139,10 @@ utils::globalVariables(c(
 #'                 where raster non NA values indicate the cells that were "active", and the
 #'                 value is the initial starting pixel.
 #'
-#' @param maxSize       Numeric. Maximum number of cells for a single or
-#'                      all events to be spread2. Recycled to match `start` length,
-#'                      if it is not as long as `start`. This will be overridden if
-#'                      `exactSize` also provided.
-#'                      See section on `Breaking out of spread2 events`.
+#' @param maxSize  Numeric. Maximum number of cells for a single or all events to be `spread2`.
+#'                 Recycled to match `start` length, if it is not as long as `start`.
+#'                 This will be overridden if `exactSize` also provided.
+#'                 See section on 'Breaking out of `spread2` events'.
 #'
 #' @param exactSize Numeric vector, length 1 or `length(start)`.
 #'                  Similar to `maxSize`, but these will be the exact
@@ -155,7 +154,7 @@ utils::globalVariables(c(
 #' @param directions    The number adjacent cells in which to look;
 #'                      default is 8 (Queen case). Can only be 4 or 8.
 #'
-#' @param iterations    Number of iterations to spread2.
+#' @param iterations    Number of iterations to `spread2`.
 #'                      Leaving this `NULL` allows the spread2 to continue
 #'                      until stops spreading itself (i.e., exhausts itself).
 #'
@@ -182,14 +181,14 @@ utils::globalVariables(c(
 #'              This is likely most useful in repeated iteration cases i.e., if this call
 #'              is using the previous output from this same function.
 #'
-#' @param neighProbs An optional numeric vector, whose sum is 1. It indicates the
-#'                   probabilities that an individual
-#'                   spread iteration will spread to `1, 2, ..., length(neighProbs)`
-#'                   neighbours, respectively. If this is used (i.e., something other than
-#'                   NA), `circle` and `returnDistances` will not work currently.
+#' @param neighProbs An optional numeric vector, whose sum is 1.
+#'                   It indicates the probabilities that an individual spread iteration
+#'                   will spread to `1, 2, ..., length(neighProbs)` neighbours, respectively.
+#'                   If this is used (i.e., something other than `NA`), `circle` and
+#'                   `returnDistances` will not work currently.
 #' @param maxRetriesPerID Only active if `exactSize` is used. This is the number of attempts
 #'                        that will be made per event ID, before abandoning, therefore completing
-#'                        the spread2 for that event with a size that is smaller than
+#'                        the `spread2` for that event with a size that is smaller than
 #'                        `exactSize`. Default 10 times.
 #'
 #' @param asymmetry     A numeric or `RasterLayer` indicating the ratio of the
@@ -206,25 +205,31 @@ utils::globalVariables(c(
 #' @param allowOverlap `numeric` (`logical` will work for backwards compatibility).
 #'                     See details.  Default is 0, i.e., no overlapping.
 #'
+#' @param oneNeighbourOnly Logical. Default is `FALSE`. If `TRUE`, then this
+#'                         spread algorithm will allow exactly one neighbour to be
+#'                         spread to (not fewer or more). This could be used, e.g.,
+#'                         for an animal moving. If this is `TRUE`, then `allowOverlap`
+#'                         will be set to `2` if it is `0` or `1`.
+#'
 #' @param plot.it  If TRUE, then plot the raster at every iteration,
 #'                   so one can watch the spread2 event grow.
 #'
 #' @details
 #'
-#' If `exactSize` or `maxSize` are used, then spreading will continue and stop
-#' before or at `maxSize` or at `exactSize`. If `iterations` is specified,
-#' then the function will end, and the returned `data.table` will still
+#' If `maxSize` or `exactSize` are used, then spreading will continue and stop
+#' before or at `maxSize` or at `exactSize`, respectively.
+#' If `iterations` is specified, then the function will end, and the returned `data.table`
 #' may (if `maxSize`) or will (if `exactSize`) have at least one active
-#' cell per event that did not already achieve `maxSize` or `exactSize`. This
-#' will be very useful to build new, customized higher-level wrapper functions that iteratively
-#' call `spread2`.
+#' cell per event that did not already achieve `maxSize` or `exactSize`.
+#' This will be very useful to build new, customized higher-level wrapper functions that
+#' iteratively call `spread2`.
 #'
 #' @note
 #' `exactSize` may not be achieved if there aren't enough cells in the map.
 #' Also, `exactSize` may not be achieved because the active cells are "stuck",
-#' i.e., they have no unactivated cells to move to; or the `spreadProb` is low.
+#' i.e., they have no inactivated cells to move to; or the `spreadProb` is low.
 #' In the latter two cases, the algorithm will retry again, but it will only
-#' re-try from the last iterations active cells.
+#' retry from the last iteration's active cells.
 #' The algorithm will only retry 10 times before quitting.
 #' Currently, there will also be an attempt to "jump" up to four cells away from
 #' the active cells to try to continue spreading.
@@ -236,7 +241,7 @@ utils::globalVariables(c(
 #'
 #' This function can be used iteratively, with relatively little overhead compared to using
 #' it non-iteratively. In general, this function can be called with arguments set as user
-#' needs, and with specifying iterations = 1 (say). This means that the function will spread
+#' needs, and with specifying e.g., `iterations = 1`. This means that the function will spread
 #' outwards 1 iteration, then stop. The returned object will be a `data.table` or
 #' `RasterLayer` that can be passed immediately back as the start argument into a subsequent
 #' call to `spread2`. This means that every argument can be updated at each iteration.
@@ -250,7 +255,7 @@ utils::globalVariables(c(
 #' objects by their pixel location, increasing.
 #' Then, of course, sorting any vectorized arguments (e.g., `maxSize`) accordingly.
 #'
-#' **NOTE**: the `data.table` or `RasterLayer` should not use be altered
+#' **NOTE**: the `data.table` or `RasterLayer` should not be altered
 #' when passed back into `spread2`.
 #'
 #' @section `allowOverlap`:
@@ -281,7 +286,7 @@ utils::globalVariables(c(
 #' attribute) will be attached to the `Raster` as an attribute named `pixel` as it
 #' provides pixel-level information about the spread events.
 #'
-#' The `RasterLayer` represents every cell in which a successful spread2 event occurred.
+#' The `RasterLayer` represents every cell in which a successful `spread2` event occurred.
 #' For the case of, say, a fire this would represent every cell that burned.
 #' If `allowOverlap` is `TRUE`, the return will always be a `data.table`.
 #'
@@ -290,13 +295,13 @@ utils::globalVariables(c(
 #'
 #' \tabular{ll}{
 #'   `initialPixels` \tab the initial cell number of that particular
-#'                            spread2 event.\cr
+#'                            `spread2` event.\cr
 #'   `pixels` \tab The cell indices of cells that have
-#'                        been touched by the spread2 algorithm.\cr
+#'                        been touched by the `spread2` algorithm.\cr
 #'   `state` \tab a logical indicating whether the cell is active (i.e.,
 #'                        could still be a source for spreading) or not (no
 #'                        spreading will occur from these cells).\cr
-#'   `from` \tab The pixel indices that were the immediately preceeding
+#'   `from` \tab The pixel indices that were the immediately preceding
 #'                    "source" for each `pixels`, i.e., the lag 1 pixels.
 #'                    Only returned if `returnFrom` is `TRUE` \cr
 #' }
@@ -306,7 +311,7 @@ utils::globalVariables(c(
 #' \tabular{ll}{
 #'   `id` \tab An arbitrary code, from 1 to `length(start)` for each "event".\cr
 #'   `initialPixels` \tab the initial cell number of that particular
-#'                            spread2 event.\cr
+#'                            `spread2` event.\cr
 #'   `numRetries` \tab The number of re-starts the event did because it got
 #'                          stuck (normally only because `exactSize` was used
 #'                          and was not achieved.\cr
@@ -315,7 +320,7 @@ utils::globalVariables(c(
 #'   `size` \tab The current size, in pixels, of each event.\cr
 #' }
 #' and several other objects that provide significant speed ups in iterative calls to
-#' spread2. If the user runs `spread2` iteratively, there will likely be significant
+#' `spread2`. If the user runs `spread2` iteratively, there will likely be significant
 #' speed gains if the `data.table` passed in to `start` should have the attribute
 #' attached, or re-attached if it was lost, e.g., via
 #' `setattr(outInput, "spreadState", attr(out, "spreadState"))`, where `out` is the
@@ -349,7 +354,8 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                     returnFrom = FALSE, maxRetriesPerID = 10,
                     spreadProbRel = NA_real_, plot.it = FALSE, circle = FALSE,
                     asymmetry = NA_real_, asymmetryAngle = NA_real_,
-                    allowOverlap = 0, neighProbs = NA_real_, skipChecks = FALSE) {
+                    allowOverlap = 0, neighProbs = NA_real_, oneNeighbourOnly = FALSE,
+                    skipChecks = FALSE) {
 
   #### assertions ###############
   assertClass(landscape, "Raster")
@@ -475,7 +481,12 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     whActive <- seq_along(start)
     whInactive <- integer()
+    if (any(duplicated(start)))
+      stop("start has duplicates; duplicates are not currently allowed; ",
+           "if that behaviour is desired, perhaps run this function multiple ",
+           "times with duplicates separated? ")
     dt <- data.table(initialPixels = start)
+
     if (returnFrom) {
       set(dt, NULL, "from", NA_integer_)
     }
@@ -561,6 +572,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   dtPotentialColNames <- c("id", "from", "to", "state", "distance"[needDistance],
                            "effectiveDistance"[usingAsymmetry])
 
+  if (isTRUE(oneNeighbourOnly)) {
+    if (allowOverlap %in% 0:1) {
+      message("oneNeighbourOnly is TRUE; allowOverlap was ", allowOverlap, " which is not allowed; ",
+              "setting allowOverlap to 2")
+      allowOverlap <- 2
+    }
+  }
   # start at iteration 0, note: totalIterations is also maintained,
   # which persists during iterative calls to spread2
   its <- 0
@@ -844,8 +862,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # remove NA values that may come from a spreadProb raster
       NAaSP <- !is.na(actualSpreadProb)
       if (any(NAaSP)) {
+        if (!all(NAaSP)) {
         dtPotential <- dtPotential[NAaSP,]
         actualSpreadProb <- actualSpreadProb[NAaSP]
+      }
       }
     }
 
@@ -875,7 +895,22 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     }
 
     # Step 7 <- calculate spread success based on actualSpreadProb
-    spreadProbSuccess <- runifC(NROW(dtPotential)) <= actualSpreadProb
+    if (isTRUE(oneNeighbourOnly)) {
+      set(dtPotential, NULL, "actualSpreadProb", actualSpreadProb)
+      randoms <- runifC(length(unique(dtPotential$from)))
+      dtPotential[, keep := {
+        cumProb = cumsum(actualSpreadProb)/sum(actualSpreadProb)
+        draw <- randoms[.GRP]
+        .I[min(which(draw <= cumProb))]},
+        by = "from"]
+      spreadProbSuccess <- rep(FALSE, NROW(dtPotential))
+      spreadProbSuccess[dtPotential$keep] <- TRUE
+      set(dtPotential, NULL, c("keep", "actualSpreadProb"), NULL)
+
+    } else {
+      randVars <- runifC(NROW(dtPotential))
+      spreadProbSuccess <- randVars <= actualSpreadProb
+    }
 
     # Step 8 - Remove duplicates & bind dt and dtPotential
     if (anyNAneighProbs) {
@@ -893,9 +928,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
             dt[, dups := {
               successes <- state == "successful"
               c(rep(FALSE, length.out = sum(!successes)),
-              pixels[successes] %in% pixels[!successes])
-              },
-                     by = "initialPixels"]
+                pixels[successes] %in% pixels[!successes])
+            },
+            by = "initialPixels"]
             #dt[!successes, dups := FALSE]
           }
           dupes <- dt$dups
@@ -983,7 +1018,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           # so they don't need any special treatment
           currentSizeTooSmall <- currentSizeTooSmall[
             !dt[dt$state %in% c("successful", "holding"), nomatch = 0]
-            ]
+          ]
 
         }
         # if the ones that are too small are unsuccessful, make them "tooSmall"
