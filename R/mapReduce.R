@@ -31,11 +31,19 @@ if (getRversion() >= "3.1.0") {
 #' @export
 #' @importFrom data.table := data.table key setkeyv setnames
 #' @importFrom raster extent getValues raster res
+#' @importFrom terra ext values rast res
 #' @rdname rasterizeReduced
 #'
 #' @example inst/examples/example_mapReduce.R
 #'
 rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names(fullRaster), ...) {
+
+  ## TODO: once this function is in reproducible use it from there if(requireNamespace...)
+  if (!exists("rasterRead")) {
+    rasterRead <- function(...)
+      eval(parse(text = getOption("reproducible.rasterRead")))(...)
+  }
+
   if (!is.data.table(reduced))
     reduced <- data.table::setDT(reduced)
 
@@ -46,7 +54,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   } else {
     setkeyv(reduced, mapcode)
   }
-  fullRasterVals <- as.data.table(list(getValues(fullRaster)))
+  fullRasterVals <- as.data.table(list(as.vector(values(fullRaster))))
   setnames(fullRasterVals, 1, new = mapcode)
   set(fullRasterVals, NULL, "row_number", seq(ncell(fullRaster)))
   setkeyv(fullRasterVals, mapcode)
@@ -67,12 +75,14 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   if (length(newRasterCols) > 1) {
     ras <- list()
     for (i in newRasterCols) {
-      ras[[i]] <- raster(res = res(fullRaster), ext = extent(fullRaster), crs = crs(fullRaster),
-                         vals = BsumVec[[i]])
+      ras[[i]] <- rasterRead(fullRaster)
+      names(ras[[i]]) <- names(rasterRead())
+      ras[[i]][] <- BsumVec[[i]]
     }
   } else {
-    ras <- raster(res = res(fullRaster), ext = extent(fullRaster), crs = crs(fullRaster),
-                  vals = BsumVec[[newRasterCols]])
+    ras <- rasterRead(fullRaster)
+    names(ras) <- names(rasterRead())
+    ras[] <- BsumVec[[newRasterCols]]
   }
   return(ras)
 }
