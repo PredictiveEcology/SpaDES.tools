@@ -47,7 +47,8 @@ Imports:
     Require,
     rgeos,
     sp (>= 1.2-4),
-    stats
+    stats,
+    terra
 Suggests:
     animation,
     bit (>= 1.1-12),
