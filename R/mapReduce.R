@@ -85,12 +85,32 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
     for (i in newRasterCols) {
       ras[[i]] <- rasterFUN(fullRaster)
       names(ras[[i]]) <- names(rasterFUN())
-      ras[[i]][] <- BsumVec[[i]]
+
+      if (is.factor(BsumVec[[i]]) && is(ras, "SpatRaster")) {
+        ras[[i]][] <- as.numeric(BsumVec[[i]])
+        levs <- unique(data.frame(id = na.omit(as.numeric(BsumVec[[i]])),
+                                  values = na.omit(BsumVec[[i]])))
+        levels(ras[[i]][]) <- levs
+      } else {
+        ## if factor values are attributed to a RasterLayer,
+        ## the attributes table is automatically added
+        ras[[i]][] <- BsumVec[[i]]
+      }
     }
   } else {
     ras <- rasterFUN(fullRaster)
     names(ras) <- names(rasterFUN())
-    ras[] <- BsumVec[[newRasterCols]]
+
+    if (is.factor(BsumVec[[newRasterCols]]) && is(ras, "SpatRaster")) {
+      ras[] <- as.numeric(BsumVec[[newRasterCols]])
+      levs <- unique(data.frame(id = na.omit(as.numeric(BsumVec[[newRasterCols]])),
+                                values = na.omit(BsumVec[[newRasterCols]])))
+      levels(ras) <- levs
+    } else {
+      ## if factor values are attributed to a RasterLayer,
+      ## the attributes table is automatically added
+      ras[] <- BsumVec[[newRasterCols]]
+    }
   }
   return(ras)
 }
