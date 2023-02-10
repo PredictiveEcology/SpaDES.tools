@@ -38,10 +38,17 @@ if (getRversion() >= "3.1.0") {
 #'
 rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names(fullRaster), ...) {
 
-  ## TODO: once this function is in reproducible use it from there if(requireNamespace...)
-  if (!exists("rasterRead")) {
-    rasterRead <- function(...)
-      eval(parse(text = getOption("reproducible.rasterRead")))(...)
+  if (!inherits(fullRaster, c("Raster", "SpatRaster"))) {
+    stop("fullRaster must be a Raster or SpatRaster")
+  }
+
+  ## don't use rasterRead; rasterizweReduced can be used independently of reproducible
+  if (is(fullRaster, "Raster")) {
+    rasterFUN <- function(...)
+      raster(...)
+  } else {
+      rasterFUN <- function(...)
+        rast(...)
   }
 
   if (!is.data.table(reduced))
@@ -75,13 +82,13 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   if (length(newRasterCols) > 1) {
     ras <- list()
     for (i in newRasterCols) {
-      ras[[i]] <- rasterRead(fullRaster)
-      names(ras[[i]]) <- names(rasterRead())
+      ras[[i]] <- rasterFUN(fullRaster)
+      names(ras[[i]]) <- names(rasterFUN())
       ras[[i]][] <- BsumVec[[i]]
     }
   } else {
-    ras <- rasterRead(fullRaster)
-    names(ras) <- names(rasterRead())
+    ras <- rasterFUN(fullRaster)
+    names(ras) <- names(rasterFUN())
     ras[] <- BsumVec[[newRasterCols]]
   }
   return(ras)
