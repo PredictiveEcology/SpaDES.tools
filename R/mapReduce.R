@@ -31,8 +31,8 @@ if (getRversion() >= "3.1.0") {
 #' @author Eliot McIntire
 #' @export
 #' @importFrom data.table := data.table key setkeyv setnames
-#' @importFrom raster extent getValues raster res
-#' @importFrom terra ext values rast res
+#' @importFrom raster raster
+#' @importFrom terra ext values rast res levels
 #' @rdname rasterizeReduced
 #'
 #' @example inst/examples/example_mapReduce.R
