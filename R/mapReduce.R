@@ -8,22 +8,23 @@ if (getRversion() >= "3.1.0") {
 #' @param reduced `data.frame` or `data.table` that has at least one
 #' column of codes that are represented in the `fullRaster`.
 #'
-#' @param fullRaster `RasterLayer` of codes used in `reduced` that
+#' @param fullRaster `RasterLayer`/`SpatRaster` of codes used in `reduced` that
 #'                   represents a spatial representation of the data.
 #'
 #' @param newRasterCols Character vector, length 1 or more, with the name(s) of
 #'                      the column(s) in `reduced` whose value will be
-#'                      returned as a `Raster` or list of `Raster`s.
+#'                      returned as a `RasterLayer`/`SpatRaster` or list
+#'                      of `RasterLayer`/`SpatRaster`s.
 #'
 #' @param mapcode a character, length 1, with the name of the column in `reduced`
 #'                that is represented in `fullRaster`.
 #'
 #' @param ... Other arguments. None used yet.
 #'
-#' @return A `RasterLayer` or list of `RasterLayer` of with same
-#' dimensions as `fullRaster` representing
-#' `newRasterCols` spatially, according to the join between the `mapcode`
-#' contained within `reduced` and `fullRaster`
+#' @return A `RasterLayer`/`SpatRaster` or list of
+#'  `RasterLayer`/`SpatRaster` of with same dimensions as `fullRaster` representing
+#'  `newRasterCols` spatially, according to the join between the `mapcode`
+#'  contained within `reduced` and `fullRaster`
 #'
 #' @seealso [raster()]
 #'
