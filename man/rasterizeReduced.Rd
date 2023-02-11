@@ -16,12 +16,13 @@ rasterizeReduced(
 \item{reduced}{\code{data.frame} or \code{data.table} that has at least one
 column of codes that are represented in the \code{fullRaster}.}
 
-\item{fullRaster}{\code{RasterLayer} of codes used in \code{reduced} that
+\item{fullRaster}{\code{RasterLayer}/\code{SpatRaster} of codes used in \code{reduced} that
 represents a spatial representation of the data.}
 
 \item{newRasterCols}{Character vector, length 1 or more, with the name(s) of
 the column(s) in \code{reduced} whose value will be
-returned as a \code{Raster} or list of \code{Raster}s.}
+returned as a \code{RasterLayer}/\code{SpatRaster} or list
+of \code{RasterLayer}/\code{SpatRaster}s.}
 
 \item{mapcode}{a character, length 1, with the name of the column in \code{reduced}
 that is represented in \code{fullRaster}.}
@@ -29,8 +30,8 @@ that is represented in \code{fullRaster}.}
 \item{...}{Other arguments. None used yet.}
 }
 \value{
-A \code{RasterLayer} or list of \code{RasterLayer} of with same
-dimensions as \code{fullRaster} representing
+A \code{RasterLayer}/\code{SpatRaster} or list of
+\code{RasterLayer}/\code{SpatRaster} of with same dimensions as \code{fullRaster} representing
 \code{newRasterCols} spatially, according to the join between the \code{mapcode}
 contained within \code{reduced} and \code{fullRaster}
 }
