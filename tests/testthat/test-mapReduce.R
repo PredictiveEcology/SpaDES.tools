@@ -1,6 +1,7 @@
 test_that("mapReduce: file does not work correctly 1", {
   library(data.table)
   library(raster)
+  library(terra)
 
   on.exit({
     detach("package:data.table")
@@ -11,19 +12,32 @@ test_that("mapReduce: file does not work correctly 1", {
   set.seed(123)
   fullRas <- randomPolygons(ras, numTypes = 2)
   names(fullRas) <- "mapcodeAll"
-  uniqueComms <- raster::unique(fullRas)
+  uniqueComms <- as.vector(unique(fullRas[]))
   reducedDT <- data.table(
     mapcodeAll = as.integer(uniqueComms),
     communities = sample(1:1000, length(uniqueComms)),
     biomass = as.integer(rnbinom(length(uniqueComms), mu = 4000, 0.4))
   )
+
   biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
-  expect_equal(sort(unique(getValues(biomass))), sort(reducedDT$biomass))
+  expect_equal(sort(as.vector(unique(biomass[]))), sort(reducedDT$biomass))
 
   communities <- rasterizeReduced(reducedDT, fullRas, "communities")
-  expect_equal(sort(unique(getValues(communities))), sort(reducedDT$communities))
+  expect_equal(sort(as.vector(unique(communities[]))), sort(reducedDT$communities))
 
-  expect_true(sum(table(sort(fullRas[])) *  reducedDT$communities) == sum(communities[]))
+  expect_true(sum(table(sort(fullRas[])) * reducedDT$communities) == sum(communities[]))
+
+  ## with SpatRaster
+  fullSpatRas <- rast(fullRas)
+  uniqueComms <- as.vector(unique(fullSpatRas[]))
+
+  biomass <- rasterizeReduced(reducedDT, fullSpatRas, "biomass")
+  expect_equal(sort(as.vector(unique(biomass[]))), sort(reducedDT$biomass))
+
+  communities <- rasterizeReduced(reducedDT, fullSpatRas, "communities")
+  expect_equal(sort(as.vector(unique(communities[]))), sort(reducedDT$communities))
+
+  expect_true(sum(table(sort(fullSpatRas[])) * reducedDT$communities) == sum(communities[]))
 })
 
 # test_that("mapReduce: file does not work correctly 2", {
