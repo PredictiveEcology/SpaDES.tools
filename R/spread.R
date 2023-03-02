@@ -2,7 +2,6 @@ if (getRversion() >= "3.1.0") {
   utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLocus"))
 }
 
-
 ###############################################################################
 #' Simulate a spread process on a landscape.
 #'
@@ -661,7 +660,6 @@ setMethod(
     #browser(expr = exists("aaaaa"))
     # while there are active cells
     while (length(loci) & (n <= iterations)) {
-
       if (!is.null(neighProbs)) {
         numNeighs <- if (is.list(neighProbs)) {
           unlist(lapply(neighProbs, function(x) {
@@ -824,15 +822,15 @@ setMethod(
       # random ordering so not always same:
       lenPot <- NROW(potentials)
       if (lenPot) {
-        reorderVals <- samInt(lenPot)
-        potentials <- potentials[reorderVals, , drop = FALSE]
+        reorderVals <- samInt(lenPot) ## TODO: uses sample.int(..., replace = FALSE)
+        potentials <- potentials[reorderVals, NULL, drop = FALSE]
       }
       if (!allowOverlap) {
         # here is where allowOverlap and returnDistances are different ##### NOW OBSOLETE, I BELIEVE ELIOT March 2020
         potentials <- potentials[!duplicated(potentials[, 2L]), , drop = FALSE]
       } else {
         pots <- potentials[, c("id", "indices"), drop = FALSE]
-        potentials <- potentials[!duplicated(pots), , drop = FALSE]
+        potentials <- potentials[!duplicated(pots), NULL, drop = FALSE]
       }
 
       # increment iteration
