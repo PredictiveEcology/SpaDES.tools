@@ -160,6 +160,8 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' @importFrom raster crs crs<-
 #' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
 #' @importFrom stats rbeta runif
+#' @importFrom terra crs
+#' @importFrom sf st_crs st_transform
 #' @export
 #' @docType methods
 #' @rdname randomPolygons
@@ -252,7 +254,7 @@ randomPolygon.matrix <- function(x, hectares, area) {
     if (missing(area))
       area <- hectares
   }
-  latLong <-   sp::CRS("+init=epsg:4326")
+  latLong <- st_crs("+init=epsg:4326")
   message("Assuming matrix is in latitude/longitude")
   x <- SpatialPoints(coords = x)
   crs(x) <- latLong
@@ -473,7 +475,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 
 utmCRS <- function(x) {
   zone <- long2UTM(mean(c(xmax(x), xmin(x))))
-  sp::CRS(paste0("+proj=utm +zone=", zone, " +datum=WGS84"))
+  sf::st_crs(paste0("+proj=utm +zone=", zone, " +datum=WGS84"))
 }
 
 long2UTM <- function(long) {
