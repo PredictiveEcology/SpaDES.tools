@@ -12,14 +12,14 @@
 #' @return `SpatalPolygonsDataFrame`
 #'
 #' @export
-#' @importFrom sp CRS SpatialPoints SpatialPolygonsDataFrame
+#' @importFrom sp SpatialPolygonsDataFrame
+#' @importFrom sf st_crs st_sfc st_point
 randomStudyArea <- function(center = NULL, size = 1e4, seed = NULL) {
-  if (is.null(center))
-    center <- SpatialPoints(
-      coords = data.frame(x = c(-1349980), y = c(6986895)),
-      proj4string = CRS(paste("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0 +y_0=0",
-                              "+datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"))
-    )
+  if (is.null(center)) {
+    center <- st_sfc(st_point(c(-1349980, 6986895)))
+    st_crs(center) <- st_crs(paste("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=0 +lon_0=-95 +x_0=0 +y_0=0",
+                                "+datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"))
+  }
 
   if (!exists(".Random.seed", envir = .GlobalEnv)) set.seed(NULL)
   prevSeed <- get(".Random.seed", envir = .GlobalEnv)
