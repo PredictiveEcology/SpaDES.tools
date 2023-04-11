@@ -161,7 +161,6 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
 #' @importFrom stats rbeta runif
 #' @importFrom terra crs
-#' @importFrom sf st_crs st_transform
 #' @export
 #' @docType methods
 #' @rdname randomPolygons
@@ -174,6 +173,15 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #' if (interactive()) {
 #'   plot(a)
 #'   points(b, pch = 19)
+#' }
+#'
+#' ## with terra:
+#' library(terra)
+#' bb <- vect(b)
+#' aa <- randomPolygon(bb, area = 1e6)
+#' if (interactive()) {
+#'   plot(aa)
+#'   points(bb, pch = 19)
 #' }
 #'
 randomPolygon <- function(x, hectares, area) {
@@ -244,21 +252,49 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
   outPolygon
 }
 
-#' @importFrom sp spsample
-#' @importFrom rgeos gContains
-#' @rdname randomPolygons
 #' @export
-randomPolygon.matrix <- function(x, hectares, area) {
+#' @importFrom terra geomtype is.related spatSample
+#' @rdname randomPolygons
+randomPolygon.SpatVector <- function(x, hectares, area) {
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
-      area <- hectares
+      area <- hectares * 1e4
   }
-  latLong <- st_crs("+init=epsg:4326")
-  message("Assuming matrix is in latitude/longitude")
-  x <- SpatialPoints(coords = x)
-  crs(x) <- latLong
-  randomPolygon(x, area = area)
+
+  if (geomtype(x) == "polygons") {
+    need <- TRUE
+    while (need) {
+      sp1 <- spatSample(x, 1, "random")
+      sp2 <- .randomPolygonSpatPoint(sp1, area)
+      contain <- is.related(sp1, sp2, relation = "within")
+      if (isTRUE(contain))
+        need <- FALSE
+    }
+  } else if (geomtype(x) == "points") {
+    sp2 <- .randomPolygonSpatPoint(x, area)
+  } else {
+    stop("if x is a SpatVector, geom type must be points or polygons")
+  }
+  sp2
+}
+
+#' @importFrom terra vect crs
+#' @rdname randomPolygons
+#' @export
+randomPolygon.matrix <- function(x, hectares, area) {
+  if (requireNamespace("sf", quietly = TRUE)) {
+    if (!missing(hectares)) {
+      message("hectares argument is deprecated; please use area")
+      if (missing(area))
+        area <- hectares
+    }
+    latLong <- crs("+init=epsg:4326")
+    message("Assuming matrix is in latitude/longitude")
+    x <- vect(x, type = "points")
+    crs(x) <- latLong
+    randomPolygon(x, area = area)
+  }
 }
 
 #' @importFrom sp spsample
@@ -282,6 +318,54 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
   sp2
 }
 
+#' @importFrom terra project crs crds vect
+.randomPolygonSpatPoint <- function(x, area) {
+  units <- gsub(".*units=(.) .*", "\\1", crs(x, proj = TRUE))
+
+  areaM2 <- area * 1.304 # rescale so mean area is close to hectares
+  radius <- sqrt(areaM2 / pi)
+  if (!identical(units, "m")) {
+    origCRS <- crs(x)
+    crsInUTM <- utmCRS(x)
+    if (is.na(crsInUTM))
+      stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
+    x <- project(x, crsInUTM)
+    message("The CRS provided is not in meters; ",
+            "converting internally to UTM so area will be approximately correct.")
+  }
+  # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
+  #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
+  #                       " +units=m +no_defs"))
+
+  #y <- spTransform(x, areaCRS)
+
+  meanX <- mean(crds(x)[, 1]) - radius
+  meanY <- mean(crds(x)[, 2]) - radius
+
+  minX <- meanX - radius
+  maxX <- meanX + radius
+  minY <- meanY - radius
+  maxY <- meanY + radius
+
+  # Add random noise to polygon
+  xAdd <- round(runif(1, radius * 0.8, radius * 1.2))
+  yAdd <- round(runif(1, radius * 0.8, radius * 1.2))
+  nPoints <- 20
+  betaPar <- 0.6
+  X <- c(jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX)),
+         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX, decreasing = TRUE)))
+  Y <- c(jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (maxY - meanY) + meanY)),
+         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxY - minY) + minY, decreasing = TRUE)),
+         jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (meanY - minY) + minY)))
+
+  outPolygon <- vect(cbind(X + xAdd, Y + yAdd), type = "polygons")
+  crs(outPolygon) <- crs(x)
+
+  if (exists("origCRS", inherits = FALSE))  {
+    outPolygon <- project(outPolygon, origCRS)
+  }
+  outPolygon
+}
 ################################################################################
 #' Initiate a specific number of agents in a map of patches
 #'
@@ -473,9 +557,10 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #   return(.Object)
 # })
 
+#' @importFrom terra crs
 utmCRS <- function(x) {
   zone <- long2UTM(mean(c(xmax(x), xmin(x))))
-  sf::st_crs(paste0("+proj=utm +zone=", zone, " +datum=WGS84"))
+  crs(paste0("+proj=utm +zone=", zone, " +datum=WGS84"), proj = TRUE)
 }
 
 long2UTM <- function(long) {
