@@ -573,38 +573,51 @@ long2UTM <- function(long) {
 #' The main addition is that it makes sure that the output raster conforms
 #' in extent with the input raster `x`, since `nlm_mpd` can output a smaller raster.
 #'
-#' @param x        A `RasterLayer` to use as a template.
+#' @param x        A `RasterLayer`/`SpatRaster` to use as a template.
 #'
 #' @param pad      Integer. Number of cells by which to pad `x` internally to ensure
 #'                 `nlm_mpd` produces a raster corresponding to the dimensions of `x`.
 #'
-#' @param ...      Further arguments passed to `NLMR::nlm_mpd`
+#' @param type     One of the supported `NLMR` functions.
 #'
-#' @importFrom raster res ncol nrow extent extend focal
+#' @param ...      Further arguments passed to `NLMR` function specified in `type`
+#'  (except ncol, nrow and resolution, which are extracted from `x`)
+#'
+#' @importFrom terra res ncol nrow ext extend focal
 #' @export
 #' @rdname neutralLandscapeMap
 #'
-#' @return A `RasterLayer` with same extent as `x`, with randomly generated values.
+#' @return A `RasterLayer`/`SpatRaster` with same extent as `x`, with randomly generated values.
 #'
 #' @seealso `nlm_mpd`
 #'
 #' @examples
 #' \dontrun{
 #'   if (require(NLMR)) {
-#'     library(raster)
+#'     library(terra)
 #'     nx <- ny <- 100L
-#'     r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+#'     r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)
+#'     ## or with raster package:
+#'     # r <- raster::raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
 #'     map1 <- neutralLandscapeMap(r,
+#'                                 type = "nlm_mpd"
 #'                                 roughness = 0.65,
 #'                                 rand_dev = 200,
 #'                                 rescale = FALSE,
 #'                                 verbose = FALSE)
-#'     if (interactive()) Plot(map1)
+#'     if (interactive()) plot(map1)
 #'   }
 #' }
-neutralLandscapeMap <- function(x, pad = 10L, ...) {
+neutralLandscapeMap <- function(x, pad = 10L,
+                                type = c("nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient", "nlm_edgegradient", "nlm_fbm",
+                                         "nlm_mosaicfield", "nlm_mosaicgibbs", "nlm_mosaictess", "nlm_neigh", "nlm_percolation",
+                                         "nlm_planargradient", "nlm_random", "nlm_randomrectangularcluster"),
+                                ...) {
   if (requireNamespace("NLMR", quietly = TRUE)) {
-    dummyVals <- NLMR::nlm_mpd(
+    type <- match.arg(type)
+    typeFun <- getFromNamespace(type, ns = "NLMR")
+
+    dummyVals <- typeFun(
       ncol = ncol(x) + pad, ## pad the raster so any lost cols won't affect crop etc.
       nrow = nrow(x) + pad, ## pad the raster so any lost rows won't affect crop etc.
       resolution = unique(res(x)),
@@ -616,22 +629,21 @@ neutralLandscapeMap <- function(x, pad = 10L, ...) {
     ## - we can't reproject or use x to define the extent;
     ## - need to add rows/cols by multiplying the final number by res;
     ## - crop to ensure the extra rows/cols are removed
-    dummyExt <- raster::extent(c(0, ncol(x)*unique(raster::res(x)),
-                                 0, nrow(x)*unique(raster::res(x))))
-    dummyVals <- raster::extend(dummyVals, dummyExt, values = NA)
-    dummyVals <- raster::crop(dummyVals, dummyExt)
+    dummyExt <- c(0, ncol(x)*unique(res(x)), 0, nrow(x)*unique(res(x)))
+    dummyVals <- extend(dummyVals, dummyExt, values = NA)
+    dummyVals <- crop(dummyVals, dummyExt)
 
     # ## now replace added NAs
     # maxIts <- max(nMissingColsRows) + 1L
     # it <- 1L
     # while (any(is.na(dummyVals[])) & (it < maxIts)) {
-    #   dummyVals <- raster::focal(dummyVals, w = matrix(1, 3, 3),
+    #   dummyVals <- focal(dummyVals, w = matrix(1, 3, 3),
     #                              fun = mean, NAonly = TRUE, na.rm = TRUE)
     #   it <- it + 1L
     # }
 
     dummyLandscape <- x
-    dummyLandscape[] <- dummyVals[]
+    dummyLandscape[] <- as.vector(dummyVals[])
 
     return(dummyLandscape)
   } else {
