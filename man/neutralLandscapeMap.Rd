@@ -4,18 +4,29 @@
 \alias{neutralLandscapeMap}
 \title{Produce a neutral landscape using a midpoint displacement algorithm}
 \usage{
-neutralLandscapeMap(x, pad = 10L, ...)
+neutralLandscapeMap(
+  x,
+  pad = 10L,
+  type = c("nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient", "nlm_edgegradient",
+    "nlm_fbm", "nlm_mosaicfield", "nlm_mosaicgibbs", "nlm_mosaictess", "nlm_neigh",
+    "nlm_percolation", "nlm_planargradient", "nlm_random",
+    "nlm_randomrectangularcluster"),
+  ...
+)
 }
 \arguments{
-\item{x}{A \code{RasterLayer} to use as a template.}
+\item{x}{A \code{RasterLayer}/\code{SpatRaster} to use as a template.}
 
 \item{pad}{Integer. Number of cells by which to pad \code{x} internally to ensure
 \code{nlm_mpd} produces a raster corresponding to the dimensions of \code{x}.}
 
-\item{...}{Further arguments passed to \code{NLMR::nlm_mpd}}
+\item{type}{One of the supported \code{NLMR} functions.}
+
+\item{...}{Further arguments passed to \code{NLMR} function specified in \code{type}
+(except ncol, nrow and resolution, which are extracted from \code{x})}
 }
 \value{
-A \code{RasterLayer} with same extent as \code{x}, with randomly generated values.
+A \code{RasterLayer}/\code{SpatRaster} with same extent as \code{x}, with randomly generated values.
 }
 \description{
 This is a wrapper for the \code{nlm_mpd} function in the \code{NLMR} package.
@@ -25,15 +36,18 @@ in extent with the input raster \code{x}, since \code{nlm_mpd} can output a smal
 \examples{
 \dontrun{
   if (require(NLMR)) {
-    library(raster)
+    library(terra)
     nx <- ny <- 100L
-    r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+    r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)
+    ## or with raster package:
+    # r <- raster::raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
     map1 <- neutralLandscapeMap(r,
+                                type = "nlm_mpd"
                                 roughness = 0.65,
                                 rand_dev = 200,
                                 rescale = FALSE,
                                 verbose = FALSE)
-    if (interactive()) Plot(map1)
+    if (interactive()) plot(map1)
   }
 }
 }

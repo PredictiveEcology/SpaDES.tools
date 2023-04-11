@@ -5,6 +5,7 @@
 \alias{randomPolygons}
 \alias{randomPolygon}
 \alias{randomPolygon.SpatialPoints}
+\alias{randomPolygon.SpatVector}
 \alias{randomPolygon.matrix}
 \alias{randomPolygon.SpatialPolygons}
 \title{Produce a \code{RasterLayer} of  random polygons}
@@ -18,6 +19,8 @@ randomPolygons(
 randomPolygon(x, hectares, area)
 
 \method{randomPolygon}{SpatialPoints}(x, hectares, area)
+
+\method{randomPolygon}{SpatVector}(x, hectares, area)
 
 \method{randomPolygon}{matrix}(x, hectares, area)
 
@@ -78,6 +81,15 @@ a <- randomPolygon(b, area = 1e6)
 if (interactive()) {
   plot(a)
   points(b, pch = 19)
+}
+
+## with terra:
+library(terra)
+bb <- vect(b)
+aa <- randomPolygon(bb, area = 1e6)
+if (interactive()) {
+  plot(aa)
+  points(bb, pch = 19)
 }
 
 }
