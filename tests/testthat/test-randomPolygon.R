@@ -1,10 +1,8 @@
 test_that("randomPolygon: does not work properly", {
-  library(sp)
-  library(rgeos)
-  library(raster)
+  library(terra)
 
   set.seed(1234) ## TODO: some seeds produce failing area test below!!
-  latLong <-   sp::CRS("+init=epsg:4326")
+  latLong <- crs("+init=epsg:4326")
 
   area <- 1e4
   center <- cbind(-110, 59)
@@ -13,14 +11,14 @@ test_that("randomPolygon: does not work properly", {
     plot(poly1)
   }
 
-  poly1InUTM <- sp::spTransform(poly1, utmCRS(poly1))
+  poly1InUTM <- project(poly1, utmCRS(poly1))
   ## check that polygon area approximately matches that given by hectares
-  polyArea <- rgeos::gArea(poly1InUTM)
+  polyArea <- expanse(poly1InUTM)
   expect_true(base::abs(base::abs(polyArea - area)) <  area/4) ## TODO: why is this area/4?
 
   ## check that polygon center is approximately centered on x
-  centerSP <- sp::SpatialPoints(center, proj4string = latLong)
-  centerSP_UTM <- sp::spTransform(centerSP, CRSobj = raster::crs(poly1InUTM))
-  polyCenter <- rgeos::gCentroid(poly1InUTM, byid = TRUE)
-  expect_true(raster::pointDistance(centerSP_UTM, polyCenter, lonlat = FALSE) < 100) ## TODO: appropriate test?
+  centerSP <- vect(center, crs = latLong)
+  centerSP_UTM <- project(centerSP, crs(poly1InUTM))
+  polyCenter <- terra::centroids(poly1InUTM)
+  expect_true(terra::distance(centerSP_UTM, polyCenter) < 100) ## TODO: appropriate test?
 })
