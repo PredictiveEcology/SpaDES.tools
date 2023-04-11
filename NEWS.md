@@ -2,6 +2,7 @@ Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
 # SpaDES.tools 1.0.2
 * `terra` compatibility added
+* `neutralLandscapeMap` expanded to use more `NLMR` functions
 
 # SpaDES.tools 1.0.1.9000
 
