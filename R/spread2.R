@@ -330,7 +330,7 @@ utils::globalVariables(c(
 #'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
-#' @importFrom checkmate assert assertClass assertNumeric
+#' @importFrom checkmate assert assertClass assertMultiClass assertNumeric
 #' @importFrom checkmate checkClass checkDataTable checkLogical checkNumeric checkScalarNA
 #' @importFrom checkmate qassert
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
@@ -358,7 +358,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                     skipChecks = FALSE) {
 
   #### assertions ###############
-  assertClass(landscape, "Raster")
+  checkmate::assertMultiClass(landscape, c("Raster", "SpatRaster"))
   ncells <- ncell(landscape)
   numCols <- ncol(landscape)
   anyNAneighProbs <- any(is.na(neighProbs))
