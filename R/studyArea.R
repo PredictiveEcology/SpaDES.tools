@@ -12,7 +12,7 @@
 #' @return `SpatalPolygonsDataFrame`
 #'
 #' @export
-#' @importFrom terra vect crs values
+#' @importFrom terra vect crs values<-
 #'
 #' @example
 #' a <- randomStudyArea(seed = 123)
