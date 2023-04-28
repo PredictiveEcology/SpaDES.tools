@@ -371,11 +371,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     qassert(neighProbs, "n[0,1]")
     assertNumeric(sum(neighProbs), lower = 1, upper = 1)
 
-    assert(
-      checkNumeric(spreadProb, 0, 1, min.len = ncell(landscape), max.len = ncell(landscape)),
-      checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
-      checkClass(spreadProb, "RasterLayer")
-    )
+    if (!inherits(spreadProb, "SpatRaster")){
+      assert(
+        checkNumeric(spreadProb, 0, 1, min.len = ncell(landscape), max.len = ncell(landscape)),
+        checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
+        checkClass(spreadProb, "Raster")
+      )
+    }
 
     if (is(spreadProb, "Raster")) {
       if (fromDisk(spreadProb)) {
@@ -855,10 +857,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 6 -- spreadProb implementation - uses an absolute probability for
     # each potential neighbour
     # Extract spreadProb for the current set of potentials
-    if (length(spreadProb) == 1) {
+    if (length(spreadProb) == 1 & class(spreadProb) != "SpatRaster") {
       actualSpreadProb <- rep(spreadProb, NROW(dtPotential))
     } else {
-      actualSpreadProb <- spreadProb[dtPotential$to]
+      actualSpreadProb <- as.vector(spreadProb)[dtPotential$to]
       # remove NA values that may come from a spreadProb raster
       NAaSP <- !is.na(actualSpreadProb)
       if (any(NAaSP)) {
