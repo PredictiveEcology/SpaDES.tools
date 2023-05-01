@@ -857,7 +857,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 6 -- spreadProb implementation - uses an absolute probability for
     # each potential neighbour
     # Extract spreadProb for the current set of potentials
-    if (length(spreadProb) == 1 & class(spreadProb) != "SpatRaster") {
+    if (length(spreadProb) == 1 & !inherits(spreadProb, "SpatRaster")) {
       actualSpreadProb <- rep(spreadProb, NROW(dtPotential))
     } else {
       actualSpreadProb <- as.vector(spreadProb)[dtPotential$to]
