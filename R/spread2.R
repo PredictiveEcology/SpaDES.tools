@@ -332,7 +332,7 @@ utils::globalVariables(c(
 #' @export
 #' @importFrom checkmate assert assertClass assertMultiClass assertNumeric
 #' @importFrom checkmate checkClass checkDataTable checkLogical checkNumeric checkScalarNA
-#' @importFrom checkmate qassert
+#' @importFrom checkmate qassert checkMultiClass
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
 #' @importFrom fastmatch fmatch
@@ -365,7 +365,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   if (!skipChecks) {
     assert(
       checkNumeric(start, min.len = 0, max.len = ncells, lower = 1, upper = ncells),
-      checkClass(start, "Raster"),
+      checkMultiClass(start, c("Raster", "SpatRaster")),
       checkDataTable(start))
 
     qassert(neighProbs, "n[0,1]")
@@ -386,19 +386,21 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                 "then passing this to spreadProb")
       }
     }
-    assert(checkNumeric(persistProb, 0, 1, min.len = 1, max.len = 1),
-           checkClass(persistProb, "RasterLayer"))
+    assert(
+      checkNumeric(persistProb, 0, 1, min.len = 1, max.len = 1),
+      checkMultiClass(persistProb,  c("RasterLayer", "SpatRaster"))
+    )
     assert(
       checkScalarNA(spreadProbRel),
-      checkClass(spreadProbRel, "RasterLayer")
+      checkMultiClass(spreadProbRel, c("RasterLayer", "SpatRaster"))
     )
     assert(
       checkNumeric(asymmetry, 0, Inf, min.len = 1, max.len = 1),
-      checkClass(asymmetry, "RasterLayer")
+      checkMultiClass(asymmetry, c("RasterLayer", "SpatRaster"))
     )
     assert(
       checkNumeric(asymmetryAngle, 0, 360, min.len = 1, max.len = 1),
-      checkClass(asymmetryAngle, "RasterLayer")
+      checkMultiClass(asymmetryAngle,  c("RasterLayer", "SpatRaster"))
     )
     qassert(directions, "N1[4,8]")
     qassert(iterations, "N1[0,Inf]")
@@ -714,7 +716,6 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         pureCircle <- cbind(pureCircle[, c("id", "indices", "dists"), drop = FALSE],
                             distClass = ceiling(pureCircle[, "dists"]))
         colnames(pureCircle)[2] <- c("to")
-
         theoreticalAngleQualities <- angleQuality(pureCircle[, "id", drop = FALSE],
                                                   pureCircle[, "to", drop = FALSE],
                                                   landscape,
@@ -1204,8 +1205,8 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
 #' @keywords internal
 #' @rdname spread2-internals
 angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
-  from1 <- cbind(id = from, xyFromCell(landscape, from))
-  to1 <- cbind(id = from, xyFromCell(landscape, to))
+  from1 <- cbind(id = from, xyFromCell(landscape, cell = as.vector(from)))
+  to1 <- cbind(id = from, xyFromCell(landscape, cell = as.vector(to)))
   d <- .pointDirection(from = from1, to = to1)
 
   angleQuality <- cbind(angleQuality = (cos(d[, "angles"] - rad(actualAsymmetryAngle)) + 1), d)
