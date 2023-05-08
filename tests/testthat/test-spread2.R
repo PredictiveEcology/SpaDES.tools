@@ -652,6 +652,38 @@ test_that("spread2 tests", {
   expect_true("effectiveDistance" %in% colnames(out))
   expect_true(all(out$state == "activeSource"))
   expect_true(all(out$distance[out$distance > 0] <= out$effectiveDistance[out$distance > 0]))
+
+})
+
+test_that("spread2 works with terra", {
+  library(terra)
+  library(data.table)
+  library(fpCompare)
+  library(quickPlot)
+
+  on.exit({
+    detach("package:quickPlot")
+    detach("package:fpCompare")
+    detach("package:data.table")
+    detach("package:terra")
+  }, add = TRUE) # nolint
+
+  # inputs for x
+  a <- rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10, res = 1)
+  b <- raster(a)
+  b[] <- 1
+  bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+  innerCells <- which(bb[] %==% 1)
+  sams <- sample(innerCells, 9)
+
+  dev()
+  expect_silent({
+    out <- spread2(a, start = sams, 1, iterations = 1, asRaster = FALSE)
+  })
+  #TODO: add more tests once asymmetry, circle, etc works
+  expect_true(all(out[pixels %in% sams]$state == "inactive"))
+  expect_true(any("activeSource" %in% out$state))
+
 })
 
 test_that("spread2 tests -- persistence", {
