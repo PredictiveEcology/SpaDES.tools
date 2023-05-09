@@ -14,9 +14,9 @@
 #' @export
 #' @importFrom terra vect crs values<-
 #'
-#' @example
+#' @examples
 #' a <- randomStudyArea(seed = 123)
-#' if (interactive) {
+#' if (interactive()) {
 #'   terra::plot(a)
 #' }
 randomStudyArea <- function(center = NULL, size = 1e4, seed = NULL) {

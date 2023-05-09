@@ -1,8 +1,7 @@
 library(data.table)
-library(raster)
-library(quickPlot)
+library(terra)
 
-ras <- raster(extent(0, 15, 0, 15), res = 1)
+ras <- rast(ext(0, 15, 0, 15), res = 1)
 fullRas <- randomPolygons(ras, numTypes = 2)
 names(fullRas) <- "mapcodeAll"
 uniqueComms <- unique(fullRas)

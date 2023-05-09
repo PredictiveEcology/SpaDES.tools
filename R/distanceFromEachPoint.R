@@ -111,15 +111,16 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
   if (!is.null(cumulativeFn)) {
     forms <- names(formals(distFn))
-    fromC <- "fromCell" %fin% forms
+    browser()
+    fromC <- "fromCell" %in% forms
     if (fromC) fromCell <- cellFromXY(landscape, from[, c("x", "y")])
-    toC <- "toCells" %fin% forms
+    toC <- "toCells" %in% forms
     if (toC) toCells <- cellFromXY(landscape, to[, c("x", "y")])
-    land <- "landscape" %fin% forms
+    land <- "landscape" %in% forms
     distFnArgs <- if (land) list(landscape = landscape[]) else list()
     if (length(list(...)) > 0) distFnArgs <- append(distFnArgs, list(...))
-    xDist <- "dist" %fin% forms
-    xDir <- "angle" %fin% forms
+    xDist <- "dist" %in% forms
+    xDir <- "angle" %in% forms
     if (is.character(cumulativeFn)) {
       cumulativeFn <- get(cumulativeFn)
     }
@@ -390,7 +391,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' library(quickPlot)
 #'
 #' N <- 2
-#' dirRas <- raster(extent(0,40,0,40), res = 1)
+#' dirRas <- terra::rast(terra::ext(0,40,0,40), res = 1)
 #' coords <- cbind(x = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
 #'                 y = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
 #'                 id = 1:N)

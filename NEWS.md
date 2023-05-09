@@ -1,5 +1,29 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
+
+
+Version 1.0.3
+=============
+
+## Enhancements
+- transitioned to `terra` and `sf`; 
+- removed dependencies on `raster`, `sp`, `rgeos`
+- functions completed: `randomPolygons`
+
+## Dependency changes
+
+
+## Defunct 
+
+## Defunct and removed
+
+## Non exported function changes
+
+## Bugfixes
+- `preProcess` failed when `googledrive` url filename could be found, but `destinationPath` was not `"."`
+
+
+
 # SpaDES.tools 1.0.2
 * `terra` compatibility added
 * `neutralLandscapeMap` expanded to use more `NLMR` functions

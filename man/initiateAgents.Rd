@@ -2,24 +2,9 @@
 % Please edit documentation in R/SELES.R
 \name{initiateAgents}
 \alias{initiateAgents}
-\alias{initiateAgents,Raster,missing,missing,ANY,missing-method}
-\alias{initiateAgents,Raster,missing,Raster,ANY,missing-method}
-\alias{initiateAgents,Raster,numeric,missing,ANY,missing-method}
-\alias{initiateAgents,Raster,numeric,Raster,ANY,missing-method}
-\alias{initiateAgents,Raster,missing,missing,ANY,numeric-method}
 \title{\code{SELES} - Initiate agents}
 \usage{
 initiateAgents(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
-
-\S4method{initiateAgents}{Raster,missing,missing,ANY,missing}(map, numAgents, probInit, asSpatialPoints)
-
-\S4method{initiateAgents}{Raster,missing,Raster,ANY,missing}(map, probInit, asSpatialPoints)
-
-\S4method{initiateAgents}{Raster,numeric,missing,ANY,missing}(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
-
-\S4method{initiateAgents}{Raster,numeric,Raster,ANY,missing}(map, numAgents, probInit, asSpatialPoints)
-
-\S4method{initiateAgents}{Raster,missing,missing,ANY,numeric}(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
 }
 \arguments{
 \item{map}{RasterLayer with extent and resolution of desired return object}
@@ -47,10 +32,10 @@ You must know how to use SELES for these to be useful.
 }
 \examples{
 if (require("sf", quietly = TRUE)) {
-  library(raster)
+  library(terra)
   library(quickPlot)
 
-  map <- raster(system.file("extdata", "map.tif", package = "SpaDES.tools"))
+  map <- rast(system.file("extdata", "map.tif", package = "SpaDES.tools"))
   names(map) <- "layer"
   pr <- probInit(map, p = (map/maxValue(map))^2)
   agents <- initiateAgents(map, 100, pr)
@@ -76,11 +61,11 @@ if (require("sf", quietly = TRUE)) {
   # then the number of points produced can't be more than
   # the number of pixels:
   agentsRas <- initiateAgents(map, 30, pr, asSpatialPoints = FALSE)
-  if (interactive()) Plot(agentsRas)
+  if (interactive()) terra::plot(agentsRas)
   #'
   if (require(dplyr)) {
     # Check that the agents are more often at the higher probability areas based on pr
-    if (utils::packageVersion("raster") >= "2.8-11") {
+    if (utils::packageVersion("terra") >= "2.8-11") {
       out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) \%>\%
                dplyr::mutate(selectionRatio = Freq / Freq.1) \%>\%
                dplyr::select(-layer.1, -Var1) \%>\%

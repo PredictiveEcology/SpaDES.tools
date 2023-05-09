@@ -22,3 +22,9 @@ Default \code{1e4}.}
 \description{
 Create default study areas for use with \code{SpaDES} modules
 }
+\examples{
+a <- randomStudyArea(seed = 123)
+if (interactive()) {
+  terra::plot(a)
+}
+}

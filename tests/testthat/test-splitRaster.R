@@ -19,8 +19,8 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   r <- b[[1]] # use first layer only
   nx <- 3
   ny <- 4
-  expect_equal(xres(r), 1)
-  expect_equal(yres(r), 1)
+  expect_equal(terra::xres(r), 1)
+  expect_equal(terra::yres(r), 1)
 
   # change the extent of r
   extent(r) <- extent(xmin(r) - 30, xmax(r) - 30, ymin(r) - 20, ymax(r) - 20)
@@ -183,8 +183,8 @@ test_that("splitRaster works in parallel", {
     r <- b[[1]] # use first layer only
     nx <- 3
     ny <- 4
-    expect_equal(xres(r), 1)
-    expect_equal(yres(r), 1)
+    expect_equal(terra::xres(r), 1)
+    expect_equal(terra::yres(r), 1)
 
     # change the extent of r
     extent(r) <- extent(xmin(r) - 30, xmax(r) - 30, ymin(r) - 20, ymax(r) - 20)

@@ -42,46 +42,63 @@
 #' curr <- SpatialPoints(cbind(x = x0, y = y0))
 #' heading(prev, curr)
 #'
-setGeneric("heading", function(from, to) {
-    standardGeneric("heading")
-})
+heading <- function(from, to) {
+  from <- coords(from)
+  to <- coords(to)
+  ys <- to[, 2] - from[, 2]
+  xs <- to[, 1] - from[, 1]
+  heading <- deg(atan(xs / ys))
+  ys <- (ys < 0)
+  heading[(ys) & (xs) < 0] <- heading[(ys) & (xs) < 0] - 180
+  heading[(ys) & (xs) > 0] <- heading[(ys) & (xs) > 0] + 180
+  return(heading %% 360)
+}
 
-#' @export
-#' @rdname heading
-setMethod("heading",
-          signature(from = "SpatialPoints", to = "SpatialPoints"),
-          definition = function(from, to) {
-            to <- coordinates(to)
-            from <- coordinates(from)
-            ys <- to[, 2] - from[, 2]
-            xs <- to[, 1] - from[, 1]
-            heading <- deg(atan(xs / ys))
-            ys <- (ys < 0)
-            heading[(ys) & (xs) < 0] <- heading[(ys) & (xs) < 0] - 180
-            heading[(ys) & (xs) > 0] <- heading[(ys) & (xs) > 0] + 180
-            return(heading %% 360)
-})
 
-#' @export
-#' @rdname heading
-setMethod("heading",
-          signature(from = "matrix", to = "matrix"),
-          definition = function(from, to) {
-            return(heading(SpatialPoints(from), SpatialPoints(to)))
-})
+coords <- function(crds) {
+  if (inherits(crds, "SpatVector")) {
+    if (!requireNamespace("terra")) stop("Need terra package installed")
+    crds <- terra::crds(crds)
+  } else if (inherits(crds, "sf")) {
+    if (!requireNamespace("sf")) stop("Need sf package installed")
+    crds <- sf::st_coordinates(crds)
+  } else if (inherits(crds, "Spatial")) {
+    if (!requireNamespace("sp")) stop("Need sp package installed")
+    crds <- sp::coordinates(crds)
+  }
 
-#' @export
-#' @rdname heading
-setMethod("heading",
-          signature(from = "matrix", to = "SpatialPoints"),
-          definition = function(from, to) {
-            return(heading(SpatialPoints(from), to))
-})
+crds
+}
 
-#' @export
-#' @rdname heading
-setMethod("heading",
-          signature(from = "SpatialPoints", to = "matrix"),
-          definition = function(from, to) {
-            return(heading(from, SpatialPoints(to)))
-})
+#' @importFrom reproducible .requireNamespace
+extnt <- function(obj) {
+  if (inherits(obj, "Raster")) {
+    .requireNamespace("raster", stopOnFALSE = TRUE)
+    obj <- raster::extent(obj)
+  } else if  (inherits(obj, "SpatRaster") || inherits(obj, "sf")) {
+    if (inherits(obj, "SpatRaster")) .requireNamespace("terra", stopOnFALSE = TRUE)
+    if (inherits(obj, "sf")) .requireNamespace("sf", stopOnFALSE = TRUE)
+    obj <- terra::ext(obj)
+  }
+  obj
+}
+
+#' @importFrom reproducible .requireNamespace
+`coords<-` <- function(obj, value) {
+  if (inherits(obj, "SpatVector")) {
+    .requireNamespace("terra", stopOnFALSE = TRUE)
+    obj <- terra::vect(data.frame(as.data.frame(obj), value), geom = c("x", "y"))
+  } else if (inherits(obj, "sf")) {
+    .requireNamespace("sf", stopOnFALSE = TRUE)
+    obj2 <- st_as_sfc(st_as_sf(as.data.frame(value), coords = c("x", "y")))
+    obj <- st_set_geometry(obj, value = obj2)
+    obj
+  } else if (inherits(obj, "Spatial")) {
+    .requireNamespace("sp", stopOnFALSE = TRUE)
+    obj@coords <- value
+  }
+
+  obj
+}
+
+

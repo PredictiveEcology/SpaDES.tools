@@ -11,7 +11,7 @@
 \title{Produce a \code{RasterLayer} of  random polygons}
 \usage{
 randomPolygons(
-  ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
+  ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
   numTypes = 2,
   ...
 )
@@ -65,7 +65,7 @@ if (interactive()) {
 
 library(raster)
 # more complex patterning, with a range of patch sizes
-a <- randomPolygons(numTypes = 400, raster(extent(0, 50, 0, 50), res = 1, vals = 0))
+a <- randomPolygons(numTypes = 400, terra::rast(terra::ext(0, 50, 0, 50), res = 1, vals = 0))
 a[a < 320] <- 0
 a[a >= 320] <- 1
 suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important

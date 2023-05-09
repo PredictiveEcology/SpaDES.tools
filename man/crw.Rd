@@ -3,17 +3,11 @@
 \name{move}
 \alias{move}
 \alias{crw}
-\alias{crw,SpatialPointsDataFrame-method}
-\alias{crw,SpatialPoints-method}
 \title{Move}
 \usage{
 move(hypothesis = "crw", ...)
 
 crw(agent, extent, stepLength, stddev, lonlat, torus = FALSE)
-
-\S4method{crw}{SpatialPointsDataFrame}(agent, extent, stepLength, stddev, lonlat, torus = FALSE)
-
-\S4method{crw}{SpatialPoints}(agent, extent, stepLength, stddev, lonlat, torus = FALSE)
 }
 \arguments{
 \item{hypothesis}{Character vector, length one, indicating which movement

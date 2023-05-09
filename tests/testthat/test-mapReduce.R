@@ -8,7 +8,7 @@ test_that("mapReduce: file does not work correctly 1", {
     detach("package:raster")
   }, add = TRUE)
 
-  ras <- raster(extent(0, 15, 0, 15), res = 1)
+  ras <- terra::rast(terra::ext(0, 15, 0, 15), res = 1)
   set.seed(123)
   fullRas <- randomPolygons(ras, numTypes = 2)
   names(fullRas) <- "mapcodeAll"
@@ -49,7 +49,7 @@ test_that("mapReduce: file does not work correctly 1", {
 #    detach("package:raster"))
 #   }, add = TRUE)
 #
-#   ras <- raster(extent(0,15,0,15), res=1)
+#   ras <- terra::rast(terra::ext(0,15,0,15), res=1)
 #   fullRas <- randomPolygons(ras, numTypes=5, speedup=1, p=0.3)
 #   names(fullRas) <- "mapcodeAll"
 #   uniqueComms <- raster::unique(fullRas)
@@ -78,7 +78,7 @@ test_that("mapReduce: file does not work correctly 1", {
 #    detach("package:raster"))
 #   }, add = TRUE)
 #
-#   ras <- raster(extent(0, 15, 0, 15), res = 1)
+#   ras <- terra::rast(terra::ext(0, 15, 0, 15), res = 1)
 #   fullRas <- randomPolygons(ras, numTypes = 5, speedup = 1, p = 0.3)
 #   names(fullRas) <- "mapcodeAll""'
 #   uniqueComms <- raster::unique(fullRas)
@@ -103,7 +103,7 @@ test_that("mapReduce: file does not work correctly 1", {
 #    detach("package:raster"))
 #   }, add = TRUE)
 #
-#   ras <- raster(extent(0,15,0,15), res=1)
+#   ras <- terra::rast(terra::ext(0,15,0,15), res=1)
 #   fullRas <- randomPolygons(ras, numTypes=5, speedup=1, p=0.3)
 #   names(fullRas) <- "mapcodeAll"
 #   uniqueComms <- raster::unique(fullRas)

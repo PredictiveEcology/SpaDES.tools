@@ -4,7 +4,6 @@
 \alias{mergeRaster}
 \alias{mergeRaster,list-method}
 \alias{splitRaster}
-\alias{splitRaster,RasterLayer-method}
 \title{Split and re-merge \code{RasterLayer}(s)}
 \usage{
 mergeRaster(x, fun = NULL)
@@ -12,17 +11,6 @@ mergeRaster(x, fun = NULL)
 \S4method{mergeRaster}{list}(x, fun = NULL)
 
 splitRaster(
-  r,
-  nx = 1,
-  ny = 1,
-  buffer = c(0, 0),
-  path = NA,
-  cl,
-  rType = "FLT4S",
-  fExt = ".grd"
-)
-
-\S4method{splitRaster}{RasterLayer}(
   r,
   nx = 1,
   ny = 1,
@@ -90,14 +78,13 @@ then this function will automatically use that cluster.
 It is always a good idea to stop the cluster when finished, using \code{\link[=endCluster]{endCluster()}}.
 }
 \examples{
-library(raster)
-library(Require)
+library(terra)
 
 # an example with dimensions:
 # nrow: 77
 # ncol: 101
 # nlayers: 3
-b <- brick(system.file("external/rlogo.grd", package = "raster"))
+b <- rast(system.file("ex/logo.tif", package = "terra"))
 r <- b[[1]] # use first layer only
 nx <- 1
 ny <- 2

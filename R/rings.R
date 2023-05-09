@@ -30,22 +30,12 @@
 #'
 #' @seealso `rgeos::gBuffer`
 #'
-#' @example inst/examples/example_rings.R
-#'
-setGeneric(
-  "rings",
-  function(landscape, loci = NA_real_, id = FALSE, minRadius = 2, maxRadius = 5,
-           allowOverlap = FALSE, returnIndices = FALSE, returnDistances = TRUE, ...) {
-    standardGeneric("rings")
-})
-
 #' @importFrom fpCompare %<=% %>=%
 #' @rdname rings
-setMethod(
-  "rings",
-  signature(landscape = "RasterLayer"),
-  definition = function(landscape, loci, id, minRadius, maxRadius, allowOverlap,
-                        returnIndices, returnDistances, ...) {
+#' @example inst/examples/example_rings.R
+#'
+rings <- function(landscape, loci = NA_real_, id = FALSE, minRadius = 2, maxRadius = 5,
+           allowOverlap = FALSE, returnIndices = FALSE, returnDistances = TRUE, ...) {
     spreadEvents <- spread(landscape, loci = loci, circle = TRUE,
                            circleMaxRadius = maxRadius, spreadProb = 1, id = TRUE,
                            returnDistances = TRUE, returnIndices = TRUE,
@@ -86,8 +76,8 @@ setMethod(
         else
           outRas[out$indices] <- out$dists
       }
-      outRas <- raster(extent(landscape), res = res(landscape), vals = outRas)
+      outRas <- terra::rast(terra::ext(landscape), res = res(landscape), vals = outRas)
       return(outRas)
     }
     return(out)
-})
+}

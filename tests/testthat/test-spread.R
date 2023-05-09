@@ -7,8 +7,8 @@ test_that("spread produces legal RasterLayer", {
   library(raster); on.exit(detach("package:raster"), add = TRUE)
 
   # inputs for x
-  a <- raster(extent(0, 20, 0, 20), res = 1)
-  b <- raster(extent(a), res = 1, vals = stats::runif(ncell(a), 0, 1))
+  a <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
+  b <- terra::rast(terra::ext(a), res = 1, vals = stats::runif(ncell(a), 0, 1))
 
   # check it makes a RasterLayer
   expect_that(spread(a, loci = ncell(a) / 2, stats::runif(1, 0.15, 0.25)), is_a("RasterLayer"))
@@ -38,7 +38,7 @@ test_that("spread produces legal RasterLayer", {
                                id = TRUE, maxSize = sizes)[]))
 
   # Check that with maxSize, the active cells are removed when maxSize is reached
-  b <- raster(extent(0, 20, 0, 20), res = 1)
+  b <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
   loci <- sample(ncell(b), size = 1)
   spreadProb <- 0.27
   seed <- 9149
@@ -100,7 +100,7 @@ test_that("allowOverlap -- produces exact result", {
   }, add = TRUE)
 
   N <- 10
-  a <- raster::raster(extent(0, N, 0, N), res = 1)
+  a <- raster::terra::rast(terra::ext(0, N, 0, N), res = 1)
   ao <- c(FALSE, TRUE)
   mp <- middlePixel(a)
   mps <- mp + (-3:3)
@@ -669,7 +669,7 @@ test_that("distanceFromPoints does not work correctly", {
 
   # evaluate cumulativeFn
   n <- 5
-  hab <- raster(extent(0, 10, 0, 10), res = 1)
+  hab <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
   coords <- cbind(x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
                   y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5)
   dfep20 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE], landscape = hab)
@@ -693,7 +693,7 @@ test_that("simple cir does not work correctly", {
     detach("package:fpCompare")
   }, add = TRUE)
 
-  hab <- raster(extent(0, 1e1, 0, 1e1), res = 1)
+  hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1)
 
   circleRas <- cir(hab, maxRadius = 1, includeBehavior = "excludePixels")
   expect_true(NROW(circleRas) == 4)
@@ -747,11 +747,11 @@ test_that("simple cir does not work correctly", {
   expect_is(cirs2, "Raster")
   expect_true(min(getValues(cirs2)) == 0)
 
-  hab <- raster(extent(0, 1e1, 0, 1e1), res = c(1, 2))
+  hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = c(1, 2))
   expect_error(cir(hab, maxRadius = 1, includeBehavior = "excludePixels"),
                "cir function only accepts rasters with identical resolution in x and y dimensions")
 
-  hab <- raster(extent(0, 1e1, 0, 1e1), res = 1)
+  hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1)
   expect_error(cir(hab, maxRadius = 1, includeBehavior = "excludeRings"),
                "includeBehavior can only be \"includePixels\" or \"excludePixels\"")
 })
@@ -764,7 +764,7 @@ test_that("wrap does not work correctly", {
   }, add = TRUE)
 
   xrange <- yrange <- c(-50, 50)
-  hab <- raster(extent(c(xrange, yrange)))
+  hab <- terra::rast(terra::ext(c(xrange, yrange)))
   hab[] <- 0
 
   # initialize caribou agents
@@ -810,7 +810,7 @@ test_that("cir angles arg doesn't work", {
     detach("package:fpCompare")
   }, add = TRUE)
 
-  ras <- raster(extent(0, 100, 0, 100), res = 1)
+  ras <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
   ras[] <- 0
   n <- 2
   coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
@@ -832,7 +832,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
     library(raster); on.exit(detach("package:raster"), add = TRUE)
     library(parallel);
 
-    hab <- randomPolygons(raster(extent(0, 1e2, 0, 1e2)), res = 1)
+    hab <- randomPolygons(terra::rast(terra::ext(0, 1e2, 0, 1e2)), res = 1)
 
     # evaluate cumulativeFn
     n <- 50
@@ -878,7 +878,7 @@ test_that("spreadProb with relative values does not work correctly", {
   seed <- 64350
   set.seed(seed)
   # dqrng::dqset.seed(seed)
-  emptyRas <- raster(extent(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
   hab <- randomPolygons(emptyRas, numTypes = 40)
   names(hab) <- "hab"
 

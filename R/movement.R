@@ -70,51 +70,14 @@ move <- function(hypothesis = "crw", ...) {
 #' @importFrom stats rnorm
 #' @rdname crw
 #'
-setGeneric("crw", function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
-  standardGeneric("crw")
-})
+crw <- function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
+  if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent, FUN.VALUE = logical(1)))) {
+    if (is(agent, "SpatVector"))
+      if (!identical("points", geomtype(agent)))
+        stop("crs can only take SpatialPoints* or SpatVector points geometry")
+  }
 
-#' @export
-#' @rdname crw
-setMethod(
-  "crw",
-  signature(agent = "SpatialPointsDataFrame"),
-  definition = function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
-    if (is.null(lonlat) || !is.logical(lonlat)) {
-      stop("you must provide a \"lonlat\" argument (TRUE/FALSE)")
-    }
-    hasNames <- names(agent) %in% c("x1", "y1")
-    n <- length(agent)
-
-    if (sum(hasNames) < 2) {
-        stop("SpatialPointsDataFrame needs x1 and y1 columns with previous location")
-    }
-
-    agentHeading <- heading(cbind(x = agent$x1, y = agent$y1), agent)
-    rndDir <- rnorm(n, agentHeading, stddev)
-    rndDir[rndDir > 180] <- rndDir[rndDir > 180] - 360
-    rndDir[rndDir <= 180 & rndDir < (-180)] <- 360 + rndDir[rndDir <= 180 & rndDir < (-180)]
-
-    agent@data[, c("x1", "y1")] <- coordinates(agent)
-    agent@coords <- cbind(
-      x = coordinates(agent)[, 1] + sin(rad(rndDir)) * stepLength,
-      y = coordinates(agent)[, 2] + cos(rad(rndDir)) * stepLength
-    )
-
-    if (torus) {
-      return(wrap(X = agent, bounds = extent, withHeading = TRUE))
-    } else {
-      return(agent)
-    }
-})
-
-#' @export
-#' @importFrom sp SpatialPointsDataFrame
-#' @rdname crw
-setMethod(
-  "crw",
-  signature(agent = "SpatialPoints"),
-  definition = function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
+  if (inherits(agent, "SpatialPoints") || (inherits(agent, "SpatVect"))) {
     n <- length(agent)
     agent <- SpatialPointsDataFrame(agent, data = data.frame(
       x1 = runif(n, -180, 180), y1 = runif(n, -180, 180)
@@ -122,5 +85,41 @@ setMethod(
     names(agent) <- c("x1", "y1")
     agent <- crw(agent, extent = extent, stepLength = stepLength,
                  stddev = stddev, lonlat = lonlat, torus = torus)
+
+  }
+  # signature(agent = "SpatialPointsDataFrame"),
+  # definition = function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
+  if (is.null(lonlat) || !is.logical(lonlat)) {
+    stop("you must provide a \"lonlat\" argument (TRUE/FALSE)")
+  }
+  hasNames <- names(agent) %in% c("x1", "y1")
+  n <- NROW(agent)
+
+  if (sum(hasNames) < 2) {
+    stop("SpatialPointsDataFrame/SpatVector needs x1 and y1 columns with previous location")
+  }
+
+  agentHeading <- heading(cbind(x = agent$x1, y = agent$y1), agent)
+  rndDir <- rnorm(n, agentHeading, stddev)
+  rndDir[rndDir > 180] <- rndDir[rndDir > 180] - 360
+  rndDir[rndDir <= 180 & rndDir < (-180)] <- 360 + rndDir[rndDir <= 180 & rndDir < (-180)]
+
+  crds <- coords(agent)
+  # move current coordinates to previous coordinates
+  agent[, c("x1", "y1")] <- crds
+  # update current coordinates to be those after the move
+  newCoords <- cbind(
+    x = crds[, 1] + sin(rad(rndDir)) * stepLength,
+    y = crds[, 2] + cos(rad(rndDir)) * stepLength
+  )
+  # for Spatial -- this was used: agent@coords <-
+  coords(agent) <- newCoords
+  # agent$geometry <- newCoords
+
+  if (torus) {
+    return(wrap(X = agent, bounds = extent, withHeading = TRUE))
+  } else {
     return(agent)
-})
+  }
+}
+

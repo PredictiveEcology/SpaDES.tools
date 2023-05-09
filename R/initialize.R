@@ -117,7 +117,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #'
 #' library(raster)
 #' # more complex patterning, with a range of patch sizes
-#' a <- randomPolygons(numTypes = 400, raster(extent(0, 50, 0, 50), res = 1, vals = 0))
+#' a <- randomPolygons(numTypes = 400, terra::rast(terra::ext(0, 50, 0, 50), res = 1, vals = 0))
 #' a[a < 320] <- 0
 #' a[a >= 320] <- 1
 #' suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important
@@ -126,7 +126,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #'   Plot(a)
 #' }
 #'
-randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
+randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
                            numTypes = 2, ...) {
   args <- list(...)
   if (any(c("p", "A", "speedup", "minpatch") %in% names(args))) {
@@ -134,9 +134,10 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
             "See new function definition.")
   }
 
-  starts <- SpatialPoints(coords = cbind(x = stats::runif(numTypes, xmin(ras), xmax(ras)),
-                                         y = stats::runif(numTypes, ymin(ras), ymax(ras))))
-  loci <- raster::cellFromXY(starts, object = ras)
+  xy <- cbind(x = stats::runif(numTypes, xmin(ras), xmax(ras)),
+              y = stats::runif(numTypes, ymin(ras), ymax(ras)))
+  starts <- terra::vect(xy)
+  loci <- terra::cellFromXY(xy, object = ras)
   a <- spread(landscape = ras, spreadProb = 1, loci, allowOverlap = FALSE, id = TRUE, ...)
   return(a)
 }
@@ -449,7 +450,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
   dt3 <- dt2[, list(cells = resample(wh, unique(num.in.pop))), by = "pops"]
   dt3$ids <- rownames(dt3)
 
-  al <- raster(extent(patches), res = res(patches), vals = 0)
+  al <- terra::rast(terra::ext(patches), res = res(patches), vals = 0)
   al[dt3$cells] <- 1
 
   return(al)

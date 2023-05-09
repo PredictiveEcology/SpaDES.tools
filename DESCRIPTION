@@ -36,17 +36,12 @@ Imports:
     checkmate (>= 1.8.2),
     CircStats (>= 0.2-4),
     data.table (>= 1.10.4),
-    fastmatch (>= 1.1-0),
     fpCompare (>= 0.2.1),
     magrittr,
     methods,
     parallel,
-    quickPlot,
-    raster (>= 2.5-8),
     Rcpp (>= 0.12.12),
     Require,
-    rgeos,
-    sp (>= 1.2-4),
     stats,
     terra
 Suggests:
@@ -63,9 +58,12 @@ Suggests:
     mgcv,
     NLMR (>= 1.1.1),
     purrr,
+    quickPlot,
+    raster (>= 2.5-8),
     RColorBrewer (>= 1.1-2),
     rmarkdown,
     sf,
+    sp (>= 1.2-4),
     testthat (>= 1.0.2)
 Remotes:
     ropensci/NLMR

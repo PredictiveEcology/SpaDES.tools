@@ -368,7 +368,7 @@ library(quickPlot)
 
 data.table::setDTthreads(1)
 
-a <- raster(extent(0, 10, 0, 10), res = 1)
+a <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
 sams <- sort(sample(ncell(a), 3))
 
 # Simple use -- similar to spread(...)
@@ -419,7 +419,7 @@ NROW(out1) > NROW(out2)
 #   30\% of the time 2 neighbours.
 #   The cells with spreadProb of 5 are 5 times more likely than cells with 1 to be chosen,
 #   when they are both within the 8 neighbours
-sp <- raster(extent(0, 3, 0, 3), res = 1, vals = 1:9) #small raster, simple values
+sp <- terra::rast(terra::ext(0, 3, 0, 3), res = 1, vals = 1:9) #small raster, simple values
 # Check neighProbs worked
 out <- list()
 

@@ -73,8 +73,8 @@ numAgents <- function(N, probInit) {
 #'
 #' @param probInit a Raster resulting from a [probInit()] call
 #'
-#' @param asSpatialPoints logical. Should returned object be `RasterLayer`
-#'                        or `SpatialPointsDataFrame` (default)
+#' @param asSpatialPoints logical or `"sf"`. Should returned object be `RasterLayer`
+#'                        or `SpatVector` default (or legacy `TRUE` `SpatialPointsDataFrame`)
 #'
 #' @param indices numeric. Indices of where agents should start
 #'
@@ -89,75 +89,45 @@ numAgents <- function(N, probInit) {
 #'
 #' @example inst/examples/example_initiateAgents.R
 #'
-setGeneric(
-  "initiateAgents",
-  function(map, numAgents, probInit, asSpatialPoints = TRUE, indices) {
-    standardGeneric("initiateAgents")
-})
-
-#' @export
-#' @rdname initiateAgents
-setMethod(
-  "initiateAgents",
-  signature = c("Raster", "missing", "missing", "ANY", "missing"),
-  function(map, numAgents, probInit, asSpatialPoints) {
-    initiateAgents(map, indices = 1:ncell(map), asSpatialPoints = asSpatialPoints)
-})
-
-#' @export
-#' @rdname initiateAgents
-setMethod(
-  "initiateAgents",
-  signature = c("Raster", "missing", "Raster", "ANY", "missing"),
-  function(map, probInit, asSpatialPoints) {
-    wh <- which(runif(ncell(probInit)) < getValues(probInit))
-    initiateAgents(map, indices = wh, asSpatialPoints = asSpatialPoints)
-})
-
-#' @export
-#' @rdname initiateAgents
-setMethod(
-  "initiateAgents",
-  signature = c("Raster", "numeric", "missing", "ANY", "missing"),
-  function(map, numAgents, probInit, asSpatialPoints, indices) {
-    wh <- sample(1:ncell(map), size = numAgents, replace = asSpatialPoints)
-    initiateAgents(map, indices = wh, asSpatialPoints = asSpatialPoints)
-})
-
-#' @export
-#' @rdname initiateAgents
-setMethod(
-  "initiateAgents",
-  signature = c("Raster", "numeric", "Raster", "ANY", "missing"),
-  function(map, numAgents, probInit, asSpatialPoints) {
-    vals <- getValues(probInit)
-    wh <- sample(1:ncell(probInit), numAgents, replace = asSpatialPoints,
-                 prob = vals / sum(vals))
-    initiateAgents(map, indices = wh, asSpatialPoints = asSpatialPoints)
-})
-
-#' @export
-#' @rdname initiateAgents
-setMethod(
-  "initiateAgents",
-  signature = c("Raster", "missing", "missing", "ANY", "numeric"),
-  function(map, numAgents, probInit, asSpatialPoints, indices) {
-    if (asSpatialPoints) {
-      if (length(indices > 0)) {
-        xys <- xyFromCell(map, indices, spatial = asSpatialPoints)
-        xys@coords <- xys@coords + cbind(runif(length(indices), -res(map)[1] / 2, res(map)[1] / 2),
-                                         runif(length(indices), -res(map)[2] / 2, res(map)[2] / 2))
+initiateAgents <- function(map, numAgents, probInit, asSpatialPoints = TRUE, indices) {
+  if (missing(numAgents) && missing(probInit) && missing(indices))
+    indices <- 1:ncell(map)
+  if (missing(numAgents) && (inherits(probInit, "Raster") || inherits(probInit, "SpatRaster")))
+    indices <- which(runif(ncell(probInit)) < terra::values(probInit))
+  if (is.numeric(numAgents) && (missing(probInit)))
+    indices <- sample(1:ncell(map), size = numAgents, replace = !(asSpatialPoints %in% FALSE))
+  if (is.numeric(numAgents)  && (inherits(probInit, "Raster") || inherits(probInit, "SpatRaster"))) {
+    vals <- terra::values(probInit)
+    indices <- sample(1:ncell(probInit), numAgents, replace = !(asSpatialPoints %in% FALSE),
+                            prob = vals / sum(vals))
+  }
+  if (!asSpatialPoints %in% FALSE) {
+    if (length(indices > 0)) {
+      xys <- terra::xyFromCell(map, indices)
+      diffs <- cbind(runif(length(indices), -res(map)[1] / 2, res(map)[1] / 2),
+                     runif(length(indices), -res(map)[2] / 2, res(map)[2] / 2))
+      if (isTRUE(asSpatialPoints)) {
+        .requireNamespace("sp", stopOnFALSE = TRUE)
+        xys <- sp::SpatialPoints(xys)
+        xys@coords <- xys@coords + diffs
         xys@bbox <- cbind(apply(coordinates(xys), 2, min), apply(coordinates(xys), 2, max))
-        return(xys)
+
       } else {
-        stop("uh oh! no indices specified.") # TODO: need error msg
+        xys <- terra::vect(xys + diffs)
       }
+      terra::crs(xys) <- terra::crs(map)
+      return(xys)
     } else {
-      tmp <- raster(extent(map), res = res(map), vals = 0)
-      tmp[indices] <- 1
-      return(tmp)
+      stop("uh oh! no indices specified.") # TODO: need error msg
     }
-})
+  } else {
+    tmp <- terra::rast(terra::ext(map), res = res(map), vals = 0)
+    tmp[indices] <- 1
+    return(tmp)
+  }
+}
+
+
 
 ################################################################################
 #' `SELES` - Agent Location at initiation
@@ -241,7 +211,7 @@ probInit <- function(map, p = NULL, absolute = NULL) {
     absolute <- FALSE
   }
   if (is.numeric(p)) {
-    probInit <- raster(extent(map), nrows = nrow(map), ncols = ncol(map), crs = crs(map))
+    probInit <- terra::rast(terra::ext(map), nrows = nrow(map), ncols = ncol(map), crs = crs(map))
     p <- rep(p, length.out = ncell(map))
     probInit <- setValues(probInit, p / (sum(p) * (1 - absolute) + 1 * (absolute)))
   } else if (is(p, "RasterLayer")) {

@@ -176,7 +176,7 @@ test_that("spread2 tests", {
   ## TODO: need better test for hov this scales
   #if (interactive()) message("Scales with number of starts, not maxSize of raster")
   #set.seed(21)
-  #b <- raster(extent(0, 33000, 0, 33000), res = 1)
+  #b <- terra::rast(terra::ext(0, 33000, 0, 33000), res = 1)
   #sams <- sample(ncell(b), 2)
   #st1 <- system.time({
   #  out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
@@ -250,7 +250,7 @@ test_that("spread2 tests", {
 
   message("Scales with number of starts, not maxSize of raster")
   set.seed(21)
-  b <- raster(extent(0, 10, 0, 10), res = 1)
+  b <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
   bProb <- raster(system.file("extdata", "bProb.tif", package = "SpaDES.tools"))
 
   set.seed(1232)
@@ -389,7 +389,7 @@ test_that("spread2 tests -- asymmetry", {
   library(quickPlot); on.exit(detach("package:quickPlot"), add = TRUE)
 
   # inputs for x
-  a <- raster(extent(0, 100, 0, 100), res = 1)
+  a <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
   b <- raster(a)
   b[] <- 1
   bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
@@ -566,7 +566,7 @@ test_that("spread2 tests -- asymmetry", {
   ####### Calibration curve
   skip("Calibration curves")
   n <- 500
-  ras <- raster(extent(0, 1000, 0, 1000), res = 1)
+  ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
   sp <- runif(n, 0.15, 0.25)
   sizes <- integer()
   for (i in 1:n) {
@@ -605,7 +605,7 @@ test_that("spread2 returnFrom", {
   library(raster); on.exit(detach("package:raster"), add = TRUE)
 
   # inputs for x
-  a <- raster(extent(0, 10, 0, 10), res = 1)
+  a <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
   b <- raster(a)
   b[] <- 1
   bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
@@ -636,7 +636,7 @@ test_that("spread2 tests", {
   }, add = TRUE) # nolint
 
   # inputs for x
-  a <- raster(extent(0, 100, 0, 100), res = 1)
+  a <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
   b <- raster(a)
   b[] <- 1
   bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
@@ -690,7 +690,6 @@ test_that("spread2 tests -- persistence", {
   library(raster)
   library(data.table)
   library(checkmate)
-  library(fastmatch)
 
   landscape <- raster::raster(nrows = 50, ncols = 50)
   landscape[] <- 1

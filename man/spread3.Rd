@@ -85,7 +85,7 @@ if (interactive()) {
   library(raster)
   library(quickPlot)
   maxDim <- 10000
-  ras <- raster::raster(extent(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
+  ras <- raster::terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
   rasQuality <- raster(ras)
   rasQuality[] <- 1
   rasAbundance <- raster(rasQuality)
@@ -163,7 +163,7 @@ if (interactive()) {
   library(quickPlot)
   library(SpaDES.tools)
   maxDim <- 10000
-  ras <- raster(extent(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
+  ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
   rasQuality <- raster(ras)
   rasQuality[] <- 1
   rasAbundance <- raster(rasQuality)

@@ -1,11 +1,10 @@
-library(raster)
-library(Require)
+library(terra)
 
 # an example with dimensions:
 # nrow: 77
 # ncol: 101
 # nlayers: 3
-b <- brick(system.file("external/rlogo.grd", package = "raster"))
+b <- rast(system.file("ex/logo.tif", package = "terra"))
 r <- b[[1]] # use first layer only
 nx <- 1
 ny <- 2

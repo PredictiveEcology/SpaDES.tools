@@ -60,7 +60,7 @@ library(raster)
 library(quickPlot)
 
 N <- 2
-dirRas <- raster(extent(0,40,0,40), res = 1)
+dirRas <- terra::rast(terra::ext(0,40,0,40), res = 1)
 coords <- cbind(x = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
                 y = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
                 id = 1:N)

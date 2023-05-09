@@ -122,7 +122,7 @@ left to right)
 }
 \examples{
 library(raster)
-a <- raster(extent(0, 1000, 0, 1000), res = 1)
+a <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
 sam <- sample(1:length(a), 1e4)
 numCol <- ncol(a)
 numCell <- ncell(a)
