@@ -8,7 +8,7 @@ test_that("mapReduce: file does not work correctly 1", {
     detach("package:raster")
   }, add = TRUE)
 
-  ras <- terra::rast(terra::ext(0, 15, 0, 15), res = 1)
+  ras <- rast(ext(0, 15, 0, 15), res = 1)
   set.seed(123)
   fullRas <- randomPolygons(ras, numTypes = 2)
   names(fullRas) <- "mapcodeAll"
@@ -26,18 +26,6 @@ test_that("mapReduce: file does not work correctly 1", {
   expect_equal(sort(as.vector(unique(communities[]))), sort(reducedDT$communities))
 
   expect_true(sum(table(sort(fullRas[])) * reducedDT$communities) == sum(communities[]))
-
-  ## with SpatRaster
-  fullSpatRas <- rast(fullRas)
-  uniqueComms <- as.vector(unique(fullSpatRas[]))
-
-  biomass <- rasterizeReduced(reducedDT, fullSpatRas, "biomass")
-  expect_equal(sort(as.vector(unique(biomass[]))), sort(reducedDT$biomass))
-
-  communities <- rasterizeReduced(reducedDT, fullSpatRas, "communities")
-  expect_equal(sort(as.vector(unique(communities[]))), sort(reducedDT$communities))
-
-  expect_true(sum(table(sort(fullSpatRas[])) * reducedDT$communities) == sum(communities[]))
 })
 
 # test_that("mapReduce: file does not work correctly 2", {

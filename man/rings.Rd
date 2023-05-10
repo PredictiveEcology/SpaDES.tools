@@ -17,7 +17,7 @@ rings(
 )
 }
 \arguments{
-\item{landscape}{A \code{RasterLayer} object. This defines the possible
+\item{landscape}{A \code{RasterLayer} or \code{SpatRaster} object. This defines the possible
 locations for spreading events to start and spread into.
 This can also be used as part of \code{stopRule}.}
 
@@ -43,17 +43,17 @@ with one another, i.e., they do not interact (this is slower
 than if \code{allowOverlap = FALSE}).
 Default is \code{FALSE}.}
 
-\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
-return a \code{data.table} with indices and values of
-successful spread events.
+\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will return a \code{data.table}
+with indices and values of successful spread events.
 If \code{2}, it will simply return a vector of pixel indices of
-all cells that were touched. This will be the fastest option. If
-\code{FALSE}, then it will return a raster with
-values. See Details.}
+all cells that were touched. This will be the fastest option.
+If \code{FALSE}, then it will return a raster with values.
+See Details.}
 
 \item{returnDistances}{Logical. Should the function include a column with the
 individual cell distances from the locus where that event
-started. Default is \code{FALSE}. See Details.}
+started. Default is \code{FALSE}.
+See Details.}
 
 \item{...}{Any other argument passed to \code{spread}}
 }
@@ -65,9 +65,8 @@ This will return  a \code{data.table} with columns as described in
 Identifies the cell numbers of all cells within a ring defined by  minimum
 and maximum distances from focal cells.
 Uses \code{\link[=spread]{spread()}} under the hood, with specific values set.
-Under many situations, this will be faster than using \code{rgeos::gBuffer}
-twice (once for smaller ring and once for larger ring, then removing the
-smaller ring cells).
+Under many situations, this may be faster than using \code{sf::st_buffer} twice
+(once for smaller ring and once for larger ring, then removing the smaller ring cells).
 }
 \examples{
 library(terra)
@@ -103,7 +102,7 @@ between the two functions is that \code{rings} takes the centre of the pixel
 as the centre of a circle, whereas \code{cir} takes the exact coordinates.
 See example.
 
-\code{rgeos::gBuffer}
+\code{sf::st_buffer}
 }
 \author{
 Eliot McIntire

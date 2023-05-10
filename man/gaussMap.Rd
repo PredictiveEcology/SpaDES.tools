@@ -44,11 +44,10 @@ Default \code{FALSE}.}
 A raster map with same extent as \code{x}, with a Gaussian random pattern.
 }
 \description{
-This is a wrapper for the \code{RFsimulate} function in the \code{RandomFields}
-package. The main addition is the \code{speedup} argument which allows
-for faster map generation. A \code{speedup} of 1 is normal and will get
-progressively faster as the number increases, at the expense of coarser
-pixel resolution of the pattern generated.
+This is a wrapper for the \code{RFsimulate} function in the \code{RandomFields} package.
+The main addition is the \code{speedup} argument which allows for faster map generation.
+A \code{speedup} of 1 is normal and will get progressively faster as the number increases,
+at the expense of coarser pixel resolution of the pattern generated.
 }
 \examples{
 \dontrun{
@@ -67,5 +66,5 @@ if (require(RandomFields)) {
 
 }
 \seealso{
-\code{RFsimulate} and \code{\link[=extent]{extent()}}
+\code{RFsimulate} and \code{\link[raster:extent]{raster::extent()}}
 }

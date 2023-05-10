@@ -7,8 +7,7 @@
 testEquivalentMetadata(...)
 }
 \arguments{
-\item{...}{2 or more of the same type of object to test
-for equivalent metadata}
+\item{...}{2 or more of the same type of object to test for equivalent metadata.}
 }
 \description{
 Currently, only Raster class has a useful method. Defaults to

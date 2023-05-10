@@ -54,22 +54,19 @@ Produces a \code{SpatialPolygons} object with 1 feature that will have approxima
 equal to \code{area} (expecting area in hectares), #' and a centre at approximately \code{x}.
 }
 \examples{
-library(quickPlot)
-
 set.seed(1234)
 Ras <- randomPolygons(numTypes = 5)
-if (interactive()) {
+if (interactive() && require("quickPlot", quietly = TRUE)) {
   clearPlot()
   Plot(Ras, cols = c("yellow", "dark green", "blue", "dark red"))
 }
 
-library(raster)
 # more complex patterning, with a range of patch sizes
 a <- randomPolygons(numTypes = 400, terra::rast(terra::ext(0, 50, 0, 50), res = 1, vals = 0))
 a[a < 320] <- 0
 a[a >= 320] <- 1
-suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important
-if (interactive()) {
+clumped <- terra::patches(a)
+if (interactive() && require("quickPlot", quietly = TRUE)) {
   clearPlot()
   Plot(a)
 }

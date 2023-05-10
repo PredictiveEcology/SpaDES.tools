@@ -1,11 +1,14 @@
 test_that("spread2 tests", {
-  library(raster)
+  skip_if_not_installed("quickPlot")
+
   library(data.table)
   library(fpCompare)
+  library(reproducible)
   library(quickPlot)
-  on.exit(detach("package:raster"), add = TRUE)
-  on.exit(detach("package:data.table"), add = TRUE)
+
+  on.exit(detach("package:reproducible"), add = TRUE)
   on.exit(detach("package:fpCompare"), add = TRUE)
+  on.exit(detach("package:data.table"), add = TRUE)
 
   data.table::setDTthreads(1)
 
@@ -271,7 +274,8 @@ test_that("spread2 tests", {
   }
   if (interactive()) {
     names(rasts) <- paste0("ras", 1:20)
-    clearPlot();Plot(rasts)
+    clearPlot()
+    Plot(rasts)
   }
 
   if (interactive())
@@ -380,6 +384,7 @@ test_that("spread2 tests", {
 })
 
 test_that("spread2 tests -- asymmetry", {
+  skip_if_not_installed("quickPlot")
   skip_if_not_installed("RandomFields", "3.1.24")
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
@@ -623,6 +628,8 @@ test_that("spread2 returnFrom", {
 })
 
 test_that("spread2 tests", {
+  skip_if_not_installed("quickPlot")
+
   library(raster)
   library(data.table)
   library(fpCompare)
@@ -656,6 +663,8 @@ test_that("spread2 tests", {
 })
 
 test_that("spread2 works with terra", {
+  skip_if_not_installed("quickPlot")
+
   library(terra)
   library(data.table)
   library(fpCompare)
@@ -712,7 +721,7 @@ test_that("spread2 tests -- persistence", {
 
   ## first fire in high persistence area,
   ## second fire in low persistence area:
-  start <- c(50, length(landscape)-49)
+  start <- c(50, length(landscape) - 49)
 
   set.seed(5)
   wRasPersist <- spread2(landscape = landscape, start = start,
@@ -729,9 +738,9 @@ test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   landscape[] <- 1
   landscape[51:55] <- NA
   start <- 1:5
-  spreadProb = landscape
+  spreadProb <- landscape
   spreadProb[!is.na(landscape[])] <- runif(sum(!is.na(landscape[])))
-  expect_silent(spread2(landscape = landscape, spreadProb = spreadProb,start = start,
-          plot.it = FALSE))
-
+  expect_silent(
+    spread2(landscape = landscape, spreadProb = spreadProb, start = start, plot.it = FALSE)
+  )
 })

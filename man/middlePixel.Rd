@@ -7,12 +7,15 @@
 middlePixel(ras)
 }
 \arguments{
-\item{ras}{A \code{Raster}}
+\item{ras}{A \code{Raster} or \code{SpatRaster} object}
 }
-\description{
+\value{
 This calculation is slightly different depending on whether
 the \code{nrow(ras)} and \code{ncol(ras)} are even or odd.
 It will return the exact middle pixel if these are odd, and
 the pixel just left and/or above the middle pixel if either
 dimension is even, respectively.
+}
+\description{
+Return the (approximate) middle pixel on a raster
 }

@@ -335,10 +335,10 @@ utils::globalVariables(c(
 #' @importFrom checkmate qassert checkMultiClass
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
+#' @importFrom fastmatch fmatch
 #' @importFrom fpCompare %<=% %>>%
-#' @importFrom magrittr %>%
-#' @importFrom quickPlot Plot
 #' @importFrom raster fromDisk ncell raster res ncol pointDistance
+#' @importFrom reproducible .requireNamespace
 #' @importFrom stats runif
 #'
 #' @seealso [spread()] for a different implementation of the same algorithm.
@@ -370,7 +370,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     qassert(neighProbs, "n[0,1]")
     assertNumeric(sum(neighProbs), lower = 1, upper = 1)
 
-    if (!inherits(spreadProb, "SpatRaster")){
+    if (!inherits(spreadProb, "SpatRaster")) {
       assert(
         checkNumeric(spreadProb, 0, 1, min.len = ncell(landscape), max.len = ncell(landscape)),
         checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
@@ -607,7 +607,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                              includeBehavior = "excludePixels",
                              minRadius = resCur,
                              maxRadius = 20 * resCur)[, "indices"]) # 20 pixels
-        }) %>%
+        }) |>
           do.call(what = rbind)
 
         dtPotential <- matrix(as.integer(dtPotential), ncol = 2)
@@ -865,7 +865,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       NAaSP <- !is.na(actualSpreadProb)
       if (any(NAaSP)) {
         if (!all(NAaSP)) {
-        dtPotential <- dtPotential[NAaSP,]
+        dtPotential <- dtPotential[NAaSP, ]
         actualSpreadProb <- actualSpreadProb[NAaSP]
       }
       }
@@ -901,7 +901,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       set(dtPotential, NULL, "actualSpreadProb", actualSpreadProb)
       randoms <- runifC(length(unique(dtPotential$from)))
       dtPotential[, keep := {
-        cumProb = cumsum(actualSpreadProb)/sum(actualSpreadProb)
+        cumProb <- cumsum(actualSpreadProb) / sum(actualSpreadProb)
         draw <- randoms[.GRP]
         .I[min(which(draw <= cumProb))]},
         by = "from"]
@@ -917,13 +917,14 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 8 - Remove duplicates & bind dt and dtPotential
     if (anyNAneighProbs) {
       if (isTRUE(allowOverlap > 0) | is.na(allowOverlap) | !canUseAvailable) {
-        # overlapping allowed
+        ## overlapping allowed
         dtPotential <- dtPotential[spreadProbSuccess]
         dtNROW <- NROW(dt)
         dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
-        # this is to prevent overlap within an event... in some cases, overlap within event is desired, so skip this block
-        if (!is.na(allowOverlap) && (any(allowOverlap %in% c(1,3) ) || isTRUE(allowOverlap))) {
+        ## this is to prevent overlap within an event...
+        ## in some cases, overlap within event is desired, so skip this block
+        if (!is.na(allowOverlap) && (any(allowOverlap %in% c(1, 3) ) || isTRUE(allowOverlap))) {
           if (identical(allowOverlap, 1) || isTRUE(allowOverlap)) {
             dt[, `:=`(dups = duplicatedInt(pixels)), by = "initialPixels"]
           } else {
@@ -940,7 +941,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           dt <- dt[!dupes]
         }
 
-        # remove all the duplicated ones from dtPotential
+        ## remove all the duplicated ones from dtPotential
         dtPotential <- dt[-seq_len(dtNROW)]
       } else {
         # no overlapping allowed
@@ -1099,6 +1100,8 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # Step 11 - plot it if necessary
     if (plot.it) {
+      .requireNamespace("quickPlot", stopOnFALSE = TRUE)
+
       newPlot <- FALSE
       if (totalIterations == 1) {
         newPlot <- TRUE
@@ -1115,7 +1118,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         setkeyv(dt, "order")
         set(dt, NULL, "order", NULL)
       }
-      Plot(spread2Ras, new = newPlot)
+      quickPlot::Plot(spread2Ras, new = newPlot)
     }
   } # end of main loop
 

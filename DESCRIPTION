@@ -12,8 +12,8 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2023-04-10
-Version: 1.0.2.9001
+Date: 2023-05-10
+Version: 1.0.3
 Authors@R: c(
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7146-8135")),
@@ -30,18 +30,23 @@ Authors@R: c(
            role = "cph")
     )
 Depends:
-    R (>= 4.0)
+    R (>= 4.1)
 Imports:
     backports,
     checkmate (>= 1.8.2),
     CircStats (>= 0.2-4),
     data.table (>= 1.10.4),
+    fastmatch,
     fpCompare (>= 0.2.1),
-    magrittr,
+    graphics,
     methods,
     parallel,
+    raster (>= 2.5-8),
+    rlang,
     Rcpp (>= 0.12.12),
+    reproducible (>= 2.0.2),
     Require,
+    sp (>= 1.2-4),
     stats,
     terra
 Suggests:
@@ -59,11 +64,10 @@ Suggests:
     NLMR (>= 1.1.1),
     purrr,
     quickPlot,
-    raster (>= 2.5-8),
     RColorBrewer (>= 1.1-2),
     rmarkdown,
+    snow,
     sf,
-    sp (>= 1.2-4),
     testthat (>= 1.0.2)
 Remotes:
     ropensci/NLMR

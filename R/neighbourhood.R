@@ -1,6 +1,4 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
-}
+utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 
 ##############################################################
 #' Fast `adjacent` function, and Just In Time compiled version
@@ -100,9 +98,9 @@ if (getRversion() >= "3.1.0") {
 #' @rdname adj
 #'
 #' @examples
-#' library(raster)
-#' a <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
-#' sam <- sample(1:length(a), 1e4)
+#' library(terra)
+#' a <- rast(ext(0, 1000, 0, 1000), res = 1)
+#' sam <- sample(1:ncell(a), 1e4)
 #' numCol <- ncol(a)
 #' numCell <- ncell(a)
 #' adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8)
@@ -369,12 +367,11 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'
 #' Identify the pixels and coordinates that are at a (set of) buffer distance(s)
 #' of the objects passed into `coords`.
-#' This is similar to `rgeos::gBuffer` but much faster and without
-#' the geo referencing information.
+#' This is similar to `sf::st_buffer` but much faster and without the geo referencing information.
 #' In other words, it can be used for similar problems, but where speed is important.
 #' This code is substantially adapted from `PlotRegionHighlighter::createCircle`.
 #'
-#' @param landscape    Raster on which the circles are built.
+#' @param landscape Raster on which the circles are built.
 #'
 #' @param coords Either a matrix with 2 (or 3) columns, x and y (and id), representing the
 #'               coordinates (and an associated id, like cell index),
@@ -400,29 +397,28 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'                        than the cell indices. This will increase the size of the returned
 #'                        object.
 #'
-#' @param includeBehavior Character string. Currently accepts only "includePixels", the default,
-#'                        and "excludePixels". See details.
+#' @param includeBehavior Character string. Currently accepts only `"includePixels"`, the default,
+#'                        and `"excludePixels"`. See details.
 #'
-#' @param returnDistances Logical. If TRUE, then a column will be added to the returned
+#' @param returnDistances Logical. If `TRUE`, then a column will be added to the returned
 #'                        data.table that reports the distance from `coords` to every
 #'                        point that was in the circle/donut surrounding `coords`. Default
-#'                        FALSE, which is faster.
+#'                        `FALSE`, which is faster.
 #'
 #' @param angles Numeric. Optional vector of angles, in radians, to use. This will create
-#'               "spokes" outward from coords. Default is NA, meaning, use internally
+#'               "spokes" outward from coords. Default is `NA`, meaning, use internally
 #'               derived angles that will "fill" the circle.
 #'
-#' @param returnAngles Logical. If TRUE, then a column will be added to the returned
-#'                        data.table that reports the angle from `coords` to every
-#'                        point that was in the circle/donut surrounding `coords`. Default
-#'                        FALSE.
+#' @param returnAngles Logical. If `TRUE`, then a column will be added to the returned
+#'                     data.table that reports the angle from `coords` to every
+#'                     point that was in the circle/donut surrounding `coords`. Default `FALSE.`
 #'
 #' @param closest Logical. When determining non-overlapping circles, should the function
 #'                give preference to the closest `loci` or the first one (much faster).
-#'                Default is FALSE, meaning the faster, though maybe not desired behaviour.
+#'                Default is `FALSE`, meaning the faster, though maybe not desired behaviour.
 #'
-#' @param simplify logical. If TRUE, then all duplicate pixels are removed. This means
-#' that some x, y combinations will disappear.
+#' @param simplify logical. If `TRUE`, then all duplicate pixels are removed.
+#' This means that some x, y combinations will disappear.
 #'
 #' @inheritParams spread
 #'
@@ -448,14 +444,13 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' @rdname cir
 #'
 #' @seealso [rings()] which uses `spread` internally.
-#' `cir` tends to be faster when there are few starting points, `rings`
-#' tends to be faster when there are many starting points. `cir` scales with
-#' `maxRadius` ^ 2 and `coords`. Another difference
-#' between the two functions is that `rings` takes the centre of the pixel
+#' `cir` tends to be faster when there are few starting points, `rings` tends to be faster
+#' when there are many starting points. `cir` scales with `maxRadius^2` and `coords`.
+#' Another difference between the two functions is that `rings` takes the centre of the pixel
 #' as the centre of a circle, whereas `cir` takes the exact coordinates.
 #' See example. For the specific case of creating distance surfaces from specific
 #' points, see [distanceFromEachPoint()], which is often faster.
-#' For the more general GIS buffering, see `rgeos::gBuffer`.
+#' For the more general GIS buffering, see `sf::st_buffer`.
 #'
 #' @example inst/examples/example_cir.R
 #'
@@ -673,14 +668,14 @@ cir <- function(landscape, coords, loci,
                  x = matDT2[, "x"], y = matDT2[, "y"], to = matDT2[, "indices"])
 
     } else {
-      xyC <- xyFromCell(landscape, matDT2[, "indices"]);
+      xyC <- xyFromCell(landscape, matDT2[, "indices"])
       a <- cbind(id = matDT2[, "id"], rads = matDT2[, "rads"], angles = matDT2[, "angles"],
                  x = xyC[, "x"], y = xyC[, "y"], to = matDT2[, "indices"])
     }
     if (!equalRadii)
       a <- cbind(a, maxRad = matDT2[, "maxRad"], minRad = matDT2[, "minRad"])
 
-    b <- cbind(coords, id = 1:NROW(coords))
+    b <- cbind(coords, id = seq_len(NROW(coords)))
 
     colnames(b)[1:2] <- c("x", "y")
     d <- distanceFromEachPoint(b, a)
@@ -762,14 +757,13 @@ cir <- function(landscape, coords, loci,
 #'
 #' Generally useful for model development purposes.
 #'
-#' If `withHeading` used, then `X` must be a `SpatialPointsDataFrame`
+#' If `withHeading` used, then `X` must be an `sf` or `SpatVector` object
 #' that contains two columns, `x1` and `y1`, with the immediately
 #' previous agent locations.
 #'
-#' @param X A `SpatialPoints*` object, or matrix of coordinates.
+#' @param X `SpatVector`, `sf`, or matrix of coordinates.
 #'
-#' @param bounds Either a `Raster*`, `Extent`, or `bbox` object
-#'               defining bounds to wrap around.
+#' @param bounds Either a `SpatRaster*`, `Extent`, or `bbox` object defining bounds to wrap around.
 #'
 #' @param withHeading logical. If `TRUE`, the previous points must be wrapped
 #'                    also so that the subsequent heading calculation will work.
@@ -780,11 +774,11 @@ cir <- function(landscape, coords, loci,
 #'
 #' @author Eliot McIntire
 #' @export
+#' @importFrom reproducible .requireNamespace
 #' @rdname wrap
 #'
 #' @examples
-#' if (requireNamespace("sf") && requireNamespace("terra")) {
-#'
+#' if (require("sf")) {
 #' xrange <- yrange <- c(-50, 50)
 #' hab <- terra::rast(terra::ext(c(xrange, yrange)))
 #' hab[] <- 0
@@ -793,17 +787,13 @@ cir <- function(landscape, coords, loci,
 #' N <- 10
 #'
 #' # previous points
-#' x1 <- rep(0, N)
-#' y1 <- rep(0, N)
+#' x1 <- y1 <- rep(0, N)
 #' # initial points
 #' starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
 #'                 y = stats::runif(N, yrange[1], yrange[2]))
 #'
 #' # create the agent object # the x1 and y1 are needed for "previous location"
-#' agent <- sf::st_as_sf(data.frame(x1, y1, starts),
-#'                      coords = c("x", "y"))
-#' agent <- terra::vect(data.frame(x1, y1, starts),
-#'                      geom = c("x", "y"))
+#' agent <- terra::vect(data.frame(x1, y1, starts), geom = c("x", "y"))
 #'
 #' ln <- rlnorm(N, 1, 0.02) # log normal step length
 #' sd <- 30 # could be specified globally in params
@@ -818,7 +808,15 @@ cir <- function(landscape, coords, loci,
 #' if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 #' }
 #' }
-wrap <- function(X, bounds, withHeading) {
+wrap <- function(X, bounds, withHeading = FALSE) {
+  classX <- is(X)
+
+  if (is(X, "matrix")) {
+    X <- terra::vect(data.frame(x1 = X[, 1], y1 = X[, 2], X), geom = c("x", "y"))
+  } else if (is(X, "sf")) {
+    X <- terra::vect(X)
+  }
+
   crdsStart <- coords(X)
   ext <- extnt(bounds)
   if (isTRUE(withHeading)) {
@@ -854,17 +852,28 @@ wrap <- function(X, bounds, withHeading) {
   if (identical(tolower(colnames(crdsStart)), c("x", "y"))) {
     # terra::vect uses capitals X Y
     crds <- cbind(
-      x = (crdsStart[, 1] - terra::xmin(bounds)) %% (terra::xmax(bounds) - terra::xmin(bounds)) + terra::xmin(bounds),
-      y = (crdsStart[, 2] - terra::ymin(bounds)) %% (terra::ymax(bounds) - terra::ymin(bounds)) + terra::ymin(bounds)
+      x = (crdsStart[, 1] - terra::xmin(bounds)) %% (terra::xmax(bounds) - terra::xmin(bounds)) +
+        terra::xmin(bounds),
+      y = (crdsStart[, 2] - terra::ymin(bounds)) %% (terra::ymax(bounds) - terra::ymin(bounds)) +
+        terra::ymin(bounds)
     )
   } else {
     stop("When X is a matrix, it must have 2 columns, x and y,",
          "as from say, coordinates(SpatialPointsObj)")
   }
-  if (!(isTRUE(identical(crdsStart[, 1], crds[, 1])) && isTRUE(identical(crdsStart[, 2], crds[, 2])))) {
+  if (!(isTRUE(identical(crdsStart[, 1], crds[, 1])) &&
+        isTRUE(identical(crdsStart[, 2], crds[, 2])))) {
     coords(X) <- crds
   }
-  X
+
+  if ("matrix" %in% classX) {
+    return(coords(X))
+  } else if ("sf" %in% classX) {
+    .requireNamespace("sf", stopOnFALSE = TRUE)
+    return(sf::st_as_sf(X))
+  } else if ("SpatVector" %in% classX) {
+    return(X)
+  }
 }
 
 # setMethod(

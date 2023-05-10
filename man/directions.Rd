@@ -20,14 +20,13 @@ optional \code{id} which will be matched with \code{id} from \code{from}.
 It makes no sense to have \code{id} column here with no \code{id} column
 in \code{from}.}
 
-\item{landscape}{(optional) \code{RasterLayer}. This is only used if \code{to = NULL},
-in which case all cells are considered \code{to}.}
+\item{landscape}{(optional) \code{RasterLayer} or \code{SpatRaster}.
+This is only used if \code{to = NULL}, in which case all cells are considered \code{to}.}
 }
 \value{
 A sorted matrix on \code{id} with same number of rows as \code{to},
-but with one extra column, \code{angles} indicating the angle in radians
-between from and to. For speed, this angle will be between \code{-pi/2}
-and \code{3*pi/2}.
+but with one extra column, \code{angles} indicating the angle in radians between from and to.
+For speed, this angle will be between \code{-pi/2} and \code{3*pi/2}.
 If the user wants this between say, \code{0} and \code{2*pi},
 then \verb{angles \\\%\\\% (2*pi)} will do the trick. See example.
 }
@@ -57,7 +56,6 @@ put a column "id" (e.g., starting cell) in the \code{from} matrix.
 }
 \examples{
 library(raster)
-library(quickPlot)
 
 N <- 2
 dirRas <- terra::rast(terra::ext(0,40,0,40), res = 1)
@@ -71,17 +69,17 @@ dirs1[, "angles"] <- deg(dirs1[,"angles"] \%\% (2*pi))
 indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
 minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
 dirRas[] <- as.vector(minDir)
-if (interactive()) {
+if (interactive() && require("quickPlot", quietly = TRUE)) {
   clearPlot()
   Plot(dirRas)
   library(sp)
   start <- SpatialPoints(coords[, c("x", "y"), drop = FALSE])
   Plot(start, addTo = "dirRas")
 }
+
 }
 \seealso{
-\code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}}, which will also return directions
-if \code{angles = TRUE}.
+\code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}}, which will also return directions if \code{angles = TRUE}.
 }
 \author{
 Eliot McIntire

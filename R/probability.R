@@ -1,6 +1,6 @@
 #' Vectorized wrapped normal density function
 #'
-#'  This is a modified version of [dwrpnorm][CircStats::dwrpnorm].
+#'  This is a modified version of [CircStats::dwrpnorm()].
 #'  to allow for multiple angles at once (i.e., vectorized on `theta` and `mu`).
 #'
 #' @inheritParams CircStats::dwrpnorm
@@ -31,9 +31,9 @@ dwrpnorm2 <- function(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc) {
   if (length(theta) != len)
     theta <- rep(theta, len)
 
-
   if (rho < 0 | rho > 1)
     stop("rho must be between 0 and 1")
+
   var <- -2 * log(rho)
   k <- 0
   Next <- .term(theta, mu, var, k)

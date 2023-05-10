@@ -78,12 +78,13 @@ numAgents <- function(N, probInit) {
 #'
 #' @param indices numeric. Indices of where agents should start
 #'
-#' @return A SpatialPointsDataFrame, with each row representing an individual agent
+#' @return A `SpatialPointsDataFrame`, with each row representing an individual agent
 #'
 #' @author Eliot McIntire
 #' @export
 #' @include heading.R
 #' @importFrom raster getValues ncell raster xyFromCell
+#' @importFrom reproducible .requireNamespace
 #' @importFrom stats runif
 #' @rdname initiateAgents
 #'

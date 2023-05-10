@@ -78,14 +78,14 @@ They are "rounded" to pixel centres.
 }
 \examples{
 ## these tests are fairly heavy, so don't run during automated tests
-if (interactive()) {
+if (interactive() && require("quickPlot", quietly = TRUE)) {
   #########################################################
   # Simple case, no variation in rasQuality, numeric advectionDir and advectionMag
   #########################################################
   library(raster)
   library(quickPlot)
   maxDim <- 10000
-  ras <- raster::terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
+  ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
   rasQuality <- raster(ras)
   rasQuality[] <- 1
   rasAbundance <- raster(rasQuality)
@@ -110,7 +110,7 @@ if (interactive()) {
           title = newTitle) # can plot the distance X number
      abline(v = meanAdvectionMag + meanDist)
      # should be 0.63:
-     freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs,1)[, cumSum]
+     freqs[disGroup == meanAdvectionMag + meanDist, cumSum] / tail(freqs, 1)[, cumSum]
      mtext(side = 3, paste("Average habitat quality: ",
            round(mean(rasQuality[], na.rm = TRUE), 2)),
            outer = TRUE, line = -2, cex = 2)
@@ -136,7 +136,7 @@ if (interactive()) {
     crs(rasQuality) <- readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools"))
     rasQuality[is.na(mask)] <- NA
     # rescale so min is 0.75 and max is 1
-    rasQuality[] <- rasQuality[] / (maxFn(rasQuality) * 4 ) + 1/4
+    rasQuality[] <- rasQuality[] / (maxFn(rasQuality) * 4) + 1 / 4
     rasAbundance <- raster(rasQuality)
     rasAbundance[] <- 0
     startPixel <- sample(seq(ncell(rasAbundance)), 300)
@@ -159,6 +159,7 @@ if (interactive()) {
   ###############################################################################
   ### The case of variable quality raster, raster for advectionDir & advectionMag
   ###############################################################################
+
   library(raster)
   library(quickPlot)
   library(SpaDES.tools)
@@ -191,7 +192,7 @@ if (interactive()) {
                  meanDist = meanDist, verbose = 2,
                  plot.it = 1)
 
-  if (interactive()) {
+  if (interactive() && require("quickPlot", quietly = TRUE)) {
     dev() # don't use Rstudio windows, which is very slow
     clearPlot()
     Plot(advectionDir, title = "Wind direction", cols = "Reds")

@@ -1,17 +1,16 @@
 test_that("mergeRaster will return a message if tiles are resampled", {
   library(raster)
-  library(magrittr)
-  nx = 3
-  ny = 3
+
+  nx <- ny <- 3
   ras <- raster::raster(xmn = -30^2, xmx = 30^2,
                         ymn = -60^2, ymx = 60^2,
                         resolution = c(30, 30),
                         crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
-                        vals = round(runif(n = 14400 , min = 1, max = 10)))
-  splitted <- SpaDES.tools::splitRaster(r = ras, nx = nx, ny = ny, buffer = c(100, 100))
+                        vals = round(runif(n = 14400, min = 1, max = 10)))
+  splitted <- splitRaster(r = ras, nx = nx, ny = ny, buffer = c(3, 3))
   expect_is(splitted, "list")
-  expect_length(splitted, nx*ny)
-  splitted <- lapply(X = 1:length(splitted), FUN = function(tiles) {
+  expect_length(splitted, nx * ny)
+  splitted <- lapply(X = seq_along(splitted), FUN = function(tiles) {
     y <- raster::raster(xmn = raster::xmin(splitted[[tiles]]),
                         xmx = raster::xmax(splitted[[tiles]]),
                         ymn = raster::ymin(splitted[[tiles]]),
@@ -31,17 +30,15 @@ test_that("mergeRaster will return a message if tiles are resampled", {
 
 test_that("mergeRaster will produce a raster layer", {
   library(raster)
-  library(magrittr)
-  nx = 3
-  ny = 3
+  nx <- ny <- 3
   ras <- raster::raster(xmn = -30^2, xmx = 30^2,
                         ymn = -60^2, ymx = 60^2,
                         resolution = c(30, 30),
                         crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
-                        vals = round(runif(n = 14400 , min = 1, max = 10)))
-  splitted <- SpaDES.tools::splitRaster(r = ras, nx = nx, ny = ny, buffer = c(100, 100))
+                        vals = round(runif(n = 14400, min = 1, max = 10)))
+  splitted <- splitRaster(r = ras, nx = nx, ny = ny, buffer = c(5, 5))
   expect_is(splitted, "list")
-  expect_length(splitted, nx*ny)
+  expect_length(splitted, nx * ny)
   merged <- mergeRaster(x = splitted)
   expect_is(merged, "RasterLayer")
 })
@@ -51,7 +48,7 @@ test_that("mergeRaster will produce error if only one raster passed", {
                         ymn = -60^2, ymx = 60^2,
                         resolution = c(30, 30),
                         crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
-                        vals = round(runif(n = 14400 , min = 1, max = 10)))
+                        vals = round(runif(n = 14400, min = 1, max = 10)))
   expect_error({
     merged <- mergeRaster(x = ras)
   })
@@ -59,18 +56,17 @@ test_that("mergeRaster will produce error if only one raster passed", {
 
 test_that("mergeRaster will use mosaic with default mean if rasters are resampled and fun if passed", {
   library(raster)
-  library(magrittr)
-  nx = 3
-  ny = 3
+
+  nx <- ny <- 3
   ras <- raster::raster(xmn = -30^2, xmx = 30^2,
                         ymn = -60^2, ymx = 60^2,
                         resolution = c(30, 30),
                         crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
-                        vals = round(runif(n = 14400 , min = 1, max = 10)))
-  splitted <- SpaDES.tools::splitRaster(r = ras, nx = nx, ny = ny, buffer = c(100, 100))
+                        vals = round(runif(n = 14400, min = 1, max = 10)))
+  splitted <- splitRaster(r = ras, nx = nx, ny = ny, buffer = c(100, 100))
   expect_is(splitted, "list")
-  expect_length(splitted, nx*ny)
-  splitted <- lapply(X = 1:length(splitted), FUN = function(tiles){
+  expect_length(splitted, nx * ny)
+  splitted <- lapply(X = seq_along(splitted), FUN = function(tiles) {
     y <- raster::raster(xmn = raster::xmin(splitted[[tiles]]),
                         xmx = raster::xmax(splitted[[tiles]]),
                         ymn = raster::ymin(splitted[[tiles]]),

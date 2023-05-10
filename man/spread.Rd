@@ -36,7 +36,7 @@ spread(
 )
 }
 \arguments{
-\item{landscape}{A \code{RasterLayer} object. This defines the possible
+\item{landscape}{A \code{RasterLayer} or \code{SpatRaster} object. This defines the possible
 locations for spreading events to start and spread into.
 This can also be used as part of \code{stopRule}.}
 
@@ -45,10 +45,10 @@ These should be cell indices.
 If user has x and y coordinates, these can be converted
 with \code{\link[raster:cellFrom]{cellFromXY()}}.}
 
-\item{spreadProb}{Numeric, or \code{RasterLayer}.
+\item{spreadProb}{Numeric, \code{RasterLayer}, or \code{SpatRaster}.
 If numeric of length 1, then this is the global probability
 of spreading into each cell from a neighbour.
-If a raster (or a vector of length \code{ncell(landscape)},
+If a raster (or a vector of length \code{terra::ncell(landscape)},
 resolution and extent of \code{landscape}), then this will
 be the cell-specific probability. Default is \code{0.23}.
 If a \code{spreadProbLater} is provided, then this is
@@ -58,16 +58,14 @@ probability". See section on "Breaking out of spread events".}
 \item{persistence}{A length 1 probability that an active cell will continue
 to burn, per time step.}
 
-\item{mask}{non-\code{NULL}, a \code{RasterLayer} object congruent with
-\code{landscape} whose elements are \verb{0,1}, where
-\code{1} indicates "cannot spread to".
+\item{mask}{\code{RasterLayer} or \code{SpatRaster} object congruent with \code{landscape},
+whose elements are \verb{0,1}, where \code{1} indicates "cannot spread to".
 Currently not implemented, but identical behaviour can be
 achieved if \code{spreadProb} has zeros in all unspreadable
 locations.}
 
-\item{maxSize}{Numeric. Maximum number of cells for a single or
-all events to be spread. Recycled to match \code{loci} length,
-if it is not as long as \code{loci}.
+\item{maxSize}{Numeric. Maximum number of cells for a single or all events to be spread.
+Recycled to match \code{loci} length, if it is not as long as \code{loci}.
 See section on \verb{Breaking out of spread events}.}
 
 \item{directions}{The number of adjacent cells in which to look;
@@ -79,17 +77,17 @@ until stops spreading itself (i.e., exhausts itself).}
 
 \item{lowMemory}{Deprecated.}
 
-\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
-return a \code{data.table} with indices and values of
-successful spread events.
+\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will return a \code{data.table}
+with indices and values of successful spread events.
 If \code{2}, it will simply return a vector of pixel indices of
-all cells that were touched. This will be the fastest option. If
-\code{FALSE}, then it will return a raster with
-values. See Details.}
+all cells that were touched. This will be the fastest option.
+If \code{FALSE}, then it will return a raster with values.
+See Details.}
 
 \item{returnDistances}{Logical. Should the function include a column with the
 individual cell distances from the locus where that event
-started. Default is \code{FALSE}. See Details.}
+started. Default is \code{FALSE}.
+See Details.}
 
 \item{mapID}{Deprecated. Use \code{id}.}
 
@@ -114,8 +112,7 @@ See Details.}
 \item{circle}{Logical. If \code{TRUE}, then outward spread will be by
 equidistant rings, rather than solely by adjacent cells
 (via \code{directions} arg.). Default is \code{FALSE}.
-Using \code{circle = TRUE} can be dramatically slower for
-large problems.
+Using \code{circle = TRUE} can be dramatically slower for large problems.
 Note, this should usually be used with \code{spreadProb = 1}.}
 
 \item{circleMaxRadius}{Numeric. A further way to stop the outward spread of events.
@@ -153,8 +150,7 @@ See details. This is still experimental.
 \strong{Use with caution.}}
 
 \item{asymmetryAngle}{A numeric indicating the angle in degrees (0 is "up",
-as in North on a map), that describes which way the
-\code{asymmetry} is.}
+as in North on a map), that describes which way the \code{asymmetry} is.}
 
 \item{quick}{Logical. If \code{TRUE}, then several potentially time consuming
 checking (such as \code{inRange}) will be skipped.
@@ -230,8 +226,7 @@ This can be used to examine things like fire size distributions.
 \strong{NOTE:} See also \code{\link[=spread2]{spread2()}}, which is more robust and can be
 used to build custom functions.
 However, under some conditions, this \code{spread} function is faster.
-The two functions can accomplish many of the same things, and key differences
-are internal.
+The two functions can accomplish many of the same things, and key differences are internal.
 }
 \details{
 For large rasters, a combination of \code{lowMemory = TRUE} and
@@ -312,10 +307,9 @@ To confirm the cause of stopping, the user can assess the values
 after the function has finished.\cr
 }
 
-The spread function does not return the result of this stopRule. If,
-say, an event has both \code{circleMaxRadius} and \code{stopRule},
-and it is
-the \code{circleMaxRadius} that caused the event spreading to stop,
+The spread function does not return the result of this \code{stopRule}.
+If, say, an event has both \code{circleMaxRadius} and \code{stopRule},
+and it is the \code{circleMaxRadius} that caused the event spreading to stop,
 there will be no indicator returned from this function that indicates
 which rule caused the stop.
 
@@ -427,7 +421,7 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   stopRuleA <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)), 1, 0, NULL,
                       maxSize = 1e6, 8, 1e6, id = TRUE, circle = TRUE, stopRule = stopRule1,
                       stopRuleBehavior = "excludePixel")
-  tapply( hab[], stopRuleA[], sum) # all below 50
+  tapply(hab[], stopRuleA[], sum) # all below 50
 
   set.seed(1234)
   stopRule2 <- function(landscape) sum(landscape) > 100
@@ -435,7 +429,7 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   stopRuleB <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)), 1, 0, NULL,
                       maxSize = 1e6, 8, 1e6, id = TRUE, circle = TRUE, stopRule = stopRule2,
                       stopRuleBehavior = "excludePixel")
-  tapply( hab[], stopRuleB[], sum) # all below 100
+  tapply(hab[], stopRuleB[], sum) # all below 100
 
   clearPlot()
   Plot(stopRuleA, stopRuleB, zero.color = "transparent")
@@ -472,8 +466,8 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
                       loci = (ncell(hab) - ncol(hab)) / 2 + c(4, -4),
                       directions = 8, id = TRUE)#, stopRule = stopRule2)
 
-  clearPlot()
-  Plot(circlish, regularCA)
+  quickPlot::clearPlot()
+  quickPlot::Plot(circlish, regularCA)
 
   ####################
   # complex stopRule
@@ -499,10 +493,15 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
 
   all.equal(twoCirclesDiffSize, twoCirclesDiffSize2) ## TRUE
 
-  Plot(twoCirclesDiffSize, twoCirclesDiffSize2)
+  if (requireNamespace("raster") && requireNamespace("quickPlot")) {
+    Plot2(twoCirclesDiffSize, twoCirclesDiffSize2)
+  } else {
+    terra::plot(twoCirclesDiffSize)
+    terra::plot(twoCirclesDiffSize2)
+  }
 
   cirs <- values(twoCirclesDiffSize)
-  vals <- tapply(hab[cirs>0], cirs[cirs > 0], sum) # one is <200, other is <400 as per endSizes
+  vals <- tapply(hab[cirs > 0], cirs[cirs > 0], sum) # one is <200, other is <400 as per endSizes
 
   # Stop if sum of landscape is big or mean of quality is too small
   quality <- rast(hab)
@@ -526,10 +525,10 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   fires <- spread(hab, loci = startCells, 1, persistence = 0,
                   neighProbs = c(0.5, 0.5, 0.5) / 1.5,
                   mask = NULL, maxSize = maxSizes, directions = 8,
-                  iterations = 1e6, id = TRUE, plot.it = FALSE, exactSizes = TRUE);
+                  iterations = 1e6, id = TRUE, plot.it = FALSE, exactSizes = TRUE)
   all(table(fires[fires > 0][]) == floor(maxSizes))
 
-  dev()
+  quickPlot::dev()
   terra::plot(fires)
   hist(fires[][fires[] > 0], main = "fire size distribution")
 
@@ -556,16 +555,11 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   events2 <- spread(hab3, id = TRUE, loci = sam, directions = 8,
                     neighProbs = c(0, 1), maxSize = c(70), exactSizes = TRUE)
 
-  terra::plot(events1, new = TRUE, cols = c("red", "yellow"), zero.color = "white")
-  terra::plot(events2, new = TRUE, cols = c("red", "yellow"), zero.color = "white")
-  terra::plot(hist(table(events1[][events1[] > 0]), breaks = 30), title = "Event size distribution")
-  # Check that events1 resulted in higher hab3 pixels overall
-
+  Plot(events1)
+  Plot(events2, new = TRUE, cols = c("blue", "red", "yellow"), zero.color = "white")
+  Plot(hist(table(events1[][events1[] > 0]), breaks = 30), title = "Event size distribution")
   # Compare outputs -- should be more high value hab pixels spread to in event1
   #  (randomness may prevent this in all cases)
-  hab3[events1[] > 0]
-  hab3[events2[] > 0]
-
   sum(hab3[events1[] > 0]) >= sum(hab3[events2[] > 0]) ## should be usually TRUE
 }
 }

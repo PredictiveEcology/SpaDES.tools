@@ -1,31 +1,32 @@
 test_that("spread produces legal RasterLayer", {
-  skip_if_not_installed("dqrnq")
+  skip_if_not_installed("dqrng")
 
   set.seed(123)
   dqrng::dqset.seed(123)
 
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
+  library(raster)
+  on.exit(detach("package:raster"), add = TRUE)
 
   # inputs for x
   a <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
   b <- terra::rast(terra::ext(a), res = 1, vals = stats::runif(ncell(a), 0, 1))
 
   # check it makes a RasterLayer
-  expect_that(spread(a, loci = ncell(a) / 2, stats::runif(1, 0.15, 0.25)), is_a("RasterLayer"))
+  expect_s4_class(spread(a, loci = ncell(a) / 2, stats::runif(1, 0.15, 0.25)), "SpatRaster")
 
   #check wide range of spreadProbs
   for (i in 1:20) {
-    expect_that(spread(a, loci = ncell(a) / 2, stats::runif(1, 0, 1)), is_a("RasterLayer"))
+    expect_s4_class(spread(a, loci = ncell(a) / 2, stats::runif(1, 0, 1)), "SpatRaster")
   }
 
   # Test for NAs in a numeric vector of spreadProb values
   numNAs <- 50
   sps <- sample(c(rep(NA_real_, numNAs), runif(ncell(a) - numNAs, 0, 0.5)))
-  expect_that(out <- spread(a, loci = ncell(a) / 2, spreadProb = sps), is_a("RasterLayer"))
+  expect_s4_class(out <- spread(a, loci = ncell(a) / 2, spreadProb = sps), "SpatRaster")
 
   # check spreadProbs outside of legal returns an "spreadProb is not a probability"
-  expect_that(spread(a, loci = ncell(a) / 2, 1.1), throws_error("spreadProb is not a probability"))
-  expect_that(spread(a, loci = ncell(a) / 2, -0.1), throws_error("spreadProb is not a probability"))
+  expect_error(spread(a, loci = ncell(a) / 2, 1.1), "spreadProb is not a probability")
+  expect_error(spread(a, loci = ncell(a) / 2, -0.1), "spreadProb is not a probability")
 
   # checks if maxSize is working properly
   # One process spreading
@@ -52,8 +53,8 @@ test_that("spread produces legal RasterLayer", {
     returnIndices = TRUE,
     maxSize = maxSize1)
 
-  expect_true(length(unique(spreadState[["indices"]])) == maxSize1)
-  expect_true(length(spreadState[["indices"]]) == maxSize1)
+  expect_equal(length(unique(spreadState[["indices"]])), maxSize1)
+  expect_equal(length(spreadState[["indices"]]), maxSize1)
 
   # Test that spreadState with a data.table works
   fires <- list()
@@ -63,8 +64,8 @@ test_that("spread produces legal RasterLayer", {
   stopped <- list()
   stopped[[1]] <- fires[[1]][, sum(active), by = id][V1 == 0, id]
   for (i in 2:4) {
-    j <- sample(1:1000, 1);
-    set.seed(j);
+    j <- sample(1:1000, 1)
+    set.seed(j)
     dqrng::dqset.seed(j)
     fires[[i]] <- spread(a, loci = as.integer(sample(1:ncell(a), 10)), returnIndices = TRUE,
                          spreadProb = 0.235, 0, NULL, 1e8, 8, iterations = 2, id = TRUE,
@@ -92,15 +93,15 @@ test_that("spread produces legal RasterLayer", {
 })
 
 test_that("allowOverlap -- produces exact result", {
-  skip_if_not_installed("dqrnq")
+  skip_if_not_installed("dqrng")
 
-  testInitOut <- testInit(needGoogle = FALSE, c("sp", "raster"))
+  testInitOut <- testInit(needGoogle = FALSE, c("terra"))
   on.exit({
     testOnExit(testInitOut)
   }, add = TRUE)
 
   N <- 10
-  a <- raster::terra::rast(terra::ext(0, N, 0, N), res = 1)
+  a <- terra::rast(terra::ext(0, N, 0, N), res = 1)
   ao <- c(FALSE, TRUE)
   mp <- middlePixel(a)
   mps <- mp + (-3:3)
@@ -121,7 +122,7 @@ test_that("allowOverlap -- produces exact result", {
     }
   }
   bs <- lapply(b, function(x) rbindlist(x, idcol = "rep"))
-  expect_true(all.equal(bs[[1]], bs[[2]]))
+  expect_true(all.equal(bs[[1]], bs[[2]])) ## TODO: failing
   # aBigger <- sum(unlist(lapply(purrr::transpose(b), function(x) NROW(x[[1]]) < NROW(x[[2]]))))
   # bBigger <- sum(unlist(lapply(purrr::transpose(b), function(x) NROW(x[[1]]) > NROW(x[[2]]))))
   # (comp <- aBigger - bBigger)
@@ -149,18 +150,17 @@ test_that("allowOverlap -- produces exact result", {
   for (i in seq_along(bs)) {
     ras[[i]] <- raster(a)
     ras[[i]][] <- 0
-    v <- bs[[i]][, .N, by = 'indices']
+    v <- bs[[i]][, .N, by = "indices"]
     ras[[i]][v$indices] <- v$N
   }
   s <- raster::stack(ras)
   s <- crop(s, extent(s[[1]], 2, 9, 2, 9))
   o <- raster::calc(s, function(x) x[2] >= x[1])
-  expect_true(sum(o[] == 1) > (ncell(s) - 10))
-
+  expect_true(sum(o[] == 1) > (ncell(s) - 10)) ## TODO: failing
 })
 
 test_that("spread stopRule does not work correctly", {
-  skip_if_not_installed("RandomFields", "3.1.24")
+  skip_if_not_installed("quickPlot")
 
   library(raster)
   library(quickPlot)
@@ -187,7 +187,7 @@ test_that("spread stopRule does not work correctly", {
                       mask = NULL, maxSize = 1e6, directions = 8,
                       iterations = 1e6, id = TRUE,
                       circle = TRUE, stopRule = stopRule1)
-  foo <- cbind(vals = hab[stopRuleA], id = stopRuleA[stopRuleA > 0]);
+  foo <- cbind(vals = hab[stopRuleA], id = stopRuleA[stopRuleA > 0])
   expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) > maxVal))
 
   # using stopRuleBehavior = "excludePixel"
@@ -196,14 +196,14 @@ test_that("spread stopRule does not work correctly", {
   stopRuleB <- spread(hab, loci = startCells, 1, 0, NULL, maxSize = 1e6, 8, 1e6,
                       id = TRUE, circle = TRUE, stopRule = stopRule1,
                       stopRuleBehavior = "excludePixel")
-  foo <- cbind(vals = hab[stopRuleB], id = stopRuleB[stopRuleB > 0]);
+  foo <- cbind(vals = hab[stopRuleB], id = stopRuleB[stopRuleB > 0])
   expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) <= maxVal))
 
   # If boolean, then it is exact
   stopRuleB <- spread(hab2, loci = startCells, 1, 0, NULL, maxSize = 1e6, 8, 1e6,
                       id = TRUE, circle = TRUE, stopRule = stopRule1,
                       stopRuleBehavior = "excludePixel")
-  foo <- cbind(vals = hab2[stopRuleB], id = stopRuleB[stopRuleB > 0]);
+  foo <- cbind(vals = hab2[stopRuleB], id = stopRuleB[stopRuleB > 0])
   expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == maxVal))
 
   # Test vector maxSize and stopRule when they interfere
@@ -212,7 +212,7 @@ test_that("spread stopRule does not work correctly", {
                       8, 1e6, id = TRUE, circle = TRUE, stopRule = stopRule1,
                       stopRuleBehavior = "excludePixel")
   if (interactive()) Plot(stopRuleB, new = TRUE)
-  foo <- cbind(vals = hab2[stopRuleB], id = stopRuleB[stopRuleB > 0]);
+  foo <- cbind(vals = hab2[stopRuleB], id = stopRuleB[stopRuleB > 0])
   expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == pmin(maxSizes, maxVal)))
 
   # Test non integer maxSize and stopRule when they interfere
@@ -221,7 +221,7 @@ test_that("spread stopRule does not work correctly", {
                       1e6, id = TRUE, circle = TRUE, stopRule = stopRule1,
                       stopRuleBehavior = "excludePixel")
   if (interactive()) Plot(stopRuleB, new = TRUE)
-  foo <- cbind(vals = hab2[stopRuleB], id = stopRuleB[stopRuleB > 0]);
+  foo <- cbind(vals = hab2[stopRuleB], id = stopRuleB[stopRuleB > 0])
   expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == pmin(floor(maxSizes), maxVal)))
 
   ####################################
@@ -433,7 +433,7 @@ test_that("spread stopRule does not work correctly", {
 })
 
 test_that("asymmetry doesn't work properly", {
-  skip_if_not_installed("RandomFields", "3.1.24")
+  skip_if_not_installed("quickPlot")
 
   library(CircStats)
   library(raster)
@@ -503,11 +503,11 @@ test_that("asymmetry doesn't work properly", {
 
   whBig <- which(lenAngles > 50)
   pred <- (1:n)[whBig] * 20
-  expect_true(abs(coef(lm(avgAngles[whBig]~pred))[[2]] - 1) < 0.1)
+  expect_true(abs(coef(lm(avgAngles[whBig] ~ pred))[[2]] - 1) < 0.1)
 })
 
 test_that("rings and cir", {
-  skip_if_not_installed("RandomFields", "3.1.24")
+  skip_if_not_installed("quickPlot")
 
   library(sp)
   library(raster)
@@ -634,7 +634,7 @@ test_that("rings and cir", {
 })
 
 test_that("distanceFromPoints does not work correctly", {
-  skip_if_not_installed("RandomFields", "3.1.24")
+  skip_if_not_installed("quickPlot")
 
   library(raster)
   library(quickPlot)
@@ -757,14 +757,18 @@ test_that("simple cir does not work correctly", {
 })
 
 test_that("wrap does not work correctly", {
+  library(sp)
   library(raster)
+  library(terra)
 
   on.exit({
+    detach("package:terra")
     detach("package:raster")
+    detach("package:sp")
   }, add = TRUE)
 
   xrange <- yrange <- c(-50, 50)
-  hab <- terra::rast(terra::ext(c(xrange, yrange)))
+  hab <- rast(ext(c(xrange, yrange)))
   hab[] <- 0
 
   # initialize caribou agents
@@ -777,60 +781,64 @@ test_that("wrap does not work correctly", {
   starts <- cbind(x = stats::runif(n, xrange[1] - 10, xrange[1]),
                   y = stats::runif(n, yrange[1] - 10, yrange[1]))
 
-  expect_false(all(wrap(starts, bounds = extent(hab)) == starts))
-  expect_false(all(wrap(starts, bounds = hab) == starts))
-  expect_false(all(wrap(starts, bounds = bbox(hab)) == starts))
-  expect_error(wrap(starts, bounds = starts),
+  expect_false(all(SpaDES.tools::wrap(starts, bounds = ext(hab)) == starts))
+  expect_false(all(SpaDES.tools::wrap(starts, bounds = hab) == starts))
+  expect_error(SpaDES.tools::wrap(starts, bounds = starts),
                "Must use either a bbox, Raster\\*, or Extent for 'bounds'")
 
   # create spdf
   spdf <- SpatialPointsDataFrame(coords = starts, data = data.frame(x1, y1))
-  expect_true(all(coordinates(wrap(spdf, bounds = hab)) == wrap(starts, hab)))
-  expect_true(all(coordinates(wrap(spdf, bounds = hab, withHeading = FALSE)) ==
-                    wrap(starts, hab)))
-  expect_true(all(coordinates(wrap(spdf, bounds = bbox(hab), withHeading = FALSE)) ==
-                    wrap(starts, hab)))
-  expect_error(wrap(spdf, bounds = starts, withHeading = FALSE),
+  expect_true(all(coordinates(SpaDES.tools::wrap(spdf, bounds = hab)) == SpaDES.tools::wrap(starts, hab)))
+  expect_true(all(coordinates(SpaDES.tools::wrap(spdf, bounds = hab, withHeading = FALSE)) ==
+                    SpaDES.tools::wrap(starts, hab)))
+  expect_true(all(coordinates(SpaDES.tools::wrap(spdf, bounds = bbox(hab), withHeading = FALSE)) ==
+                    SpaDES.tools::wrap(starts, hab)))
+  expect_error(SpaDES.tools::wrap(spdf, bounds = starts, withHeading = FALSE),
                "Must use either a bbox, Raster\\*, or Extent for 'bounds'")
 
   # errrors
   starts <- cbind(x1 = stats::runif(n, xrange[1] - 10, xrange[1]),
                   y = stats::runif(n, yrange[1] - 10, yrange[1]))
   spdf <- SpatialPointsDataFrame(coords = starts, data = data.frame(x1, y1))
-  expect_error(wrap(spdf, bounds = extent(hab)),
+  expect_error(SpaDES.tools::wrap(spdf, bounds = extent(hab)),
                "When X is a matrix, it must have 2 columns, x and y,")
 })
 
 test_that("cir angles arg doesn't work", {
   library(fpCompare)
-  library(raster)
+  library(terra)
 
   on.exit({
-    detach("package:raster")
+    detach("package:terra")
     detach("package:fpCompare")
   }, add = TRUE)
 
   ras <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
   ras[] <- 0
   n <- 2
-  coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
-                  y = stats::runif(n, xmin(ras), xmax(ras)))
+  coords <- cbind(x = stats::runif(n, terra::xmin(ras), terra::xmax(ras)),
+                  y = stats::runif(n, terra::xmin(ras), terra::xmax(ras)))
   angles <- seq(0, 2 * pi, length.out = 21)[-21]
   circ <- cir(ras, coords, angles = angles, maxRadius = 3, minRadius = 0,
               returnIndices = TRUE, allowOverlap = TRUE, returnAngles = TRUE)
   anglesTab <- table(circ[, "angles"])
   expect_true(all(as.numeric(names(anglesTab)) %==% angles))
   expect_true(all(length(anglesTab) == (length(angles))))
-
 })
 
 test_that("multi-core version of distanceFromEachPoints does not work correctly", {
   skip_on_cran()
   skip_on_ci()
+  skip_if_not_installed("snow")
 
   if (interactive()) {
-    library(raster); on.exit(detach("package:raster"), add = TRUE)
-    library(parallel);
+    library(parallel)
+    library(raster)
+
+    on.exit({
+      detach("package:raster")
+      detach("package:parallel")
+    }, add = TRUE)
 
     hab <- randomPolygons(terra::rast(terra::ext(0, 1e2, 0, 1e2)), res = 1)
 
@@ -913,10 +921,10 @@ test_that("spreadProb with relative values does not work correctly", {
   set.seed(seed)
   # dqrng::dqset.seed(seed)
 
-  expect_that(out1 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = ras), is_a("RasterLayer"))
+  expect_s4_class(out1 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = ras), "SpatRaster")
   set.seed(seed)
   # dqrng::dqset.seed(seed)
 
-  expect_that(out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps), is_a("RasterLayer"))
+  expect_s4_class(out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps), "SpatRaster")
   expect_identical(out1, out2)
 })

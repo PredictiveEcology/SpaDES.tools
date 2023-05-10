@@ -72,7 +72,7 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   stopRuleA <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)), 1, 0, NULL,
                       maxSize = 1e6, 8, 1e6, id = TRUE, circle = TRUE, stopRule = stopRule1,
                       stopRuleBehavior = "excludePixel")
-  tapply( hab[], stopRuleA[], sum) # all below 50
+  tapply(hab[], stopRuleA[], sum) # all below 50
 
   set.seed(1234)
   stopRule2 <- function(landscape) sum(landscape) > 100
@@ -80,7 +80,7 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   stopRuleB <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)), 1, 0, NULL,
                       maxSize = 1e6, 8, 1e6, id = TRUE, circle = TRUE, stopRule = stopRule2,
                       stopRuleBehavior = "excludePixel")
-  tapply( hab[], stopRuleB[], sum) # all below 100
+  tapply(hab[], stopRuleB[], sum) # all below 100
 
   clearPlot()
   Plot(stopRuleA, stopRuleB, zero.color = "transparent")
@@ -117,8 +117,8 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
                       loci = (ncell(hab) - ncol(hab)) / 2 + c(4, -4),
                       directions = 8, id = TRUE)#, stopRule = stopRule2)
 
-  clearPlot()
-  Plot(circlish, regularCA)
+  quickPlot::clearPlot()
+  quickPlot::Plot(circlish, regularCA)
 
   ####################
   # complex stopRule
@@ -152,7 +152,7 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   }
 
   cirs <- values(twoCirclesDiffSize)
-  vals <- tapply(hab[cirs>0], cirs[cirs > 0], sum) # one is <200, other is <400 as per endSizes
+  vals <- tapply(hab[cirs > 0], cirs[cirs > 0], sum) # one is <200, other is <400 as per endSizes
 
   # Stop if sum of landscape is big or mean of quality is too small
   quality <- rast(hab)
@@ -176,7 +176,7 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   fires <- spread(hab, loci = startCells, 1, persistence = 0,
                   neighProbs = c(0.5, 0.5, 0.5) / 1.5,
                   mask = NULL, maxSize = maxSizes, directions = 8,
-                  iterations = 1e6, id = TRUE, plot.it = FALSE, exactSizes = TRUE);
+                  iterations = 1e6, id = TRUE, plot.it = FALSE, exactSizes = TRUE)
   all(table(fires[fires > 0][]) == floor(maxSizes))
 
   quickPlot::dev()

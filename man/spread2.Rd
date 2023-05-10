@@ -364,7 +364,6 @@ say, insect swarms.
 \examples{
 library(data.table)
 library(raster)
-library(quickPlot)
 
 data.table::setDTthreads(1)
 

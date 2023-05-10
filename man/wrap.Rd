@@ -4,13 +4,12 @@
 \alias{wrap}
 \title{Wrap coordinates or pixels in a torus-like fashion}
 \usage{
-wrap(X, bounds, withHeading)
+wrap(X, bounds, withHeading = FALSE)
 }
 \arguments{
-\item{X}{A \verb{SpatialPoints*} object, or matrix of coordinates.}
+\item{X}{\code{SpatVector}, \code{sf}, or matrix of coordinates.}
 
-\item{bounds}{Either a \verb{Raster*}, \code{Extent}, or \code{bbox} object
-defining bounds to wrap around.}
+\item{bounds}{Either a \verb{SpatRaster*}, \code{Extent}, or \code{bbox} object defining bounds to wrap around.}
 
 \item{withHeading}{logical. If \code{TRUE}, the previous points must be wrapped
 also so that the subsequent heading calculation will work.
@@ -24,13 +23,12 @@ reflect the wrapping.
 Generally useful for model development purposes.
 }
 \details{
-If \code{withHeading} used, then \code{X} must be a \code{SpatialPointsDataFrame}
+If \code{withHeading} used, then \code{X} must be an \code{sf} or \code{SpatVector} object
 that contains two columns, \code{x1} and \code{y1}, with the immediately
 previous agent locations.
 }
 \examples{
-if (requireNamespace("sf") && requireNamespace("terra")) {
-
+if (require("sf")) {
 xrange <- yrange <- c(-50, 50)
 hab <- terra::rast(terra::ext(c(xrange, yrange)))
 hab[] <- 0
@@ -39,17 +37,13 @@ hab[] <- 0
 N <- 10
 
 # previous points
-x1 <- rep(0, N)
-y1 <- rep(0, N)
+x1 <- y1 <- rep(0, N)
 # initial points
 starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
                 y = stats::runif(N, yrange[1], yrange[2]))
 
 # create the agent object # the x1 and y1 are needed for "previous location"
-agent <- sf::st_as_sf(data.frame(x1, y1, starts),
-                     coords = c("x", "y"))
-agent <- terra::vect(data.frame(x1, y1, starts),
-                     geom = c("x", "y"))
+agent <- terra::vect(data.frame(x1, y1, starts), geom = c("x", "y"))
 
 ln <- rlnorm(N, 1, 0.02) # log normal step length
 sd <- 30 # could be specified globally in params

@@ -18,7 +18,7 @@ splitRaster(
   path = NA,
   cl,
   rType = "FLT4S",
-  fExt = ".grd"
+  fExt = ".tif"
 )
 }
 \arguments{
@@ -34,7 +34,7 @@ accepts a \code{na.rm} argument. The default is \code{mean}.}
 \item{ny}{The number of tiles to make along the y-axis.}
 
 \item{buffer}{Numeric vector of length 2 giving the size of the buffer along the x and y axes.
-If these values less than or equal to \code{1} are used, this
+If values greater than or equal to \code{1} are used, this
 is interpreted as the number of pixels (cells) to use as a buffer.
 Values between \code{0} and \code{1} are interpreted as proportions
 of the number of pixels in each tile (rounded up to an integer value).
@@ -138,7 +138,7 @@ all.equal(n2, r) ## TRUE
 unlink(tmpdir, recursive = TRUE)
 }
 \seealso{
-\code{\link[raster:merge]{raster::merge()}}, \code{\link[raster:mosaic]{raster::mosaic()}}
+\code{\link[terra:merge]{terra::merge()}}, \code{\link[terra:mosaic]{terra::mosaic()}}
 
 \code{\link[=do.call]{do.call()}}, \code{\link[raster:merge]{raster::merge()}}.
 }

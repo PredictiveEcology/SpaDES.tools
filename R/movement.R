@@ -67,9 +67,9 @@ move <- function(hypothesis = "crw", ...) {
 #' @author Eliot McIntire
 #' @export
 #' @importFrom CircStats rad
+#' @importFrom sp SpatialPointsDataFrame
 #' @importFrom stats rnorm
 #' @rdname crw
-#'
 crw <- function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
   if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent, FUN.VALUE = logical(1)))) {
     if (is(agent, "SpatVector"))
@@ -90,7 +90,7 @@ crw <- function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
   # signature(agent = "SpatialPointsDataFrame"),
   # definition = function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
   if (is.null(lonlat) || !is.logical(lonlat)) {
-    stop("you must provide a \"lonlat\" argument (TRUE/FALSE)")
+    stop("you must provide a 'lonlat' argument (TRUE/FALSE)")
   }
   hasNames <- names(agent) %in% c("x1", "y1")
   n <- NROW(agent)
@@ -122,4 +122,3 @@ crw <- function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
     return(agent)
   }
 }
-

@@ -17,8 +17,8 @@ test_that("neutralLandscapeMap produces consistent rasters", {
 
   for (i in seq_along(n)) {
     r <- raster(nrows = ny[i], ncols = nx[i],
-                xmn = -nx[i]/2, xmx = nx[i]/2,
-                ymn = -ny[i]/2, ymx = ny[i]/2)
+                xmn = -nx[i] / 2, xmx = nx[i] / 2,
+                ymn = -ny[i] / 2, ymx = ny[i] / 2)
 
     ## give some a projection
     if (i %in% seq_along(length(crslist))) {

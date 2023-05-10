@@ -3,11 +3,15 @@ Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 # SpaDES.tools 1.0.3
 
 ## Enhancements
-* transitioned to `terra` and `sf`:
-  - functions completed: `randomPolygons`
+* begin transition to `terra` and `sf`
+* `splitRaster()` uses ".tif" as the default raster file type
 
 ## Dependency changes
-* removed dependencies on `raster`, `sp`, `rgeos`
+* drop support for R 4.0 (dependency package `reproducible` supports R >= 4.1);
+* removed dependencies `magrittr`, `raster`, `sp`, `rgeos`;
+* added dependency `rlang`;
+* `quickPlot` moved to Suggests;
+* added `snow` to Suggests as it's used for parallel `raster` operations;
 
 ## Bugfixes
 * minor bug fixes

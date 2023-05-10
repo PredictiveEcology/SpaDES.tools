@@ -111,7 +111,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
   if (!is.null(cumulativeFn)) {
     forms <- names(formals(distFn))
-    browser()
+    # browser()
     fromC <- "fromCell" %in% forms
     if (fromC) fromCell <- cellFromXY(landscape, from[, c("x", "y")])
     toC <- "toCells" %in% forms
@@ -371,24 +371,19 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'           optional `id` which will be matched with `id` from `from`.
 #'           It makes no sense to have `id` column here with no `id` column
 #'           in `from`.
-#' @param landscape (optional) `RasterLayer`. This is only used if `to = NULL`,
-#'                  in which case all cells are considered `to`.
+#' @param landscape (optional) `RasterLayer` or `SpatRaster`.
+#'                  This is only used if `to = NULL`, in which case all cells are considered `to`.
 #'
 #' @return A sorted matrix on `id` with same number of rows as `to`,
-#'         but with one extra column, `angles` indicating the angle in radians
-#'         between from and to. For speed, this angle will be between `-pi/2`
-#'         and `3*pi/2`.
+#'         but with one extra column, `angles` indicating the angle in radians between from and to.
+#'         For speed, this angle will be between `-pi/2` and `3*pi/2`.
 #'         If the user wants this between say, `0` and `2*pi`,
 #'         then `angles \%\% (2*pi)` will do the trick. See example.
 #'
-#' @export
-#' @rdname directions
-#' @seealso [distanceFromEachPoint()], which will also return directions
-#'          if `angles = TRUE`.
+#' @seealso [distanceFromEachPoint()], which will also return directions if `angles = TRUE`.
 #'
 #' @examples
 #' library(raster)
-#' library(quickPlot)
 #'
 #' N <- 2
 #' dirRas <- terra::rast(terra::ext(0,40,0,40), res = 1)
@@ -402,13 +397,18 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
 #' minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
 #' dirRas[] <- as.vector(minDir)
-#' if (interactive()) {
+#' if (interactive() && require("quickPlot", quietly = TRUE)) {
 #'   clearPlot()
 #'   Plot(dirRas)
 #'   library(sp)
 #'   start <- SpatialPoints(coords[, c("x", "y"), drop = FALSE])
 #'   Plot(start, addTo = "dirRas")
 #' }
+#'
+#' @export
+#' @importFrom raster ncell xyFromCell
+#' @importFrom terra ncell xyFromCell
+#' @rdname directions
 directionFromEachPoint <- function(from, to = NULL, landscape) {
   matched <- FALSE
   nrowFrom <- NROW(from)
@@ -462,7 +462,7 @@ directionFromEachPoint <- function(from, to = NULL, landscape) {
 }
 
 
-docall <- function (what, args, quote = FALSE, envir = parent.frame()) {
+docall <- function(what, args, quote = FALSE, envir = parent.frame()) {
   if (quote) {
     args <- lapply(args, enquote)
   }
@@ -470,8 +470,7 @@ docall <- function (what, args, quote = FALSE, envir = parent.frame()) {
   if (is.null(namsArgs) || is.data.frame(args)) {
     argn <- args
     args <- list()
-  }
-  else {
+  } else {
     hasName <- namsArgs != ""
     argn <- lapply(namsArgs[hasName], as.name)
     names(argn) <- namsArgs[hasName]
@@ -483,26 +482,23 @@ docall <- function (what, args, quote = FALSE, envir = parent.frame()) {
       fn <- strsplit(what, "[:]{2,3}")[[1]]
       what <- if (length(fn) == 1) {
         get(fn[[1]], envir = envir, mode = "function")
-      }
-      else {
+      } else {
         get(fn[[2]], envir = asNamespace(fn[[1]]), mode = "function")
       }
     }
     call <- as.call(c(list(what), argn))
-  }
-  else if ("function" %in% class(what)) {
+  } else if ("function" %in% class(what)) {
     f_name <- deparse(substitute(what))
     call <- as.call(c(list(as.name(f_name)), argn))
     args[[f_name]] <- what
-  }
-  else if ("name" %in% class(what)) {
+  } else if ("name" %in% class(what)) {
     call <- as.call(c(list(what, argn)))
   }
   eval(call, envir = args, enclos = envir)
 }
 
-outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, xDir,
-                        distFnArgs, fromC, toC, xDist, cumulativeFn, distFn, nrowFrom, otherFromCols) {
+outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, xDir, distFnArgs,
+                        fromC, toC, xDist, cumulativeFn, distFn, nrowFrom, otherFromCols) {
 
   cumVal <- rep_len(0, NROW(to))
   needAngles <- isTRUE(angles) && isTRUE(xDir)
@@ -542,7 +538,6 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
       }
       # cumVal <- docall(cumulativeFn, args = list(cumVal, docall(distFn, args = distFnArgs)))
     }
-
   }
   return(cumVal)
 }
@@ -551,8 +546,7 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
 spiralDistances <- function(pixelGroupMap, maxDis, cellSize) {
   spiral <- which(focalWeight(pixelGroupMap, maxDis, type = "circle") > 0, arr.ind = TRUE) -
     ceiling(maxDis/cellSize) - 1
-  spiral <- cbind(spiral, dists = sqrt( (0 - spiral[,1]) ^ 2 + (0 - spiral[, 2]) ^ 2))
+  spiral <- cbind(spiral, dists = sqrt( (0 - spiral[, 1]) ^ 2 + (0 - spiral[, 2]) ^ 2))
   spiral <- spiral[order(spiral[, "dists"], apply(abs(spiral), 1, sum),
                          abs(spiral[, 1]), abs(spiral[, 2])), NULL, drop = FALSE]
 }
-

@@ -1,15 +1,12 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables("num.in.pop")
-}
+utils::globalVariables("num.in.pop")
 
 ################################################################################
 #' Produce a `raster` of a random Gaussian process.
 #'
-#' This is a wrapper for the `RFsimulate` function in the `RandomFields`
-#' package. The main addition is the `speedup` argument which allows
-#' for faster map generation. A `speedup` of 1 is normal and will get
-#' progressively faster as the number increases, at the expense of coarser
-#' pixel resolution of the pattern generated.
+#' This is a wrapper for the `RFsimulate` function in the `RandomFields` package.
+#' The main addition is the `speedup` argument which allows for faster map generation.
+#' A `speedup` of 1 is normal and will get progressively faster as the number increases,
+#' at the expense of coarser pixel resolution of the pattern generated.
 #'
 #' @param x        A spatial object (e.g., a `RasterLayer`).
 #'
@@ -37,7 +34,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @return A raster map with same extent as `x`, with a Gaussian random pattern.
 #'
-#' @seealso `RFsimulate` and [extent()]
+#' @seealso `RFsimulate` and [raster::extent()]
 #'
 #' @importFrom raster cellStats disaggregate extent extent<- raster res
 #' @export
@@ -106,22 +103,19 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' @rdname randomPolygons
 #'
 #' @examples
-#' library(quickPlot)
-#'
 #' set.seed(1234)
 #' Ras <- randomPolygons(numTypes = 5)
-#' if (interactive()) {
+#' if (interactive() && require("quickPlot", quietly = TRUE)) {
 #'   clearPlot()
 #'   Plot(Ras, cols = c("yellow", "dark green", "blue", "dark red"))
 #' }
 #'
-#' library(raster)
 #' # more complex patterning, with a range of patch sizes
 #' a <- randomPolygons(numTypes = 400, terra::rast(terra::ext(0, 50, 0, 50), res = 1, vals = 0))
 #' a[a < 320] <- 0
 #' a[a >= 320] <- 1
-#' suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important
-#' if (interactive()) {
+#' clumped <- terra::patches(a)
+#' if (interactive() && require("quickPlot", quietly = TRUE)) {
 #'   clearPlot()
 #'   Plot(a)
 #' }
@@ -280,29 +274,32 @@ randomPolygon.SpatVector <- function(x, hectares, area) {
   sp2
 }
 
+#' @importFrom reproducible .requireNamespace
 #' @importFrom terra vect crs
 #' @rdname randomPolygons
 #' @export
 randomPolygon.matrix <- function(x, hectares, area) {
-  if (requireNamespace("sf", quietly = TRUE)) {
-    if (!missing(hectares)) {
-      message("hectares argument is deprecated; please use area")
-      if (missing(area))
-        area <- hectares
-    }
-    latLong <- crs("+init=epsg:4326")
-    message("Assuming matrix is in latitude/longitude")
-    x <- vect(x, type = "points")
-    crs(x) <- latLong
-    randomPolygon(x, area = area)
+  .requireNamespace("sf", stopOnFALSE = TRUE)
+
+  if (!missing(hectares)) {
+    message("hectares argument is deprecated; please use area")
+    if (missing(area))
+      area <- hectares
   }
+  latLong <- crs("+init=epsg:4326")
+  message("Assuming matrix is in latitude/longitude")
+  x <- vect(x, type = "points")
+  crs(x) <- latLong
+  randomPolygon(x, area = area)
 }
 
+#' @importFrom reproducible .requireNamespace
 #' @importFrom sp spsample
-#' @importFrom rgeos gContains
 #' @rdname randomPolygons
 #' @export
 randomPolygon.SpatialPolygons <- function(x, hectares, area) {
+  .requireNamespace("sf", stopOnFALSE = TRUE)
+
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
@@ -312,7 +309,7 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
   while (need) {
     sp1 <- spsample(x, 1, "random")
     sp2 <- randomPolygon(sp1, area)
-    contain <- gContains(sp2, sp1)
+    contain <- sf::st_contains(sf::st_as_sf(sp2), sf::st_as_sf(sp1))
     if (isTRUE(contain))
       need <- FALSE
   }
@@ -565,7 +562,7 @@ utmCRS <- function(x) {
 }
 
 long2UTM <- function(long) {
-  (floor((long + 180)/6) %% 60) + 1
+  (floor((long + 180) / 6) %% 60) + 1
 }
 
 #' Produce a neutral landscape using a midpoint displacement algorithm
@@ -610,9 +607,11 @@ long2UTM <- function(long) {
 #'   }
 #' }
 neutralLandscapeMap <- function(x, pad = 10L,
-                                type = c("nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient", "nlm_edgegradient", "nlm_fbm",
-                                         "nlm_mosaicfield", "nlm_mosaicgibbs", "nlm_mosaictess", "nlm_neigh", "nlm_percolation",
-                                         "nlm_planargradient", "nlm_random", "nlm_randomrectangularcluster"),
+                                type = c("nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient",
+                                         "nlm_edgegradient", "nlm_fbm", "nlm_mosaicfield",
+                                         "nlm_mosaicgibbs", "nlm_mosaictess", "nlm_neigh",
+                                         "nlm_percolation", "nlm_planargradient", "nlm_random",
+                                         "nlm_randomrectangularcluster"),
                                 ...) {
   if (requireNamespace("NLMR", quietly = TRUE)) {
     type <- match.arg(type)
@@ -630,7 +629,7 @@ neutralLandscapeMap <- function(x, pad = 10L,
     ## - we can't reproject or use x to define the extent;
     ## - need to add rows/cols by multiplying the final number by res;
     ## - crop to ensure the extra rows/cols are removed
-    dummyExt <- c(0, ncol(x)*unique(res(x)), 0, nrow(x)*unique(res(x)))
+    dummyExt <- c(0, ncol(x) * unique(res(x)), 0, nrow(x) * unique(res(x)))
     dummyVals <- extend(dummyVals, dummyExt, values = NA)
     dummyVals <- crop(dummyVals, dummyExt)
 

@@ -101,7 +101,6 @@ See examples.
 }
 \examples{
 library(terra)
-library(quickPlot)
 
 n <- 2
 distRas <- rast(ext(0, 40, 0, 40), res = 1)

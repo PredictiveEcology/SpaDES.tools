@@ -48,16 +48,16 @@ of \code{landscape}, \code{fromCell}, \code{toCell}, \code{x}
 (distance from coords cell), or any other named argument passed
 into the \code{...} of this function. See examples.}
 
-\item{includeBehavior}{Character string. Currently accepts only "includePixels", the default,
-and "excludePixels". See details.}
+\item{includeBehavior}{Character string. Currently accepts only \code{"includePixels"}, the default,
+and \code{"excludePixels"}. See details.}
 
-\item{returnDistances}{Logical. If TRUE, then a column will be added to the returned
+\item{returnDistances}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the distance from \code{coords} to every
 point that was in the circle/donut surrounding \code{coords}. Default
-FALSE, which is faster.}
+\code{FALSE}, which is faster.}
 
 \item{angles}{Numeric. Optional vector of angles, in radians, to use. This will create
-"spokes" outward from coords. Default is NA, meaning, use internally
+"spokes" outward from coords. Default is \code{NA}, meaning, use internally
 derived angles that will "fill" the circle.}
 
 \item{nAngles}{Numeric, length one. Alternative to angles. If provided, the function
@@ -66,18 +66,16 @@ with a length \code{nAngles}, and not including \code{2*pi}.
 Will not be used if \code{angles} is provided, and will show
 warning of both are given.}
 
-\item{returnAngles}{Logical. If TRUE, then a column will be added to the returned
+\item{returnAngles}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the angle from \code{coords} to every
-point that was in the circle/donut surrounding \code{coords}. Default
-FALSE.}
+point that was in the circle/donut surrounding \code{coords}. Default \code{FALSE.}}
 
-\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
-return a \code{data.table} with indices and values of
-successful spread events.
+\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will return a \code{data.table}
+with indices and values of successful spread events.
 If \code{2}, it will simply return a vector of pixel indices of
-all cells that were touched. This will be the fastest option. If
-\code{FALSE}, then it will return a raster with
-values. See Details.}
+all cells that were touched. This will be the fastest option.
+If \code{FALSE}, then it will return a raster with values.
+See Details.}
 
 \item{...}{Objects to be used by \code{stopRule()}. See examples.}
 }
@@ -94,40 +92,36 @@ This is a generalized version of a notion of a viewshed.
 The main difference is that there can be many "viewpoints".
 }
 \examples{
-if (requireNamespace("terra")) {
+set.seed(1234)
 
-  set.seed(1234)
+ras <- terra::rast(terra::ext(0, 10, 0, 10), res = 1, val = 0)
+rp <- randomPolygons(ras, numTypes = 10)
 
-  ras <- terra::rast(terra::ext(0, 10, 0, 10), res = 1, val = 0)
-  rp <- randomPolygons(ras, numTypes = 10)
+terra::plot(rp)
 
-  terra::plot(rp)
+angles <- seq(0, pi * 2, length.out = 17)
+angles <- angles[-length(angles)]
+n <- 2
+loci <- sample(ncell(rp), n)
+coords <- terra::vect(xyFromCell(rp, loci))
+stopRule <- function(landscape) landscape < 3
+d2 <- spokes(rp, coords = coords, stopRule = stopRule,
+             minRadius = 0, maxRadius = 50,
+             returnAngles = TRUE, returnDistances = TRUE,
+             allowOverlap = TRUE, angles = angles, returnIndices = TRUE)
 
-  angles <- seq(0, pi * 2, length.out = 17)
-  angles <- angles[-length(angles)]
-  n <- 2
-  loci <- sample(ncell(rp), n)
-  coords <- terra::vect(xyFromCell(rp, loci))
-  stopRule <- function(landscape) landscape < 3
-  d2 <- spokes(rp, coords = coords, stopRule = stopRule,
-               minRadius = 0, maxRadius = 50,
-               returnAngles = TRUE, returnDistances = TRUE,
-               allowOverlap = TRUE, angles = angles, returnIndices = TRUE)
+# Assign values to the "patches" that were in the viewshed of a ray
+rasB <- terra::rast(ras)
+rasB[] <- 0
+rasB[d2[d2[, "stop"] == 1, "indices"]] <- 1
 
-  # Assign values to the "patches" that were in the viewshed of a ray
-  rasB <- terra::rast(ras)
-  rasB[] <- 0
-  rasB[d2[d2[, "stop"] == 1, "indices"]] <- 1
+terra::plot(rasB, add = TRUE, col = "red")
 
-  terra::plot(rasB, add = TRUE, col = "red")
-
-  if (NROW(d2) > 0) {
-    sp1 <- terra::vect(d2[, c("x", "y")])
-    terra::plot(sp1, add = TRUE, pch = 19)
-  }
-  terra::plot(coords, add = TRUE, pch = 19, col = "blue")
-
+if (NROW(d2) > 0) {
+  sp1 <- terra::vect(d2[, c("x", "y")])
+  terra::plot(sp1, add = TRUE, pch = 19)
 }
+terra::plot(coords, add = TRUE, pch = 19, col = "blue")
 }
 \author{
 Eliot McIntire

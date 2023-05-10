@@ -29,8 +29,10 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
         googledrive::drive_auth_config(active = TRUE)
     }
 
-    if (quickPlot::isRstudioServer()) {
-      options(httr_oob_default = TRUE)
+    if (requireNamespace("quickPlot", quietly = TRUE)) {
+      if (quickPlot::isRstudioServer()) {
+        options(httr_oob_default = TRUE)
+      }
     }
 
     ## #119 changed use of .httr-oauth (i.e., no longer used)
@@ -69,12 +71,10 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
 
   if (!is.null(opts)) {
     if (needGoogle) {
-      optsGoogle <- if (utils::packageVersion("googledrive") >= "1.0.0") {
-        # list(httr_oob_default = quickPlot::isRstudioServer(),
-        #      httr_oauth_cache = "~/.httr-oauth")
-      } else {
-        list(httr_oob_default = quickPlot::isRstudioServer())
-      }
+      optsGoogle <- list(
+        # httr_oob_default = quickPlot::isRstudioServer(),
+        # httr_oauth_cache = "~/.httr-oauth"
+      )
       opts <- append(opts, optsGoogle)
     }
     opts <- options(opts)
@@ -131,6 +131,6 @@ testOnExit <- function(testInitOut) {
   }
 
   lapply(testInitOut$libs, function(lib) {
-    try(detach(paste0("package:", lib), character.only = TRUE), silent = TRUE)}
-  )
+    try(detach(paste0("package:", lib), character.only = TRUE), silent = TRUE)
+  })
 }

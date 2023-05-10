@@ -14,7 +14,7 @@ test_that("randomPolygon: does not work properly", {
   poly1InUTM <- project(poly1, utmCRS(poly1))
   ## check that polygon area approximately matches that given by hectares
   polyArea <- expanse(poly1InUTM)
-  expect_true(base::abs(base::abs(polyArea - area)) <  area/4) ## TODO: why is this area/4?
+  expect_true(base::abs(base::abs(polyArea - area)) <  area / 4) ## TODO: why is this area/4?
 
   ## check that polygon center is approximately centered on x
   centerSP <- vect(center, crs = latLong)

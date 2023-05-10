@@ -3,7 +3,7 @@ if (require("sf", quietly = TRUE)) {
 
   map <- rast(system.file("extdata", "map.tif", package = "SpaDES.tools"))
   names(map) <- "layer"
-  pr <- probInit(map, p = (map[]/terra::minmax(map)[2])^2)
+  pr <- probInit(map, p = (map[] / terra::minmax(map)[2])^2)
   agents <- initiateAgents(map, 100, pr, asSpatialPoints = "sf")
   if (interactive()) {
     terra::plot(map)
@@ -17,14 +17,17 @@ if (require("sf", quietly = TRUE)) {
   setnames(dt2, old = "N", new = "available")
   dt <- dt1[dt2, on = "V1"]  # join the counts and available data.tables
   setnames(dt, old = "V1", new = "mapValue")
-  dt[, selection := count/available]
+  dt[, selection := count / available]
   dt[is.na(selection), selection := 0]
-  if (interactive())
-    with(dt, {plot(mapValue, selection)})
+  if (interactive()) {
+    with(dt, plot(mapValue, selection))
+  }
   #'
   # Note, can also produce a Raster representing agents,
   # then the number of points produced can't be more than
   # the number of pixels:
   agentsRas <- initiateAgents(map, 30, pr, asSpatialPoints = FALSE)
-  if (interactive()) terra::plot(agentsRas)
+  if (interactive()) {
+    terra::plot(agentsRas)
+  }
 }

@@ -1,10 +1,8 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(
-    c("abund", "abundActive", "abundSettled", "direction", "distance", "distGrp",
-      "from", "indFull", "lenRec", "lenSrc", "mags", "meanNumNeighs",
-      "newDirs", "newMags", "prop", "srcAbundActive", "sumAbund", "sumAbund2")
-  )
-}
+utils::globalVariables(c(
+  "abund", "abundActive", "abundSettled", "direction", "distance", "distGrp",
+  "from", "indFull", "lenRec", "lenSrc", "mags", "meanNumNeighs",
+  "newDirs", "newMags", "prop", "srcAbundActive", "sumAbund", "sumAbund2"
+))
 
 #' An alternative spread function, conceived for insects
 #'
@@ -14,36 +12,47 @@ if (getRversion() >= "3.1.0") {
 #' They are "rounded" to pixel centres.
 #'
 #' @param start Raster indices from which to initiate dispersal
+#'
 #' @param rasQuality A raster with habitat quality. Currently, must
 #'   be scaled from 0 to 1, i.e., a probability of "settling"
 #' @param rasAbundance A raster where each pixel represents the number
 #'   of "agents" or pseudo-agents contained. This number of agents, will
 #'   be spread horizontally, and distributed from each pixel
 #'   that contains a non-zero non NA value.
+#'
 #' @param advectionDir A single number or `RasterLayer` in degrees from North = 0
 #'   (though it will use radians if all values are `abs(advectionDir) > 2 * pi)`.
 #'   This indicates the direction of advective forcing (i.e., wind).
+#'
 #' @param advectionMag A single number or `RasterLayer` in distance units of the
 #'   `rasQuality`, e.g., meters, indicating the relative forcing that will
 #'   occur. It is imposed on the total event, i.e., if the `meanDist` is
 #'   `10000`, and `advectionMag` is `5000`, then the expected
 #'   distance (i.e., `63%` of agents) will have settled by `15000` map units.
+#'
 #' @param dispersalKernel One of either `"exponential"` or `"weibull"`.
+#'
 #' @param meanDist A single number indicating the mean distance parameter in map units
 #'    (not pixels), for a negative exponential distribution
 #'    dispersal kernel (e.g., `dexp`). This will mean that `63%` of agents will have
 #'    settled at this `meanDist` (still experimental).
+#'
 #' @param sdDist A single number indicating the `sd` parameter of a two-parameter
 #'   `dispersalKernel`.
 #'   Defaults to `1`, which is the same as the `exponential` distribution.
+#'
 #' @param verbose Numeric. With increasing numbers above 0, there will be more
 #'     messages produced. Currently, only 0, 1, or 2+ are distinct.
+#'
 #' @param plot.it Numeric. With increasing numbers above 0, there will be plots
 #'     produced during iterations. Currently, only 0, 1, or 2+ are distinct.
+#'
 #' @param minNumAgents Single numeric indicating the minimum number of agents
 #'    to consider all dispersing finished. Default is 50.
+#'
 #' @param saveStack If provided as a character string, it will save each iteration
 #'   as part of a `rasterStack` to disk upon exit.
+#'
 #' @param skipChecks Logical. If `TRUE`, assertions will be skipped (faster, but could miss
 #'   problems)
 #'
@@ -54,8 +63,8 @@ if (getRversion() >= "3.1.0") {
 #' @importFrom data.table := setattr
 #' @importFrom fpCompare %>=% %>>%
 #' @importFrom graphics par
-#' @importFrom quickPlot clearPlot Plot
 #' @importFrom raster pointDistance xyFromCell
+#' @importFrom reproducible .requireNamespace
 #' @importFrom stats pexp dweibull pweibull
 #'
 #' @example inst/examples/example_spread3.R
@@ -128,7 +137,6 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
   }
 
   while (abundanceDispersing > minNumAgents) {
-
     if (dtThr == 1 && data.table::getDTthreads() != 1) data.table::setDTthreads(1)
     b <- spread2(landscape = rasQuality, start = start,
                  spreadProb = 1, iterations = 1, asRaster = FALSE,
@@ -145,9 +153,10 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     iteration <- spreadState$totalIterations
     if (verbose > 1) message("Iteration ", iteration)
     if (isTRUE(plot.it > 1)) {
+      .requireNamespace("quickPlot", stopOnFALSE = TRUE)
       rasIterations[b[active]$pixels] <- iteration
-      Plot(rasIterations, new = iteration == 1,
-           legendRange = c(0, meanDist / (res(rasQuality)[1] / 12)))
+      quickPlot::Plot(rasIterations, new = iteration == 1,
+                      legendRange = c(0, meanDist / (res(rasQuality)[1] / 12)))
     }
 
 
@@ -184,7 +193,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     activeNonNA <- active[nonNA]
 
     if (any(anyNegs)) { # "opposite direction"
-      dirs2 <- (dirs[negs] + pi) %% (2*pi)
+      dirs2 <- (dirs[negs] + pi) %% (2 * pi)
       activeNegs <- active[negs]
       set(b, activeNegs, "mags", -b$mags[activeNegs])
       # b[active[negs], mags := -mags]
@@ -240,7 +249,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 
     totalSumAbund <- sum(b[["sumAbund"]][active], na.rm = TRUE)
     totalSumAbund2 <- sum(b[["sumAbund2"]][active], na.rm = TRUE)
-    multiplyAll <- totalSumAbund/totalSumAbund2
+    multiplyAll <- totalSumAbund / totalSumAbund2
 
     set(b, active, "sumAbund", b[["sumAbund2"]][active] * multiplyAll)
     set(b, NULL, c("abund", "sumAbund2", "mags", "lenSrc", "lenRec",
@@ -258,13 +267,14 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
                       rate = pi / (meanDist + advectionMagTmp)^1.5)
     } else if (startsWith(tolower(dispersalKernel), prefix = "weib")) {
       mn <- (meanDist + advectionMagTmp)
-      sd <- mn/sdDist # 0.8 to 2.0 range
-      shape <- (sd/mn)^(-1.086)
-      scale <- mn/exp(lgamma(1 + 1/shape))
+      sd <- mn / sdDist # 0.8 to 2.0 range
+      shape <- (sd / mn)^(-1.086)
+      scale <- mn / exp(lgamma(1 + 1 / shape))
       cumProb <- pweibull(b[["distance"]][active], shape, scale = scale)
       if (plot.it > 0) {
         par(mfrow = c(1, 2))
-        x <- seq(mn/5)*10; plot(x, cumProb)
+        x <- seq(mn / 5) * 10
+        plot(x, cumProb)
         plot(x, dweibull(x, shape, scale = scale))
       }
 
@@ -293,6 +303,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     abundanceDispersing <- sum(b[active]$abundActive, na.rm = TRUE)
     if (verbose > 1) message("Number still dispersing ", abundanceDispersing)
     if (isTRUE(plot.it > 0)) {
+      .requireNamespace("quickPlot", stopOnFALSE = TRUE)
       b2 <- b[, sum(abundSettled), by = "pixels"]
       rasAbundance[b2$pixels] <- ceiling(b2$V1)
       needNew <- FALSE
@@ -300,8 +311,8 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
         plotMultiplier <- plotMultiplier * 1.5
         needNew <- TRUE
       }
-      Plot(rasAbundance, new = iteration == 1 || needNew,
-           legendRange = c(0, plotMultiplier), title = "Abundance")
+      quickPlot::Plot(rasAbundance, new = iteration == 1 || needNew,
+                      legendRange = c(0, plotMultiplier), title = "Abundance")
     }
 
     newInactive <- b[["abundActive"]][active] == 0
@@ -342,20 +353,22 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 
 #' Return the (approximate) middle pixel on a raster
 #'
-#' This calculation is slightly different depending on whether
+#' @param ras A `Raster` or `SpatRaster` object
+#'
+#' @return This calculation is slightly different depending on whether
 #' the `nrow(ras)` and `ncol(ras)` are even or odd.
 #' It will return the exact middle pixel if these are odd, and
 #' the pixel just left and/or above the middle pixel if either
 #' dimension is even, respectively.
-#' @param ras A `Raster`
 #'
 #' @export
+#' @importFrom raster ncell ncol nrow
 #' @importFrom terra ncell ncol nrow
 middlePixel <- function(ras) {
   if (nrow(ras) %% 2 == 1) {
     floor(ncell(ras) / 2)
   } else {
-    floor(nrow(ras)/2) * ncol(ras) - floor(ncol(ras)/2)
+    floor(nrow(ras) / 2) * ncol(ras) - floor(ncol(ras) / 2)
   }
 }
 
@@ -363,8 +376,9 @@ middlePixel <- function(ras) {
 #'
 #' Currently, only Raster class has a useful method. Defaults to
 #' `all(sapply(list(...)[-1], function(x) identical(list(...)[1], x)))`
-#' @param ... 2 or more of the same type of object to test
-#'   for equivalent metadata
+#'
+#' @param ... 2 or more of the same type of object to test for equivalent metadata.
+#'
 #' @export
 testEquivalentMetadata <- function(...) {
   UseMethod("testEquivalentMetadata")

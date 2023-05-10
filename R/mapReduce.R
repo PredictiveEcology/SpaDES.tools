@@ -1,6 +1,4 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("..colsToKeep", ".N", "row_number"))
-}
+utils::globalVariables(c("..colsToKeep", ".N", "row_number"))
 
 ################################################################################
 #' Convert reduced representation to full raster
@@ -32,24 +30,25 @@ if (getRversion() >= "3.1.0") {
 #' @export
 #' @importFrom data.table := data.table key setkeyv setnames
 #' @importFrom raster raster
-#' @importFrom terra ext values rast res levels
+#' @importFrom terra ext levels rast res values
 #' @rdname rasterizeReduced
 #'
 #' @example inst/examples/example_mapReduce.R
 #'
 rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names(fullRaster), ...) {
-
   if (!inherits(fullRaster, c("Raster", "SpatRaster"))) {
     stop("fullRaster must be a Raster or SpatRaster")
   }
 
-  ## don't use rasterRead; rasterizweReduced can be used independently of reproducible
+  ## don't use rasterRead; rasterizeReduced can be used independently of reproducible
   if (is(fullRaster, "Raster")) {
-    rasterFUN <- function(...)
+    rasterFUN <- function(...) {
       raster(...)
+    }
   } else {
-      rasterFUN <- function(...)
-        rast(...)
+    rasterFUN <- function(...) {
+      rast(...)
+    }
   }
 
   if (!is.data.table(reduced))

@@ -42,5 +42,7 @@ resampleZeroProof <- function(spreadProbHas0, x, n, prob) {
     } else {
       resample(x, n, prob = prob / sm)
     }
-  } else resample(x, n, prob = prob / sum(prob, na.rm = TRUE))
+  } else {
+    resample(x, n, prob = prob / sum(prob, na.rm = TRUE))
+  }
 }

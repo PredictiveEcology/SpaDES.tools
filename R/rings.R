@@ -3,9 +3,17 @@
 #' Identifies the cell numbers of all cells within a ring defined by  minimum
 #' and maximum distances from focal cells.
 #' Uses [spread()] under the hood, with specific values set.
-#' Under many situations, this will be faster than using `rgeos::gBuffer`
-#' twice (once for smaller ring and once for larger ring, then removing the
-#' smaller ring cells).
+#' Under many situations, this may be faster than using `sf::st_buffer` twice
+#' (once for smaller ring and once for larger ring, then removing the smaller ring cells).
+#'
+#' @seealso [cir()] which uses a different algorithm.
+#' `cir` tends to be faster when there are few starting points, `rings`
+#' tends to be faster when there are many starting points. Another difference
+#' between the two functions is that `rings` takes the centre of the pixel
+#' as the centre of a circle, whereas `cir` takes the exact coordinates.
+#' See example.
+#'
+#' @seealso `sf::st_buffer`
 #'
 #' @inheritParams spread
 #'
@@ -18,22 +26,12 @@
 #' @return This will return  a `data.table` with columns as described in
 #'         `spread` when `returnIndices = TRUE`.
 #'
-#' @author Eliot McIntire
-#' @export
-#' @rdname rings
-#' @seealso [cir()] which uses a different algorithm.
-#' `cir` tends to be faster when there are few starting points, `rings`
-#' tends to be faster when there are many starting points. Another difference
-#' between the two functions is that `rings` takes the centre of the pixel
-#' as the centre of a circle, whereas `cir` takes the exact coordinates.
-#' See example.
-#'
-#' @seealso `rgeos::gBuffer`
-#'
-#' @importFrom fpCompare %<=% %>=%
-#' @rdname rings
 #' @example inst/examples/example_rings.R
 #'
+#' @author Eliot McIntire
+#' @export
+#' @importFrom fpCompare %<=% %>=%
+#' @rdname rings
 rings <- function(landscape, loci = NA_real_, id = FALSE, minRadius = 2, maxRadius = 5,
            allowOverlap = FALSE, returnIndices = FALSE, returnDistances = TRUE, ...) {
     spreadEvents <- spread(landscape, loci = loci, circle = TRUE,

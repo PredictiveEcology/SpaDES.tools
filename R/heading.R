@@ -54,44 +54,33 @@ heading <- function(from, to) {
   return(heading %% 360)
 }
 
-
+#' @importFrom reproducible .requireNamespace
 coords <- function(crds) {
   if (inherits(crds, "SpatVector")) {
-    if (!requireNamespace("terra")) stop("Need terra package installed")
+    .requireNamespace("terra", stopOnFALSE = TRUE)
     crds <- terra::crds(crds)
   } else if (inherits(crds, "sf")) {
-    if (!requireNamespace("sf")) stop("Need sf package installed")
+    .requireNamespace("sf", stopOnFALSE = TRUE)
     crds <- sf::st_coordinates(crds)
   } else if (inherits(crds, "Spatial")) {
-    if (!requireNamespace("sp")) stop("Need sp package installed")
+    .requireNamespace("sp", stopOnFALSE = TRUE)
     crds <- sp::coordinates(crds)
   }
 
-crds
-}
-
-#' @importFrom reproducible .requireNamespace
-extnt <- function(obj) {
-  if (inherits(obj, "Raster")) {
-    .requireNamespace("raster", stopOnFALSE = TRUE)
-    obj <- raster::extent(obj)
-  } else if  (inherits(obj, "SpatRaster") || inherits(obj, "sf")) {
-    if (inherits(obj, "SpatRaster")) .requireNamespace("terra", stopOnFALSE = TRUE)
-    if (inherits(obj, "sf")) .requireNamespace("sf", stopOnFALSE = TRUE)
-    obj <- terra::ext(obj)
-  }
-  obj
+ crds
 }
 
 #' @importFrom reproducible .requireNamespace
 `coords<-` <- function(obj, value) {
   if (inherits(obj, "SpatVector")) {
     .requireNamespace("terra", stopOnFALSE = TRUE)
-    obj <- terra::vect(data.frame(as.data.frame(obj), value), geom = c("x", "y"))
+    crdsdf <- data.frame(value, as.data.frame(coords(obj)))
+    colnames(crdsdf) <- c("x", "y", "x1", "y1")
+    obj <- terra::vect(crdsdf, geom = c("x", "y"))
   } else if (inherits(obj, "sf")) {
     .requireNamespace("sf", stopOnFALSE = TRUE)
-    obj2 <- st_as_sfc(st_as_sf(as.data.frame(value), coords = c("x", "y")))
-    obj <- st_set_geometry(obj, value = obj2)
+    obj2 <- sf::st_as_sfc(sf::st_as_sf(as.data.frame(value), coords = c("x", "y")))
+    obj <- sf::st_set_geometry(obj, value = obj2)
     obj
   } else if (inherits(obj, "Spatial")) {
     .requireNamespace("sp", stopOnFALSE = TRUE)
@@ -100,5 +89,3 @@ extnt <- function(obj) {
 
   obj
 }
-
-

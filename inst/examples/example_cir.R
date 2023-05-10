@@ -84,4 +84,3 @@ coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
 circ <- cir(ras, coords, angles = seq(0, 2 * pi, length.out = 21),
             maxRadius = 200, minRadius = 0, returnIndices = FALSE,
             allowOverlap = TRUE, returnAngles = TRUE)
-
