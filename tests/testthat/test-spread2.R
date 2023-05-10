@@ -14,7 +14,7 @@ test_that("spread2 tests", {
   b <- raster(a)
   sp <- 0.225
   spRas <- raster(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
-  spRas[] <- spRas[] / maxValue(spRas) * sp / 2 + sp / 2 * 1.5
+  spRas[] <- spRas[] / maxFn(spRas) * sp / 2 + sp / 2 * 1.5
   b[] <- 1
   bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
   innerCells <- which(bb[] %==% 1)

@@ -13,8 +13,8 @@ initiateAgents(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
 
 \item{probInit}{a Raster resulting from a \code{\link[=probInit]{probInit()}} call}
 
-\item{asSpatialPoints}{logical. Should returned object be \code{RasterLayer}
-or \code{SpatialPointsDataFrame} (default)}
+\item{asSpatialPoints}{logical or \code{"sf"}. Should returned object be \code{RasterLayer}
+or \code{SpatVector} default (or legacy \code{TRUE} \code{SpatialPointsDataFrame})}
 
 \item{indices}{numeric. Indices of where agents should start}
 }
@@ -33,20 +33,18 @@ You must know how to use SELES for these to be useful.
 \examples{
 if (require("sf", quietly = TRUE)) {
   library(terra)
-  library(quickPlot)
 
   map <- rast(system.file("extdata", "map.tif", package = "SpaDES.tools"))
   names(map) <- "layer"
-  pr <- probInit(map, p = (map/maxValue(map))^2)
-  agents <- initiateAgents(map, 100, pr)
+  pr <- probInit(map, p = (map[]/terra::minmax(map)[2])^2)
+  agents <- initiateAgents(map, 100, pr, asSpatialPoints = "sf")
   if (interactive()) {
-    clearPlot()
-    Plot(map)
-    Plot(agents, addTo = "map")
+    terra::plot(map)
+    terra::plot(agents, add = TRUE)
   }
   # Test that they are indeed selecting according to probabilities in pr
   library(data.table)
-  dt1 <- data.table(table(round(map[agents], 0)))
+  dt1 <- data.table(table(round(extract(map, agents), 0)[, "layer"]))
   setnames(dt1, old = "N", new = "count")
   dt2 <- data.table(table(round(map[], 0)))
   setnames(dt2, old = "N", new = "available")
@@ -62,22 +60,6 @@ if (require("sf", quietly = TRUE)) {
   # the number of pixels:
   agentsRas <- initiateAgents(map, 30, pr, asSpatialPoints = FALSE)
   if (interactive()) terra::plot(agentsRas)
-  #'
-  if (require(dplyr)) {
-    # Check that the agents are more often at the higher probability areas based on pr
-    if (utils::packageVersion("terra") >= "2.8-11") {
-      out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) \%>\%
-               dplyr::mutate(selectionRatio = Freq / Freq.1) \%>\%
-               dplyr::select(-layer.1, -Var1) \%>\%
-               dplyr::rename(Present = Freq, Avail = Freq.1, Type = layer.2)
-    } else {
-      out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) \%>\%
-               dplyr::mutate(selectionRatio = Freq/Freq.1) \%>\%
-               dplyr::select(-Var1, -Var1.1) \%>\%
-               dplyr::rename(Present = Freq, Avail = Freq.1, Type = Var2)
-    }
-    out
-  }
 }
 }
 \author{

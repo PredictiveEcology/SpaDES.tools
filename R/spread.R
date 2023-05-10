@@ -148,7 +148,7 @@ if (getRversion() >= "3.1.0") {
 #' @param spreadProb    Numeric, or `RasterLayer`.
 #'                      If numeric of length 1, then this is the global probability
 #'                      of spreading into each cell from a neighbour.
-#'                      If a raster (or a vector of length `ncell(landscape)`,
+#'                      If a raster (or a vector of length `terra::ncell(landscape)`,
 #'                      resolution and extent of `landscape`), then this will
 #'                      be the cell-specific probability. Default is `0.23`.
 #'                      If a `spreadProbLater` is provided, then this is
@@ -322,10 +322,10 @@ if (getRversion() >= "3.1.0") {
 #' @author Eliot McIntire and Steve Cumming
 #' @export
 #' @importFrom data.table := data.table setcolorder set
-#' @importFrom %in%
 #' @importFrom fpCompare %<=%
+#' @importFrom reproducible maxFn minFn
 #' @importFrom quickPlot clearPlot Plot
-#' @importFrom raster extent maxValue minValue ncell ncol nrow raster res setValues
+#' @importFrom terra extent ncell raster res setValues
 #' @importFrom stats runif
 #' @importFrom utils assignInMyNamespace
 #'
@@ -391,7 +391,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     if (any(is.na(loci)))  {
       # start it in the centre cell, if there is no spreadState
       if (!spreadStateExists)
-        loci <- middlePixel(landscape) #(nrow(landscape) / 2L + 0.5) * ncol(landscape)
+        loci <- middlePixel(landscape)
     }
     if (!is.integer(loci)) {
       loci <- as.integer(loci)
@@ -426,14 +426,15 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
 
     # Check for probabilities
     if (!quick) {
-      if (is(spreadProbLater, "RasterLayer") | is(spreadProb, "Rasterlayer")) {
-        if ((minValue(spreadProb) > 1L) || (maxValue(spreadProb) < 0L) ||
-            (maxValue(spreadProb) > 1L) || (minValue(spreadProb) < 0L)) {
+      if (inherits(spreadProbLater, "RasterLayer") || inherits(spreadProb, "Rasterlayer") ||
+          inherits(spreadProbLater, "SpatRaster") || inherits(spreadProb, "SpatRaster")) {
+        if ((minFn(spreadProb) > 1L) || (maxFn(spreadProb) < 0L) ||
+            (maxFn(spreadProb) > 1L) || (minFn(spreadProb) < 0L)) {
           relativeSpreadProb <- TRUE
         }
         if (spreadProbLaterExists)
-          if (((minValue(spreadProbLater) > 1L) || (maxValue(spreadProbLater) < 0L) ||
-              (maxValue(spreadProbLater) > 1L) || (minValue(spreadProbLater) < 0L))) {
+          if (((minFn(spreadProbLater) > 1L) || (maxFn(spreadProbLater) < 0L) ||
+              (maxFn(spreadProbLater) > 1L) || (minFn(spreadProbLater) < 0L))) {
             relativeSpreadProb <- TRUE
           }
       } else {
@@ -448,7 +449,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       }
     }
 
-    ncells <- as.integer(ncell(landscape))
+    ncells <- as.integer(terra::ncell(landscape))
 
     #browser(expr = exists("aaaaa"))
     allowOverlapOrReturnDistances <- allowOverlap | returnDistances
@@ -728,8 +729,8 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
 
       # extract spreadProb values from spreadProb argument
       if (is.numeric(spreadProb)) {
-        if (!(length(spreadProb) == 1 || length(spreadProb) == ncell(landscape)))
-          stop("spreadProb must be length 1 or length ncell(landscape), or a raster")
+        if (!(length(spreadProb) == 1 || length(spreadProb) == terra::ncell(landscape)))
+          stop("spreadProb must be length 1 or length terra::ncell(landscape), or a raster")
         if (n == 1 & spreadProbLaterExists) {
           # need cell specific values
           spreadProbs <- rep(spreadProb, NROW(potentials))

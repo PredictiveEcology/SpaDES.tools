@@ -136,7 +136,7 @@ if (interactive()) {
     crs(rasQuality) <- readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools"))
     rasQuality[is.na(mask)] <- NA
     # rescale so min is 0.75 and max is 1
-    rasQuality[] <- rasQuality[] / (maxValue(rasQuality) * 4 ) + 1/4
+    rasQuality[] <- rasQuality[] / (maxFn(rasQuality) * 4 ) + 1/4
     rasAbundance <- raster(rasQuality)
     rasAbundance[] <- 0
     startPixel <- sample(seq(ncell(rasAbundance)), 300)
@@ -176,13 +176,13 @@ if (interactive()) {
   advectionDir <- raster(system.file("extdata", "advectionDir.tif", package = "SpaDES.tools"))
   crs(advectionDir) <- crs(rasQuality)
   # rescale so min is 0.75 and max is 1
-  advectionDir[] <- advectionDir[] / (maxValue(advectionDir)) * 180
+  advectionDir[] <- advectionDir[] / (maxFn(advectionDir)) * 180
 
   # raster for advectionMag
   advectionMag <- raster(system.file("extdata", "advectionMag.tif", package = "SpaDES.tools"))
   crs(advectionMag) <- crs(rasQuality)
   # rescale so min is 0.75 and max is 1
-  advectionMag[] <- advectionMag[] / (maxValue(advectionMag)) * 600
+  advectionMag[] <- advectionMag[] / (maxFn(advectionMag)) * 600
 
   out <- spread3(rasAbundance = rasAbundance,
                  rasQuality = rasQuality,

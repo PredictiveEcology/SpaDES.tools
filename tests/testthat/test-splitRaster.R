@@ -269,7 +269,7 @@ test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   expect_equal(extent(m), extent(r))
   expect_equal(names(m), names(r))
   expect_equal(res(m), res(r))
-  #expect_equal(maxValue(m)), maxValue(r))) ## Error: cannot allocate vector of size 4.8 Gb
+  #expect_equal(maxFn(m)), maxFn(r))) ## Error: cannot allocate vector of size 4.8 Gb
   #expect_equal(min(values(m)), min(values(r))) ## Error: cannot allocate vector of size 4.8 Gb
 
   # with buffer

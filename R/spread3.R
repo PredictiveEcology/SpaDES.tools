@@ -350,6 +350,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 #' @param ras A `Raster`
 #'
 #' @export
+#' @importFrom terra ncell ncol nrow
 middlePixel <- function(ras) {
   if (nrow(ras) %% 2 == 1) {
     floor(ncell(ras) / 2)

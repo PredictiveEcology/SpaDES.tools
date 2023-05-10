@@ -39,7 +39,6 @@ if (getRversion() >= "3.1.0") {
 #'
 rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names(fullRaster), ...) {
 
-  browser()
   if (!inherits(fullRaster, c("Raster", "SpatRaster"))) {
     stop("fullRaster must be a Raster or SpatRaster")
   }
