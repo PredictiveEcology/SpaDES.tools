@@ -1,40 +1,25 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
-
-
-Version 1.0.3
-=============
+# SpaDES.tools 1.0.3
 
 ## Enhancements
-- transitioned to `terra` and `sf`; 
-- removed dependencies on `raster`, `sp`, `rgeos`
-- functions completed: `randomPolygons`
+* transitioned to `terra` and `sf`:
+  - functions completed: `randomPolygons`
 
 ## Dependency changes
-
-
-## Defunct 
-
-## Defunct and removed
-
-## Non exported function changes
+* removed dependencies on `raster`, `sp`, `rgeos`
 
 ## Bugfixes
-- `preProcess` failed when `googledrive` url filename could be found, but `destinationPath` was not `"."`
-
-
+* minor bug fixes
 
 # SpaDES.tools 1.0.2
-* `terra` compatibility added
-* `neutralLandscapeMap` expanded to use more `NLMR` functions
-
-# SpaDES.tools 1.0.1.9000
 
 ## Dependency changes
 * none
 
 ## Enhancements
-* none
+* `terra` compatibility added
+* `neutralLandscapeMap` expanded to use more `NLMR` functions
 
 ## Bug Fixes
 * suppress additional spurious warnings
@@ -46,7 +31,7 @@ Version 1.0.3
 
 # SpaDES.tools 1.0.0
 
-This is a major `SpaDES.tools` update causing breaking changes due to multiple CRAN packages no longer available as of R # SpaDES.tools 4.2 released April 2022.
+This is a major `SpaDES.tools` update causing breaking changes due to multiple CRAN packages no longer available as of R version 4.2 released April 2022.
 
 ## Dependency changes
 * Removed dependencies `ffbase` and `ff` and deprecated use of `lowMemory` argument in `spread` (`ffbase` was removed from CRAN April 2022).
