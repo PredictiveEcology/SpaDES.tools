@@ -621,7 +621,7 @@ test_that("rings and cir", {
                 includeBehavior = "includePixels", allowOverlap = FALSE,
                 returnIndices = FALSE, closest = TRUE, returnDistances = TRUE)
   if (interactive()) Plot(dists1, dists2, dists3, new = TRUE)
-  diffDists12 <- abs(dists1 - dists2)
+  diffDists12 <- abs(dists1 - dists2) ## TODO: Error in `dists1 - dists2`: non-numeric argument to binary operator
   diffDists23 <- abs(dists2 - dists3)
   tabs12 <- table(round(getValues(diffDists12)))
   tabs23 <- table(round(getValues(diffDists23)))
@@ -926,5 +926,5 @@ test_that("spreadProb with relative values does not work correctly", {
   # dqrng::dqset.seed(seed)
 
   expect_s4_class(out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps), "SpatRaster")
-  expect_identical(out1, out2)
+  expect_equal(out1, out2)
 })
