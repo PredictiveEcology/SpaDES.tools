@@ -786,21 +786,21 @@ test_that("wrap does not work correctly", {
   expect_error(SpaDES.tools::wrap(starts, bounds = starts),
                "Unable to determine extent of object of type 'matrix'.")
 
-  # create spdf
-  spdf <- SpatialPointsDataFrame(coords = starts, data = data.frame(x1, y1)) ## TODO: failing; use sf
-  expect_true(all(coordinates(SpaDES.tools::wrap(spdf, bounds = hab)) == SpaDES.tools::wrap(starts, hab)))
-  expect_true(all(coordinates(SpaDES.tools::wrap(spdf, bounds = hab, withHeading = FALSE)) ==
+  # using sf
+  sf <- sf::st_as_sf(data.frame(starts, x1, y1), coords = c("x", "y"))
+  expect_true(all(coords(SpaDES.tools::wrap(sf, bounds = hab)) == SpaDES.tools::wrap(starts, hab)))
+  expect_true(all(coords(SpaDES.tools::wrap(sf, bounds = hab, withHeading = FALSE)) ==
                     SpaDES.tools::wrap(starts, hab)))
-  expect_true(all(coordinates(SpaDES.tools::wrap(spdf, bounds = bbox(hab), withHeading = FALSE)) ==
+  expect_true(all(coords(SpaDES.tools::wrap(sf, bounds = terra::ext(hab), withHeading = FALSE)) ==
                     SpaDES.tools::wrap(starts, hab)))
-  expect_error(SpaDES.tools::wrap(spdf, bounds = starts, withHeading = FALSE),
-               "Must use either a bbox, Raster\\*, or Extent for 'bounds'")
+  expect_error(SpaDES.tools::wrap(sf, bounds = starts, withHeading = FALSE),
+               "Unable to determine extent of object of type 'matrix'.")
 
-  # errrors
+  # errors
   starts <- cbind(x1 = stats::runif(n, xrange[1] - 10, xrange[1]),
                   y = stats::runif(n, yrange[1] - 10, yrange[1]))
   spdf <- SpatialPointsDataFrame(coords = starts, data = data.frame(x1, y1))
-  expect_error(SpaDES.tools::wrap(spdf, bounds = extent(hab)),
+  expect_error(SpaDES.tools::wrap(spdf, bounds = terra::ext(hab)),
                "When X is a matrix, it must have 2 columns, x and y,")
 })
 
