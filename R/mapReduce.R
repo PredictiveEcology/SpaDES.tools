@@ -71,6 +71,14 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   fullRasterVals <- as.data.table(fullRaster[1:ncell(fullRaster)])
   setnames(fullRasterVals, 1, new = mapcode)
 
+  ## with RasterLayer we need to use factorValues to convert the mapcodes
+  ## to the levels.
+  if (is(fullRaster, "Raster")) {
+    if (raster::is.factor(fullRaster)) {
+      fullRasterVals <- as.data.table(factorValues(fullRaster, fullRasterVals[[mapcode]]))
+    }
+  }
+
   if (is.factor(fullRasterVals[[mapcode]])) {
     fullRasterVals[, (mapcode) := lapply(.SD, as.character), .SDcols = mapcode]
   }
