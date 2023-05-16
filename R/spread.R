@@ -322,6 +322,7 @@ utils::globalVariables(c(
 #' @export
 #' @importFrom data.table := data.table setcolorder set
 #' @importFrom fpCompare %<=%
+#' @importFrom raster colortable
 #' @importFrom reproducible maxFn minFn .requireNamespace
 #' @importFrom stats runif
 #' @importFrom terra ext ncell rast res setValues
@@ -1249,7 +1250,14 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
 
     landscape[] <- 0
-    terra::coltab(landscape) <- NULL
+
+    ## remove colour table
+    if (inherits(landscape, "RasterLayer")) {
+      raster::colortable(landscape) <- logical(0)
+    } else if (inherits(landscape, "SpatRaster")) {
+      terra::coltab(landscape) <- NULL
+    }
+
     if (allowOverlapOrReturnDistances) {
       if (returnDistances & !allowOverlap) {
         landscape[spreads[, "indices"]] <- spreads[, "dists"]
