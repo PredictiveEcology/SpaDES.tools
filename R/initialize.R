@@ -422,8 +422,9 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #'
 #' @export
 #' @importFrom data.table data.table setkey
-#' @importFrom terra ext rast values which.lyr
+#' @importFrom raster raster
 #' @importFrom stats na.omit
+#' @importFrom terra ext rast values
 #' @rdname specnumperpatch-probs
 specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap = NULL) {
   isRaster <- inherits(patches, "RasterLayer")
@@ -455,6 +456,10 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 
   al <- terra::rast(terra::ext(patches), res = res(patches), vals = 0)
   al[dt3$cells] <- 1
+
+  if (isRaster) {
+    al <- raster::raster(al)
+  }
 
   return(al)
 }

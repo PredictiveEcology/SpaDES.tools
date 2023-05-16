@@ -7,13 +7,13 @@
 specificNumPerPatch(patches, numPerPatchTable = NULL, numPerPatchMap = NULL)
 }
 \arguments{
-\item{patches}{\code{RasterLayer} of patches, with some sort of a patch id.}
+\item{patches}{\code{SpatRaster} of patches, with some sort of a patch id.}
 
 \item{numPerPatchTable}{A \code{data.frame} or \code{data.table} with a
 column named \code{pops} that matches the \code{patches} patch ids, and a
 second column \code{num.in.pop} with population size in each patch.}
 
-\item{numPerPatchMap}{A \code{RasterLayer} exactly the same as \code{patches}
+\item{numPerPatchMap}{A \code{SpatRaster} exactly the same as \code{patches}
 but with agent numbers rather than ids as the cell values per patch.}
 }
 \value{
