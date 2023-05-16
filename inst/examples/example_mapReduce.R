@@ -19,3 +19,19 @@ if (interactive()) {
   clearPlot()
   Plot(biomass, communities, fullRas)
 }
+
+## with a factor SpatRaster, the mapcode should correspond to the
+## active category (not the ids)
+cls <- data.frame(id = sort(unique(as.vector(fullRas[]))))
+cls$Bclass <- LETTERS[cls$id]
+levels(fullRas) <- cls
+is.factor(fullRas)
+
+clsDT <- as.data.table(cls)
+reducedDT <- reducedDT[clsDT, on = "mapcodeAll==id"]
+reducedDT[, mapcodeAll := Bclass]
+
+biomass2 <- rasterizeReduced(reducedDT, fullRas, "biomass")
+
+
+
