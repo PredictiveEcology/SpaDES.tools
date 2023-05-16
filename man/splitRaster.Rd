@@ -89,7 +89,8 @@ r <- b[[1]] # use first layer only
 nx <- 1
 ny <- 2
 
-tmpdir <- checkPath(file.path(tempdir(), "splitRaster-example"), create = TRUE)
+tmpdir <- reproducible::checkPath(file.path(tempdir(), "splitRaster-example"),
+                                  create = TRUE)
 
 y0 <- splitRaster(r, nx, ny, path = file.path(tmpdir, "y0")) # no buffer
 
