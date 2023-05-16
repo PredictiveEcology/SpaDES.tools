@@ -431,8 +431,8 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
                       stopRuleBehavior = "excludePixel")
   tapply(hab[], stopRuleB[], sum) # all below 100
 
-  clearPlot()
-  Plot(stopRuleA, stopRuleB, zero.color = "transparent")
+  quickPlot::clearPlot()
+  quickPlot::Plot(stopRuleA, stopRuleB, zero.color = "transparent")
 
   # Cellular automata shapes
   # Diamonds - can make them with: a boolean raster, directions = 4,
@@ -555,9 +555,11 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   events2 <- spread(hab3, id = TRUE, loci = sam, directions = 8,
                     neighProbs = c(0, 1), maxSize = c(70), exactSizes = TRUE)
 
-  Plot(events1)
-  Plot(events2, new = TRUE, cols = c("blue", "red", "yellow"), zero.color = "white")
-  Plot(hist(table(events1[][events1[] > 0]), breaks = 30), title = "Event size distribution")
+  quickPlot::Plot(events1)
+  quickPlot::Plot(events2, new = TRUE, cols = c("blue", "red", "yellow"),
+                  zero.color = "white")
+  quickPlot::Plot(hist(table(events1[][events1[] > 0]), breaks = 30),
+                  title = "Event size distribution")
   # Compare outputs -- should be more high value hab pixels spread to in event1
   #  (randomness may prevent this in all cases)
   sum(hab3[events1[] > 0]) >= sum(hab3[events2[] > 0]) ## should be usually TRUE
