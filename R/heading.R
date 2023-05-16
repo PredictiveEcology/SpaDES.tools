@@ -47,7 +47,8 @@ heading <- function(from, to) {
   to <- coords(to)
   ys <- to[, 2] - from[, 2]
   xs <- to[, 1] - from[, 1]
-  heading <- deg(atan(xs / ys))
+  heading <- deg(atan(xs / ys)) ## 0/0 produces NaN; correct this below
+  heading[xs == 0 & ys == 0] <- 0
   ys <- (ys < 0)
   heading[(ys) & (xs) < 0] <- heading[(ys) & (xs) < 0] - 180
   heading[(ys) & (xs) > 0] <- heading[(ys) & (xs) > 0] + 180
