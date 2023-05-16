@@ -1,4 +1,4 @@
-utils::globalVariables(c("..colsToKeep", ".N", "row_number"))
+utils::globalVariables(c("..colsToKeep", ".N", ".SD", "row_number"))
 
 ################################################################################
 #' Convert reduced representation to full raster
@@ -32,7 +32,7 @@ utils::globalVariables(c("..colsToKeep", ".N", "row_number"))
 #' @author Eliot McIntire
 #' @export
 #' @importFrom data.table := data.table key setkeyv setnames
-#' @importFrom raster raster
+#' @importFrom raster raster factorValues
 #' @importFrom terra ext levels rast res values
 #' @rdname rasterizeReduced
 #'
