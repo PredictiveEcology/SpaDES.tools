@@ -102,8 +102,8 @@ terra::plot(rp)
 angles <- seq(0, pi * 2, length.out = 17)
 angles <- angles[-length(angles)]
 n <- 2
-loci <- sample(ncell(rp), n)
-coords <- terra::vect(xyFromCell(rp, loci))
+loci <- sample(terra::ncell(rp), n)
+coords <- terra::vect(terra::xyFromCell(rp, loci))
 stopRule <- function(landscape) landscape < 3
 d2 <- spokes(rp, coords = coords, stopRule = stopRule,
              minRadius = 0, maxRadius = 50,
