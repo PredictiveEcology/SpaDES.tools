@@ -1,10 +1,11 @@
-if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
+if (requireNamespace("terra") && requireNamespace("RColorBrewer") &&
+    requireNamespace("quickPlot")) {
   library(terra)
   library(RColorBrewer)
 
   # Make random forest cover map
   set.seed(123)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- rast(ext(0, 1e2, 0, 1e2), res = 1)
   hab <- randomPolygons(emptyRas, numTypes = 40)
   names(hab) <- "hab"
   mask <- rast(emptyRas)
@@ -52,7 +53,8 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
 
   ## Use data.table and loci...
   fires <- spread(hab, loci = as.integer(sample(1:ncell(hab), 10)),
-                  returnIndices = TRUE, 0.235, 0, NULL, 1e8, 8, iterations = 2, id = TRUE)
+                  returnIndices = TRUE, 0.235, 0, NULL, 1e8, 8,
+                  iterations = 2, id = TRUE)
   fullRas <- rast(hab)
   fullRas[] <- 1:ncell(hab)
   burned <- fires[active == FALSE]
@@ -132,24 +134,23 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer")) {
   stopRule3 <- function(landscape, id, endSizes) sum(landscape) > endSizes[id]
 
   set.seed(1)
-  twoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
-                               directions = 8, id = TRUE, stopRule = stopRule3,
-                               endSizes = endSizes, stopRuleBehavior = "excludePixel")
+  twoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci,
+                               circle = TRUE, directions = 8, id = TRUE,
+                               stopRule = stopRule3, endSizes = endSizes,
+                               stopRuleBehavior = "excludePixel")
 
   # or using named list of named elements:
   set.seed(1)
-  twoCirclesDiffSize2 <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
-                                directions = 8, id = TRUE, stopRule = stopRule3,
-                                vars = list(endSizes = endSizes), stopRuleBehavior = "excludePixel")
+  twoCirclesDiffSize2 <- spread(hab, spreadProb = 1, loci = initialLoci,
+                                circle = TRUE, directions = 8, id = TRUE,
+                                stopRule = stopRule3,
+                                vars = list(endSizes = endSizes),
+                                stopRuleBehavior = "excludePixel")
 
   all.equal(twoCirclesDiffSize, twoCirclesDiffSize2) ## TRUE
 
-  if (requireNamespace("raster") && requireNamespace("quickPlot")) {
-    Plot2(twoCirclesDiffSize, twoCirclesDiffSize2)
-  } else {
-    terra::plot(twoCirclesDiffSize)
-    terra::plot(twoCirclesDiffSize2)
-  }
+  terra::plot(twoCirclesDiffSize)
+  terra::plot(twoCirclesDiffSize2)
 
   cirs <- values(twoCirclesDiffSize)
   vals <- tapply(hab[cirs > 0], cirs[cirs > 0], sum) # one is <200, other is <400 as per endSizes
