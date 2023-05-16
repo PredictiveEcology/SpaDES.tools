@@ -390,8 +390,8 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       checkMultiClass(persistProb,  c("RasterLayer", "SpatRaster"))
     )
     assert(
-      checkScalarNA(spreadProbRel),
-      checkMultiClass(spreadProbRel, c("RasterLayer", "SpatRaster"))
+      checkMultiClass(spreadProbRel, c("RasterLayer", "SpatRaster")),
+      checkScalarNA(spreadProbRel) ## needs to be checked second; will fail if SpatRaster
     )
     assert(
       checkNumeric(asymmetry, 0, Inf, min.len = 1, max.len = 1),

@@ -363,18 +363,18 @@ say, insect swarms.
 
 \examples{
 library(data.table)
-library(raster)
+library(terra)
 
-data.table::setDTthreads(1)
+setDTthreads(1)
 
-a <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
+a <- rast(ext(0, 10, 0, 10), res = 1)
 sams <- sort(sample(ncell(a), 3))
 
 # Simple use -- similar to spread(...)
 out <- spread2(a, start = sams, 0.225)
-if (interactive()) {
-  clearPlot()
-  Plot(out)
+if (interactive() && requireNamespace("quickPlot")) {
+  quickPlot::clearPlot()
+  quickPlot::Plot(out)
 }
 
 # Use maxSize -- this gives an upper limit
@@ -409,7 +409,7 @@ out1 <- spreadWithEscape(a, sams, escapeProb = 0.25, spreadProb = 0.225)
 set.seed(421)
 out2 <- spread2(a, sams, 0.225, asRaster = FALSE)
 # The one with high escape probability is larger (most of the time)
-NROW(out1) > NROW(out2)
+NROW(out1) > NROW(out2) ## TODO: not true
 
 ## Use neighProbs, with a spreadProb that is a RasterLayer
 # Create a raster of different values, which will be the relative probabilities
@@ -418,7 +418,7 @@ NROW(out1) > NROW(out2)
 #   30\% of the time 2 neighbours.
 #   The cells with spreadProb of 5 are 5 times more likely than cells with 1 to be chosen,
 #   when they are both within the 8 neighbours
-sp <- terra::rast(terra::ext(0, 3, 0, 3), res = 1, vals = 1:9) #small raster, simple values
+sp <- rast(ext(0, 3, 0, 3), res = 1, vals = 1:9) #small raster, simple values
 # Check neighProbs worked
 out <- list()
 
@@ -436,7 +436,8 @@ table(sp[out$pixels])
 #  spread to it as cell 1. This comes from sp object above which is providing
 #  the relative spread probabilities
 keep <- c(1:4, 6:9)
-chisq.test(keep, unname(tabulate(sp[out$pixels], 9)[keep]), simulate.p.value = TRUE)
+chisq.test(keep, unname(tabulate(sp[out$pixels]$lyr.1, 9)[keep]),
+           simulate.p.value = TRUE)
 
 ## Example showing asymmetry
 sams <- ncell(a) / 4 - ncol(a) / 4 * 3
