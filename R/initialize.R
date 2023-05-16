@@ -371,23 +371,17 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #' The user can either supply a table of how many to initiate in each patch,
 #' linked by a column in that table called `pops`.
 #'
-#' @param patches `RasterLayer` of patches, with some sort of a patch id.
+#' @param patches `SpatRaster` of patches, with some sort of a patch id.
 #'
 #' @param numPerPatchTable A `data.frame` or `data.table` with a
 #'  column named `pops` that matches the `patches` patch ids, and a
 #'  second column `num.in.pop` with population size in each patch.
 #'
-#' @param numPerPatchMap A `RasterLayer` exactly the same as `patches`
+#' @param numPerPatchMap A `SpatRaster` exactly the same as `patches`
 #' but with agent numbers rather than ids as the cell values per patch.
 #'
 #' @return A raster with 0s and 1s, where the 1s indicate starting locations of
 #' agents following the numbers above.
-#'
-#' @export
-#' @importFrom data.table data.table setkey
-#' @importFrom raster getValues raster Which
-#' @importFrom stats na.omit
-#' @rdname specnumperpatch-probs
 #'
 #' @examples
 #' library(data.table)
@@ -426,9 +420,21 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #'   Plot(rasAgents)
 #' }
 #'
+#' @export
+#' @importFrom data.table data.table setkey
+#' @importFrom terra ext rast values which.lyr
+#' @importFrom stats na.omit
+#' @rdname specnumperpatch-probs
 specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap = NULL) {
-  patchids <- as.numeric(na.omit(getValues(patches)))
-  wh <- Which(patches, cells = TRUE)
+  isRaster <- inherits(patches, "RasterLayer")
+  if (isRaster) {
+    patches <- terra::rast(patches)
+    if (!is.null(numPerPatchMap) && inherits(numPerPatchMap, "RasterLayer")) {
+      numPerPatchMap <- terra::rast(numPerPatchMap)
+    }
+  }
+  patchids <- as.numeric(terra::values(patches, na.rm = TRUE))
+  wh <- which(as.logical(terra::values(patches)))
   if (!is.null(numPerPatchTable)) {
     dt1 <- data.table(wh, pops = patchids)
     setkeyv(dt1, "pops")
@@ -438,7 +444,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
     setkeyv(numPerPatchTable, "pops")
     dt2 <- dt1[numPerPatchTable]
   } else if (!is.null(numPerPatchMap)) {
-    numPerPatchTable <- as.numeric(na.omit(getValues(numPerPatchMap)))
+    numPerPatchTable <- as.numeric(na.omit(terra::values(numPerPatchMap)))
     dt2 <- data.table(wh, pops = patchids, num.in.pop = numPerPatchTable)
   } else {
     stop("need numPerPatchMap or numPerPatchTable")
