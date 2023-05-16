@@ -7,7 +7,10 @@ utils::globalVariables(c("..colsToKeep", ".N", "row_number"))
 #' column of codes that are represented in the `fullRaster`.
 #'
 #' @param fullRaster `RasterLayer`/`SpatRaster` of codes used in `reduced` that
-#'                   represents a spatial representation of the data.
+#'                   represents a spatial representation of the data. Note that
+#'                   if `fullRaster` is a `factor` `SpatRaster`, the active category
+#'                   level values are used, not the IDs (see `terra::activeCat` and
+#'                   `terra::cats`)
 #'
 #' @param newRasterCols Character vector, length 1 or more, with the name(s) of
 #'                      the column(s) in `reduced` whose value will be
@@ -61,8 +64,17 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   } else {
     setkeyv(reduced, mapcode)
   }
-  fullRasterVals <- as.data.table(list(as.vector(values(fullRaster))))
+
+  ## instead of `.as.vector(values(fullRaster))` extract by pix ID so that
+  ## for factor rasters the value/label of the active category (not its code/level) is extracted
+  ## presumably this is the value in reduced.
+  fullRasterVals <- as.data.table(fullRaster[1:ncell(fullRaster)])
   setnames(fullRasterVals, 1, new = mapcode)
+
+  if (is.factor(fullRasterVals[[mapcode]])) {
+    fullRasterVals[, (mapcode) := lapply(.SD, as.character), .SDcols = mapcode]
+  }
+
   set(fullRasterVals, NULL, "row_number", seq(ncell(fullRaster)))
   setkeyv(fullRasterVals, mapcode)
 

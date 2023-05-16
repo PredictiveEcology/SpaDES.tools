@@ -17,7 +17,10 @@ rasterizeReduced(
 column of codes that are represented in the \code{fullRaster}.}
 
 \item{fullRaster}{\code{RasterLayer}/\code{SpatRaster} of codes used in \code{reduced} that
-represents a spatial representation of the data.}
+represents a spatial representation of the data. Note that
+if \code{fullRaster} is a \code{factor} \code{SpatRaster}, the active category
+level values are used, not the IDs (see \code{terra::activeCat} and
+\code{terra::cats})}
 
 \item{newRasterCols}{Character vector, length 1 or more, with the name(s) of
 the column(s) in \code{reduced} whose value will be
