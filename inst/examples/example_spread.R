@@ -147,7 +147,8 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer") &&
                                 vars = list(endSizes = endSizes),
                                 stopRuleBehavior = "excludePixel")
 
-  all.equal(twoCirclesDiffSize, twoCirclesDiffSize2) ## TRUE
+  compareGeom(twoCirclesDiffSize, twoCirclesDiffSize2, res = TRUE,
+              stopOnError = FALSE)
 
   terra::plot(twoCirclesDiffSize)
   terra::plot(twoCirclesDiffSize2)
@@ -207,11 +208,16 @@ if (requireNamespace("terra") && requireNamespace("RColorBrewer") &&
   events2 <- spread(hab3, id = TRUE, loci = sam, directions = 8,
                     neighProbs = c(0, 1), maxSize = c(70), exactSizes = TRUE)
 
+  quickPlot::clearPlot()
   quickPlot::Plot(events1)
-  quickPlot::Plot(events2, new = TRUE, cols = c("blue", "red", "yellow"),
+
+  quickPlot::clearPlot()
+  quickPlot::Plot(events2, cols = c("blue", "red", "yellow"),
                   zero.color = "white")
-  quickPlot::Plot(hist(table(events1[][events1[] > 0]), breaks = 30),
-                  title = "Event size distribution")
+
+  quickPlot::clearPlot()
+  quickPlot::Plot(hist(table(events1[][events1[] > 0]), breaks = 30, plot = FALSE),
+                  title = "Event size distribution") ## TODO: fix this plot
   # Compare outputs -- should be more high value hab pixels spread to in event1
   #  (randomness may prevent this in all cases)
   sum(hab3[events1[] > 0]) >= sum(hab3[events2[] > 0]) ## should be usually TRUE
