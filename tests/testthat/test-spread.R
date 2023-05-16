@@ -784,10 +784,10 @@ test_that("wrap does not work correctly", {
   expect_false(all(SpaDES.tools::wrap(starts, bounds = ext(hab)) == starts))
   expect_false(all(SpaDES.tools::wrap(starts, bounds = hab) == starts))
   expect_error(SpaDES.tools::wrap(starts, bounds = starts),
-               "Must use either a bbox, Raster\\*, or Extent for 'bounds'")
+               "Unable to determine extent of object of type 'matrix'.")
 
   # create spdf
-  spdf <- SpatialPointsDataFrame(coords = starts, data = data.frame(x1, y1))
+  spdf <- SpatialPointsDataFrame(coords = starts, data = data.frame(x1, y1)) ## TODO: failing; use sf
   expect_true(all(coordinates(SpaDES.tools::wrap(spdf, bounds = hab)) == SpaDES.tools::wrap(starts, hab)))
   expect_true(all(coordinates(SpaDES.tools::wrap(spdf, bounds = hab, withHeading = FALSE)) ==
                     SpaDES.tools::wrap(starts, hab)))

@@ -58,6 +58,7 @@ for (i in 1:10) {
 if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 }
 }
+
 }
 \author{
 Eliot McIntire

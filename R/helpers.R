@@ -8,18 +8,26 @@ compareNA <- function(v1, v2) {
 
 #' @importFrom reproducible .requireNamespace
 extnt <- function(x, ...) {
-  if (inherits(x, "Raster")) {
+  if (inherits(x, "Extent") || inherits(x, "SpatExtent")) {
+    return(x)
+  } else if (inherits(x, "Raster")) {
     .requireNamespace("raster", stopOnFALSE = TRUE)
-    x <- raster::extent(x)
+    return(raster::extent(x))
   } else if (inherits(x, "SpatRaster") || inherits(x, "sf")) {
     if (inherits(x, "SpatRaster")) .requireNamespace("terra", stopOnFALSE = TRUE)
     if (inherits(x, "sf")) .requireNamespace("sf", stopOnFALSE = TRUE)
-    x <- terra::ext(x)
+    return(terra::ext(x))
   } else if (inherits(x, "numeric")) {
-    x <- terra::ext(x, ...)
+    return(terra::ext(x, ...))
+  } else {
+    if (inherits(x, "matrix") &&
+        identical(colnames(x), c("min", "max")) &&
+        identical(rownames(x), c("s1", "s2"))) {
+      return(terra::ext(x))
+    } else {
+      stop(sprintf("Unable to determine extent of object of type '%s'.", is(x)[1]))
+    }
   }
-
-  return(x)
 }
 
 #' @importFrom reproducible .requireNamespace

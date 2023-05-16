@@ -772,11 +772,6 @@ cir <- function(landscape, coords, loci,
 #' @return Object of the same class as `X`, but with coordinates updated to
 #'         reflect the wrapping.
 #'
-#' @author Eliot McIntire
-#' @export
-#' @importFrom reproducible .requireNamespace
-#' @rdname wrap
-#'
 #' @examples
 #' if (require("sf")) {
 #' xrange <- yrange <- c(-50, 50)
@@ -808,6 +803,11 @@ cir <- function(landscape, coords, loci,
 #' if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 #' }
 #' }
+#'
+#' @author Eliot McIntire
+#' @export
+#' @importFrom reproducible .requireNamespace
+#' @rdname wrap
 wrap <- function(X, bounds, withHeading = FALSE) {
   classX <- is(X)
 
