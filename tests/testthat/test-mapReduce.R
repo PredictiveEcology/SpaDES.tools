@@ -46,7 +46,7 @@ test_that("mapReduce: file does not work correctly 1", {
 
   ## test factor RasterLayer
   fullRasL <- raster(fullRas)
-  fullRasL <- as.factor(fullRasL)
+  fullRasL <- raster::as.factor(fullRasL)
   levs <- levels(fullRasL)[[1]]
   levs$Bclass <- clsDT[id %in% unique(fullRasL[]), "Bclass"]
 
