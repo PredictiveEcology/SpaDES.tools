@@ -807,7 +807,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         potentials <- potentials[!duplicated(potentials[, 2L]), , drop = FALSE]
       } else {
         pots <- potentials[, c("id", "indices"), drop = FALSE]
-        potentials <- potentials[!duplicated(pots), NULL, drop = FALSE]
+        potentials <- potentials[!duplicated(pots), , drop = FALSE]
       }
 
       # increment iteration
