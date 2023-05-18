@@ -15,6 +15,7 @@ Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
 ## Bugfixes
 * minor bug fixes
+* bug fixes related to migration to `terra`
 
 # SpaDES.tools 1.0.2
 

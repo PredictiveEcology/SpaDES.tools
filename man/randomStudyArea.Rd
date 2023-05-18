@@ -17,7 +17,7 @@ Default \code{1e4}.}
 (useful for ensuring the same study area is produced each time).}
 }
 \value{
-\code{SpatalPolygonsDataFrame}
+\code{SpatVector}
 }
 \description{
 Create default study areas for use with \code{SpaDES} modules
