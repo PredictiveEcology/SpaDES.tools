@@ -184,12 +184,12 @@ if (interactive()) {
                  plot.it = 1)
 
   if (interactive()) {
-    dev.set(4) # don't use Rstudio windows, which is very slow
-    clearPlot()
-    Plot(advectionDir, title = "Wind direction", cols = "Reds")
-    Plot(advectionMag, title = "Wind speed", cols = "Blues")
+    names(advectionDir) <- "Wind direction"
+    names(advectionMag) <- "Wind speed"
+    names(rasAbundance) <- "Initial abundances"
+    terra::plot(c(advectionDir, advectionMag, rasAbundance))#, title = "Wind direction", cols = "Reds")
+
     plotDispersalKernel(out, mean(advectionMag[]))
-    Plot(rasAbundance, addTo = "rasAbundance", cols = "black", title = "")
   }
 
   #########################################
@@ -205,7 +205,7 @@ if (interactive()) {
 
   ## This animates the series of images into an animated GIF
   if (require(animation, quietly = TRUE)) {
-    out2 <- raster::stack(tmpStack)
+    out2 <- terra::rast(tmpStack)
     gifName <- file.path(tempdir(), "animation.gif")
     saveGIF(interval = 0.1, movie.name = gifName, expr = {
       for (i in seq(numLayers(out2))) plot(out2[[i]])

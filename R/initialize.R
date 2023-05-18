@@ -36,24 +36,9 @@ utils::globalVariables("num.in.pop")
 #'
 #' @seealso `RFsimulate` and [raster::extent()]
 #'
-#' @importFrom raster cellStats disaggregate extent extent<- raster res
+#' @importFrom terra res
 #' @export
 #' @rdname gaussMap
-#'
-#' @examples
-#' \dontrun{
-#' if (require(RandomFields)) {
-#'   library(raster)
-#'   nx <- ny <- 100L
-#'   r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
-#'   speedup <- max(1, nx/5e2)
-#'   map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
-#'   if (interactive()) Plot(map1)
-#'
-#'   # with non-default method
-#'   map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
-#' }
-#' }
 #'
 gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
                      alpha = 1, inMemory = FALSE, ...) {
@@ -98,8 +83,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' @seealso [spread()], [raster()], [randomPolygons()]
 #'
 #' @export
-#' @importFrom raster cellFromXY extent raster xmax xmin ymax ymin
-#' @importFrom sp SpatialPoints
+#' @importFrom terra cellFromXY ext xmax xmin ymax ymin
 #' @rdname randomPolygons
 #'
 #' @examples
@@ -135,10 +119,11 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 
 #' Create a single random polygon object
 #'
-#' Produces a `SpatialPolygons` object with 1 feature that will have approximately an area
+#' Produces a `SpatVector` polygons object with 1 feature that will have approximately an area
 #' equal to `area` (expecting area in hectares), #' and a centre at approximately `x`.
 #'
-#' @param x Either a `SpatialPoints`, `SpatialPolygons`, or `matrix` with two
+#' @param x Either a `SpatVector`, or `SpatialPoints` (deprecated), `SpatialPolygons`
+#'          (deprecated), or `matrix` with two
 #'          dimensions, 1 row, with the approximate centre of the new random polygon to create.
 #'          If `matrix`, then longitude and latitude are assumed (epsg:4326)
 #'
@@ -146,11 +131,10 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 #'
 #' @param hectares Deprecated. Use `area` in meters squared.
 #'
-#' @return A `SpatialPolygons` object, with approximately the area request,
+#' @return A `SpatVector` polygons object, with approximately the area request,
 #'         centred approximately at the coordinates requested, in the projection of `x`
 #'
-#' @importFrom raster crs crs<-
-#' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
+#' @importFrom terra crs crs<-
 #' @importFrom stats rbeta runif
 #' @importFrom terra crs
 #' @export
@@ -158,22 +142,13 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 #' @rdname randomPolygons
 #'
 #' @examples
-#' library(raster)
-#' b <- SpatialPoints(cbind(-110, 59))
-#' crs(b) <- sp::CRS("+init=epsg:4326")
+#' library(terra)
+#' b <- terra::vect(cbind(-110, 59))
+#' crs(b) <- terra::crs("epsg:4326")
 #' a <- randomPolygon(b, area = 1e6)
 #' if (interactive()) {
 #'   plot(a)
 #'   points(b, pch = 19)
-#' }
-#'
-#' ## with terra:
-#' library(terra)
-#' bb <- vect(b)
-#' aa <- randomPolygon(bb, area = 1e6)
-#' if (interactive()) {
-#'   plot(aa)
-#'   points(bb, pch = 19)
 #' }
 #'
 randomPolygon <- function(x, hectares, area) {
@@ -198,18 +173,13 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
     crsInUTM <- utmCRS(x)
     if (is.na(crsInUTM))
       stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
-    x <- spTransform(x, CRSobj = crsInUTM)
+    x <- sp::spTransform(x, CRSobj = crsInUTM)
     message("The CRS provided is not in meters; ",
             "converting internally to UTM so area will be approximately correct.")
   }
-  # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
-  #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
-  #                       " +units=m +no_defs"))
 
-  #y <- spTransform(x, areaCRS)
-
-  meanX <- mean(coordinates(x)[, 1]) - radius
-  meanY <- mean(coordinates(x)[, 2]) - radius
+  meanX <- mean(sp::coordinates(x)[, 1]) - radius
+  meanY <- mean(sp::coordinates(x)[, 2]) - radius
 
   minX <- meanX - radius
   maxX <- meanX + radius
@@ -227,10 +197,10 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
          jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxY - minY) + minY, decreasing = TRUE)),
          jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (meanY - minY) + minY)))
 
-  Sr1 <- Polygon(cbind(X + xAdd, Y + yAdd))
-  Srs1 <- Polygons(list(Sr1), "s1")
-  outPolygon <- SpatialPolygons(list(Srs1), 1L)
-  crs(outPolygon) <- crs(x)
+  Sr1 <- sp::Polygon(cbind(X + xAdd, Y + yAdd))
+  Srs1 <- sp::Polygons(list(Sr1), "s1")
+  outPolygon <- sp::SpatialPolygons(list(Srs1), 1L)
+  sp::crs(outPolygon) <- sp::crs(x)
   wasSpatial <- is(outPolygon, "Spatial")
   if (exists("origCRS", inherits = FALSE))  {
     if (requireNamespace("sf", quietly = TRUE)) {
@@ -238,10 +208,10 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
       outPolygon <- sf::st_transform(outPolygon, origCRS)
       outPolygon <- as(outPolygon, "Spatial")
     } else {
-      outPolygon <- suppressWarnings(spTransform(outPolygon, origCRS)) # this should use reproducible:::suppressWarningsSpecific
+      outPolygon <- suppressWarnings(sp::spTransform(outPolygon, origCRS)) # this should use reproducible:::suppressWarningsSpecific
     }
   }
-  outPolygon
+  return(outPolygon)
 }
 
 #' @export
@@ -304,7 +274,7 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
   }
   need <- TRUE
   while (need) {
-    sp1 <- spsample(x, 1, "random")
+    sp1 <- sp::spsample(x, 1, "random")
     sp2 <- randomPolygon(sp1, area)
     contain <- sf::st_contains(sf::st_as_sf(sp2), sf::st_as_sf(sp1))
     if (isTRUE(contain))
@@ -415,7 +385,6 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #'
 #' @export
 #' @importFrom data.table data.table setkey
-#' @importFrom raster raster
 #' @importFrom stats na.omit
 #' @importFrom terra ext rast values
 #' @rdname specnumperpatch-probs

@@ -62,7 +62,7 @@ utils::globalVariables(c(
 #' @importFrom data.table := setattr
 #' @importFrom fpCompare %>=% %>>%
 #' @importFrom graphics par
-#' @importFrom raster pointDistance xyFromCell
+#' @importFrom terra distance xyFromCell
 #' @importFrom reproducible .requireNamespace
 #' @importFrom stats pexp dweibull pweibull
 #'
@@ -160,7 +160,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 
     fromPts <- xyFromCell(rasQuality, b[["from"]][active])
     toPts <- xyFromCell(rasQuality, b[["pixels"]][active])
-    dists <- pointDistance(p1 = fromPts, p2 = toPts, lonlat = FALSE)
+    dists <- distance(fromPts, toPts, pairwise = TRUE, lonlat = FALSE)
     dirs <- b[["direction"]][active]
 
     # Convert advection vector into length of dirs from pixels, if length is not 1
@@ -309,7 +309,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
         needNew <- TRUE
       }
       if (requireNamespace("quickPlot")) {
-        if (iteration == 1) clearPlot()
+        if (iteration == 1) quickPlot::clearPlot()
         quickPlot::Plot(rasAbundance, new = iteration == 1 || needNew,
                     legendRange = c(0, plotMultiplier), title = "Abundance")
       } else
@@ -364,7 +364,6 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 #' dimension is even, respectively.
 #'
 #' @export
-#' @importFrom raster ncell ncol nrow
 #' @importFrom terra ncell ncol nrow
 middlePixel <- function(ras) {
   if (nrow(ras) %% 2 == 1) {
@@ -387,9 +386,11 @@ testEquivalentMetadata <- function(...) {
 }
 
 #' @export
-#' @importFrom raster compareRaster
+#' @importFrom terra compareGeom
 testEquivalentMetadata.default <- function(...) {
-  # raster::compareRaster(..., orig = TRUE)
-  terra::compareGeom(...)
+  if (is(list(...)[[1]], "Raster"))
+    raster::compareRaster(..., orig = TRUE)
+  else
+    terra::compareGeom(...)
   return(invisible())
 }

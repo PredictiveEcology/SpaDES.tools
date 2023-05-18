@@ -212,6 +212,7 @@ test_that("splitRaster works in parallel", {
   skip_on_cran()
   skip_on_ci()
   skip_if_not_installed("snow")
+  skip_if_not_installed("raster")
   skip_if_not(interactive())
 
   tmpdir <- file.path(tempdir(), "splitRaster-test-parallel") |>
@@ -220,7 +221,7 @@ test_that("splitRaster works in parallel", {
   on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
 
   # b <- raster::brick(system.file("external/rlogo.grd", package = "raster"))
-  b <- terra::rast(system.file("ex/logo.tif", package = "terra"))
+  b <- raster::raster(system.file("ex/logo.tif", package = "terra"))
   r <- b[[1]] # use first layer only
   nx <- 3
   ny <- 4
@@ -228,17 +229,17 @@ test_that("splitRaster works in parallel", {
   expect_equal(terra::yres(r), 1)
 
   # change the extent of r
-  extent(r) <- extent(xmin(r) - 30, xmax(r) - 30, ymin(r) - 20, ymax(r) - 20)
+  raster::extent(r) <- raster::extent(xmin(r) - 30, xmax(r) - 30, ymin(r) - 20, ymax(r) - 20)
 
   # test parallel cropping
   n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
   raster::beginCluster(n)
   on.exit(raster::endCluster(), add = TRUE)
 
-  cl <- getCluster()
+  cl <- raster::getCluster()
 
   y11 <- splitRaster(r, nx, ny, c(3L, 4L), path = file.path(tmpdir, "red11"))
-  expect_true(unique(unlist(lapply(y11, fromDisk))))
+  expect_true(unique(!unlist(lapply(y11, terra::inMemory))))
 
   for (i in 1:12) {
     expect_true(file.exists(file.path(tmpdir, "red11", paste0("red_tile", i, ".tif"))))

@@ -18,13 +18,13 @@
 #' @return Returns new `SpatialPoints*` object with potentially fewer agents.
 #'
 #' @export
-#' @importFrom sp 'coordinates<-'
 #' @include heading.R
 #' @rdname SELEStransitions
 #'
 #' @author Eliot McIntire
 transitions <- function(p, agent) {
-    coordinates(agent)[which(p == 0), ] <- NA
+  if (!requireNamespace("sp")) stop("Need to install.packages('sp')")
+    sp::coordinates(agent)[which(p == 0), ] <- NA
     return(agent)
 }
 
@@ -83,7 +83,7 @@ numAgents <- function(N, probInit) {
 #' @author Eliot McIntire
 #' @export
 #' @include heading.R
-#' @importFrom raster getValues ncell raster xyFromCell
+#' @importFrom terra values ncell raster xyFromCell
 #' @importFrom reproducible .requireNamespace
 #' @importFrom stats runif
 #' @rdname initiateAgents
@@ -199,7 +199,7 @@ agentLocation <- function(map) {
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom raster cellStats crs extent setValues raster
+#' @importFrom terra crs ext setValues
 #' @include heading.R
 #' @rdname SELESprobInit
 #'
@@ -216,7 +216,8 @@ probInit <- function(map, p = NULL, absolute = NULL) {
     p <- rep(p, length.out = ncell(map))
     probInit <- setValues(probInit, p / (sum(p) * (1 - absolute) + 1 * (absolute)))
   } else if (is(p, "RasterLayer")) {
-    probInit <- p / (cellStats(p, sum) * (1 - absolute) + 1 * (absolute))
+    if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
+    probInit <- p / (raster::cellStats(p, sum) * (1 - absolute) + 1 * (absolute))
   } else if (is(map, "SpatialPolygonsDataFrame")) {
     probInit <- p / sum(p)
   } else {
@@ -229,7 +230,7 @@ probInit <- function(map, p = NULL, absolute = NULL) {
 #'
 #' @param patches Number of patches.
 #'
-#' @importFrom raster freq
+#' @importFrom terra freq
 #'
 patchSize <- function(patches) {
   return(freq(patches))

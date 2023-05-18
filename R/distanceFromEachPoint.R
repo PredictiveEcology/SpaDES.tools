@@ -88,7 +88,7 @@
 #' See examples.
 #'
 #' @export
-#' @importFrom raster getCluster ncell returnCluster xyFromCell
+#' @importFrom terra ncell xyFromCell
 #' @importFrom parallel clusterApply mclapply
 #'
 #' @example inst/examples/example_distanceFromEachPoint.R
@@ -197,8 +197,8 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
         # }
 
         if (missing(cl)) {
-          cl <- tryCatch(getCluster(), error = function(e) NULL)
-          on.exit(if (!is.null(cl)) returnCluster(), add = TRUE)
+          cl <- tryCatch(raster::getCluster(), error = function(e) NULL)
+          on.exit(if (!is.null(cl)) raster::returnCluster(), add = TRUE)
         }
 
         outerCumFunArgs <- list(landscape = landscape, to = to, angles = angles,
@@ -405,7 +405,6 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' }
 #'
 #' @export
-#' @importFrom raster ncell xyFromCell
 #' @importFrom terra ncell xyFromCell
 #' @rdname directions
 directionFromEachPoint <- function(from, to = NULL, landscape) {
@@ -541,8 +540,8 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
   return(cumVal)
 }
 
-#' @importFrom raster focalWeight
 spiralDistances <- function(pixelGroupMap, maxDis, cellSize) {
+  if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
   spiral <- which(focalWeight(pixelGroupMap, maxDis, type = "circle") > 0, arr.ind = TRUE) -
     ceiling(maxDis/cellSize) - 1
   spiral <- cbind(spiral, dists = sqrt( (0 - spiral[, 1]) ^ 2 + (0 - spiral[, 2]) ^ 2))

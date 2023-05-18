@@ -27,12 +27,11 @@ utils::globalVariables(c("..colsToKeep", ".N", ".SD", "row_number"))
 #'  `newRasterCols` spatially, according to the join between the `mapcode`
 #'  contained within `reduced` and `fullRaster`
 #'
-#' @seealso [raster()]
+#' @seealso [terra::rast()]
 #'
 #' @author Eliot McIntire
 #' @export
 #' @importFrom data.table := data.table key setkeyv setnames
-#' @importFrom raster raster factorValues
 #' @importFrom terra ext levels rast res values
 #' @rdname rasterizeReduced
 #'
@@ -46,7 +45,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   ## don't use rasterRead; rasterizeReduced can be used independently of reproducible
   if (is(fullRaster, "Raster")) {
     rasterFUN <- function(...) {
-      raster(...)
+      raster::raster(...)
     }
   } else {
     rasterFUN <- function(...) {
@@ -75,7 +74,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   ## to the levels.
   if (is(fullRaster, "Raster")) {
     if (raster::is.factor(fullRaster)) {
-      fullRasterVals <- as.data.table(factorValues(fullRaster, fullRasterVals[[mapcode]]))
+      fullRasterVals <- as.data.table(raster::factorValues(fullRaster, fullRasterVals[[mapcode]]))
       setnames(fullRasterVals, 1, new = mapcode)
     }
   }

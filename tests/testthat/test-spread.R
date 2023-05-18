@@ -346,7 +346,6 @@ test_that("spread stopRule does not work correctly", {
       cells <- which(as.numeric(terra::values(circs)) == whCirc)
       centre <- xyFromCell(hab2, startCells)
       allCells <- xyFromCell(hab2, cells)
-      # pd <- pointDistance(centre[whCirc, ], allCells, lonlat = FALSE)
       pd <- as.numeric(terra::distance(centre[whCirc, , drop = FALSE], allCells, lonlat = FALSE))
       circEdge <- circs
       circEdge[] <- 0

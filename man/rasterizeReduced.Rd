@@ -80,7 +80,7 @@ biomass2 <- rasterizeReduced(reducedDT, fullRas, "biomass")
 
 }
 \seealso{
-\code{\link[=raster]{raster()}}
+\code{\link[terra:rast]{terra::rast()}}
 }
 \author{
 Eliot McIntire

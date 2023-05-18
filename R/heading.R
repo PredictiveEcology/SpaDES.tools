@@ -3,28 +3,27 @@
 #'
 #' Determines the heading between spatial points.
 #'
-#' @param from The starting position; an object of class SpatialPoints.
+#' @param from The starting position; an object of class SpatVector
 #'
-#' @param to The ending position;  an object of class SpatialPoints.
+#' @param to The ending position;  an object of class SpatVector
 #'
 #' @return The heading between the points, in degrees.
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom sp SpatialPoints
 #' @rdname heading
 #'
 #' @examples
-#' library(sp)
+#' library(terra)
 #' N <- 10L                # number of agents
 #' x1 <- stats::runif(N, -50, 50) # previous X location
 #' y1 <- stats::runif(N, -50, 50) # previous Y location
 #' x0 <- stats::rnorm(N, x1, 5)   # current X location
 #' y0 <- stats::rnorm(N, y1, 5)   # current Y location
 #'
-#' # using SpatialPoints
-#' prev <- SpatialPoints(cbind(x = x1, y = y1))
-#' curr <- SpatialPoints(cbind(x = x0, y = y0))
+#' # using SpatVector
+#' prev <- terra::vect(cbind(x = x1, y = y1))
+#' curr <- terra::vect(cbind(x = x0, y = y0))
 #' heading(prev, curr)
 #'
 #' # using matrix
@@ -33,12 +32,12 @@
 #' heading(prev, curr)
 #'
 #' #using both
-#' prev <- SpatialPoints(cbind(x = x1, y = y1))
+#' prev <- terra::vect(cbind(x = x1, y = y1))
 #' curr <- matrix(c(x0, y0), ncol = 2, dimnames = list(NULL, c("x","y")))
 #' heading(prev, curr)
 #'
 #' prev <- matrix(c(x1, y1), ncol = 2, dimnames = list(NULL, c("x","y")))
-#' curr <- SpatialPoints(cbind(x = x0, y = y0))
+#' curr <- terra::vect(cbind(x = x0, y = y0))
 #' heading(prev, curr)
 #'
 heading <- function(from, to) {

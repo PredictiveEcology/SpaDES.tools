@@ -93,7 +93,7 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #' @author Eliot McIntire
 #' @export
 #' @importFrom data.table := data.table key set setcolorder setkeyv
-#' @importFrom raster ncell ncol nrow
+#' @importFrom terra ncell ncol nrow
 #' @importFrom stats na.omit
 #' @rdname adj
 #'
@@ -437,9 +437,8 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' associated with the ring or circle being identified by this function.
 #'
 #' @importFrom data.table data.table set setkeyv
-#' @importFrom sp coordinates
 #' @importFrom fpCompare %==%
-#' @importFrom raster cellFromXY extract res xyFromCell ncell ncol
+#' @importFrom terra cellFromXY extract res xyFromCell ncell ncol
 #' @export
 #' @rdname cir
 #'
@@ -483,7 +482,7 @@ cir <- function(landscape, coords, loci,
       stop("Need either a numeric loci or coords")
     }
   } else if (inherits(coords, "Spatial")) {
-    coords <- coordinates(coords)
+    coords <- sp::coordinates(coords)
   } else if (inherits(coords, "SpatVector")) {
     coords <- crds(coords)
   } else if (!is.numeric(coords)) {
@@ -1001,7 +1000,7 @@ spokes <- function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
            includeBehavior = "includePixels", returnDistances = FALSE,
            angles = NA_real_, nAngles = NA_real_, returnAngles = FALSE,
            returnIndices = TRUE, ...) {
-  warning("This function is very experimental and may not behave as expected")
+  message("This function is very experimental and may not behave as expected")
 #  signature(landscape = "RasterLayer", coords = "SpatialPoints", loci = "missing"),
   if (!missing(nAngles)) {
     if (missing(angles)) {
@@ -1018,9 +1017,10 @@ spokes <- function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
               angles = angles, returnIndices = returnIndices)
 
   if (!is.null(stopRule)) {
+    if (!requireNamespace("sp")) stop("Need to install.packages('sp')")
     forms <- names(formals(stopRule))
     fromC <- "fromCell" %in% forms
-    if (fromC) fromCell <- cellFromXY(landscape, coordinates(coords))
+    if (fromC) fromCell <- cellFromXY(landscape, sp::coordinates(coords))
     toC <- "toCell" %in% forms
     if (toC) toCell <- cellFromXY(landscape, to[, c("x", "y")])
     land <- "landscape" %in% forms

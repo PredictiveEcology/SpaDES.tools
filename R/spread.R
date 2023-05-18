@@ -324,7 +324,6 @@ utils::globalVariables(c(
 #' @export
 #' @importFrom data.table := data.table setcolorder set
 #' @importFrom fpCompare %<=%
-#' @importFrom raster colortable
 #' @importFrom reproducible maxFn minFn .requireNamespace
 #' @importFrom stats runif
 #' @importFrom terra ext ncell rast res setValues

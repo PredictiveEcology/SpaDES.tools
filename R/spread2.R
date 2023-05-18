@@ -337,7 +337,7 @@ utils::globalVariables(c(
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
 #' @importFrom fastmatch fmatch
 #' @importFrom fpCompare %<=% %>>%
-#' @importFrom raster fromDisk ncell raster res ncol pointDistance
+#' @importFrom terra ncell res ncol distance
 #' @importFrom reproducible .requireNamespace
 #' @importFrom stats runif
 #'
@@ -674,7 +674,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     if (needDistance) {
       fromPts <- xyFromCell(landscape, dtPotential$id)
       toPts <- xyFromCell(landscape, dtPotential$to)
-      dists <- pointDistance(p1 = fromPts, p2 = toPts, lonlat = FALSE)
+      dists <- terra::distance(fromPts, toPts, pairwise=TRUE, lonlat = FALSE)
       if (isTRUE(returnDirections))
         dirs <- .pointDirection(fromPts, toPts)
       if (usingAsymmetry) {

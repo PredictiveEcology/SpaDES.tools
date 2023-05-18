@@ -39,7 +39,7 @@
 #' @author Alex Chubaty and Yong Luo
 #' @export
 #' @importFrom parallel clusterApplyLB
-#' @importFrom raster crop crs<- extent getCluster raster returnCluster writeRaster
+#' @importFrom terra crop crs<- ext writeRaster
 #' @importFrom reproducible checkPath
 #' @importFrom terra ext unwrap wrap xmax xmin xres yres
 #' @rdname splitRaster
@@ -65,8 +65,8 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
   }
 
   if (missing(cl)) {
-    cl <- tryCatch(getCluster(), error = function(e) NULL)
-    on.exit(if (!is.null(cl)) returnCluster(), add = TRUE)
+    cl <- tryCatch(raster::getCluster(), error = function(e) NULL)
+    on.exit(if (!is.null(cl)) raster::returnCluster(), add = TRUE)
   }
 
   if (length(buffer) > 2) {
@@ -126,8 +126,7 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
   return(tiles)
 }
 
-#' @importFrom raster extension
-#' @importFrom terra crop crs datatype rast unwrap wrap writeRaster
+#' @importFrom terra crop crs rast unwrap wrap writeRaster
 #' @keywords internal
 .croppy <- function(i, e, r, path, rType, fExt) {
   isWrapped <- is(r, "PackedSpatRaster")
@@ -140,7 +139,7 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
   if (is.na(path)) {
     return(ri)
   } else {
-    filename <- raster::extension(file.path(path, paste0(names(r), "_tile", i)), fExt)
+    filename <- paste0(file.path(path, paste0(names(r), "_tile", i)), fExt)
     terra::writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
 
     if (isWrapped) {
