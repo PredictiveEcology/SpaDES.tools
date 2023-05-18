@@ -138,7 +138,7 @@ test_that("mergeRaster will use mosaic with default mean if rasters are resample
     ras <- do.call(reproducible::rasterRead, rastArgs)
 
 
-    splitted <- splitRaster(r = ras, nx = nx, ny = ny, buffer = c(100, 100))
+    splitted <- splitRaster(r = ras, nx = nx, ny = ny, buffer = c(10, 10))
     expect_is(splitted, "list")
     expect_length(splitted, nx * ny)
     splitted <- lapply(X = seq_along(splitted), FUN = function(tiles, pkg) {
