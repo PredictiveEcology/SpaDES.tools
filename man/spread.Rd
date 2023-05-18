@@ -123,9 +123,11 @@ Default is \code{NA}.}
 \item{stopRule}{A function which will be used to assess whether each
 individual cluster should stop growing.
 This function can be an argument of \code{"landscape"},
-\code{"id"}, \code{"cells"}, and any other named vectors,
-a named list of named vectors, or a named \code{data.frame}
-with column names passed to \code{spread} in the \code{...}.
+\code{"id"}, \code{"cells"}, and any other variables passed to
+\code{spread} in the \code{...}. \code{cells} and \code{landscape} will both
+be numeric vectors of length of active cells. \code{cells} will
+be the raster index, so can be used to extract values
+from another raster passed via ... .
 Default \code{NA}, meaning that spreading will not stop
 as a function of the landscape.
 See section on "Breaking out of spread events" and examples.}
