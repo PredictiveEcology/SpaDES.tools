@@ -71,5 +71,5 @@ if (interactive()) {
 
 }
 \seealso{
-\code{\link[=spread]{spread()}}, \code{\link[=raster]{raster()}}, \code{\link[=randomPolygons]{randomPolygons()}}
+\code{\link[=spread]{spread()}}, \code{\link[=randomPolygons]{randomPolygons()}}
 }

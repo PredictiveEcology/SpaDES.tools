@@ -364,8 +364,6 @@ say, insect swarms.
 \examples{
 library(terra)
 
-setDTthreads(1)
-
 a <- rast(ext(0, 10, 0, 10), res = 1)
 sams <- sort(sample(ncell(a), 3))
 
