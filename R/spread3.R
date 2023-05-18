@@ -154,8 +154,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     if (isTRUE(plot.it > 1)) {
       # .requireNamespace("quickPlot", stopOnFALSE = TRUE)
       rasIterations[b[active]$pixels] <- iteration
-      terra::plot(rasIterations, add = !(iteration == 1),
-                  range = c(0, meanDist / (res(rasQuality)[1] / 12)))
+      terra::plot(rasIterations, range = c(0, meanDist / (res(rasQuality)[1] / 12)))
     }
 
 
@@ -165,13 +164,13 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     dirs <- b[["direction"]][active]
 
     # Convert advection vector into length of dirs from pixels, if length is not 1
-    advectionDirTmp <- if (length(advectionDir) > 1) {
-      advectionDir[b[["pixels"]][active]]
+    advectionDirTmp <- if (length(advectionDir) > 1 || is(advectionDir, "SpatRaster")) {
+      advectionDir[][b[["pixels"]][active]]
     } else {
       advectionDir
     }
-    advectionMagTmp <- if (length(advectionMag) > 1) {
-      advectionMag[b[["pixels"]][active]]
+    advectionMagTmp <- if (length(advectionMag) > 1 || is(advectionMag, "SpatRaster")) {
+      advectionMag[][b[["pixels"]][active]]
     } else {
       advectionMag
     }
@@ -256,8 +255,8 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
         NULL)
 
     # Some of those active will not stop: estimate here by kernel probability
-    advectionMagTmp <- if (length(advectionMag) > 1) {
-      advectionMag[b[active]$pixels]
+    advectionMagTmp <- if (length(advectionMag) > 1 || is(advectionMag, "SpatRaster")) {
+      advectionMag[][b[active]$pixels]
     } else {
       advectionMag
     }
@@ -302,7 +301,6 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     abundanceDispersing <- sum(b[active]$abundActive, na.rm = TRUE)
     if (verbose > 1) message("Number still dispersing ", abundanceDispersing)
     if (isTRUE(plot.it > 0)) {
-      .requireNamespace("quickPlot", stopOnFALSE = TRUE)
       b2 <- b[, sum(abundSettled), by = "pixels"]
       rasAbundance[b2$pixels] <- ceiling(b2$V1)
       needNew <- FALSE
@@ -310,8 +308,13 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
         plotMultiplier <- plotMultiplier * 1.5
         needNew <- TRUE
       }
-      quickPlot::Plot(rasAbundance, new = iteration == 1 || needNew,
-                      legendRange = c(0, plotMultiplier), title = "Abundance")
+      if (requireNamespace("quickPlot")) {
+        if (iteration == 1) clearPlot()
+        quickPlot::Plot(rasAbundance, new = iteration == 1 || needNew,
+                    legendRange = c(0, plotMultiplier), title = "Abundance")
+      } else
+          terra::plot(rasAbundance, # new = iteration == 1 || needNew,
+                      range = c(0, plotMultiplier), main = "Abundance")
     }
 
     newInactive <- b[["abundActive"]][active] == 0

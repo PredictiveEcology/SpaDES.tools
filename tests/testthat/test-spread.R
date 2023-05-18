@@ -475,13 +475,16 @@ test_that("spread stopRule does not work correctly", {
 
 test_that("asymmetry doesn't work properly", {
 
-  withr::local_package("CircStats")
   withr::local_package("terra")
-  withr::local_package("raster")
-  for (pkg in c("raster::raster", "terra::rast")) {
-    withr::local_options(reproducible.rasterRead = pkg)
+  withr::local_package("CircStats")
+  rastDF <- needTerraAndRaster() #
 
-    hab <- reproducible::rasterRead(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+
+  for (ii in seq(NROW(rastDF))) {
+    read <- eval(parse(text = rastDF$read[ii]))
+
+    hab <- read(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
     names(hab) <- "hab"
     hab2 <- hab > 0
     maxRadius <- 25
@@ -497,8 +500,9 @@ test_that("asymmetry doesn't work properly", {
     lenAngles <- numeric(n)
 
     # function to calculate mean angle -- returns in degrees
+    if (!requireNamespace("CircStats")) stop("Need to install.packages('CircStats')")
     meanAngle <- function(angles) {
-      deg(atan2(mean(sin(rad(angles))), mean(cos(rad(angles)))))
+      CircStats::deg(atan2(mean(sin(rad(angles))), mean(cos(CircStats::rad(angles)))))
     }
 
     # if (interactive()) clearPlot()
