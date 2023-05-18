@@ -40,7 +40,7 @@
 #' @export
 #' @importFrom parallel clusterApplyLB
 #' @importFrom raster crop crs<- extent getCluster raster returnCluster writeRaster
-#' @importFrom Require checkPath
+#' @importFrom reproducible checkPath
 #' @importFrom terra ext unwrap wrap xmax xmin xres yres
 #' @rdname splitRaster
 #'

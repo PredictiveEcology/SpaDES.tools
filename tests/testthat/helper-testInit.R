@@ -32,7 +32,7 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
   unlist(lapply(libraries, require, character.only = TRUE))
   require("testthat")
   subDir <- paste(sample(LETTERS, 8), collapse = "")
-  tmpdir <- Require::tempdir2(subDir)
+  tmpdir <- reproducible::tempdir2(subDir)
 
   if (isTRUE(needGoogle)) {
     if (requireNamespace("googledrive", quietly = TRUE)) {
@@ -70,7 +70,7 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
   }
   checkPath(tmpdir, create = TRUE)
   origDir <- setwd(tmpdir)
-  tmpCache <- Require::normPath(file.path(tmpdir, "testCache"))
+  tmpCache <- reproducible::normPath(file.path(tmpdir, "testCache"))
   checkPath(tmpCache, create = TRUE)
 
   defaultOpts <- list(reproducible.showSimilar = FALSE,
@@ -99,7 +99,7 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
     tmpfile <- file.path(tmpdir, ranfiles)
     tmpfile <- gsub(pattern = "\\.\\.", tmpfile, replacement = "\\.")
     file.create(tmpfile)
-    tmpfile <- Require::normPath(tmpfile)
+    tmpfile <- reproducible::normPath(tmpfile)
   }
 
   try(clearCache(tmpdir, ask = FALSE), silent = TRUE)

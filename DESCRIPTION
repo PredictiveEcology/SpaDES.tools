@@ -40,12 +40,9 @@ Imports:
     graphics,
     methods,
     parallel,
-    raster (>= 2.5-8),
     rlang,
     Rcpp (>= 0.12.12),
     reproducible (>= 2.0.2),
-    Require,
-    sp (>= 1.2-4),
     stats,
     terra
 Suggests:
@@ -64,10 +61,12 @@ Suggests:
     NLMR (>= 1.1.1),
     purrr,
     quickPlot,
+    raster (>= 2.5-8),
     RColorBrewer (>= 1.1-2),
     rmarkdown,
-    snow,
     sf,
+    snow,
+    sp (>= 1.2-4),
     testthat (>= 1.0.2),
     withr
 Remotes:
