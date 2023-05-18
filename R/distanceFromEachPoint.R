@@ -392,7 +392,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'                 id = 1:N)
 #'
 #' dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
-#' library(CircStats)
+#' if (requireNamespace("CircStats")) {
 #' dirs1[, "angles"] <- deg(dirs1[,"angles"] %% (2*pi))
 #' indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
 #' minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
@@ -403,6 +403,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'   library(sp)
 #'   start <- SpatialPoints(coords[, c("x", "y"), drop = FALSE])
 #'   Plot(start, addTo = "dirRas")
+#' }
 #' }
 #'
 #' @export

@@ -34,7 +34,6 @@ Depends:
 Imports:
     backports,
     checkmate (>= 1.8.2),
-    CircStats (>= 0.2-4),
     data.table (>= 1.10.4),
     fastmatch,
     fpCompare (>= 0.2.1),
@@ -52,6 +51,7 @@ Imports:
 Suggests:
     animation,
     bit (>= 1.1-12),
+    CircStats (>= 0.2-4),
     covr,
     DBI,
     DEoptim (>= 2.2-4),
