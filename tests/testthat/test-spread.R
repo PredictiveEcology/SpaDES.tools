@@ -910,7 +910,6 @@ test_that("spreadProb with relative values does not work correctly", {
 
     withr::local_options(reproducible.rasterRead = read)
 
-
     seed <- 64350
     set.seed(seed)
     # dqrng::dqset.seed(seed)
@@ -949,13 +948,13 @@ test_that("spreadProb with relative values does not work correctly", {
     set.seed(seed)
     # dqrng::dqset.seed(seed)
 
-    expect_s4_class(out1 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = ras),
-                    df$class[i])
+    out1 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = ras)
+    expect_s4_class(out1, df$class[i])
     set.seed(seed)
     # dqrng::dqset.seed(seed)
 
-    expect_s4_class(out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps),
-                    df$class[i])
+    out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps)
+    expect_s4_class(out2, df$class[i])
     expect_equal(out1, out2)
   }
 })
