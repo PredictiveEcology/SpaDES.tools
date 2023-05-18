@@ -8,7 +8,7 @@
 \alias{randomPolygon.SpatVector}
 \alias{randomPolygon.matrix}
 \alias{randomPolygon.SpatialPolygons}
-\title{Produce a \code{RasterLayer} of  random polygons}
+\title{Produce a \code{SpatRaster} of  random polygons}
 \usage{
 randomPolygons(
   ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),

@@ -83,7 +83,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   return(div[x %% div == 0L])
 }
 
-#' Produce a `RasterLayer` of  random polygons
+#' Produce a `SpatRaster` of  random polygons
 #'
 #' These are built with the [spread()] function internally.
 #'

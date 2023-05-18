@@ -1,22 +1,16 @@
 test_that("mapReduce: file does not work correctly 1", {
-  withr::local_package("data.table")
 
-  df <- data.frame(pkg = c("raster", "terra"),
-                   cls = c("RasterLayer", "SpatRaster"),
-                   read = c("raster::raster", "terra::rast"),
-                   ext = c("raster::extent", "terra::ext"))
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
+  data.table::setDTthreads(1)
 
-  for (i in seq(NROW(df))) {
-    pkg <- df$pkg[i]
-    cls <- df$cls[i]
-    read <- df$read[i]
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
+    cls <- rastDF$class[ii]
+    read <- eval(parse(text = rastDF$read[ii]))
+    extFun <- eval(parse(text = rastDF$ext[ii]))
 
-    withr::local_package(pkg)
-    withr::local_options(reproducible.rasterRead = read)
-
-    extFun <- eval(parse(text = df$ext[i]))
-
-    ras <- reproducible::rasterRead(extFun(0, 15, 0, 15), res = 1)
+    ras <- read(extFun(0, 15, 0, 15), res = 1)
     ras[] <- NA
 
     set.seed(123)
@@ -59,81 +53,35 @@ test_that("mapReduce: file does not work correctly 1", {
   }
 })
 
-# test_that("mapReduce: file does not work correctly 2", {
-#   library(data.table)
-#   library(raster)
-#
-#   on.exit({
-#    detach("package:data.table")
-#    detach("package:raster"))
-#   }, add = TRUE)
-#
-#   ras <- terra::rast(terra::ext(0,15,0,15), res=1)
-#   fullRas <- randomPolygons(ras, numTypes=5, speedup=1, p=0.3)
-#   names(fullRas) <- "mapcodeAll"
-#   uniqueComms <- raster::unique(fullRas)
-#   reducedDT <- data.table(
-#     mapcodeAll=uniqueComms,
-#     communities=sample(1:1000, length(uniqueComms)),
-#     biomass=rnbinom(length(uniqueComms), mu=4000, 0.4)
-#   )
-#   biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
-#
-#   expect_equal(sort(unique(getValues(biomass))), sort(reducedDT$biomass))
-#   expect_equal(length(unique(getValues(biomass))), length(unique(getValues(fullRas))))
-#
-#   setkey(reducedDT, biomass)
-#   communities <- rasterizeReduced(reducedDT, fullRas, "communities")
-#   expect_equal(sort(unique(getValues(communities))), sort(reducedDT$communities))
-#   expect_equal(length(unique(getValues(communities))), length(unique(getValues(fullRas))))
-# })
-#
-# test_that("mapReduce: file does not work correctly 3", {
-#   library(data.table)
-#   library(raster)
-#
-#   on.exit({
-#    detach("package:data.table")
-#    detach("package:raster"))
-#   }, add = TRUE)
-#
-#   ras <- terra::rast(terra::ext(0, 15, 0, 15), res = 1)
-#   fullRas <- randomPolygons(ras, numTypes = 5, speedup = 1, p = 0.3)
-#   names(fullRas) <- "mapcodeAll""'
-#   uniqueComms <- raster::unique(fullRas)
-#   reducedDT <- data.table(
-#     mapcodeAll=uniqueComms,
-#     communities=sample(1:1000, length(uniqueComms)),
-#     biomass=rnbinom(length(uniqueComms), mu = 4000, 0.4)
-#   )
-#   biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
-#
-#   setkey(reducedDT, biomass)
-#   communities <- rasterizeReduced(reducedDT, fullRas, "communities")
-#   expect_equal(sort(unique(getValues(communities))), sort(reducedDT$communities))
-# })
-#
-# test_that("mapReduce: file does not work correctly 4", {
-#   library(data.table)
-#   library(raster)
-#
-#   on.exit({
-#    detach("package:data.table")
-#    detach("package:raster"))
-#   }, add = TRUE)
-#
-#   ras <- terra::rast(terra::ext(0,15,0,15), res=1)
-#   fullRas <- randomPolygons(ras, numTypes=5, speedup=1, p=0.3)
-#   names(fullRas) <- "mapcodeAll"
-#   uniqueComms <- raster::unique(fullRas)
-#   reducedDT <- data.table(
-#     mapcodeAll=uniqueComms,
-#     communities=sample(1:1000, length(uniqueComms)),
-#     biomass=rnbinom(length(uniqueComms), mu=4000, 0.4)
-#   )
-#   biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
-#
-#   setkey(reducedDT, biomass)
-#   communities <- rasterizeReduced(reducedDT, fullRas, "communities")
-#   expect_equal(length(unique(getValues(communities))), length(unique(getValues(fullRas))))
-# })
+test_that("mapReduce: file does not work correctly 2", {
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
+  rasOrig <- terra::rast(terra::ext(0,15,0,15), res=1)
+
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
+    cls <- rastDF$class[ii]
+    read <- eval(parse(text = rastDF$read[ii]))
+    extFun <- eval(parse(text = rastDF$ext[ii]))
+
+    ras <- read(rasOrig)
+    fullRas <- randomPolygons(ras, numTypes = 5)
+    names(fullRas) <- "mapcodeAll"
+    uniqueComms <- as.numeric(unique(fullRas[]))
+    reducedDT <- data.table(
+      mapcodeAll=uniqueComms,
+      communities=sample(1:1000, length(uniqueComms)),
+      biomass=rnbinom(length(uniqueComms), mu = 4000, 0.4)
+    )
+    biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
+
+    expect_equal(sort(unique(as.numeric(terra::values(biomass)))), sort(reducedDT$biomass))
+    expect_equal(length(unique(as.numeric(terra::values(biomass)))), length(unique(as.numeric(terra::values(fullRas)))))
+
+    setkey(reducedDT, biomass)
+    communities <- rasterizeReduced(reducedDT, fullRas, "communities")
+    expect_equal(sort(unique(as.numeric(terra::values(communities)))), sort(reducedDT$communities))
+    expect_equal(length(unique(as.numeric(terra::values(communities)))), length(unique(as.numeric(terra::values(fullRas)))))
+  }
+})
+
