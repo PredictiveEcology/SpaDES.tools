@@ -60,8 +60,7 @@ setkey(reducedDT, biomass)
 communities <- rasterizeReduced(reducedDT, fullRas, "communities")
 coltab(communities) <- c("blue", "orange", "red")
 if (interactive()) {
-  clearPlot()
-  Plot(biomass, communities, fullRas)
+  terra::plot(c(biomass, communities, fullRas))
 }
 
 ## with a factor SpatRaster, the mapcode should correspond to the

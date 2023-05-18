@@ -66,7 +66,6 @@ move <- function(hypothesis = "crw", ...) {
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom CircStats rad
 #' @importFrom sp SpatialPointsDataFrame
 #' @importFrom stats rnorm
 #' @rdname crw
@@ -78,6 +77,7 @@ crw <- function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
   }
 
   if (inherits(agent, "SpatialPoints") || (inherits(agent, "SpatVect"))) {
+    if (!requireNamespace("CircStats")) stop("Need to install.packages('CircStats')")
     n <- length(agent)
     agent <- SpatialPointsDataFrame(agent, data = data.frame(
       x1 = runif(n, -180, 180), y1 = runif(n, -180, 180)
@@ -109,8 +109,8 @@ crw <- function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
   agent[, c("x1", "y1")] <- crds
   # update current coordinates to be those after the move
   newCoords <- cbind(
-    x = crds[, 1] + sin(rad(rndDir)) * stepLength,
-    y = crds[, 2] + cos(rad(rndDir)) * stepLength
+    x = crds[, 1] + sin(CircStats::rad(rndDir)) * stepLength,
+    y = crds[, 2] + cos(CircStats::rad(rndDir)) * stepLength
   )
   # for Spatial -- this was used: agent@coords <-
   coords(agent) <- newCoords

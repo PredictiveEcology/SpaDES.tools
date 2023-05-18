@@ -105,9 +105,8 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' @examples
 #' set.seed(1234)
 #' Ras <- randomPolygons(numTypes = 5)
-#' if (interactive() && require("quickPlot", quietly = TRUE)) {
-#'   clearPlot()
-#'   Plot(Ras, cols = c("yellow", "dark green", "blue", "dark red"))
+#' if (interactive() ) {
+#'   terra::plot(Ras, col = c("yellow", "dark green", "blue", "dark red"))
 #' }
 #'
 #' # more complex patterning, with a range of patch sizes
@@ -115,11 +114,9 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' a[a < 320] <- 0
 #' a[a >= 320] <- 1
 #' clumped <- terra::patches(a)
-#' if (interactive() && require("quickPlot", quietly = TRUE)) {
-#'   clearPlot()
-#'   Plot(a)
+#' if (interactive()) {
+#'   terra::plot(a)
 #' }
-#'
 randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
                            numTypes = 2, ...) {
   args <- list(...)
@@ -386,14 +383,12 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #' @examples
 #' library(data.table)
 #' library(raster)
-#' library(quickPlot)
 #'
 #' set.seed(1234)
 #' Ntypes <- 4
 #' ras <- randomPolygons(numTypes = Ntypes)
 #' if (interactive()) {
-#'   clearPlot()
-#'   Plot(ras)
+#'   terra::plot(ras)
 #' }
 #'
 #' # Use numPerPatchTable
@@ -410,14 +405,12 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #'   rasPatches[rasPatches==i] <- patchDT$num.in.pop[i]
 #' }
 #' if (interactive()) {
-#'   clearPlot()
-#'   Plot(ras, rasPatches)
+#'   terra::plot(c(ras, rasPatches))
 #' }
 #' rasAgents <- specificNumPerPatch(ras, numPerPatchMap = rasPatches)
 #' rasAgents[is.na(rasAgents)] <- 0
 #' if (interactive()) {
-#'   clearPlot()
-#'   Plot(rasAgents)
+#'   terra::plot(rasAgents)
 #' }
 #'
 #' @export

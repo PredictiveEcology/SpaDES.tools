@@ -59,7 +59,6 @@ utils::globalVariables(c(
 #' @return A `data.table` with all information used during the spreading
 #'
 #' @export
-#' @importFrom CircStats deg rad
 #' @importFrom data.table := setattr
 #' @importFrom fpCompare %>=% %>>%
 #' @importFrom graphics par
@@ -131,7 +130,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
   plotMultiplier <- mean(start$abundActive, na.rm = TRUE) /
     ((meanDist * 10 / res(rasQuality)[1]))
   if (isTRUE(plot.it > 1)) {
-    rasIterations <- raster(rasQuality)
+    rasIterations <- terra::rast(rasQuality)
     rasIterations[] <- NA
     rasIterations[start$pixels] <- 0
   }
@@ -153,10 +152,10 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     iteration <- spreadState$totalIterations
     if (verbose > 1) message("Iteration ", iteration)
     if (isTRUE(plot.it > 1)) {
-      .requireNamespace("quickPlot", stopOnFALSE = TRUE)
+      # .requireNamespace("quickPlot", stopOnFALSE = TRUE)
       rasIterations[b[active]$pixels] <- iteration
-      quickPlot::Plot(rasIterations, new = iteration == 1,
-                      legendRange = c(0, meanDist / (res(rasQuality)[1] / 12)))
+      terra::plot(rasIterations, add = !(iteration == 1),
+                  range = c(0, meanDist / (res(rasQuality)[1] / 12)))
     }
 
 
@@ -332,18 +331,18 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     saveStackFALSE <- isFALSE(saveStack) # allow TRUE or character
     if (!saveStackFALSE) {
       if (isTRUE(saveStack))
-        saveStack <- raster::rasterTmpFile()
+        saveStack <- tempfile(fileext = ".tif")
       # make 30 maps
       b[, distGrp := floor(distance / (diff(range(b$distance)) / 30))]
-      ras <- raster(rasAbundance)
+      ras <- terra::rast(rasAbundance)
       out1 <- lapply(unique(b$distGrp), function(x)  {
-        r <- raster(ras)
+        r <- terra::rast(ras)
         x1 <- b[distGrp <= x, sum(abundSettled), by = "pixels"]
         r[x1$pixels] <- ceiling(x1$V1)
-        r <- writeRaster(r, raster::rasterTmpFile())
+        # r <- writeRaster(r, tempfile(fileext = ".tif"))
         r
       })
-      writeRaster(raster::stack(out1), filename = saveStack, overwrite = TRUE)
+      writeRaster(terra::rast(out1), filename = saveStack, overwrite = TRUE)
       message("stack saved to ", saveStack)
     }
   }
@@ -386,7 +385,8 @@ testEquivalentMetadata <- function(...) {
 
 #' @export
 #' @importFrom raster compareRaster
-testEquivalentMetadata.Raster <- function(...) {
-  compareRaster(..., orig = TRUE)
+testEquivalentMetadata.default <- function(...) {
+  # raster::compareRaster(..., orig = TRUE)
+  terra::compareGeom(...)
   return(invisible())
 }

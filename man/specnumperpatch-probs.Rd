@@ -28,14 +28,12 @@ linked by a column in that table called \code{pops}.
 \examples{
 library(data.table)
 library(raster)
-library(quickPlot)
 
 set.seed(1234)
 Ntypes <- 4
 ras <- randomPolygons(numTypes = Ntypes)
 if (interactive()) {
-  clearPlot()
-  Plot(ras)
+  terra::plot(ras)
 }
 
 # Use numPerPatchTable
@@ -52,14 +50,12 @@ for (i in 1:Ntypes) {
   rasPatches[rasPatches==i] <- patchDT$num.in.pop[i]
 }
 if (interactive()) {
-  clearPlot()
-  Plot(ras, rasPatches)
+  terra::plot(c(ras, rasPatches))
 }
 rasAgents <- specificNumPerPatch(ras, numPerPatchMap = rasPatches)
 rasAgents[is.na(rasAgents)] <- 0
 if (interactive()) {
-  clearPlot()
-  Plot(rasAgents)
+  terra::plot(rasAgents)
 }
 
 }

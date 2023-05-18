@@ -101,10 +101,7 @@ If this is \code{excludePixels}, and if a \code{minRadius} and
 \code{maxRadius} are equal, this will return no pixels.
 }
 \examples{
-library(reproducible)
-library(data.table)
 library(terra)
-# library(quickPlot)
 
 set.seed(1462)
 
@@ -174,7 +171,6 @@ ras1[] <- 0
 cirsOverlap <- data.table(cirs)[, list(sumIDs = sum(id)), by = indices]
 ras1[cirsOverlap$indices] <- cirsOverlap$sumIDs
 if (interactive()) {
-  # clearPlot()
   terra::plot(ras1)
 }
 

@@ -383,7 +383,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' @seealso [distanceFromEachPoint()], which will also return directions if `angles = TRUE`.
 #'
 #' @examples
-#' library(raster)
+#' library(terra)
 #'
 #' N <- 2
 #' dirRas <- terra::rast(terra::ext(0,40,0,40), res = 1)
@@ -393,17 +393,15 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'
 #' dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
 #' if (requireNamespace("CircStats")) {
-#' dirs1[, "angles"] <- deg(dirs1[,"angles"] %% (2*pi))
-#' indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
-#' minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
-#' dirRas[] <- as.vector(minDir)
-#' if (interactive() && require("quickPlot", quietly = TRUE)) {
-#'   clearPlot()
-#'   Plot(dirRas)
-#'   library(sp)
-#'   start <- SpatialPoints(coords[, c("x", "y"), drop = FALSE])
-#'   Plot(start, addTo = "dirRas")
-#' }
+#'   dirs1[, "angles"] <- CircStats::deg(dirs1[,"angles"] %% (2*pi))
+#'   indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
+#'   minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
+#'   dirRas[] <- as.vector(minDir)
+#'   if (interactive()) {
+#'     terra::plot(dirRas)
+#'     start <- terra::vect(coords[, c("x", "y"), drop = FALSE])
+#'     terra::plot(start, add = TRUE)
+#'   }
 #' }
 #'
 #' @export

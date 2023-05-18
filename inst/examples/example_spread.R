@@ -13,9 +13,8 @@ numCell <- ncell(emptyRas)
 directions <- 8
 
 # Can use transparent as a colour
-coltab(hab) <- paste(c("transparent", brewer.pal(8, "Greys")))
+coltab(hab) <- paste(c("transparent", grey(0:40/40)))
 
-# note speedup is equivalent to making pyramids, so, some details are lost
 terra::plot(hab)
 
 # initiate 10 fires
@@ -23,12 +22,12 @@ startCells <- as.integer(sample(1:ncell(emptyRas), 100))
 fires <- spread(hab, loci = startCells, 0.235, persistence = 0, numNeighs = 2,
                 mask = NULL, maxSize = 1e8, directions = 8, iterations = 1e6, id = TRUE)
 
-terra::plot(hab, type = "classes")
-terra::plot(fires, type = "continuous")
+terra::plot(hab, type = "classes", legend = FALSE)
+fires[fires == 0] <- NA
+terra::plot(fires, add = TRUE, col = "red", type = "continuous", legend = FALSE)
 
 # Instead, to give a colour to the zero values, use \code{zero.color=}
 coltab(fires) <- NULL
-fires[fires[] == 0] <- NA
 # need to specify "type" to get correct legend
 terra::plot(fires,  col = c(colorRampPalette(c("blue", "green"))(100)),
             type = "continuous")

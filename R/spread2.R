@@ -51,7 +51,7 @@ utils::globalVariables(c(
 #' \deqn{max(spreadProb)/min(spreadProb)} will generally be less than
 #' `asymmetry`, for the 8 neighbours. The exact adjustment to the spreadProb
 #' is calculated with:
-#' \deqn{angleQuality <- (cos(angles - rad(asymmetryAngle))+1)/2}
+#' \deqn{angleQuality <- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2}
 #' which is multiplied to get an angle-adjusted spreadProb:
 #' \deqn{spreadProbAdj <- actualSpreadProb * angleQuality}
 #' which is then rescaled:
@@ -1105,7 +1105,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # Step 11 - plot it if necessary
     if (plot.it) {
-      .requireNamespace("quickPlot", stopOnFALSE = TRUE)
+      # .requireNamespace("quickPlot", stopOnFALSE = TRUE)
 
       newPlot <- FALSE
       if (totalIterations == 1) {
@@ -1224,7 +1224,7 @@ angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
   to1 <- cbind(id = from, xyFromCell(landscape, cell = as.vector(to)))
   d <- .pointDirection(from = from1, to = to1)
 
-  angleQuality <- cbind(angleQuality = (cos(d[, "angles"] - rad(actualAsymmetryAngle)) + 1), d)
+  angleQuality <- cbind(angleQuality = (cos(d[, "angles"] - CircStats::rad(actualAsymmetryAngle)) + 1), d)
   angleQuality
 }
 

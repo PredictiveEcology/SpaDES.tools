@@ -56,9 +56,8 @@ equal to \code{area} (expecting area in hectares), #' and a centre at approximat
 \examples{
 set.seed(1234)
 Ras <- randomPolygons(numTypes = 5)
-if (interactive() && require("quickPlot", quietly = TRUE)) {
-  clearPlot()
-  Plot(Ras, cols = c("yellow", "dark green", "blue", "dark red"))
+if (interactive() ) {
+  terra::plot(Ras, col = c("yellow", "dark green", "blue", "dark red"))
 }
 
 # more complex patterning, with a range of patch sizes
@@ -66,11 +65,9 @@ a <- randomPolygons(numTypes = 400, terra::rast(terra::ext(0, 50, 0, 50), res = 
 a[a < 320] <- 0
 a[a >= 320] <- 1
 clumped <- terra::patches(a)
-if (interactive() && require("quickPlot", quietly = TRUE)) {
-  clearPlot()
-  Plot(a)
+if (interactive()) {
+  terra::plot(a)
 }
-
 library(raster)
 b <- SpatialPoints(cbind(-110, 59))
 crs(b) <- sp::CRS("+init=epsg:4326")

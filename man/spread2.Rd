@@ -256,7 +256,7 @@ exactly one of the 8 angles of the 8 neighbours. This means that
 \deqn{max(spreadProb)/min(spreadProb)} will generally be less than
 \code{asymmetry}, for the 8 neighbours. The exact adjustment to the spreadProb
 is calculated with:
-\deqn{angleQuality <- (cos(angles - rad(asymmetryAngle))+1)/2}
+\deqn{angleQuality <- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2}
 which is multiplied to get an angle-adjusted spreadProb:
 \deqn{spreadProbAdj <- actualSpreadProb * angleQuality}
 which is then rescaled:
@@ -362,7 +362,6 @@ say, insect swarms.
 }
 
 \examples{
-library(data.table)
 library(terra)
 
 setDTthreads(1)
@@ -372,9 +371,8 @@ sams <- sort(sample(ncell(a), 3))
 
 # Simple use -- similar to spread(...)
 out <- spread2(a, start = sams, 0.225)
-if (interactive() && requireNamespace("quickPlot")) {
-  quickPlot::clearPlot()
-  quickPlot::Plot(out)
+if (interactive()) {
+  terra::plot(out)
 }
 
 # Use maxSize -- this gives an upper limit

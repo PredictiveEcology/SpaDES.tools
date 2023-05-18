@@ -11,7 +11,6 @@
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom CircStats deg
 #' @importFrom sp SpatialPoints
 #' @rdname heading
 #'
@@ -43,11 +42,12 @@
 #' heading(prev, curr)
 #'
 heading <- function(from, to) {
+  if (!requireNamespace("CircStats")) stop("Need to install.packages('CirsStats')")
   from <- coords(from)
   to <- coords(to)
   ys <- to[, 2] - from[, 2]
   xs <- to[, 1] - from[, 1]
-  heading <- deg(atan(xs / ys)) ## 0/0 produces NaN; correct this below
+  heading <- CircStats::deg(atan(xs / ys)) ## 0/0 produces NaN; correct this below
   heading[xs == 0 & ys == 0] <- 0
   ys <- (ys < 0)
   heading[(ys) & (xs) < 0] <- heading[(ys) & (xs) < 0] - 180
