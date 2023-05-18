@@ -76,6 +76,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   if (is(fullRaster, "Raster")) {
     if (raster::is.factor(fullRaster)) {
       fullRasterVals <- as.data.table(factorValues(fullRaster, fullRasterVals[[mapcode]]))
+      setnames(fullRasterVals, 1, new = mapcode)
     }
   }
 
