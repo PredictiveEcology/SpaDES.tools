@@ -83,7 +83,7 @@ numAgents <- function(N, probInit) {
 #' @author Eliot McIntire
 #' @export
 #' @include heading.R
-#' @importFrom terra values ncell raster xyFromCell
+#' @importFrom terra values ncell xyFromCell
 #' @importFrom reproducible .requireNamespace
 #' @importFrom stats runif
 #' @rdname initiateAgents
