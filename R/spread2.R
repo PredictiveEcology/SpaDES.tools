@@ -358,6 +358,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   #### assertions ###############
   checkmate::assertMultiClass(landscape, c("Raster", "SpatRaster"))
+  fmatch2 <- if (requireNamespace("fastmatch")) fastmatch::fmatch else base::match
   landscapeOrigClass <- is(landscape)
   ncells <- ncell(landscape)
   numCols <- ncol(landscape)
@@ -1101,7 +1102,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     #   tooSmall ==> tooSmall
     set(dt, whNotInactive, "state",
         c("inactive", "activeSource", "activeSource", "tooSmall")[
-          fmatch(activeStates, c("activeSource", "holding", "successful", "tooSmall"))])
+          fmatch2(activeStates, c("activeSource", "holding", "successful", "tooSmall"))])
 
     # Step 11 - plot it if necessary
     if (plot.it) {
