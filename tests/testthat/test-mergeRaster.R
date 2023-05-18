@@ -15,7 +15,7 @@ test_that("mergeRaster will return a message if tiles are resampled", {
 
     rastArgs <- list(xmn = -30^2, xmx = 30^2, ymn = -60^2, ymx = 60^2)
     if (pkg == "terra") {
-      names(rastArgs) <-c("xmin", "xmax", "ymin", "ymax")
+      names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
     }
     rastArgs <- append(rastArgs, list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
                                       resolution = c(30, 30),
@@ -33,7 +33,7 @@ test_that("mergeRaster will return a message if tiles are resampled", {
                        ymn = ymin(splitted[[tiles]]),
                        ymx = ymax(splitted[[tiles]]))
       if (pkg == "terra") {
-        names(rastArgs) <-c("xmin", "xmax", "ymin", "ymax")
+        names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
       }
       rastArgs <- append(rastArgs, list(resolution = c(250, 250), crs = crs(splitted[[tiles]])))
       y <- do.call(reproducible::rasterRead, rastArgs)
@@ -68,7 +68,7 @@ test_that("mergeRaster will produce a raster layer", {
 
     rastArgs <- list(xmn = -30^2, xmx = 30^2, ymn = -60^2, ymx = 60^2)
     if (pkg == "terra") {
-      names(rastArgs) <-c("xmin", "xmax", "ymin", "ymax")
+      names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
     }
     rastArgs <- append(rastArgs, list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
                                       resolution = c(30, 30),
@@ -99,7 +99,7 @@ test_that("mergeRaster will produce error if only one raster passed", {
 
     rastArgs <- list(xmn = -30^2, xmx = 30^2, ymn = -60^2, ymx = 60^2)
     if (pkg == "terra") {
-      names(rastArgs) <-c("xmin", "xmax", "ymin", "ymax")
+      names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
     }
     rastArgs <- append(rastArgs, list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
                                       resolution = c(30, 30),
@@ -129,7 +129,7 @@ test_that("mergeRaster will use mosaic with default mean if rasters are resample
 
     rastArgs <- list(xmn = -30^2, xmx = 30^2, ymn = -60^2, ymx = 60^2)
     if (pkg == "terra") {
-      names(rastArgs) <-c("xmin", "xmax", "ymin", "ymax")
+      names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
     }
     rastArgs <- append(rastArgs, list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
                                       resolution = c(30, 30),
@@ -147,7 +147,7 @@ test_that("mergeRaster will use mosaic with default mean if rasters are resample
                        ymn = ymin(splitted[[tiles]]),
                        ymx = ymax(splitted[[tiles]]))
       if (pkg == "terra") {
-        names(rastArgs) <-c("xmin", "xmax", "ymin", "ymax")
+        names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
       }
       rastArgs <- append(rastArgs, list(resolution = c(250, 250),
                                         crs = raster::crs(splitted[[tiles]])))
