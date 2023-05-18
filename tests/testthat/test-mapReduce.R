@@ -8,52 +8,50 @@ test_that("mapReduce: file does not work correctly 1", {
     detach("package:raster")
   }, add = TRUE)
 
-  ras <- rast(ext(0, 15, 0, 15), res = 1)
-  set.seed(123)
-  fullRas <- randomPolygons(ras, numTypes = 2)
-  names(fullRas) <- "mapcodeAll"
-  uniqueComms <- as.vector(unique(fullRas[]))
-  reducedDT <- data.table(
-    mapcodeAll = as.integer(uniqueComms),
-    communities = sample(1:1000, length(uniqueComms)),
-    biomass = as.integer(rnbinom(length(uniqueComms), mu = 4000, 0.4))
-  )
+  for (pkg in c("raster", "terra")) {
+    ras <- switch(pkg,
+                  raster = raster(extent(0, 15, 0, 15), res = 1),
+                  terra = rast(ext(0, 15, 0, 15), res = 1))
+    ras[] <- NA
 
-  biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
-  expect_equal(sort(as.vector(unique(biomass[]))), sort(reducedDT$biomass))
+    set.seed(123)
+    fullRas <- randomPolygons(ras, numTypes = 2)
+    names(fullRas) <- "mapcodeAll"
+    uniqueComms <- as.vector(unique(fullRas[]))
+    reducedDT <- data.table(
+      mapcodeAll = as.integer(uniqueComms),
+      communities = sample(1:1000, length(uniqueComms)),
+      biomass = as.integer(rnbinom(length(uniqueComms), mu = 4000, 0.4))
+    )
 
-  ## test with RasterLayer
-  biomassRL <- rasterizeReduced(reducedDT, raster(fullRas), "biomass")
-  expect_equal(sort(as.vector(unique(biomassRL[]))), sort(reducedDT$biomass))
+    biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
+    expect_equal(sort(as.vector(unique(biomass[]))), sort(reducedDT$biomass))
 
-  communities <- rasterizeReduced(reducedDT, fullRas, "communities")
-  expect_equal(sort(as.vector(unique(communities[]))), sort(reducedDT$communities))
+    communities <- rasterizeReduced(reducedDT, fullRas, "communities")
+    expect_equal(sort(as.vector(unique(communities[]))), sort(reducedDT$communities))
 
-  expect_true(sum(table(sort(fullRas[])) * reducedDT$communities) == sum(communities[]))
+    expect_true(sum(table(sort(fullRas[])) * reducedDT$communities) == sum(communities[]))
 
-  ## test factor SpatRaster
-  cls <- data.frame(id = sort(unique(as.vector(fullRas[]))))
-  cls$Bclass <- LETTERS[cls$id]
-  levels(fullRas) <- cls
-  is.factor(fullRas)
+    ## test factor raster
+    cls <- data.frame(id = sort(unique(as.vector(fullRas[]))))
+    cls$Bclass <- LETTERS[cls$id]
+    clsDT <- as.data.table(cls)
 
-  clsDT <- as.data.table(cls)
-  reducedDT <- reducedDT[clsDT, on = "mapcodeAll==id"]
-  reducedDT[, mapcodeAll := Bclass]
+    if (is(fullRas, "SpatRaster")) {
+      levels(fullRas) <- cls
+    } else {
+      fullRas <- raster::as.factor(fullRas)
+      levs <- levels(fullRas)[[1]]
+      levs$Bclass <- clsDT[id %in% unique(fullRas[]), "Bclass"]
 
-  biomass2 <- rasterizeReduced(reducedDT, fullRas, "biomass")
-  expect_equal(biomass, biomass2)
+      levels(fullRas) <- levs
+    }
+    reducedDT <- reducedDT[clsDT, on = "mapcodeAll==id"]
+    reducedDT[, mapcodeAll := Bclass]
 
-  ## test factor RasterLayer
-  fullRasL <- raster(fullRas)
-  fullRasL <- raster::as.factor(fullRasL)
-  levs <- levels(fullRasL)[[1]]
-  levs$Bclass <- clsDT[id %in% unique(fullRasL[]), "Bclass"]
-
-  levels(fullRasL) <- levs
-
-  biomassRL2 <- rasterizeReduced(reducedDT, fullRasL, "biomass")
-  expect_equal(biomassRL, biomassRL2)
+    biomass2 <- rasterizeReduced(reducedDT, fullRas, "biomass")
+    expect_equal(biomass, biomass2)
+  }
 })
 
 # test_that("mapReduce: file does not work correctly 2", {
