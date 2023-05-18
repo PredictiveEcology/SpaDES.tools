@@ -82,8 +82,6 @@ test_that("mergeRaster will produce a raster layer", {
     merged <- mergeRaster(x = splitted)
     expect_is(merged, cls)
   }
-
-
 })
 
 test_that("mergeRaster will produce error if only one raster passed", {
@@ -112,7 +110,6 @@ test_that("mergeRaster will produce error if only one raster passed", {
   }
 })
 
-
 test_that("mergeRaster will use mosaic with default mean if rasters are resampled and fun if passed", {
   df <- data.frame(pkg = c("raster", "terra"),
                    read = c("raster::raster", "terra::rast"))
@@ -136,7 +133,6 @@ test_that("mergeRaster will use mosaic with default mean if rasters are resample
                                       vals = round(runif(n = 14400, min = 1, max = 10))))
 
     ras <- do.call(reproducible::rasterRead, rastArgs)
-
 
     splitted <- splitRaster(r = ras, nx = nx, ny = ny, buffer = c(10, 10))
     expect_is(splitted, "list")
