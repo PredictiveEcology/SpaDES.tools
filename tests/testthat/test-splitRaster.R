@@ -1,19 +1,27 @@
 test_that("splitRaster and mergeRaster work on small in-memory rasters", {
-  library(reproducible)
+  withr::local_package("reproducible")
 
-  owd <- getwd()
-  on.exit({
-    setwd(owd)
-    detach("package:reproducible")
-  }, add = TRUE)
+  df <- data.frame(pkg = c("raster", "terra"),
+                   read = c("raster::brick", "terra::rast"),
+                   testFile = c("external/rlogo.grd", "ex/logo.tif"))
 
-  for (pkg in c("raster", "terra")) {
+  for (i in seq(NROW(df))) {
+    pkg <- df$pkg[i]
+    read <- df$read[i]
+    testFile <- system.file(df$testFile[i], package = pkg)
+
+    withr::local_package(pkg)
+    withr::local_options(reproducible.rasterRead = read)
+
+    owd <- getwd()
+    on.exit({
+      setwd(owd)
+    }, add = TRUE)
+
     tmpdir <- file.path(tempdir(), "splitRaster-test", pkg) |> checkPath(create = TRUE)
     setwd(tmpdir)
 
-    b <- switch(pkg,
-                raster = raster::brick(system.file("external/rlogo.grd", package = "raster")),
-                terra = terra::rast(system.file("ex/logo.tif", package = "terra")))
+    b <- reproducible::rasterRead(testFile)
     r <- b[[1]] # use first layer only
     nx <- 3
     ny <- 4
