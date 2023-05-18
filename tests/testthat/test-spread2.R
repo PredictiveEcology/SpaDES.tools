@@ -1,10 +1,6 @@
 test_that("spread2 tests", {
 
-  withr::local_package("terra")
-  if (!requireNamespace("raster", quietly = TRUE)) {
-    rastDF <- rastDF[rastDF$pkg == "terra",]
-  }
-
+  rastDF <- needTerraAndRaster() #
   data.table::setDTthreads(1)
 
   # inputs for x
