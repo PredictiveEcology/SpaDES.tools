@@ -9,7 +9,7 @@
 #' @param seed   Numeric indicating the random seed to set internally
 #'               (useful for ensuring the same study area is produced each time).
 #'
-#' @return `SpatalPolygonsDataFrame`
+#' @return `SpatVector`
 #'
 #' @export
 #' @importFrom terra vect crs values<-
