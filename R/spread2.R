@@ -335,7 +335,6 @@ utils::globalVariables(c(
 #' @importFrom checkmate qassert checkMultiClass
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
-#' @importFrom fastmatch fmatch
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom terra ncell res ncol distance
 #' @importFrom reproducible .requireNamespace
