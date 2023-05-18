@@ -75,7 +75,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #'
 #' @return A map of extent `ext` with random polygons.
 #'
-#' @seealso [spread()], [raster()], [randomPolygons()]
+#' @seealso [spread()], [randomPolygons()]
 #'
 #' @export
 #' @importFrom terra cellFromXY ext xmax xmin ymax ymin
