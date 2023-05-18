@@ -40,7 +40,6 @@ Imports:
     graphics,
     methods,
     parallel,
-    rlang,
     Rcpp (>= 0.12.12),
     reproducible (>= 2.0.2),
     stats,
