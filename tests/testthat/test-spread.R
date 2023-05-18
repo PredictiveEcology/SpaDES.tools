@@ -1,10 +1,11 @@
 test_that("spread produces legal RasterLayer", {
+  skip_if_not_installed("dqrng")
+
   withr::local_package("terra")
   withr::local_package("dqrng")
 
   set.seed(123)
   dqrng::dqset.seed(123)
-
 
   # inputs for x
   a <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
