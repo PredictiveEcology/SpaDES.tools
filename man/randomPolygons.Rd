@@ -4,10 +4,7 @@
 \name{randomPolygons}
 \alias{randomPolygons}
 \alias{randomPolygon}
-\alias{randomPolygon.SpatialPoints}
-\alias{randomPolygon.SpatVector}
-\alias{randomPolygon.matrix}
-\alias{randomPolygon.SpatialPolygons}
+\alias{randomPolygon.default}
 \title{Produce a \code{SpatRaster} of  random polygons}
 \usage{
 randomPolygons(
@@ -18,13 +15,7 @@ randomPolygons(
 
 randomPolygon(x, hectares, area)
 
-\method{randomPolygon}{SpatialPoints}(x, hectares, area)
-
-\method{randomPolygon}{SpatVector}(x, hectares, area)
-
-\method{randomPolygon}{matrix}(x, hectares, area)
-
-\method{randomPolygon}{SpatialPolygons}(x, hectares, area)
+\method{randomPolygon}{default}(x, hectares, area)
 }
 \arguments{
 \item{ras}{A raster that whose extent will be used for the random polygons.}
@@ -33,7 +24,8 @@ randomPolygon(x, hectares, area)
 
 \item{...}{Other arguments passed to \code{spread}. No known uses currently.}
 
-\item{x}{Either a \code{SpatialPoints}, \code{SpatialPolygons}, or \code{matrix} with two
+\item{x}{Either a \code{SpatVector}, or \code{SpatialPoints} (deprecated), \code{SpatialPolygons}
+(deprecated), or \code{matrix} with two
 dimensions, 1 row, with the approximate centre of the new random polygon to create.
 If \code{matrix}, then longitude and latitude are assumed (epsg:4326)}
 
@@ -44,13 +36,13 @@ If \code{matrix}, then longitude and latitude are assumed (epsg:4326)}
 \value{
 A map of extent \code{ext} with random polygons.
 
-A \code{SpatialPolygons} object, with approximately the area request,
+A \code{SpatVector} polygons object, with approximately the area request,
 centred approximately at the coordinates requested, in the projection of \code{x}
 }
 \description{
 These are built with the \code{\link[=spread]{spread()}} function internally.
 
-Produces a \code{SpatialPolygons} object with 1 feature that will have approximately an area
+Produces a \code{SpatVector} polygons object with 1 feature that will have approximately an area
 equal to \code{area} (expecting area in hectares), #' and a centre at approximately \code{x}.
 }
 \examples{
@@ -68,22 +60,13 @@ clumped <- terra::patches(a)
 if (interactive()) {
   terra::plot(a)
 }
-library(raster)
-b <- SpatialPoints(cbind(-110, 59))
-crs(b) <- sp::CRS("+init=epsg:4326")
+library(terra)
+b <- terra::vect(cbind(-110, 59))
+crs(b) <- terra::crs("epsg:4326")
 a <- randomPolygon(b, area = 1e6)
 if (interactive()) {
   plot(a)
   points(b, pch = 19)
-}
-
-## with terra:
-library(terra)
-bb <- vect(b)
-aa <- randomPolygon(bb, area = 1e6)
-if (interactive()) {
-  plot(aa)
-  points(bb, pch = 19)
 }
 
 }

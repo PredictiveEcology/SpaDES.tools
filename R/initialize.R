@@ -157,7 +157,21 @@ randomPolygon <- function(x, hectares, area) {
 
 #' @export
 #' @rdname randomPolygons
-randomPolygon.SpatialPoints <- function(x, hectares, area) {
+randomPolygon.default <- function(x, hectares, area) {
+  if (inherits(x, "SpatialPoints")) {
+    rndmPolygonSpatialPoints(x = x, hectares = hectares, area = area)
+  } else if (inherits(x, "SpatVector")) {
+    rndmPolygonSpatVector(x, hectares, area)
+  } else if (inherits(x, "matrix")) {
+    rndmPolygonMatrix(x, hectares, area)
+  } else if (inherits(x, "SpatialPolygons")) {
+    rndmPolygonSpatialPolygons(x, hectares, area)
+  }
+}
+
+rndmPolygonSpatialPoints <- function(x, hectares, area) {
+  .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
+  if (!requireNamespace("sp")) stop("Need to install.packages('sp')")
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
@@ -214,10 +228,8 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
   return(outPolygon)
 }
 
-#' @export
 #' @importFrom terra geomtype is.related spatSample
-#' @rdname randomPolygons
-randomPolygon.SpatVector <- function(x, hectares, area) {
+rndmPolygonSpatVector <- function(x, hectares, area) {
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
@@ -243,9 +255,7 @@ randomPolygon.SpatVector <- function(x, hectares, area) {
 
 #' @importFrom reproducible .requireNamespace
 #' @importFrom terra vect crs
-#' @rdname randomPolygons
-#' @export
-randomPolygon.matrix <- function(x, hectares, area) {
+rndmPolygonMatrix <- function(x, hectares, area) {
   .requireNamespace("sf", stopOnFALSE = TRUE)
 
   if (!missing(hectares)) {
@@ -261,11 +271,10 @@ randomPolygon.matrix <- function(x, hectares, area) {
 }
 
 #' @importFrom reproducible .requireNamespace
-#' @importFrom sp spsample
-#' @rdname randomPolygons
-#' @export
-randomPolygon.SpatialPolygons <- function(x, hectares, area) {
+rndmPolygonSpatialPolygons <- function(x, hectares, area) {
+  .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
   .requireNamespace("sf", stopOnFALSE = TRUE)
+  .requireNamespace("sp", stopOnFALSE = TRUE)
 
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
