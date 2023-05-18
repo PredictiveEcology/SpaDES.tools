@@ -68,7 +68,8 @@ Suggests:
     rmarkdown,
     snow,
     sf,
-    testthat (>= 1.0.2)
+    testthat (>= 1.0.2),
+    withr
 Remotes:
     ropensci/NLMR
 Encoding: UTF-8
