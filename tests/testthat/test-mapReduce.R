@@ -1,17 +1,22 @@
 test_that("mapReduce: file does not work correctly 1", {
-  library(data.table)
-  library(raster)
-  library(terra)
+  withr::local_package("data.table")
 
-  on.exit({
-    detach("package:data.table")
-    detach("package:raster")
-  }, add = TRUE)
+  df <- data.frame(pkg = c("raster", "terra"),
+                   cls = c("RasterLayer", "SpatRaster"),
+                   read = c("raster::raster", "terra::rast"),
+                   ext = c("raster::extent", "terra::ext"))
 
-  for (pkg in c("raster", "terra")) {
-    ras <- switch(pkg,
-                  raster = raster(extent(0, 15, 0, 15), res = 1),
-                  terra = rast(ext(0, 15, 0, 15), res = 1))
+  for (i in seq(NROW(df))) {
+    pkg <- df$pkg[i]
+    cls <- df$cls[i]
+    read <- df$read[i]
+
+    withr::local_package(pkg)
+    withr::local_options(reproducible.rasterRead = read)
+
+    extFun <- eval(parse(text = df$ext[i]))
+
+    ras <- reproducible::rasterRead(extFun(0, 15, 0, 15), res = 1)
     ras[] <- NA
 
     set.seed(123)
