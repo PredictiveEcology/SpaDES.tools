@@ -455,6 +455,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   # returnDistances = TRUE and circle = TRUE both require distance calculations
   needDistance <- returnDistances | circle | returnDirections
   usingAsymmetry <- !is.na(asymmetry)
+  asymmetryAngleNeedSubset <- (inherits(asymmetryAngle, "Raster") ||
+                                 inherits(asymmetryAngle, "SpatRaster")) &&
+    NROW(asymmetryAngle) != 1 # length was previously used, but has different meaning for SpatRaster & Raster
 
   # This means that if an event can not spread any more, it will try 10 times, incl. 2 jumps
   # maxRetriesPerID <- 10
@@ -680,7 +683,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         } else {
           asymmetry[dtPotential$to]
         }
-        actualAsymmetryAngle <- if (length(asymmetryAngle) == 1) {
+        actualAsymmetryAngle <- if (!asymmetryAngleNeedSubset) {
           asymmetryAngle
         } else {
           asymmetryAngle[dtPotential$to]
@@ -883,10 +886,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         asymmetry[dtPotential$to]
       }
 
-      actualAsymmetryAngle <- if (length(asymmetryAngle) == 1) {
-        asymmetryAngle
+      actualAsymmetryAngle <- if (asymmetryAngleNeedSubset) {
+        asymmetryAngle[][dtPotential$to]
       } else {
-        asymmetryAngle[dtPotential$to]
+        asymmetryAngle
       }
 
       angleQualities <- angleQuality(from = dtPotential$id, to = dtPotential$to,
@@ -1068,14 +1071,14 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # breaking some tests
 
     ## Extract persistenceProb for the current set of source pixels
-    if (length(persistProb) == 1) {
+    if (length(persistProb) == 1 && (!is(persistProb, "Raster") && !is(persistProb, "SpatRaster"))) {
       if (is.na(persistProb)) {
         actualPersistProb <- NULL
       } else {
         actualPersistProb <- rep(persistProb, sum(dt$state == "activeSource"))
       }
     } else {
-      actualPersistProb <- persistProb[dt[state == "activeSource", initialPixels]]
+      actualPersistProb <- persistProb[][dt[state == "activeSource", initialPixels]]
     }
 
     ## "activeSource" fires become "successful" depending on prob of persistence

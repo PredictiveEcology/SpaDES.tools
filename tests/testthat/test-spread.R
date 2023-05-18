@@ -2,9 +2,7 @@ test_that("spread produces legal RasterLayer", {
   skip_if_not_installed("dqrng")
 
   withr::local_package("terra")
-  if (!requireNamespace("raster", quietly = TRUE)) {
-    rastDF <- rastDF[rastDF$pkg == "terra",]
-  }
+  rastDF <- needTerraAndRaster() #
   withr::local_package("dqrng")
 
   set.seed(123)
@@ -14,12 +12,10 @@ test_that("spread produces legal RasterLayer", {
   a <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
   b <- terra::rast(terra::ext(a), res = 1, vals = stats::runif(ncell(a), 0, 1))
 
-  rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"),
-                   read = c("raster::raster", "terra::rast"))
-  for (i in seq(NROW(rastDF))) {
-    type <- rastDF$pkg[i]
-    cls <- rastDF$class[i]
-    pkg <- rastDF$read[i]
+  for (ii in seq(NROW(rastDF))) {
+    type <- rastDF$pkg[ii]
+    cls <- rastDF$class[ii]
+    pkg <- rastDF$read[ii]
 
     withr::local_options(reproducible.rasterRead = pkg)
     a <- reproducible::rasterRead(a)
@@ -29,7 +25,7 @@ test_that("spread produces legal RasterLayer", {
     expect_s4_class(spread(a, loci = ncell(a) / 2, stats::runif(1, 0.15, 0.25)), cls)
 
     #check wide range of spreadProbs
-    for (i in 1:20) {
+    for (wwt in 1:20) {
       expect_s4_class(spread(a, loci = ncell(a) / 2, stats::runif(1, 0, 1)), cls)
     }
 
@@ -82,17 +78,17 @@ test_that("spread produces legal RasterLayer", {
                          mask = NULL, maxSize = 1e8, 8, iterations = 2, id = TRUE)
     stopped <- list()
     stopped[[1]] <- fires[[1]][, sum(active), by = id][V1 == 0, id]
-    for (i in 2:4) {
+    for (wwn in 2:4) {
       j <- sample(1:1000, 1)
       set.seed(j)
       dqrng::dqset.seed(j)
-      fires[[i]] <- spread(a, loci = as.integer(sample(1:ncell(a), 10)), returnIndices = TRUE,
+      fires[[wwn]] <- spread(a, loci = as.integer(sample(1:ncell(a), 10)), returnIndices = TRUE,
                            spreadProb = 0.235, 0, NULL, 1e8, 8, iterations = 2, id = TRUE,
-                           spreadState = fires[[i - 1]])
-      stopped[[i]] <- fires[[i]][, sum(active), by = id][V1 == 0, id]
+                           spreadState = fires[[wwn - 1]])
+      stopped[[wwn]] <- fires[[wwn]][, sum(active), by = id][V1 == 0, id]
 
       # Test that any fire that stopped previously is not rekindled
-      expect_true(all(stopped[[i - 1]] %in% stopped[[i]]))
+      expect_true(all(stopped[[wwn - 1]] %in% stopped[[wwn]]))
     }
 
     # Test that passing NA to loci returns a correct data.table
@@ -117,14 +113,17 @@ test_that("allowOverlap -- produces exact result", {
   skip_if_not_installed("dqrng")
 
   withr::local_package("terra")
-  withr::local_package("raster")
+  rastDF <- needTerraAndRaster() #
   N <- 10
   smallExt <- terra::ext(1, N - 1, 1, N - 1)
   smallExtRas <- terra::rast(smallExt)
   lrgExt <- terra::extend(smallExt, 1)
   a <- terra::rast(lrgExt, res = 1)
 
-  for (pkg in c("raster::raster", "terra::rast")) {
+  for (ii in seq(NROW(rastDF))) {
+
+  # for (pkg in c("raster::raster", "terra::rast")) {
+    pkg <- rastDF$read[ii]
     withr::local_options(reproducible.rasterRead = pkg)
     if (pkg == "raster::raster") {
       a <- reproducible::rasterRead(a)
@@ -141,13 +140,13 @@ test_that("allowOverlap -- produces exact result", {
     dqrng::dqset.seed(123445)
     Nreps <- 100
     sams <- sample(1e7, Nreps)
-    for (i in seq_along(ao)) {
-      b[[i]] <- list()
+    for (jjj in seq_along(ao)) {
+      b[[jjj]] <- list()
       for (j in seq_len(Nreps)) {
         set.seed(sams[j])
         # dqrng::dqset.seed(sams[j])
-        b[[i]][[j]] <- spread(a, loci = mp, spreadProb = 0.22, id = TRUE,
-                              allowOverlap = ao[i], returnIndices = TRUE)
+        b[[jjj]][[j]] <- spread(a, loci = mp, spreadProb = 0.22, id = TRUE,
+                              allowOverlap = ao[jjj], returnIndices = TRUE)
       }
     }
     bs <- lapply(b, function(x) rbindlist(x, idcol = "rep"))
@@ -159,28 +158,27 @@ test_that("allowOverlap -- produces exact result", {
     # expect_true(out)
 
     ##################################################
-    i <- 0L
     b <- list()
     Nreps <- 100
     sams <- sample(1e7, Nreps)
 
     #._spread_14 <- 1
-    for (i in seq_along(ao)) {
-      b[[i]] <- list()
+    for (wte in seq_along(ao)) {
+      b[[wte]] <- list()
       for (j in seq_len(Nreps)) {
         set.seed(sams[j])
         # dqrng::dqset.seed(sams[j])
-        b[[i]][[j]] <- spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
-                              allowOverlap = ao[i], returnIndices = TRUE)
+        b[[wte]][[j]] <- spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
+                              allowOverlap = ao[wte], returnIndices = TRUE)
       }
     }
     bs <- lapply(b, function(x) rbindlist(x, idcol = "rep"))
     ras <- list()
-    for (i in seq_along(bs)) {
-      ras[[i]] <- reproducible::rasterRead(a)
-      ras[[i]][] <- 0
-      v <- bs[[i]][, .N, by = "indices"]
-      ras[[i]][v$indices] <- v$N
+    for (wti in seq_along(bs)) {
+      ras[[wti]] <- reproducible::rasterRead(a)
+      ras[[wti]][] <- 0
+      v <- bs[[wti]][, .N, by = "indices"]
+      ras[[wti]][v$indices] <- v$N
     }
     if (pkg == "raster::raster") {
       stk <- raster::stack(ras)
@@ -200,7 +198,7 @@ test_that("allowOverlap -- produces exact result", {
 test_that("spread stopRule does not work correctly", {
 
   withr::local_package("terra")
-  withr::local_package("raster") # this test does a loop and runs with both
+  rastDF <- needTerraAndRaster() #
 
   for (pkg in c("raster::raster", "terra::rast")) {
     withr::local_options(reproducible.rasterRead = pkg)
@@ -349,7 +347,7 @@ test_that("spread stopRule does not work correctly", {
       centre <- xyFromCell(hab2, startCells)
       allCells <- xyFromCell(hab2, cells)
       # pd <- pointDistance(centre[whCirc, ], allCells, lonlat = FALSE)
-      pd <- as.numeric(distance(centre[whCirc, , drop = FALSE], allCells, lonlat = FALSE))
+      pd <- as.numeric(terra::distance(centre[whCirc, , drop = FALSE], allCells, lonlat = FALSE))
       circEdge <- circs
       circEdge[] <- 0
       circEdge[cells[pd == maxRadius]] <- 1
@@ -399,7 +397,7 @@ test_that("spread stopRule does not work correctly", {
     #}) ## TODO: fix error when allowOverlap = TRUE
 
     # Test allowOverlap and stopRule
-    for (i in 1:6) {
+    for (iti in 1:6) {
       maxVal <- sample(10:300, 1)
       stopRule2 <- function(landscape, maxVal) sum(landscape) > maxVal
 
@@ -438,7 +436,7 @@ test_that("spread stopRule does not work correctly", {
 
     # Test arbitrary raster as part of stopRule
     # Stop if sum of landscape is big or mean of quality is too small
-    for (i in 1:6) {
+    for (itj in 1:6) {
       initialLoci <- as.integer(sample(1:ncell(hab), 10))
       quality <- reproducible::rasterRead(hab)
       quality[] <- runif(ncell(quality), 0, 1)
@@ -718,13 +716,12 @@ test_that("simple cir does not work correctly", {
   set.seed(1234)
   # dqrng::dqset.seed(1234)
   withr::local_package("terra")
-  withr::local_package("raster")
+  rastDF <- needTerraAndRaster() #
 
   hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1)
 
-  rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"))
-  for (i in seq(NROW(rastDF))) {
-    type <- rastDF$pkg[i]
+  for (ii in seq(NROW(rastDF))) {
+    type <- rastDF$pkg[ii]
     if (type == "raster")
       hab <- raster::raster(hab)
     circleRas <- cir(hab, maxRadius = 1, includeBehavior = "excludePixels")
@@ -763,20 +760,20 @@ test_that("simple cir does not work correctly", {
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = FALSE, returnDistances = FALSE)
-    expect_is(cirs2, rastDF$class[i])
+    expect_is(cirs2, rastDF$class[ii])
     expect_true(max(as.numeric(terra::values(cirs2))) == 2)
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = TRUE, returnDistances = FALSE)
-    expect_is(cirs2, rastDF$class[i])
+    expect_is(cirs2, rastDF$class[ii])
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = TRUE, returnDistances = TRUE)
-    expect_is(cirs2, rastDF$class[i])
+    expect_is(cirs2, rastDF$class[ii])
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = c(1, 2))
@@ -900,14 +897,13 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
 })
 
 test_that("spreadProb with relative values does not work correctly", {
-  withr::local_package("terra")
-  withr::local_package("raster")
+  rastDF <- needTerraAndRaster() #
 
   ext1 <- terra::ext(0, 1e2, 0, 1e2)
   extRas <- terra::rast(ext1, res = 1)
-  for (i in seq(NROW(rastDF))) {
-    type <- rastDF$pkg[i]
-    read <- rastDF$read[i]
+  for (ii in seq(NROW(rastDF))) {
+    type <- rastDF$pkg[ii]
+    read <- rastDF$read[ii]
 
     withr::local_options(reproducible.rasterRead = read)
 
@@ -950,12 +946,12 @@ test_that("spreadProb with relative values does not work correctly", {
     # dqrng::dqset.seed(seed)
 
     out1 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = ras)
-    expect_s4_class(out1, rastDF$class[i])
+    expect_s4_class(out1, rastDF$class[ii])
     set.seed(seed)
     # dqrng::dqset.seed(seed)
 
     out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps)
-    expect_s4_class(out2, rastDF$class[i])
+    expect_s4_class(out2, rastDF$class[ii])
     expect_equal(out1, out2)
   }
 })

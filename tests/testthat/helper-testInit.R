@@ -8,8 +8,7 @@ rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster
                      stackClass = c("RasterStack", "SpatRaster"),
                      extent = c("raster::extent", "terra::ext"))
 
-needTerraAndRaster <- function() {
-  withr::local_package("terra")
+needTerraAndRaster <- function(envir = parent.frame()) {
   if (!requireNamespace("raster", quietly = TRUE)) {
     rastDF <- rastDF[rastDF$pkg == "terra",]
   }

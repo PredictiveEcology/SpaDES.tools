@@ -1,5 +1,6 @@
 test_that("spread2 tests", {
 
+  withr::local_package("terra")
   rastDF <- needTerraAndRaster() #
   data.table::setDTthreads(1)
 
@@ -383,363 +384,381 @@ test_that("spread2 tests", {
 })
 
 test_that("spread2 tests -- asymmetry", {
-  skip_if_not_installed("quickPlot")
-  skip_if_not_installed("RandomFields", "3.1.24")
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
 
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
-  library(data.table); on.exit(detach("package:data.table"), add = TRUE)
-  library(fpCompare); on.exit(detach("package:fpCompare"), add = TRUE)
-  library(CircStats); on.exit(detach("package:CircStats"), add = TRUE)
-  library(quickPlot); on.exit(detach("package:quickPlot"), add = TRUE)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
-  # inputs for x
-  a <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
-  b <- raster(a)
-  b[] <- 1
-  bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
-  innerCells <- which(bb[] %==% 1)
+  for (ii in seq(NROW(rastDF))) {
+    read <- eval(parse(text = rastDF$read[ii]))
+    # skip_if_not_installed("quickPlot")
+    # skip_if_not_installed("RandomFields", "3.1.24")
+    #
+    # library(raster); on.exit(detach("package:raster"), add = TRUE)
+    # library(data.table); on.exit(detach("package:data.table"), add = TRUE)
+    # library(fpCompare); on.exit(detach("package:fpCompare"), add = TRUE)
+    # library(CircStats); on.exit(detach("package:CircStats"), add = TRUE)
+    # library(quickPlot); on.exit(detach("package:quickPlot"), add = TRUE)
 
-  set.seed(123)
-  sams <- sample(innerCells, 2)
-  out <- spread2(a, start = sams, 0.215, asRaster = FALSE, asymmetry = 2,
-                 asymmetryAngle = 90)
-  for (eof in 1:20) {
-    expect_silent({
-      out <- spread2(a, start = out, 0.215, asRaster = FALSE, asymmetry = 2,
-                     asymmetryAngle = 90)
-    })
-  }
+    # inputs for x
+    b <- read(aOrig)
+    a <- read(aOrig)
+    b[] <- 1
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    innerCells <- which(bb[] %==% 1)
 
-  hab <- raster(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
-  names(hab) <- "hab"
-  hab2 <- hab > 0
-  maxRadius <- 25
-  maxVal <- 50
-  set.seed(53432)
-
-  startCells <- as.integer(sample(1:ncell(hab), 1))
-
-  n <- 16
-  avgAngles <- numeric(n)
-  lenAngles <- numeric(n)
-
-  # function to calculate mean angle -- returns in degrees
-  meanAngle <- function(angles) {
-    deg(atan2(mean(sin(rad(angles))), mean(cos(rad(angles)))))
-  }
-
-  # if (interactive()) {
-  #   # dev()
-  #   # clearPlot()
-  # }
-  seed <- sample(1e6, 1)
-  set.seed(seed)
-  for (asymAng in (2:n)) {
-    circs <- spread2(hab, spreadProb = 0.25, start = ncell(hab) / 2 - ncol(hab) / 2,
-                    asymmetry = 40, asymmetryAngle = asymAng * 20, asRaster = FALSE)
-    ci <- raster(hab)
-    ci[] <- 0
-    ci[circs$pixels] <- circs$initialPixels
-    ciCentre <- raster(ci)
-    ciCentre[] <- 0
-    ciCentre[unique(circs$initialPixels)] <- 1
-    newName <- paste0("ci", asymAng * 20)
-    assign(newName, ci)
-
-    where2 <- function(name, env = parent.frame()) {
-      # simplified from pryr::where
-      if (exists(name, env, inherits = FALSE)) env else where2(name, parent.env(env))
+    set.seed(123)
+    sams <- sample(innerCells, 2)
+    out <- spread2(a, start = sams, 0.215, asRaster = FALSE, asymmetry = 2,
+                   asymmetryAngle = 90)
+    for (eof in 1:20) {
+      expect_silent({
+        out <- spread2(a, start = out, 0.215, asRaster = FALSE, asymmetry = 2,
+                       asymmetryAngle = 90)
+      })
     }
-    env <- where2(newName)
+
+    hab <- read(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
+    names(hab) <- "hab"
+    hab2 <- hab > 0
+    maxRadius <- 25
+    maxVal <- 50
+    set.seed(53432)
+
+    startCells <- as.integer(sample(1:ncell(hab), 1))
+
+    n <- 16
+    avgAngles <- numeric(n)
+    lenAngles <- numeric(n)
+
+    # function to calculate mean angle -- returns in degrees
+    meanAngle <- function(angles) {
+      deg(atan2(mean(sin(rad(angles))), mean(cos(rad(angles)))))
+    }
+
+    # if (interactive()) {
+    #   # dev()
+    #   # clearPlot()
+    # }
+    seed <- sample(1e6, 1)
+    set.seed(seed)
+    for (asymAng in (2:n)) {
+      circs <- spread2(hab, spreadProb = 0.25, start = ncell(hab) / 2 - ncol(hab) / 2,
+                       asymmetry = 40, asymmetryAngle = asymAng * 20, asRaster = FALSE)
+      ci <- read(hab)
+      ci[] <- 0
+      ci[circs$pixels] <- circs$initialPixels
+      ciCentre <- read(ci)
+      ciCentre[] <- 0
+      ciCentre[unique(circs$initialPixels)] <- 1
+      newName <- paste0("ci", asymAng * 20)
+      assign(newName, ci)
+
+      where2 <- function(name, env = parent.frame()) {
+        # simplified from pryr::where
+        if (exists(name, env, inherits = FALSE)) env else where2(name, parent.env(env))
+      }
+      env <- where2(newName)
+      if (interactive()) {
+        objToPlot <- get(newName, envir = env)
+        terra::plot(objToPlot) #, add = TRUE)
+        ciCentre[ciCentre == 0] <- NA
+        terra::plot(ciCentre, add = TRUE, col = "black")
+      }
+      a <- cbind(id = circs$initialPixels, to = circs$pixels, xyFromCell(hab, circs$pixels))
+      initialLociXY <- cbind(id = unique(circs$initialPixels),
+                             xyFromCell(hab, unique(circs$initialPixels)))
+      dirs <- directionFromEachPoint(from = initialLociXY, to = a)
+      dirs[, "angles"] <- CircStats::deg(dirs[, "angles"])
+      avgAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], meanAngle) %% 360
+      lenAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], length)
+    }
+
+    whBig <- which(lenAngles > 50)
+    pred <- (1:n)[whBig] * 20
+    expect_true(abs(coef(lm(avgAngles[whBig] ~ pred))[[2]] - 1) < 0.1)
+
+    # test that the events spread to the middle
+    # Create a raster with one point at the centre
+    ciCentre <- read(hab)
+    terra::crs(ciCentre) <- "epsg:23028"
+    ciCentre <- setValues(ciCentre, 1)
+    ciCentre[seq_len(ncell(ciCentre))[-(ncell(ciCentre) / 2 - ncol(ciCentre) / 2)]] <- NA_integer_
+    # create a direction raster with all points leading to that point
+    directionRas <- direction(ciCentre)
+    directionRas[] <- deg(directionRas[])
+
+    seed <- 4406
+    set.seed(seed)
+    sams <- ncol(directionRas) + 2
+    circs <- spread2(hab, spreadProb = 0.265, start = sams, asymmetry = 300,
+                     asymmetryAngle = directionRas, asRaster = TRUE)
+    circs2 <- spread2(hab, spreadProb = 0.265, start = sams, asRaster = TRUE)
     if (interactive()) {
-      objToPlot <- get(newName, envir = env)
-      Plot(objToPlot, addTo = newName)
-      Plot(ciCentre, cols = c("transparent", "black"), addTo = "objToPlot")
+      terra::plot(circs)
+      ciCentrePlot <- ciCentre
+      ciCentrePlot[ciCentrePlot == 2] <- NA
+      ciCentrePlot[sams] <- 2
+      ciCentrePlot[ciCentrePlot == 0] <- NA
+      terra::plot(ciCentrePlot, add = TRUE, col = c("black", "red"))
+      terra::plot(circs2, add = TRUE, col = "#1211AA33")
+      # Plot(ciCentrePlot, cols = c("transparent", "black", "red"), addTo = "circs")
+      # Plot(circs2, addTo = "circs", col = "#1211AA33")
     }
-    a <- cbind(id = circs$initialPixels, to = circs$pixels, xyFromCell(hab, circs$pixels))
-    initialLociXY <- cbind(id = unique(circs$initialPixels),
-                           xyFromCell(hab, unique(circs$initialPixels)))
-    dirs <- directionFromEachPoint(from = initialLociXY, to = a)
-    dirs[, "angles"] <- CircStats::deg(dirs[, "angles"])
-    avgAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], meanAngle) %% 360
-    lenAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], length)
-  }
+    #test whether it stopped before hitting the whole map
+    expect_true(sum(circs[], na.rm = TRUE) < ncell(circs))
 
-  whBig <- which(lenAngles > 50)
-  pred <- (1:n)[whBig] * 20
-  expect_true(abs(coef(lm(avgAngles[whBig] ~ pred))[[2]] - 1) < 0.1)
-
-  # test that the events spread to the middle
-  # Create a raster with one point at the centre
-  ciCentre <- raster(hab)
-  ciCentre <- setValues(ciCentre, 1)
-  ciCentre[seq_len(ncell(ciCentre))[-(ncell(ciCentre) / 2 - ncol(ciCentre) / 2)]] <- NA_integer_
-  # create a direction raster with all points leading to that point
-  directionRas <- direction(ciCentre)
-  directionRas[] <- deg(directionRas[])
-
-  seed <- 4406
-  set.seed(seed)
-  sams <- ncol(directionRas) + 2
-  circs <- spread2(hab, spreadProb = 0.265, start = sams, asymmetry = 300,
-                   asymmetryAngle = directionRas, asRaster = TRUE)
-  circs2 <- spread2(hab, spreadProb = 0.265, start = sams, asRaster = TRUE)
-  if (interactive()) {
-    Plot(circs, new = TRUE)
-    ciCentrePlot <- ciCentre
-    ciCentrePlot[ciCentrePlot == 2] <- NA
-    ciCentrePlot[sams] <- 2
-    Plot(ciCentrePlot, cols = c("transparent", "black", "red"), addTo = "circs")
-    Plot(circs2, addTo = "circs", cols = "#1211AA33")
-  }
-  #test whether it stopped before hitting the whole map
-  expect_true(sum(circs[], na.rm = TRUE) < ncell(circs))
-
-  if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
-    #test that it reached the centre, but not circs2 that did not have directionality
-    expect_equal(circs[sams], circs[which(ciCentre[] == 1)]) ## TODO: restore this test
-  }
-  expect_true(is.na(circs2[ciCentre == 1]))
-  expect_true(!is.na(circs2[sams]))
-
-  # Here, test that the asymmetry version, with adjusted downward spreadProb is creating the
-  #  same size events as the Non-asymmetry one. This is a weak test, really. It should
-  sizes <- data.frame(a = numeric())
-  set.seed(1234)
-  for (rso in 1:10) {
-    sams <- ncell(hab) / 4 - ncol(hab) / 4 * 3
-    circs <- spread2(hab, spreadProb = 0.18, start = sams,
-                     asymmetry = 2, asymmetryAngle = 135, asRaster = TRUE)
-    sizes <- rbind(sizes, cbind(a = attr(circs, "pixel")[, .N]))
-    if (FALSE) {
-      Plot(circs, new = TRUE)
-      ciCentre[ciCentre == 2] <- NA
-      ciCentre[sams] <- 2
-      Plot(ciCentre, cols = c("black", "red"), addTo = "circs")
-      Plot(circs2, addTo = "circs", cols = "#1211AA33")
+    if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
+      #test that it reached the centre, but not circs2 that did not have directionality
+      expect_equal(circs[sams], circs[which(ciCentre[] == 1)]) ## TODO: restore this test
     }
-  }
+    expect_true(is.na(circs2[ciCentre == 1]))
+    expect_true(!is.na(circs2[sams]))
 
-  ttestOut <- t.test(sizes$a, mu = 994)
-  expect_true(ttestOut$p.value > 0.05)
+    # Here, test that the asymmetry version, with adjusted downward spreadProb is creating the
+    #  same size events as the Non-asymmetry one. This is a weak test, really. It should
+    sizes <- data.frame(a = numeric())
+    set.seed(1234)
+    for (rso in 1:10) {
+      sams <- ncell(hab) / 4 - ncol(hab) / 4 * 3
+      circs <- spread2(hab, spreadProb = 0.18, start = sams,
+                       asymmetry = 2, asymmetryAngle = 135, asRaster = TRUE)
+      sizes <- rbind(sizes, cbind(a = attr(circs, "pixel")[, .N]))
+      if (FALSE) {
+        Plot(circs, new = TRUE)
+        ciCentre[ciCentre == 2] <- NA
+        ciCentre[sams] <- 2
+        Plot(ciCentre, cols = c("black", "red"), addTo = "circs")
+        Plot(circs2, addTo = "circs", cols = "#1211AA33")
+      }
+    }
 
-  skip("DEoptim within spread2")
-  # This code is used to get the mean value for the t.test above
-  n <- 100
-  sizes <- integer(n)
-  for (iwo in 1:n) {
-    circs <- spread2(hab, spreadProb = 0.225,
-                     start = ncell(hab) / 4 - ncol(hab) / 4 * 3,
-                     asRaster = FALSE)
-    sizes[iwo] <- circs[, .N]
-  }
-  goalSize <- mean(sizes)
+    ttestOut <- t.test(sizes$a, mu = 994)
+    expect_true(ttestOut$p.value > 0.05)
 
-  library(parallel)
-  # only need 10 cores for 10 populations in DEoptim
-  cl <- makeCluster(pmin(10, detectCores() - 2))
-  parallel::clusterEvalQ(cl, {
-    library(SpaDES.tools)
-    library(raster)
-    library(fpCompare)
-  })
-
-  objFn <- function(sp, n = 20, ras, goalSize) {
+    next # the following isn't tested
+    if (!interactive()) next
+    # This code is used to get the mean value for the t.test above
+    n <- 100
     sizes <- integer(n)
-    for (wnn in 1:n) {
-      circs <- spread2(ras, spreadProb = sp,
-                       start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
-                       asymmetry = 2, asymmetryAngle = 135,
+    for (iwo in 1:n) {
+      circs <- spread2(hab, spreadProb = 0.225,
+                       start = ncell(hab) / 4 - ncol(hab) / 4 * 3,
                        asRaster = FALSE)
-      sizes[wnn] <- circs[, .N]
+      sizes[iwo] <- circs[, .N]
     }
-    abs(mean(sizes) - goalSize)
+    goalSize <- mean(sizes)
+
+    library(parallel)
+    # only need 10 cores for 10 populations in DEoptim
+    cl <- makeCluster(pmin(10, detectCores() - 2))
+    parallel::clusterEvalQ(cl, {
+      library(SpaDES.tools)
+      library(raster)
+      library(fpCompare)
+    })
+
+    objFn <- function(sp, n = 20, ras, goalSize) {
+      sizes <- integer(n)
+      for (wnn in 1:n) {
+        circs <- spread2(ras, spreadProb = sp,
+                         start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
+                         asymmetry = 2, asymmetryAngle = 135,
+                         asRaster = FALSE)
+        sizes[wnn] <- circs[, .N]
+      }
+      abs(mean(sizes) - goalSize)
+    }
+    aa <- DEoptim(objFn, lower = 0.2, upper = 0.23,
+                  control = DEoptim.control(
+                    cluster = cl, NP = 10, VTR = 0.02,
+                    initialpop = as.matrix(rnorm(10, 0.213, 0.001))
+                  ),
+                  ras = hab, goalSize = goalSize)
+
+    # The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:
+    sp <- aa$optim$bestmem
+    circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
+                     asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)
+
+    ####### Calibration curve
+    skip("Calibration curves")
+    n <- 500
+    ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
+    sp <- runif(n, 0.15, 0.25)
+    sizes <- integer()
+    for (qwe in 1:n) {
+      circs <- spread2(ras, spreadProb = sp[qwe], start = ncell(ras) / 2 - ncol(ras) / 2,
+                       asRaster = FALSE)
+      sizes[qwe] <- NROW(circs)
+      message(qwe)
+    }
+    dt1 <- data.table(sp, sizes)
+    library(mgcv)
+    aa <- gam(log10(dt1$sizes) ~ s(dt1$sp))
+    aap <- predict(aa, se.fit = FALSE)
+    plot(dt1$sp, log10(dt1$sizes), axes = FALSE, ylab = "Fire Size, ha", xlab = "Spread Probability")
+    axis(2, 0:5, labels = 10 ^ (0:5))
+    axis(1)
+    aapOrd <- order(dt1$sp)
+    lines(dt1$sp[aapOrd], aap[aapOrd], lwd = 2, col = "red")
+    mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
+                          "Red line shows expected size", sep = "\n"))
+
+    aa1 <- gam(dt1$sp ~ s(log10(dt1$sizes)))
+    aap1 <- predict(aa1, se.fit = FALSE, type = "response")
+    plot(log10(dt1$sizes), dt1$sp, axes = FALSE, xlab = "Fire Size, ha", ylab = "Spread Probability")
+    axis(2)
+    axis(1, 0:5, labels = 10 ^ (0:5))
+    aap1Ord <- order(log10(dt1$sizes))
+    lines(log10(dt1$sizes)[aap1Ord], aap1[aap1Ord], lwd = 2, col = "red")
+    mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
+                          "Red line shows expected size", sep = "\n"))
   }
-  aa <- DEoptim(objFn, lower = 0.2, upper = 0.23,
-                control = DEoptim.control(
-                  cluster = cl, NP = 10, VTR = 0.02,
-                  initialpop = as.matrix(rnorm(10, 0.213, 0.001))
-                ),
-                ras = hab, goalSize = goalSize)
-
-  # The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:
-  sp <- aa$optim$bestmem
-  circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
-                   asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)
-
-  ####### Calibration curve
-  skip("Calibration curves")
-  n <- 500
-  ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
-  sp <- runif(n, 0.15, 0.25)
-  sizes <- integer()
-  for (qwe in 1:n) {
-    circs <- spread2(ras, spreadProb = sp[qwe], start = ncell(ras) / 2 - ncol(ras) / 2,
-                   asRaster = FALSE)
-    sizes[qwe] <- NROW(circs)
-    message(qwe)
-  }
-  dt1 <- data.table(sp, sizes)
-  library(mgcv)
-  aa <- gam(log10(dt1$sizes) ~ s(dt1$sp))
-  aap <- predict(aa, se.fit = FALSE)
-  plot(dt1$sp, log10(dt1$sizes), axes = FALSE, ylab = "Fire Size, ha", xlab = "Spread Probability")
-  axis(2, 0:5, labels = 10 ^ (0:5))
-  axis(1)
-  aapOrd <- order(dt1$sp)
-  lines(dt1$sp[aapOrd], aap[aapOrd], lwd = 2, col = "red")
-  mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
-                        "Red line shows expected size", sep = "\n"))
-
-  aa1 <- gam(dt1$sp ~ s(log10(dt1$sizes)))
-  aap1 <- predict(aa1, se.fit = FALSE, type = "response")
-  plot(log10(dt1$sizes), dt1$sp, axes = FALSE, xlab = "Fire Size, ha", ylab = "Spread Probability")
-  axis(2)
-  axis(1, 0:5, labels = 10 ^ (0:5))
-  aap1Ord <- order(log10(dt1$sizes))
-  lines(log10(dt1$sizes)[aap1Ord], aap1[aap1Ord], lwd = 2, col = "red")
-  mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
-                        "Red line shows expected size", sep = "\n"))
 })
 
 test_that("spread2 returnFrom", {
-  library(CircStats); on.exit(detach("package:CircStats"), add = TRUE)
-  library(data.table); on.exit(detach("package:data.table"), add = TRUE)
-  library(fpCompare); on.exit(detach("package:fpCompare"), add = TRUE)
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
 
-  # inputs for x
-  a <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
-  b <- raster(a)
-  b[] <- 1
-  bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
-  innerCells <- which(bb[] %==% 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
-  set.seed(123)
-  for (iso in 1:20) {
-    sams <- sample(innerCells, 2)
-    expect_silent(out <- spread2(a, start = sams, 0.215, asRaster = FALSE,
-                                 returnFrom = TRUE))
-    out <- spread2(a, start = sams, 0.215, asRaster = FALSE, returnFrom = TRUE)
-    expect_true("from" %in% colnames(out))
-    expect_true(sum(is.na(out$from)) == length(sams))
+  for (ii in seq(NROW(rastDF))) {
+    read <- eval(parse(text = rastDF$read[ii]))
+
+    # inputs for x
+    a <- read(aOrig)
+    b <- read(aOrig)
+    b[] <- 1
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    innerCells <- which(bb[] %==% 1)
+
+    set.seed(123)
+    for (iso in 1:20) {
+      sams <- sample(innerCells, 2)
+      expect_silent(out <- spread2(a, start = sams, 0.215, asRaster = FALSE,
+                                   returnFrom = TRUE))
+      out <- spread2(a, start = sams, 0.215, asRaster = FALSE, returnFrom = TRUE)
+      expect_true("from" %in% colnames(out))
+      expect_true(sum(is.na(out$from)) == length(sams))
+    }
   }
 })
 
 test_that("spread2 tests", {
-  skip_if_not_installed("quickPlot")
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
 
-  library(raster)
-  library(data.table)
-  library(fpCompare)
-  library(quickPlot)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
-  on.exit({
-    detach("package:quickPlot")
-    detach("package:fpCompare")
-    detach("package:data.table")
-    detach("package:raster")
-  }, add = TRUE) # nolint
+  for (ii in seq(NROW(rastDF))) {
+    read <- eval(parse(text = rastDF$read[ii]))
+    a <- read(aOrig)
+    b <- read(aOrig)
 
-  # inputs for x
-  a <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
-  b <- raster(a)
-  b[] <- 1
-  bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
-  innerCells <- which(bb[] %==% 1)
-  sams <- sample(innerCells, 9)
+    b[] <- 1
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    innerCells <- which(bb[] %==% 1)
+    sams <- sample(innerCells, 9)
 
-  dev()
-  expect_silent({
-    out <- spread2(a, start = sams, 1, circle = TRUE, asymmetry = 4,
-                   asymmetryAngle = 120, iterations = 10, asRaster = FALSE,
-                   returnDistances = TRUE, allowOverlap = TRUE)
-  })
-  expect_true("effectiveDistance" %in% colnames(out))
-  expect_true(all(out$state == "activeSource"))
-  expect_true(all(out$distance[out$distance > 0] <= out$effectiveDistance[out$distance > 0]))
+    # dev()
+    expect_silent({
+      out <- spread2(a, start = sams, 1, circle = TRUE, asymmetry = 4,
+                     asymmetryAngle = 120, iterations = 10, asRaster = FALSE,
+                     returnDistances = TRUE, allowOverlap = TRUE)
+    })
+    expect_true("effectiveDistance" %in% colnames(out))
+    expect_true(all(out$state == "activeSource"))
+    expect_true(all(out$distance[out$distance > 0] <= out$effectiveDistance[out$distance > 0]))
 
+  }
 })
 
 test_that("spread2 works with terra", {
-  skip_if_not_installed("quickPlot")
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
 
-  library(terra)
-  library(data.table)
-  library(fpCompare)
-  library(quickPlot)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
-  on.exit({
-    detach("package:quickPlot")
-    detach("package:fpCompare")
-    detach("package:data.table")
-    detach("package:terra")
-  }, add = TRUE) # nolint
+  for (ii in seq(NROW(rastDF))) {
+    read <- eval(parse(text = rastDF$read[ii]))
+    a <- read(aOrig)
+    b <- read(aOrig)
 
-  # inputs for x
-  a <- rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10, res = 1)
-  b <- raster(a)
-  b[] <- 1
-  bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
-  innerCells <- which(bb[] %==% 1)
-  sams <- sample(innerCells, 9)
+    # inputs for x
+    b[] <- 1
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    innerCells <- which(bb[] %==% 1)
+    sams <- sample(innerCells, 9)
 
-  dev()
-  expect_silent({
-    out <- spread2(a, start = sams, 1, iterations = 1, asRaster = FALSE)
-  })
-  #TODO: add more tests once asymmetry, circle, etc works
-  expect_true(all(out[pixels %in% sams]$state == "inactive"))
-  expect_true(any("activeSource" %in% out$state))
+    expect_silent({
+      out <- spread2(a, start = sams, 1, iterations = 1, asRaster = FALSE)
+    })
+    #TODO: add more tests once asymmetry, circle, etc works
+    expect_true(all(out[pixels %in% sams]$state == "inactive"))
+    expect_true(any("activeSource" %in% out$state))
 
+  }
 })
 
 test_that("spread2 tests -- persistence", {
-  library(raster)
-  library(data.table)
-  library(checkmate)
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
 
-  landscape <- raster::raster(nrows = 50, ncols = 50)
-  landscape[] <- 1
-  start <- 1:5
+  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
 
-  ## test the effect of persistence as a single numeric value
-  set.seed(5)
-  noPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
-                       spreadProb = 0.23, persistProb = 0, iterations = 10, directions = 8L, plot.it = FALSE)
-  wPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
-                      spreadProb = 0.23, persistProb = 0.8, iterations = 10, directions = 8L, plot.it = FALSE)
+  for (ii in seq(NROW(rastDF))) {
+    read <- eval(parse(text = rastDF$read[ii]))
+    a <- read(aOrig)
+    b <- read(aOrig)
+    landscape <- read(aOrig)
+    landscape[] <- 1
+    start <- 1:5
 
-  expect_true(sum(noPersist$state == "activeSource") < sum(wPersist$state == "activeSource"))
+    ## test the effect of persistence as a single numeric value
+    set.seed(5)
+    noPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
+                         spreadProb = 0.23, persistProb = 0, iterations = 10, directions = 8L, plot.it = FALSE)
+    wPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
+                        spreadProb = 0.23, persistProb = 0.8, iterations = 10, directions = 8L, plot.it = FALSE)
 
-  ## test the effect of persistence as a raster layer
-  M <- matrix(0.8, nrow = 50, ncol = 50)
-  M[upper.tri(M)] <- 0
-  persistRas <- raster::raster(nrows = 50, ncols = 50)
-  persistRas[] <- as.vector(M)
+    expect_true(sum(noPersist$state == "activeSource") < sum(wPersist$state == "activeSource"))
 
-  ## first fire in high persistence area,
-  ## second fire in low persistence area:
-  start <- c(50, length(landscape) - 49)
+    ## test the effect of persistence as a raster layer
+    M <- matrix(0.8, nrow = 50, ncol = 50)
+    M[upper.tri(M)] <- 0
+    persistRas <- read(aOrig)
+    persistRas[] <- as.vector(M)
 
-  set.seed(5)
-  wRasPersist <- spread2(landscape = landscape, start = start,
-                        spreadProb = 0.23, persistProb = persistRas, iterations = 10,
-                        directions = 8L, asRaster = TRUE, plot.it = FALSE)
+    ## first fire in high persistence area,
+    ## second fire in low persistence area:
+    start <- c(50, ncell(landscape) - 49)
 
-  expect_true(sum(wRasPersist[] == 1, na.rm = TRUE) > sum(wRasPersist[] == 2, na.rm = TRUE))
+    set.seed(5)
+    wRasPersist <- spread2(landscape = landscape, start = start,
+                           spreadProb = 0.23, persistProb = persistRas, iterations = 10,
+                           directions = 8L, asRaster = TRUE, plot.it = FALSE)
 
+    expect_true(sum(wRasPersist[] == 1, na.rm = TRUE) > sum(wRasPersist[] == 2, na.rm = TRUE))
+  }
 })
 
 test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
-  library(raster)
-  landscape <- raster::raster(nrows = 50, ncols = 50)
-  landscape[] <- 1
-  landscape[51:55] <- NA
-  start <- 1:5
-  spreadProb <- landscape
-  spreadProb[!is.na(landscape[])] <- runif(sum(!is.na(landscape[])))
-  expect_silent(
-    spread2(landscape = landscape, spreadProb = spreadProb, start = start, plot.it = FALSE)
-  )
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
+
+  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
+
+  for (ii in seq(NROW(rastDF))) {
+    read <- eval(parse(text = rastDF$read[ii]))
+    landscape <- read(aOrig)
+    landscape[] <- 1
+    landscape[51:55] <- NA
+    start <- 1:5
+    spreadProb <- landscape
+    spreadProb[!is.na(landscape[])] <- runif(sum(!is.na(landscape[])))
+    expect_silent(
+      spread2(landscape = landscape, spreadProb = spreadProb, start = start, plot.it = FALSE)
+    )
+  }
 })
