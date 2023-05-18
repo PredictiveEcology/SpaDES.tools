@@ -1,4 +1,3 @@
-library(data.table)
 library(terra)
 
 setDTthreads(1)
@@ -8,9 +7,8 @@ sams <- sort(sample(ncell(a), 3))
 
 # Simple use -- similar to spread(...)
 out <- spread2(a, start = sams, 0.225)
-if (interactive() && requireNamespace("quickPlot")) {
-  quickPlot::clearPlot()
-  quickPlot::Plot(out)
+if (interactive()) {
+  terra::plot(out)
 }
 
 # Use maxSize -- this gives an upper limit
