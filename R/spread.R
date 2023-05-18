@@ -217,9 +217,11 @@ utils::globalVariables(c(
 #' @param stopRule      A function which will be used to assess whether each
 #'                      individual cluster should stop growing.
 #'                      This function can be an argument of `"landscape"`,
-#'                      `"id"`, `"cells"`, and any other named vectors,
-#'                      a named list of named vectors, or a named `data.frame`
-#'                      with column names passed to `spread` in the `...`.
+#'                      `"id"`, `"cells"`, and any other variables passed to
+#'                      `spread` in the `...`. `cells` and `landscape` will both
+#'                      be numeric vectors of length of active cells. `cells` will
+#'                      be the raster index, so can be used to extract values
+#'                      from another raster passed via ... .
 #'                      Default `NA`, meaning that spreading will not stop
 #'                      as a function of the landscape.
 #'                      See section on "Breaking out of spread events" and examples.
@@ -533,12 +535,13 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       # Raster indexing is slow. If there is are Rasters submitted with the stopRule
       #  then this will convert them to vectors first. Clearly, this will have
       #  memory consequences if the Rasters are on disk, but spread is optimized for speed
-      rasters <- unlist(lapply(otherVars[names(otherVars)], function(x) is(x, "Raster")))
-      if (any(rasters)) {
-        for (i in 1:which(rasters)) {
-          otherVars[[names(rasters[i])]] <- otherVars[[names(rasters[i])]][]
-        }
-      }
+
+      # rasters <- unlist(lapply(otherVars[names(otherVars)], function(x) is(x, "Raster")))
+      # if (any(rasters)) {
+      #   for (i in 1:which(rasters)) {
+      #     otherVars[[names(rasters[i])]] <- otherVars[[names(rasters[i])]][]
+      #   }
+      # }
       landRas <- landscape[] # For speed
     }
 
@@ -930,6 +933,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
             args <- append(args, otherVars)
             do.call(stopRule, args[whArgs])
           })
+
           if (any(lapply(shouldStopList, length) > 1))
             stop("stopRule does not return a length-one logical.",
                  " Perhaps stopRule need indexing by cells or id?")

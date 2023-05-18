@@ -466,17 +466,18 @@ cir <- function(landscape, coords, loci,
                 returnAngles = FALSE, returnIndices = TRUE,
                 closest = FALSE, simplify = TRUE)  {
 
+  origClass <- class(landscape)
   if (missing(coords)) {
     if (missing(loci)) {
-      ncells <- ncell(landscape)
+      ncells <- terra::ncell(landscape)
       middleCell <- if (identical(ncells / 2, floor(ncells / 2))) {
-        ncells / 2 - ncol(landscape) / 2
+        ncells / 2 - terra::ncol(landscape) / 2
       } else {
         round(ncells / 2)
       }
-      coords <- xyFromCell(landscape, middleCell)
+      coords <- terra::xyFromCell(landscape, middleCell)
     } else if (is.numeric(loci)) {
-      coords <- xyFromCell(landscape, loci)
+      coords <- terra::xyFromCell(landscape, loci)
       coords <- cbind(coords, id = loci)
     } else {
       stop("Need either a numeric loci or coords")
@@ -496,7 +497,7 @@ cir <- function(landscape, coords, loci,
   }
   suppliedAngles <- if (all(!is.na(angles))) TRUE else FALSE
 
-  scaleRaster <- res(landscape)
+  scaleRaster <- terra::res(landscape)
   if (!isTRUE(all.equal(scaleRaster[1], scaleRaster[2]))) {
     stop("cir function only accepts rasters with identical resolution in x and y dimensions")
   }
@@ -730,7 +731,10 @@ cir <- function(landscape, coords, loci,
     matDT <- matDT[, -which(colnames(matDT) == "rads"), drop = FALSE]
   }
   if (!(returnIndices > 0)) {
-    ras <- raster(landscape)
+    if (isTRUE(origClass == "SpatRaster"))
+      ras <- terra::rast(landscape)
+    else
+      ras <- raster::raster(landscape)
     ras[] <- 0
     if (!allowOverlap) {
       if (!returnDistances) {

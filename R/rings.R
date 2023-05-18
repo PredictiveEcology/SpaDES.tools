@@ -34,48 +34,54 @@
 #' @rdname rings
 rings <- function(landscape, loci = NA_real_, id = FALSE, minRadius = 2, maxRadius = 5,
            allowOverlap = FALSE, returnIndices = FALSE, returnDistances = TRUE, ...) {
-    spreadEvents <- spread(landscape, loci = loci, circle = TRUE,
-                           circleMaxRadius = maxRadius, spreadProb = 1, id = TRUE,
-                           returnDistances = TRUE, returnIndices = TRUE,
-                           allowOverlap = allowOverlap, ...)
-    if (length(minRadius) > 1 | length(maxRadius) > 1) {
-      len <- length(loci)
-      if (!(length(minRadius) == len | length(maxRadius) == len)) {
-        warning("minRadius and maxRadius should be length 1 or same length as loci. ",
-                "Recycling values which may not produce desired effects.")
-      }
-      minRadius <- rep(minRadius, length.out = len)
-      maxRadius <- rep(maxRadius, length.out = len)
-      out <- rbindlist(lapply(seq_along(loci), function(j) {
-        spreadEvents[id == j & (dists %>=% minRadius[j] & dists %<=% maxRadius[j])]
-      }))
-    } else {
-      out <- spreadEvents[(dists %>=% minRadius)]
+  origClass <- is(landscape)
+  spreadEvents <- spread(landscape, loci = loci, circle = TRUE,
+                         circleMaxRadius = maxRadius, spreadProb = 1, id = TRUE,
+                         returnDistances = TRUE, returnIndices = TRUE,
+                         allowOverlap = allowOverlap, ...)
+  if (length(minRadius) > 1 | length(maxRadius) > 1) {
+    len <- length(loci)
+    if (!(length(minRadius) == len | length(maxRadius) == len)) {
+      warning("minRadius and maxRadius should be length 1 or same length as loci. ",
+              "Recycling values which may not produce desired effects.")
     }
+    minRadius <- rep(minRadius, length.out = len)
+    maxRadius <- rep(maxRadius, length.out = len)
+    out <- rbindlist(lapply(seq_along(loci), function(j) {
+      spreadEvents[id == j & (dists %>=% minRadius[j] & dists %<=% maxRadius[j])]
+    }))
+  } else {
+    out <- spreadEvents[(dists %>=% minRadius)]
+  }
 
-    if (!(returnIndices > 0)) {
-      outRas <- numeric(ncell(landscape))
-      if (returnDistances)
-        outRas[] <- NA_real_
-      else
-        outRas[] <- 0
+  if (!(returnIndices > 0)) {
+    outRas <- numeric(ncell(landscape))
+    if (returnDistances)
+      outRas[] <- NA_real_
+    else
+      outRas[] <- 0
 
-      if (allowOverlap) {
-        if (returnDistances) {
-          out2 <- out[, list(mDists = mean(dists)), by = indices]
-          outRas[out2$indices] <- out2$mDists
-        } else {
-          out2 <- out[, list(sumID = sum(id)), by = indices]
-          outRas[out2$indices] <- out2$sumID
-        }
+    if (allowOverlap) {
+      if (returnDistances) {
+        out2 <- out[, list(mDists = mean(dists)), by = indices]
+        outRas[out2$indices] <- out2$mDists
       } else {
-        if (returnDistances)
-          outRas[out$indices] <- out$dists
-        else
-          outRas[out$indices] <- out$dists
+        out2 <- out[, list(sumID = sum(id)), by = indices]
+        outRas[out2$indices] <- out2$sumID
       }
-      outRas <- terra::rast(terra::ext(landscape), res = res(landscape), vals = outRas)
-      return(outRas)
+    } else {
+      if (returnDistances)
+        outRas[out$indices] <- out$dists
+      else
+        outRas[out$indices] <- out$dists
     }
-    return(out)
+    if (isTRUE(origClass == "SpatRaster"))
+      outRas1 <- terra::rast(landscape)
+    else
+      outRas1 <- raster::raster(landscape)
+    outRas1[] <- outRas
+    # outRas <- terra::rast(terra::ext(landscape), res = res(landscape), vals = outRas)
+    return(outRas1)
+  }
+  return(out)
 }
