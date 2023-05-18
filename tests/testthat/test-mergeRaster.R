@@ -112,7 +112,8 @@ test_that("mergeRaster will produce error if only one raster passed", {
 
 test_that("mergeRaster will use mosaic with default mean if rasters are resampled and fun if passed", {
   df <- data.frame(pkg = c("raster", "terra"),
-                   read = c("raster::raster", "terra::rast"))
+                   read = c("raster::raster", "terra::rast"),
+                   cls = c("Raster", "SpatRaster"))
 
   nx <- ny <- 3
 
