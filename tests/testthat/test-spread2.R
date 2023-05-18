@@ -5,8 +5,8 @@ test_that("spread2 tests", {
   data.table::setDTthreads(1)
 
   # inputs for x
-  a <- terra::rast(system.file("extdata", "a.tif", package = "SpaDES.tools"))
-  b <- terra::rast(a)
+  aOrig <- terra::rast(system.file("extdata", "a.tif", package = "SpaDES.tools"))
+  bOrig <- terra::rast(aOrig)
 
   bSimple <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
 
@@ -16,12 +16,11 @@ test_that("spread2 tests", {
   for (ii in seq(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
-    read <- rastDF$read[ii]
+    # read <- rastDF$read[ii]
+    read <- eval(parse(text = rastDF$read[ii]))
 
-    withr::local_options(reproducible.rasterRead = read)
-    a <- reproducible::rasterRead(a)
-    b <- reproducible::rasterRead(b)
-    # spRas <- reproducible::rasterRead(spRas)
+    a <- read(aOrig)
+    b <- read(bOrig)
 
     sp <- 0.225
     spRas[] <- spRas[] / maxFn(spRas) * sp / 2 + sp / 2 * 1.5
@@ -42,7 +41,7 @@ test_that("spread2 tests", {
     sams <- sample(innerCells, 2)
     numNAs <- 25
     sps <- sample(c(rep(NA_real_, numNAs), runif(ncell(a) - numNAs, 0, 1)))
-    spsRas <- reproducible::rasterRead(a)
+    spsRas <- read(aOrig)
     spsRas[] <- sps
     set.seed(123)
     out1 <- spread2(a, start = sams, spreadProb = sps, asRaster = FALSE)
@@ -149,7 +148,7 @@ test_that("spread2 tests", {
       for (ids in unique(out$initialPixels)) {
         # dev(3 + count)
         count <- count + 1
-        ras <- reproducible::rasterRead(a)
+        ras <- read(aOrig)
         ras[] <- 0
         ras[out[initialPixels == ids, pixels]] <- out[initialPixels == ids, distance]
         # clearPlot()
@@ -192,7 +191,7 @@ test_that("spread2 tests", {
 
     if (interactive()) message("test neighProbs")
     maxSizes <- 14
-    sp <- reproducible::rasterRead(a)
+    sp <- read(aOrig)
     spreadProbOptions <- 1:5
     sp[] <- sample(spreadProbOptions, ncell(sp), replace = TRUE)
     set.seed(2123)
@@ -252,8 +251,8 @@ test_that("spread2 tests", {
 
     message("Scales with number of starts, not maxSize of raster")
     set.seed(21)
-    b <- reproducible::rasterRead(bSimple)
-    bProb <- reproducible::rasterRead(system.file("extdata", "bProb.tif", package = "SpaDES.tools"))
+    b <- read(bSimple)
+    bProb <- read(system.file("extdata", "bProb.tif", package = "SpaDES.tools"))
 
     set.seed(1232)
     out <- spread2(spreadProb = 0.5, landscape = b, asRaster = FALSE,
@@ -391,14 +390,6 @@ test_that("spread2 tests -- asymmetry", {
 
   for (ii in seq(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
-    # skip_if_not_installed("quickPlot")
-    # skip_if_not_installed("RandomFields", "3.1.24")
-    #
-    # library(raster); on.exit(detach("package:raster"), add = TRUE)
-    # library(data.table); on.exit(detach("package:data.table"), add = TRUE)
-    # library(fpCompare); on.exit(detach("package:fpCompare"), add = TRUE)
-    # library(CircStats); on.exit(detach("package:CircStats"), add = TRUE)
-    # library(quickPlot); on.exit(detach("package:quickPlot"), add = TRUE)
 
     # inputs for x
     b <- read(aOrig)
