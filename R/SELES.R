@@ -111,7 +111,7 @@ initiateAgents <- function(map, numAgents, probInit, asSpatialPoints = TRUE, ind
         .requireNamespace("sp", stopOnFALSE = TRUE)
         xys <- sp::SpatialPoints(xys)
         xys@coords <- xys@coords + diffs
-        xys@bbox <- cbind(apply(coordinates(xys), 2, min), apply(coordinates(xys), 2, max))
+        xys@bbox <- cbind(apply(sp::coordinates(xys), 2, min), apply(sp::coordinates(xys), 2, max))
 
       } else {
         xys <- terra::vect(xys + diffs)

@@ -187,7 +187,7 @@ if (interactive()) {
     names(advectionDir) <- "Wind direction"
     names(advectionMag) <- "Wind speed"
     names(rasAbundance) <- "Initial abundances"
-    terra::plot(c(advectionDir, advectionMag, rasAbundance))#, title = "Wind direction", cols = "Reds")
+    terra::plot(c(advectionDir, advectionMag, rasAbundance))
 
     plotDispersalKernel(out, mean(advectionMag[]))
   }

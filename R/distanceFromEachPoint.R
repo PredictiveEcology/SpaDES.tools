@@ -542,7 +542,7 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
 
 spiralDistances <- function(pixelGroupMap, maxDis, cellSize) {
   if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
-  spiral <- which(focalWeight(pixelGroupMap, maxDis, type = "circle") > 0, arr.ind = TRUE) -
+  spiral <- which(raster::focalWeight(pixelGroupMap, maxDis, type = "circle") > 0, arr.ind = TRUE) -
     ceiling(maxDis/cellSize) - 1
   spiral <- cbind(spiral, dists = sqrt( (0 - spiral[, 1]) ^ 2 + (0 - spiral[, 2]) ^ 2))
   spiral <- spiral[order(spiral[, "dists"], apply(abs(spiral), 1, sum),

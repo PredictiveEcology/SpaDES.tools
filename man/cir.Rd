@@ -102,6 +102,7 @@ If this is \code{excludePixels}, and if a \code{minRadius} and
 }
 \examples{
 library(terra)
+library(data.table)
 
 set.seed(1462)
 

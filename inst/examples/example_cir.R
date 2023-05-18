@@ -1,4 +1,5 @@
 library(terra)
+library(data.table)
 
 set.seed(1462)
 

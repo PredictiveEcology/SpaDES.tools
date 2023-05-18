@@ -72,10 +72,11 @@ over the values in any buffered regions.
 This is useful for reducing edge effects when performing raster operations involving
 contagious processes.
 
-This function is parallel-aware, using the same mechanism as used in \pkg{raster}.
-Specifically, if you start a cluster using \code{\link[=beginCluster]{beginCluster()}},
+This function is parallel-aware using the same mechanism as used in \pkg{raster}:
+NOTE: This may not work as expected as we transition away from \code{raster}.
+Specifically, if you start a cluster using \code{raster::beginCluster()},
 then this function will automatically use that cluster.
-It is always a good idea to stop the cluster when finished, using \code{\link[=endCluster]{endCluster()}}.
+It is always a good idea to stop the cluster when finished, using \code{raster::endCluster()}.
 }
 \examples{
 library(terra)

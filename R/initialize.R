@@ -3,10 +3,7 @@ utils::globalVariables("num.in.pop")
 ################################################################################
 #' Produce a `raster` of a random Gaussian process.
 #'
-#' This is a wrapper for the `RFsimulate` function in the `RandomFields` package.
-#' The main addition is the `speedup` argument which allows for faster map generation.
-#' A `speedup` of 1 is normal and will get progressively faster as the number increases,
-#' at the expense of coarser pixel resolution of the pattern generated.
+#' Defunct.
 #'
 #' @param x        A spatial object (e.g., a `RasterLayer`).
 #'
@@ -33,8 +30,6 @@ utils::globalVariables("num.in.pop")
 #' @param ... Additional arguments to `raster`.
 #'
 #' @return A raster map with same extent as `x`, with a Gaussian random pattern.
-#'
-#' @seealso `RFsimulate` and [raster::extent()]
 #'
 #' @importFrom terra res
 #' @export
@@ -214,7 +209,7 @@ rndmPolygonSpatialPoints <- function(x, hectares, area) {
   Sr1 <- sp::Polygon(cbind(X + xAdd, Y + yAdd))
   Srs1 <- sp::Polygons(list(Sr1), "s1")
   outPolygon <- sp::SpatialPolygons(list(Srs1), 1L)
-  sp::crs(outPolygon) <- sp::crs(x)
+  terra::crs(outPolygon) <- terra::crs(x)
   wasSpatial <- is(outPolygon, "Spatial")
   if (exists("origCRS", inherits = FALSE))  {
     if (requireNamespace("sf", quietly = TRUE)) {

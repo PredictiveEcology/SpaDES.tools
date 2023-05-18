@@ -8,6 +8,10 @@ fastCrop(x, y, ...)
 }
 \arguments{
 \item{x}{Raster to crop}
+
+\item{y}{Raster to crop with}
+
+\item{...}{other}
 }
 \description{
 \code{fastCrop} is deprecated.
