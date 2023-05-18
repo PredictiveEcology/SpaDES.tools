@@ -358,6 +358,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   #### assertions ###############
   checkmate::assertMultiClass(landscape, c("Raster", "SpatRaster"))
+  landscapeOrigClass <- is(landscape)
   ncells <- ncell(landscape)
   numCols <- ncol(landscape)
   anyNAneighProbs <- any(is.na(neighProbs))
@@ -370,16 +371,17 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     qassert(neighProbs, "n[0,1]")
     assertNumeric(sum(neighProbs), lower = 1, upper = 1)
 
-    if (!inherits(spreadProb, "SpatRaster")) {
-      assert(
-        checkNumeric(spreadProb, 0, 1, min.len = ncell(landscape), max.len = ncell(landscape)),
-        checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
-        checkClass(spreadProb, "Raster")
-      )
-    }
+    # if (!inherits(spreadProb, "Raster") && !inherits(spreadProb, "SpatRaster")) {
+    assert(# this is "or"
+      checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = ncell(landscape)),
+      checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
+      checkClass(spreadProb, "Raster"),
+      checkClass(spreadProb, "SpatRaster")
+    )
+    # }
 
-    if (is(spreadProb, "Raster")) {
-      if (fromDisk(spreadProb)) {
+    if (is(spreadProb, "Raster") || is(spreadProb, "SpatRaster")) {
+      if (!terra::inMemory(spreadProb)) {
         warning("spreadProb is a raster layer stored on disk. This may cause spread2 to be",
                 " very slow. We suggest extracting the values to a numeric vector first, ",
                 "then passing this to spreadProb")
@@ -458,7 +460,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   # maxRetriesPerID <- 10
 
   if (!is.numeric(start) & !is.data.table(start)) {
-    if (is(start, "Raster")) {
+    if (is(start, "Raster") || is(start, "SpatRaster")) {
       start <- attr(start, "pixel")
     } else {
       stop("Start must be either a vector of pixels, a data.table from",
@@ -817,7 +819,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       setkeyv(dtPotential, c("id", "from")) # sort so it is the same as numNeighsByPixel
 
       if (NROW(dtPotential)) {
-        if (is(spreadProbRel, "RasterLayer")) {
+        if (is(spreadProbRel, "RasterLayer") || is(spreadProbRel, "SpatRaster")) {
           set(dtPotential, NULL, "spreadProbRel", spreadProbRel[][dtPotential$to])
         } else {
           set(dtPotential, NULL, "spreadProbRel", 1)
@@ -1106,8 +1108,12 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       if (totalIterations == 1) {
         newPlot <- TRUE
       }
-      if (newPlot | !(exists("spread2Ras", inherits = FALSE)))
-        spread2Ras <- raster(landscape)
+      if (newPlot | !(exists("spread2Ras", inherits = FALSE))) {
+        if (any(landscapeOrigClass == "Raster"))
+          spread2Ras <- raster::raster(landscape)
+        else
+          spread2Ras <- terra::rast(landscape)
+      }
       if (returnDistances) {
         spread2Ras[dt$pixels] <- dt$distance
         newPlot <- TRUE # need to rescale legend each time
@@ -1118,7 +1124,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         setkeyv(dt, "order")
         set(dt, NULL, "order", NULL)
       }
-      quickPlot::Plot(spread2Ras, new = newPlot)
+      terra::plot(spread2Ras, add = !newPlot)
     }
   } # end of main loop
 
@@ -1139,7 +1145,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   # Step 13 -- return either raster or data.table
   if (asRaster) {
-    ras <- raster(landscape)
+    if (any(landscapeOrigClass == "Raster"))
+      ras <- raster::raster(landscape)
+    else
+      ras <- terra::rast(landscape)
+    # ras <- raster(landscape)
     # inside unit tests, this raster gives warnings if it is only NAs
     suppressWarnings(ras[dt$pixels] <- clusterDT[dt]$id)
     setattr(ras, "pixel", dt)

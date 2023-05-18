@@ -1,386 +1,389 @@
 test_that("spread2 tests", {
-  skip_if_not_installed("quickPlot")
 
-  library(data.table)
-  library(fpCompare)
-  library(reproducible)
-  library(quickPlot)
-
-  on.exit(detach("package:reproducible"), add = TRUE)
-  on.exit(detach("package:fpCompare"), add = TRUE)
-  on.exit(detach("package:data.table"), add = TRUE)
+  withr::local_package("terra")
+  if (!requireNamespace("raster", quietly = TRUE)) {
+    rastDF <- rastDF[rastDF$pkg == "terra",]
+  }
 
   data.table::setDTthreads(1)
 
   # inputs for x
-  a <- raster(system.file("extdata", "a.tif", package = "SpaDES.tools"))
-  b <- raster(a)
-  sp <- 0.225
-  spRas <- raster(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
-  spRas[] <- spRas[] / maxFn(spRas) * sp / 2 + sp / 2 * 1.5
-  b[] <- 1
-  bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
-  innerCells <- which(bb[] %==% 1)
-  sams <- sample(innerCells, 2)
+  a <- terra::rast(system.file("extdata", "a.tif", package = "SpaDES.tools"))
+  b <- terra::rast(a)
 
-  set.seed(123)
-  for (i in 1:20) {
+  bSimple <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
+
+  spRas <- terra::rast(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
+
+
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
+    cls <- rastDF$class[ii]
+    read <- rastDF$read[ii]
+
+    withr::local_options(reproducible.rasterRead = read)
+    a <- reproducible::rasterRead(a)
+    b <- reproducible::rasterRead(b)
+    # spRas <- reproducible::rasterRead(spRas)
+
+    sp <- 0.225
+    spRas[] <- spRas[] / maxFn(spRas) * sp / 2 + sp / 2 * 1.5
+    b[] <- 1
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    innerCells <- which(bb[] %==% 1)
     sams <- sample(innerCells, 2)
-    out <- spread2(a, start = sams, spreadProb = 0.225, asRaster = FALSE)
-    expect_true(length(unique(out$initialPixels)) == 2)
-    expect_true(all(out$active == 0))
-  }
 
-  # Test numeric vector passed to spreadProb
-  sams <- sample(innerCells, 2)
-  numNAs <- 25
-  sps <- sample(c(rep(NA_real_, numNAs), runif(ncell(a) - numNAs, 0, 1)))
-  spsRas <- raster(a)
-  spsRas[] <- sps
-  set.seed(123)
-  out1 <- spread2(a, start = sams, spreadProb = sps, asRaster = FALSE)
-  set.seed(123)
-  out2 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
-  expect_true(identical(out1, out2))
+    set.seed(123)
+    for (jjj in 1:20) {
+      sams <- sample(innerCells, 2)
+      out <- spread2(a, start = sams, spreadProb = 0.225, asRaster = FALSE)
+      expect_true(length(unique(out$initialPixels)) == 2)
+      expect_true(all(out$active == 0))
+    }
 
-  # Test warning for raster on disk
-  spsRas[] <- sps
-  spsRas <- writeRaster(spsRas, tempfile())
-  warn <- capture_warnings({
-    out1 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
-  })
-  expect_true(grepl("spreadProb is a raster layer stored on disk", warn))
-
-  if (interactive()) message("testing maxSize")
-  maxSizes <- 2:3
-  for (i in 1:20) {
-    seed <- sample(1e6, 1)
-    set.seed(seed)
+    # Test numeric vector passed to spreadProb
     sams <- sample(innerCells, 2)
-    out <- spread2(a, start = sams, spreadProb = 0.225, maxSize = maxSizes, asRaster = FALSE)
-    expect_true(all(out[, .N, by = "initialPixels"]$N <= maxSizes[order(sams)]))
-  }
+    numNAs <- 25
+    sps <- sample(c(rep(NA_real_, numNAs), runif(ncell(a) - numNAs, 0, 1)))
+    spsRas <- reproducible::rasterRead(a)
+    spsRas[] <- sps
+    set.seed(123)
+    out1 <- spread2(a, start = sams, spreadProb = sps, asRaster = FALSE)
+    set.seed(123)
+    out2 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
+    expect_true(identical(out1, out2))
 
-  if (interactive()) message("testing exactSize")
-  exactSizes <- c(5, 3.1)
-  for (i in 1:20) {
-    sams <- sample(innerCells, 2)
-    out <- spread2(
-      a,
-      start = sams,
-      spreadProb = 0.225,
-      exactSize = exactSizes,
-      asRaster = FALSE
-    )
-    attrib <- attr(out, "spreadState")$cluster$numRetries > 10
-    if (any(attrib)) {
-      frequ <- out[, .N, by = "initialPixels"]$N
-      expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
-      expect_true(all(frequ[!attrib] == floor(exactSizes[order(sams)][!attrib])))
-    } else {
-      expect_true(all(out[, .N, by = "initialPixels"]$N == floor(exactSizes[order(sams)])))
+    # Test warning for raster on disk
+    spsRas[] <- sps
+    spsRas <- writeRaster(spsRas, filename = tempfile(fileext = ".tif"))
+    warn <- capture_warnings({
+      out1 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
+    })
+    expect_true(grepl("spreadProb is a raster layer stored on disk", warn))
+
+    if (interactive()) message("testing maxSize")
+    maxSizes <- 2:3
+    for (kkk in 1:20) {
+      seed <- sample(1e6, 1)
+      set.seed(seed)
+      sams <- sample(innerCells, 2)
+      out <- spread2(a, start = sams, spreadProb = 0.225, maxSize = maxSizes, asRaster = FALSE)
+      expect_true(all(out[, .N, by = "initialPixels"]$N <= maxSizes[order(sams)]))
     }
-  }
 
-  if (interactive()) message("testing exactSize")
-  exactSizes <- c(5.01, 3.1, 4)
-  for (i in 1:20) {
-    sams <- sample(innerCells, length(exactSizes))
-    out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
-    attrib <- attr(out, "spreadState")$clusterDT$numRetries > 10
-    if (any(attrib)) {
-      frequ <- out[, .N, by = "initialPixels"]$N
-      expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
-      expect_true(all(frequ[!attrib] == floor(exactSizes[order(sams)][!attrib])))
-    } else {
-      expect_true(all(out[, .N, by = "initialPixels"]$N == floor(exactSizes[order(sams)])))
-    }
-  }
-
-  if (interactive()) message("testing exact maxSize, can't be achieved, allow jumping")
-  exactSizes <- c(154, 111, 134) # too big for landscape, can't achieve it --
-                                 #  will hit max numRetries, and will try jumping
-  for (i in 1:20) {
-    seed <- sample(1e6, 1)
-    set.seed(seed)
-    sams <- sample(innerCells, 3)
-    out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
-    expect_true(all(out[, .N, by = "initialPixels"]$N < exactSizes))
-    expect_true(all(out$numRetries == 11)) # current max
-  }
-
-  if (interactive()) message("test circle = TRUE")
-  for (i in 1:20) {
-    message(i)
-    seed <- sample(1e6, 1)
-    set.seed(seed)
-    sams <- sample(innerCells, length(sams))
-    expect_error(spread2(a, start = sams, spreadProb = runif(1, 1.00000001, 1e4),
-                         circle = TRUE, asRaster = FALSE, plot.it = TRUE))
-    expect_error(spread2(a, start = sams, spreadProb = runif(1, -1e5, -0.00000001, 1e4),
-                         circle = TRUE, asRaster = FALSE, plot.it = TRUE))
-    out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, asRaster = FALSE)
-    expect_true(is.numeric(out$distance))
-    expect_true(NROW(out) == ncell(a))
-  }
-
-  # test circle
-  sams <- sort(sample(innerCells, 3)) # sorted -- makes comparisons later easier
-  out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, asRaster = FALSE,
-                 returnDistances = TRUE)
-  expect_true(NROW(out) == ncell(a))
-  expect_true(all(out$state == "inactive"))
-  expect_true(all(out$distance <= (sqrt(2) * ncol(a))))
-
-  out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, allowOverlap = TRUE,
-                 asRaster = FALSE, returnDistances = TRUE)
-  expect_true(NROW(out) == ncell(a) * length(sams))
-  expect_true(all(out$state == "inactive"))
-  expect_true(all(out$distance <= (sqrt(2) * ncol(a))))
-
-  setkey(out, initialPixels, distance)
-
-  if (interactive()) {
-    count <- 1
-    for (ids in unique(out$initialPixels)) {
-      dev(3 + count)
-      count <- count + 1
-      ras <- raster(a)
-      ras[] <- 0
-      ras[out[initialPixels == ids, pixels]] <- out[initialPixels == ids, distance]
-      clearPlot()
-      Plot(ras)
-    }
-  }
-
-  if (interactive()) message("compare spread2 circle with cir circle")
-  cirOut <- data.table(
-    cir(a, allowOverlap = TRUE, loci = sams, minRadius = 0, maxRadius = 15,
-        returnDistances = TRUE, simplify = TRUE)
-  )
-  if (interactive()) {
-    for (ids in seq(unique(cirOut$id))) {
-      dev(3 + ids)
-      ras[cirOut[id == ids, indices]] <- cirOut[id == ids, dists]
-      clearPlot()
-      Plot(ras)
-    }
-  }
-  cirOut$dists <- round(cirOut$dists, 4)
-  out$distance <- round(out$distance, 4)
-  setkey(cirOut, id, dists)
-  #quickDT <- data.table(id = seq_along(sams), initialPixels = sams, key = "id")
-  cirOut <- unique(cirOut)
-  #cirOut <- quickDT[cirOut, on = ]
-  setnames(cirOut, "id", "initialPixels")
-  compare <- out[cirOut, on = c(initialPixels = "initialPixels", pixels = "indices")]
-  expect_true(sum(abs(compare$dists - compare$distance)) %==% 0)
-
-  ## TODO: need better test for hov this scales
-  #if (interactive()) message("Scales with number of starts, not maxSize of raster")
-  #set.seed(21)
-  #b <- terra::rast(terra::ext(0, 33000, 0, 33000), res = 1)
-  #sams <- sample(ncell(b), 2)
-  #st1 <- system.time({
-  #  out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
-  #})
-  #expect_true(st1[1] < 1) ## don't check timing as it fluctuates ased on machine load!
-
-  if (interactive()) message("test neighProbs")
-  maxSizes <- 14
-  sp <- raster(a)
-  spreadProbOptions <- 1:5
-  sp[] <- sample(spreadProbOptions, ncell(sp), replace = TRUE)
-  set.seed(2123)
-  sams <- sample(innerCells, 2)
-  set.seed(321)
-  out <- spread2(a, spreadProb = 1, spreadProbRel = sp, start = sams,
-                 neighProbs = c(0.7, 0.3), maxSize = maxSizes, asRaster = FALSE)
-  expect_true(uniqueN(out) == maxSizes * length(sams))
-  expect_true(NROW(out) == maxSizes * length(sams))
-
-  if (interactive()) message("check variable lengths of neighProbs")
-  set.seed(29937)
-  sams <- sample(innerCells, 2)
-  for (i in 1:8) {
-    alwaysN <- rep(0, i)
-    alwaysN[i] <- 1
-    out <- spread2(
-      a,
-      spreadProb = 1,
-      spreadProbRel = sp,
-      iterations = 1,
-      start = sams,
-      neighProbs = alwaysN,
-      asRaster = FALSE
-    )
-    expect_true(NROW(out) == (length(alwaysN) * 2 + length(sams)))
-  }
-
-  if (interactive()) {
-    message(
-      paste(
-        "Test that when using neighProbs & a Raster of spreadProbs,",
-        "the spreadProb raster is followed probabilistically.",
-        "This test does only 1 iteration from 2 pixels that are",
-        "not interacting with edges or each other"
+    if (interactive()) message("testing exactSize")
+    exactSizes <- c(5, 3.1)
+    for (mmm in 1:20) {
+      sams <- sample(innerCells, 2)
+      out <- spread2(
+        a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE
       )
+      attrib <- attr(out, "spreadState")$cluster$numRetries > 10
+      if (any(attrib)) {
+        frequ <- out[, .N, by = "initialPixels"]$N
+        expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
+        expect_true(all(frequ[!attrib] == floor(exactSizes[order(sams)][!attrib])))
+      } else {
+        expect_true(all(out[, .N, by = "initialPixels"]$N == floor(exactSizes[order(sams)])))
+      }
+    }
+
+    if (interactive()) message("testing exactSize")
+    exactSizes <- c(5.01, 3.1, 4)
+    for (nnn in 1:20) {
+      sams <- sample(innerCells, length(exactSizes))
+      out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
+      attrib <- attr(out, "spreadState")$clusterDT$numRetries > 10
+      if (any(attrib)) {
+        frequ <- out[, .N, by = "initialPixels"]$N
+        expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
+        expect_true(all(frequ[!attrib] == floor(exactSizes[order(sams)][!attrib])))
+      } else {
+        expect_true(all(out[, .N, by = "initialPixels"]$N == floor(exactSizes[order(sams)])))
+      }
+    }
+
+    if (interactive()) message("testing exact maxSize, can't be achieved, allow jumping")
+    exactSizes <- c(154, 111, 134) # too big for landscape, can't achieve it --
+    #  will hit max numRetries, and will try jumping
+    for (rrr in 1:20) {
+      seed <- sample(1e6, 1)
+      set.seed(seed)
+      sams <- sample(innerCells, 3)
+      out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
+      expect_true(all(out[, .N, by = "initialPixels"]$N < exactSizes))
+      expect_true(all(out$numRetries == 11)) # current max
+    }
+
+    if (interactive()) message("test circle = TRUE")
+    for (ppp in 1:20) {
+      message(ppp)
+      seed <- sample(1e6, 1)
+      set.seed(seed)
+      sams <- sample(innerCells, length(sams))
+
+      expect_error(spread2(a, start = sams, spreadProb = runif(1, 1.00000001, 1e4),
+                           circle = TRUE, asRaster = FALSE, plot.it = TRUE))
+      expect_error(spread2(a, start = sams, spreadProb = runif(1, -1e5, -0.00000001, 1e4),
+                           circle = TRUE, asRaster = FALSE, plot.it = TRUE))
+      out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, asRaster = FALSE)
+      expect_true(is.numeric(out$distance))
+      expect_true(NROW(out) == ncell(a))
+    }
+
+    # test circle
+    sams <- sort(sample(innerCells, 3)) # sorted -- makes comparisons later easier
+    out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, asRaster = FALSE,
+                   returnDistances = TRUE)
+    expect_true(NROW(out) == ncell(a))
+    expect_true(all(out$state == "inactive"))
+    expect_true(all(out$distance <= (sqrt(2) * ncol(a))))
+
+    out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, allowOverlap = TRUE,
+                   asRaster = FALSE, returnDistances = TRUE)
+    expect_true(NROW(out) == ncell(a) * length(sams))
+    expect_true(all(out$state == "inactive"))
+    expect_true(all(out$distance <= (sqrt(2) * ncol(a))))
+
+    setkey(out, initialPixels, distance)
+
+    if (interactive()) {
+      count <- 1
+      for (ids in unique(out$initialPixels)) {
+        # dev(3 + count)
+        count <- count + 1
+        ras <- reproducible::rasterRead(a)
+        ras[] <- 0
+        ras[out[initialPixels == ids, pixels]] <- out[initialPixels == ids, distance]
+        # clearPlot()
+        terra::plot(ras)#Plot(ras)
+      }
+    }
+
+    if (interactive()) message("compare spread2 circle with cir circle")
+    cirOut <- data.table(
+      cir(a, allowOverlap = TRUE, loci = sams, minRadius = 0, maxRadius = 15,
+          returnDistances = TRUE, simplify = TRUE)
     )
-  }
-  sams <- sort(c(0:2 * 3 + 12) + rep(c(0, 30, 60, 90), 3))
-  sams <- sams[sams < 90]
-  set.seed(654)
-  out <- list()
-  for (i in 1:10) {
-    out[[i]] <- spread2(a, spreadProbRel = sp, spreadProb = 1, iterations = 1,
-                        start = sams, neighProbs = c(1), asRaster = FALSE)
-  }
-  out <- rbindlist(out)[state == "activeSource"]
-  uniquePixels <- out[, list(uniquePix = unique(pixels)), by = "initialPixels"]
-  avail <- table(sp[uniquePixels$uniquePix])
-  actual <- unname(table(sp[out$pixels]))
-  relProbs <- spreadProbOptions / sum(spreadProbOptions)
-  aa <- rmultinom(1, size = 1e4, prob = relProbs)[, 1] * unname(avail)
-  suppressWarnings({
-    cht <- chisq.test(x = cbind(aa, actual))
-  })
+    if (interactive()) {
+      for (ids in seq(unique(cirOut$id))) {
+        # dev(3 + ids)
+        ras[cirOut[id == ids, indices]] <- cirOut[id == ids, dists]
+        # clearPlot()
+        terra::plot(ras) # Plot(ras)
+      }
+    }
+    cirOut$dists <- round(cirOut$dists, 4)
+    out$distance <- round(out$distance, 4)
+    setkey(cirOut, id, dists)
+    #quickDT <- data.table(id = seq_along(sams), initialPixels = sams, key = "id")
+    cirOut <- unique(cirOut)
+    #cirOut <- quickDT[cirOut, on = ]
+    setnames(cirOut, "id", "initialPixels")
+    compare <- out[cirOut, on = c(initialPixels = "initialPixels", pixels = "indices")]
+    expect_true(sum(abs(compare$dists - compare$distance)) %==% 0)
 
-  #if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
+    ## TODO: need better test for hov this scales
+    #if (interactive()) message("Scales with number of starts, not maxSize of raster")
+    #set.seed(21)
+    #b <- terra::rast(terra::ext(0, 33000, 0, 33000), res = 1)
+    #sams <- sample(ncell(b), 2)
+    #st1 <- system.time({
+    #  out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
+    #})
+    #expect_true(st1[1] < 1) ## don't check timing as it fluctuates ased on machine load!
+
+    if (interactive()) message("test neighProbs")
+    maxSizes <- 14
+    sp <- reproducible::rasterRead(a)
+    spreadProbOptions <- 1:5
+    sp[] <- sample(spreadProbOptions, ncell(sp), replace = TRUE)
+    set.seed(2123)
+    sams <- sample(innerCells, 2)
+    set.seed(321)
+    out <- spread2(a, spreadProb = 1, spreadProbRel = sp, start = sams,
+                   neighProbs = c(0.7, 0.3), maxSize = maxSizes, asRaster = FALSE)
+    expect_true(uniqueN(out) == maxSizes * length(sams))
+    expect_true(NROW(out) == maxSizes * length(sams))
+
+    if (interactive()) message("check variable lengths of neighProbs")
+    set.seed(29937)
+    sams <- sample(innerCells, 2)
+    for (www in 1:8) {
+      alwaysN <- rep(0, www)
+      alwaysN[www] <- 1
+      out <- spread2(
+        a, spreadProb = 1, spreadProbRel = sp, iterations = 1,start = sams,
+        neighProbs = alwaysN, asRaster = FALSE
+      )
+      expect_true(NROW(out) == (length(alwaysN) * 2 + length(sams)))
+    }
+
+    if (interactive()) {
+      message(
+        paste(
+          "Test that when using neighProbs & a Raster of spreadProbs,",
+          "the spreadProb raster is followed probabilistically.",
+          "This test does only 1 iteration from 2 pixels that are",
+          "not interacting with edges or each other"
+        )
+      )
+    }
+    sams <- sort(c(0:2 * 3 + 12) + rep(c(0, 30, 60, 90), 3))
+    sams <- sams[sams < 90]
+    set.seed(654)
+    out <- list()
+    for (yyy in 1:10) {
+      out[[yyy]] <- spread2(a, spreadProbRel = sp, spreadProb = 1, iterations = 1,
+                          start = sams, neighProbs = c(1), asRaster = FALSE)
+    }
+    out <- rbindlist(out)[state == "activeSource"]
+    uniquePixels <- out[, list(uniquePix = unique(pixels)), by = "initialPixels"]
+    avail <- table(sp[uniquePixels$uniquePix])
+    actual <- unname(table(sp[out$pixels]))
+    relProbs <- spreadProbOptions / sum(spreadProbOptions)
+    aa <- rmultinom(1, size = 1e4, prob = relProbs)[, 1] * unname(avail)
+    suppressWarnings({
+      cht <- chisq.test(x = cbind(aa, actual))
+    })
+
+    #if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
     expect_true(cht$p.value > 0.05)
-  #} else {
-  #  expect_false(cht$p.value > 0.05) ## TODO: is this valid/correct test?
-  #}
+    #} else {
+    #  expect_false(cht$p.value > 0.05) ## TODO: is this valid/correct test?
+    #}
 
-  message("Scales with number of starts, not maxSize of raster")
-  set.seed(21)
-  b <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
-  bProb <- raster(system.file("extdata", "bProb.tif", package = "SpaDES.tools"))
+    message("Scales with number of starts, not maxSize of raster")
+    set.seed(21)
+    b <- reproducible::rasterRead(bSimple)
+    bProb <- reproducible::rasterRead(system.file("extdata", "bProb.tif", package = "SpaDES.tools"))
 
-  set.seed(1232)
-  out <- spread2(spreadProb = 0.5, landscape = b, asRaster = FALSE,
-                 start = ncell(b) / 2 - ncol(b) / 2, spreadProbRel = bProb,
-                 returnFrom = TRUE, neighProbs = c(0.3, 0.7), exactSize = 30)
+    set.seed(1232)
+    out <- spread2(spreadProb = 0.5, landscape = b, asRaster = FALSE,
+                   start = ncell(b) / 2 - ncol(b) / 2, spreadProbRel = bProb,
+                   returnFrom = TRUE, neighProbs = c(0.3, 0.7), exactSize = 30)
 
-  set(out, NULL, "relProb", bProb[][out$pixels])
-  if (interactive()) out
+    set(out, NULL, "relProb", bProb[][out$pixels])
+    if (interactive()) out
 
-  if (interactive())
-    message("check wide range of spreadProbs and that it makes a RasterLayer")
-  set.seed(654)
-  rasts <- list()
-  for (i in 1:20) {
-    rasts[[i]] <- spread2(a, spreadProb = stats::runif(1, 0, 1))
-    expect_that(rasts[[i]], is_a("RasterLayer"))
-  }
-  if (interactive()) {
-    names(rasts) <- paste0("ras", 1:20)
-    clearPlot()
-    Plot(rasts)
-  }
+    if (interactive())
+      message("check wide range of spreadProbs and that it makes a RasterLayer")
+    set.seed(654)
+    rasts <- list()
+    for (ccc in 1:20) {
+      rasts[[ccc]] <- spread2(a, spreadProb = stats::runif(1, 0, 1))
+      expect_that(rasts[[ccc]], is_a(cls))
+    }
+    if (interactive()) {
+      names(rasts) <- paste0("ras", 1:20)
+      rasts <- eval(parse(text = rastDF$stack[ii]))(rasts)
+      terra::plot(rasts)
+    }
 
-  if (interactive())
-    message("testing iterative calling of spread2")
-  set.seed(299)
-  sams <- sample(innerCells, 2)
-  set.seed(299)
-  out <- spread2(a, iterations = 1, start = sams, asRaster = FALSE)
-  stillActive <- TRUE
-  while (stillActive) {
-    stillActive <- any(out$state == "activeSource")
-    out <- spread2(a, iterations = 1, start = out, asRaster = FALSE)
-  }
-  set.seed(299)
-  out2 <- spread2(a, start = sams, asRaster = FALSE)
-  keyedCols <- c("initialPixels", "pixels")
-  expect_equivalent(out2, out)
+    if (interactive())
+      message("testing iterative calling of spread2")
+    set.seed(299)
+    sams <- sample(innerCells, 2)
+    set.seed(299)
+    out <- spread2(a, iterations = 1, start = sams, asRaster = FALSE)
+    stillActive <- TRUE
+    while (stillActive) {
+      stillActive <- any(out$state == "activeSource")
+      out <- spread2(a, iterations = 1, start = out, asRaster = FALSE)
+    }
+    set.seed(299)
+    out2 <- spread2(a, start = sams, asRaster = FALSE)
+    keyedCols <- c("initialPixels", "pixels")
+    expect_equivalent(out2, out)
 
-  if (interactive())
-    message("testing iterative calling of spread2, but asRaster = TRUE")
-  set.seed(299)
-  sams <- sample(innerCells, 2)
-  set.seed(299)
-  out1 <- spread2(a, iterations = 1, start = sams, asRaster = TRUE)
-  stillActive <- TRUE
-  while (stillActive) {
-    stillActive <- any(attr(out1, "pixel")$state == "activeSource")
-    out1 <- spread2(a, iterations = 1, start = out1, asRaster = TRUE)
-  }
-  expect_true(identical(out, attr(out1, "pixel")))
+    if (interactive())
+      message("testing iterative calling of spread2, but asRaster = TRUE")
+    set.seed(299)
+    sams <- sample(innerCells, 2)
+    set.seed(299)
+    out1 <- spread2(a, iterations = 1, start = sams, asRaster = TRUE)
+    stillActive <- TRUE
+    while (stillActive) {
+      stillActive <- any(attr(out1, "pixel")$state == "activeSource")
+      out1 <- spread2(a, iterations = 1, start = out1, asRaster = TRUE)
+    }
+    expect_true(identical(out, attr(out1, "pixel")))
 
-  if (interactive())
-    message("testing iterative with maxSize")
-  set.seed(299)
-  seed <- sample(1e6, 1)
-  set.seed(seed)
-  sams <- sample(innerCells, 2)
-  exactSizes <- 5:6
-  out <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
-                  exactSize = exactSizes, asRaster = FALSE)
-  for (i in 1:20) {
-    out <- spread2(a, start = out, spreadProb = 0.225, iterations = 1,
+    if (interactive())
+      message("testing iterative with maxSize")
+    set.seed(299)
+    seed <- sample(1e6, 1)
+    set.seed(seed)
+    sams <- sample(innerCells, 2)
+    exactSizes <- 5:6
+    out <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
                    exactSize = exactSizes, asRaster = FALSE)
-  }
+    for (pip in 1:20) {
+      out <- spread2(a, start = out, spreadProb = 0.225, iterations = 1,
+                     exactSize = exactSizes, asRaster = FALSE)
+    }
 
-  if (interactive())
-    message("testing iterative with maxSize -- where needRetry occurs")
-  set.seed(299)
-  sams <- sample(innerCells, 2)
-  exactSizes <- 60:61
+    if (interactive())
+      message("testing iterative with maxSize -- where needRetry occurs")
+    set.seed(299)
+    sams <- sample(innerCells, 2)
+    exactSizes <- 60:61
 
-  out <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
-                 exactSize = exactSizes, asRaster = FALSE)
-  out2 <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
-                  exactSize = exactSizes, asRaster = FALSE)
-  for (i in 1:25) {
-    out <- spread2(a, start = out, spreadProb = 0.225, iterations = 1,
+    out <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
                    exactSize = exactSizes, asRaster = FALSE)
-    attr(out2, "spreadState") <- NULL
-    out2 <- spread2(a, start = out2, spreadProb = 0.225, iterations = 1,
+    out2 <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
                     exactSize = exactSizes, asRaster = FALSE)
-  }
-  expect_true(is.data.table(out))
-  expect_true(is.data.table(out2))
-  expect_true(all(attr(out2, "spreadState")$clusterDT$numRetries == 0))
-  expect_true(all(attr(out, "spreadState")$clusterDT$numRetries > 10))
+    for (wip in 1:25) {
+      out <- spread2(a, start = out, spreadProb = 0.225, iterations = 1,
+                     exactSize = exactSizes, asRaster = FALSE)
+      attr(out2, "spreadState") <- NULL
+      out2 <- spread2(a, start = out2, spreadProb = 0.225, iterations = 1,
+                      exactSize = exactSizes, asRaster = FALSE)
+    }
+    expect_true(is.data.table(out))
+    expect_true(is.data.table(out2))
+    expect_true(all(attr(out2, "spreadState")$clusterDT$numRetries == 0))
+    expect_true(all(attr(out, "spreadState")$clusterDT$numRetries > 10))
 
-  # because loses info on how many retries, it will always be smaller
-  expect_true(all(attr(out, "spreadState")$clusterDT$numRetries >
-                    attr(out2, "spreadState")$clusterDT$numRetries))
+    # because loses info on how many retries, it will always be smaller
+    expect_true(all(attr(out, "spreadState")$clusterDT$numRetries >
+                      attr(out2, "spreadState")$clusterDT$numRetries))
 
-  sams <- c(25, 75)
-  set.seed(234)
-  out <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
-                 exactSize = exactSizes, asRaster = FALSE)
-  set.seed(234)
-  out2 <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
-                  exactSize = exactSizes, asRaster = FALSE)
-  for (i in 1:4) {
-    # limit this so it doesn't get into retries, which will cause them to differ
+    sams <- c(25, 75)
     set.seed(234)
-    out <- spread2(a, start = out, spreadProb = 0.225, iterations = 1,
+    out <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
                    exactSize = exactSizes, asRaster = FALSE)
-
-    attr(out2, "spreadState") <- NULL
     set.seed(234)
-    out2 <- spread2(a, start = out2, spreadProb = 0.225, iterations = 1,
+    out2 <- spread2(a, start = sams, spreadProb = 0.225, iterations = 1,
                     exactSize = exactSizes, asRaster = FALSE)
+    for (jij in 1:4) {
+      # limit this so it doesn't get into retries, which will cause them to differ
+      set.seed(234)
+      out <- spread2(a, start = out, spreadProb = 0.225, iterations = 1,
+                     exactSize = exactSizes, asRaster = FALSE)
+
+      attr(out2, "spreadState") <- NULL
+      set.seed(234)
+      out2 <- spread2(a, start = out2, spreadProb = 0.225, iterations = 1,
+                      exactSize = exactSizes, asRaster = FALSE)
+    }
+
+    ## they start to diverge if there is a jump that occurs, because the one without
+    ## memory doesn't know how many retries it has had
+    #expect_identical(data.table(out2), data.table(out)) ## TODO: fix this test
+
+    for (eoe in 1:25) {
+      set.seed(234)
+      out <- spread2(a, start = out, spreadProb = 0.225, iterations = 1,
+                     exactSize = exactSizes, asRaster = FALSE)
+
+      attr(out2, "spreadState") <- NULL
+      set.seed(234)
+      out2 <- spread2(a, start = out2, spreadProb = 0.225, iterations = 1,
+                      exactSize = exactSizes, asRaster = FALSE)
+    }
+    expect_false(identical(data.table(out2), data.table(out)))
   }
-
-  ## they start to diverge if there is a jump that occurs, because the one without
-  ## memory doesn't know how many retries it has had
-  #expect_identical(data.table(out2), data.table(out)) ## TODO: fix this test
-
-  for (i in 1:25) {
-    set.seed(234)
-    out <- spread2(a, start = out, spreadProb = 0.225, iterations = 1,
-                   exactSize = exactSizes, asRaster = FALSE)
-
-    attr(out2, "spreadState") <- NULL
-    set.seed(234)
-    out2 <- spread2(a, start = out2, spreadProb = 0.225, iterations = 1,
-                    exactSize = exactSizes, asRaster = FALSE)
-  }
-  expect_false(identical(data.table(out2), data.table(out)))
 })
 
 test_that("spread2 tests -- asymmetry", {
@@ -404,7 +407,7 @@ test_that("spread2 tests -- asymmetry", {
   sams <- sample(innerCells, 2)
   out <- spread2(a, start = sams, 0.215, asRaster = FALSE, asymmetry = 2,
                  asymmetryAngle = 90)
-  for (i in 1:20) {
+  for (eof in 1:20) {
     expect_silent({
       out <- spread2(a, start = out, 0.215, asRaster = FALSE, asymmetry = 2,
                      asymmetryAngle = 90)
@@ -429,10 +432,10 @@ test_that("spread2 tests -- asymmetry", {
     deg(atan2(mean(sin(rad(angles))), mean(cos(rad(angles)))))
   }
 
-  if (interactive()) {
-    dev()
-    clearPlot()
-  }
+  # if (interactive()) {
+  #   # dev()
+  #   # clearPlot()
+  # }
   seed <- sample(1e6, 1)
   set.seed(seed)
   for (asymAng in (2:n)) {
@@ -507,7 +510,7 @@ test_that("spread2 tests -- asymmetry", {
   #  same size events as the Non-asymmetry one. This is a weak test, really. It should
   sizes <- data.frame(a = numeric())
   set.seed(1234)
-  for (i in 1:10) {
+  for (rso in 1:10) {
     sams <- ncell(hab) / 4 - ncol(hab) / 4 * 3
     circs <- spread2(hab, spreadProb = 0.18, start = sams,
                      asymmetry = 2, asymmetryAngle = 135, asRaster = TRUE)
@@ -528,11 +531,11 @@ test_that("spread2 tests -- asymmetry", {
   # This code is used to get the mean value for the t.test above
   n <- 100
   sizes <- integer(n)
-  for (i in 1:n) {
+  for (iwo in 1:n) {
     circs <- spread2(hab, spreadProb = 0.225,
                      start = ncell(hab) / 4 - ncol(hab) / 4 * 3,
                      asRaster = FALSE)
-    sizes[i] <- circs[, .N]
+    sizes[iwo] <- circs[, .N]
   }
   goalSize <- mean(sizes)
 
@@ -547,12 +550,12 @@ test_that("spread2 tests -- asymmetry", {
 
   objFn <- function(sp, n = 20, ras, goalSize) {
     sizes <- integer(n)
-    for (i in 1:n) {
+    for (wnn in 1:n) {
       circs <- spread2(ras, spreadProb = sp,
                        start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
                        asymmetry = 2, asymmetryAngle = 135,
                        asRaster = FALSE)
-      sizes[i] <- circs[, .N]
+      sizes[wnn] <- circs[, .N]
     }
     abs(mean(sizes) - goalSize)
   }
@@ -574,11 +577,11 @@ test_that("spread2 tests -- asymmetry", {
   ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
   sp <- runif(n, 0.15, 0.25)
   sizes <- integer()
-  for (i in 1:n) {
-    circs <- spread2(ras, spreadProb = sp[i], start = ncell(ras) / 2 - ncol(ras) / 2,
+  for (qwe in 1:n) {
+    circs <- spread2(ras, spreadProb = sp[qwe], start = ncell(ras) / 2 - ncol(ras) / 2,
                    asRaster = FALSE)
-    sizes[i] <- NROW(circs)
-    message(i)
+    sizes[qwe] <- NROW(circs)
+    message(qwe)
   }
   dt1 <- data.table(sp, sizes)
   library(mgcv)
@@ -617,7 +620,7 @@ test_that("spread2 returnFrom", {
   innerCells <- which(bb[] %==% 1)
 
   set.seed(123)
-  for (i in 1:20) {
+  for (iso in 1:20) {
     sams <- sample(innerCells, 2)
     expect_silent(out <- spread2(a, start = sams, 0.215, asRaster = FALSE,
                                  returnFrom = TRUE))

@@ -2,6 +2,9 @@ test_that("spread produces legal RasterLayer", {
   skip_if_not_installed("dqrng")
 
   withr::local_package("terra")
+  if (!requireNamespace("raster", quietly = TRUE)) {
+    rastDF <- rastDF[rastDF$pkg == "terra",]
+  }
   withr::local_package("dqrng")
 
   set.seed(123)
@@ -11,12 +14,12 @@ test_that("spread produces legal RasterLayer", {
   a <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
   b <- terra::rast(terra::ext(a), res = 1, vals = stats::runif(ncell(a), 0, 1))
 
-  df <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"),
+  rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"),
                    read = c("raster::raster", "terra::rast"))
-  for (i in seq(NROW(df))) {
-    type <- df$pkg[i]
-    cls <- df$class[i]
-    pkg <- df$read[i]
+  for (i in seq(NROW(rastDF))) {
+    type <- rastDF$pkg[i]
+    cls <- rastDF$class[i]
+    pkg <- rastDF$read[i]
 
     withr::local_options(reproducible.rasterRead = pkg)
     a <- reproducible::rasterRead(a)
@@ -719,9 +722,9 @@ test_that("simple cir does not work correctly", {
 
   hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1)
 
-  df <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"))
-  for (i in seq(NROW(df))) {
-    type <- df$pkg[i]
+  rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"))
+  for (i in seq(NROW(rastDF))) {
+    type <- rastDF$pkg[i]
     if (type == "raster")
       hab <- raster::raster(hab)
     circleRas <- cir(hab, maxRadius = 1, includeBehavior = "excludePixels")
@@ -760,20 +763,20 @@ test_that("simple cir does not work correctly", {
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = FALSE, returnDistances = FALSE)
-    expect_is(cirs2, df$class[i])
+    expect_is(cirs2, rastDF$class[i])
     expect_true(max(as.numeric(terra::values(cirs2))) == 2)
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = TRUE, returnDistances = FALSE)
-    expect_is(cirs2, df$class[i])
+    expect_is(cirs2, rastDF$class[i])
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = TRUE, returnDistances = TRUE)
-    expect_is(cirs2, df$class[i])
+    expect_is(cirs2, rastDF$class[i])
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = c(1, 2))
@@ -902,11 +905,9 @@ test_that("spreadProb with relative values does not work correctly", {
 
   ext1 <- terra::ext(0, 1e2, 0, 1e2)
   extRas <- terra::rast(ext1, res = 1)
-  df <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"),
-                   read = c("raster::raster", "terra::rast"))
-  for (i in seq(NROW(df))) {
-    type <- df$pkg[i]
-    read <- df$read[i]
+  for (i in seq(NROW(rastDF))) {
+    type <- rastDF$pkg[i]
+    read <- rastDF$read[i]
 
     withr::local_options(reproducible.rasterRead = read)
 
@@ -949,12 +950,12 @@ test_that("spreadProb with relative values does not work correctly", {
     # dqrng::dqset.seed(seed)
 
     out1 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = ras)
-    expect_s4_class(out1, df$class[i])
+    expect_s4_class(out1, rastDF$class[i])
     set.seed(seed)
     # dqrng::dqset.seed(seed)
 
     out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps)
-    expect_s4_class(out2, df$class[i])
+    expect_s4_class(out2, rastDF$class[i])
     expect_equal(out1, out2)
   }
 })

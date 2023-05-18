@@ -2,6 +2,12 @@
 #   optsAsk in this environment,
 # loads and libraries indicated plus testthat,
 # sets options("reproducible.ask" = FALSE) if ask = FALSE
+rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"),
+                     read = c("raster::raster", "terra::rast"),
+                     stack = c("raster::stack", "terra::rast"),
+                     stackClass = c("RasterStack", "SpatRaster"),
+                     extent = c("raster::extent", "terra::ext"))
+
 testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
                      opts = NULL, needGoogle = FALSE) {
 
