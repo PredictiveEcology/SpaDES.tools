@@ -119,7 +119,8 @@ if (requireNamespace("CircStats", quietly = TRUE)) {
                                               initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
                     ras = a, goalSize = goalSize)
 
-      # The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:
+      # The value of spreadProb that will give the
+      #    same expected event sizes to spreadProb = 0.225 is:
       sp <- aa$optim$bestmem
       circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
                        asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)

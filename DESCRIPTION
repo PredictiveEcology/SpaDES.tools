@@ -42,7 +42,6 @@ Imports:
     Rcpp (>= 0.12.12),
     reproducible (>= 2.0.2),
     stats,
-    tools,
     terra
 Suggests:
     animation,
@@ -68,6 +67,7 @@ Suggests:
     snow,
     sp (>= 1.2-4),
     testthat (>= 1.0.2),
+    tools,
     withr
 Remotes:
     ropensci/NLMR

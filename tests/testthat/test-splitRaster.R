@@ -203,10 +203,11 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
 
     ## use different file extensions
     y7 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".grd")
-    expect_true(all(tools::file_ext(reproducible::Filenames(y7[[1]])) %in% c("grd", "gri")))
-
     y8 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".tif")
-    expect_true(tools::file_ext(reproducible::Filenames(y8[[1]])) == "tif")
+    if (requireNamespace("tools")) {
+      expect_true(all(tools::file_ext(reproducible::Filenames(y7[[1]])) %in% c("grd", "gri")))
+      expect_true(tools::file_ext(reproducible::Filenames(y8[[1]])) == "tif")
+    }
 
     setwd(owd)
   }
