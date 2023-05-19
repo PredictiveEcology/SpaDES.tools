@@ -116,6 +116,9 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
            fExt = fExt)
   }
 
+  if (any(vapply(tiles, function(x) is(x, "PackedSpatRaster"), FUN.VALUE = logical(1))))
+    tiles <- lapply(tiles, terra::unwrap)
+
   if (isRasterLayer) {
     tiles <- lapply(tiles, function(t) {
       withCallingHandlers({
@@ -131,8 +134,6 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
     })
   }
 
-  if (any(vapply(tiles, function(x) is(x, "PackedSpatRaster"), FUN.VALUE = logical(1))))
-    tiles <- lapply(tiles, terra::unwrap)
 
   return(tiles)
 }
