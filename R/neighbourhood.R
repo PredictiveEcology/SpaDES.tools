@@ -482,7 +482,8 @@ cir <- function(landscape, coords, loci,
       stop("Need either a numeric loci or coords")
     }
   } else if (inherits(coords, "Spatial")) {
-    coords <- sp::coordinates(coords)
+    if (!requireNamespace("sp")) stop("Need to install.packages('sp') or use SpatVect")
+      coords <- sp::coordinates(coords)
   } else if (inherits(coords, "SpatVector")) {
     coords <- crds(coords)
   } else if (!is.numeric(coords)) {
@@ -1017,10 +1018,9 @@ spokes <- function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
               angles = angles, returnIndices = returnIndices)
 
   if (!is.null(stopRule)) {
-    if (!requireNamespace("sp")) stop("Need to install.packages('sp')")
     forms <- names(formals(stopRule))
     fromC <- "fromCell" %in% forms
-    if (fromC) fromCell <- cellFromXY(landscape, sp::coordinates(coords))
+    if (fromC) fromCell <- cellFromXY(landscape, terra::crds(coords))
     toC <- "toCell" %in% forms
     if (toC) toCell <- cellFromXY(landscape, to[, c("x", "y")])
     land <- "landscape" %in% forms
