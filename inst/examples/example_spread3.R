@@ -136,9 +136,13 @@
       if (require(animation, quietly = TRUE)) {
         out2 <- terra::rast(tmpStack)
         gifName <- file.path(tempdir(), "animation.gif")
-        saveGIF(interval = 0.1, movie.name = gifName, expr = {
-          for (i in seq(length(names(out2)))) plot(out2[[i]])
-        })
+
+        # Only works on some systems; may need to configure
+        # Works on Windows without system adjustments
+        if (identical(.Platform$OS.type, "windows"))
+          saveGIF(interval = 0.1, movie.name = gifName, expr = {
+            for (i in seq(length(names(out2)))) terra::plot(out2[[i]])
+          })
       }
     }
   }

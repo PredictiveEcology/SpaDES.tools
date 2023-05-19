@@ -151,7 +151,6 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     iteration <- spreadState$totalIterations
     if (verbose > 1) message("Iteration ", iteration)
     if (isTRUE(plot.it > 1)) {
-      # .requireNamespace("quickPlot")
       rasIterations[b[active]$pixels] <- iteration
       terra::plot(rasIterations, range = c(0, meanDist / (res(rasQuality)[1] / 12)))
     }
@@ -306,7 +305,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
         plotMultiplier <- plotMultiplier * 1.5
         needNew <- TRUE
       }
-      if (requireNamespace("quickPlot", quietly = TRUE)) {
+      if (quickPlotUse()) {
         if (iteration == 1) quickPlot::clearPlot()
         quickPlot::Plot(rasAbundance, new = iteration == 1 || needNew,
                         legendRange = c(0, plotMultiplier), title = "Abundance")
@@ -392,4 +391,9 @@ testEquivalentMetadata.default <- function(...) {
   else
     terra::compareGeom(...)
   return(invisible())
+}
+
+quickPlotUse <- function() {
+  requireNamespace("quickPlot", quietly = TRUE) &&
+  tryCatch(packageVersion("quickPlot") > "0.1.8", error = function(x) FALSE)
 }
