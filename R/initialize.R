@@ -565,7 +565,7 @@ long2UTM <- function(long) {
 #' @seealso `nlm_mpd`
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   if (require(NLMR)) {
 #'     library(terra)
 #'     nx <- ny <- 100L

@@ -297,7 +297,7 @@ test_that("spread stopRule does not work correctly", {
                        id = TRUE, stopRule = stopRule2, stopRuleBehavior = "includePixel")
       cirs <- as.numeric(terra::values(circs3))
       vals <- tapply(hab[circs3 > 0], cirs[cirs > 0], sum)
-      expect_true(all(vals <= (maxVal + maxFn(hab))))
+      expect_true(all(vals <= (maxVal + reproducible::maxFn(hab))))
 
       set.seed(53432)
       # dqrng::dqset.seed(53432)
@@ -306,7 +306,7 @@ test_that("spread stopRule does not work correctly", {
                        id = TRUE, stopRule = stopRule2, stopRuleBehavior = "excludePixel")
       cirs <- as.numeric(terra::values(circs4))
       vals <- tapply(hab[circs4 > 0], cirs[cirs > 0], sum)
-      expect_true(all(vals >= (maxVal - maxFn(hab))))
+      expect_true(all(vals >= (maxVal - reproducible::maxFn(hab))))
 
       # There should be 1 extra cell
       expect_true(sum(as.numeric(terra::values(circs4)) > 0) + length(startCells) == sum(as.numeric(terra::values(circs3)) > 0))

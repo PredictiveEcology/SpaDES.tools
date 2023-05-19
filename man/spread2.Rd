@@ -444,7 +444,7 @@ if (requireNamespace("CircStats", quietly = TRUE)) {
 }
 ## ADVANCED: Estimate spreadProb when using asymmetry, such that the expected
 ##   event size is the same as without using asymmetry
-\dontrun{
+\donttest{
   if (interactive()) {
     ras <- rast(a)
     ras[] <- 1

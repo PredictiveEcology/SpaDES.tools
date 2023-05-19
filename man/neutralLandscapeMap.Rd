@@ -34,7 +34,7 @@ The main addition is that it makes sure that the output raster conforms
 in extent with the input raster \code{x}, since \code{nlm_mpd} can output a smaller raster.
 }
 \examples{
-\dontrun{
+\donttest{
   if (require(NLMR)) {
     library(terra)
     nx <- ny <- 100L
