@@ -1,9 +1,11 @@
+library(terra)
 set.seed(1234)
 
 ras <- terra::rast(terra::ext(0, 10, 0, 10), res = 1, val = 0)
 rp <- randomPolygons(ras, numTypes = 10)
 
-terra::plot(rp)
+if (interactive())
+  terra::plot(rp)
 
 angles <- seq(0, pi * 2, length.out = 17)
 angles <- angles[-length(angles)]
@@ -21,10 +23,15 @@ rasB <- terra::rast(ras)
 rasB[] <- 0
 rasB[d2[d2[, "stop"] == 1, "indices"]] <- 1
 
-terra::plot(rasB, add = TRUE, col = "red")
+if (interactive()) {
+  rasB[rasB == 0] <- NA
+  terra::plot(rasB, add = TRUE, col = "red", legend = FALSE)
+}
 
 if (NROW(d2) > 0) {
   sp1 <- terra::vect(d2[, c("x", "y")])
-  terra::plot(sp1, add = TRUE, pch = 19)
+  if (interactive())
+    terra::plot(sp1, add = TRUE, pch = 19)
 }
-terra::plot(coords, add = TRUE, pch = 19, col = "blue")
+if (interactive())
+  terra::plot(coords, add = TRUE, pch = 19, col = "blue")

@@ -566,14 +566,14 @@ long2UTM <- function(long) {
 #'
 #' @examples
 #' \donttest{
-#'   if (require(NLMR)) {
+#'   if (requireNamespace("NLMR", quietly = TRUE)) {
 #'     library(terra)
 #'     nx <- ny <- 100L
 #'     r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)
 #'     ## or with raster package:
 #'     # r <- raster::raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
 #'     map1 <- neutralLandscapeMap(r,
-#'                                 type = "nlm_mpd"
+#'                                 type = "nlm_mpd",
 #'                                 roughness = 0.65,
 #'                                 rand_dev = 200,
 #'                                 rescale = FALSE,

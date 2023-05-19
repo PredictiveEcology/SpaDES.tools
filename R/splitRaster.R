@@ -118,7 +118,14 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
 
   if (isRasterLayer) {
     tiles <- lapply(tiles, function(t) {
-      t <- raster::raster(t)
+      withCallingHandlers({
+        t <- raster::raster(t)
+      },
+      warning = function(w) {
+        if (getRversion() <= "4.1.3")
+          if (grepl("NAs introduced by coercion", w$message))
+            invokeRestart("muffleWarning")
+      })
       raster::dataType(t) <- rType
       t
     })

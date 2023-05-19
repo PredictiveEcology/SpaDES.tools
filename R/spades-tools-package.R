@@ -37,7 +37,7 @@
 #' \tabular{ll}{
 #'   [crw()] \tab Simple correlated random walk function\cr
 #'   [heading()] \tab Determines the heading between `SpatialPoints*`\cr
-#'   [quickPlot::makeLines()] \tab Makes `SpatialLines` object for, e.g., drawing arrows\cr
+#'   quickPlot::makeLines() \tab Makes `SpatialLines` object for, e.g., drawing arrows\cr
 #'   [move()] \tab A meta function that can currently only take "crw"\cr
 #'   [specificNumPerPatch()] \tab Initiate a specific number of agents per patch\cr
 #' }
@@ -48,7 +48,7 @@
 #' contributed packages such as `sp`, `raster`, `maps`, `maptools`
 #' and many others), we provide the following GIS-related functions:
 #' \tabular{ll}{
-#'   [quickPlot::equalExtent()] \tab Assess whether a list of extents are all equal\cr
+#'   quickPlot::equalExtent() \tab Assess whether a list of extents are all equal\cr
 #' }
 #'
 #' @section 4 Map-reduce - type operations:

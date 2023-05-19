@@ -39,7 +39,7 @@ Agents have several methods and functions specific to them:
 \tabular{ll}{
 \code{\link[=crw]{crw()}} \tab Simple correlated random walk function\cr
 \code{\link[=heading]{heading()}} \tab Determines the heading between \verb{SpatialPoints*}\cr
-\code{\link[quickPlot:makeLines]{quickPlot::makeLines()}} \tab Makes \code{SpatialLines} object for, e.g., drawing arrows\cr
+quickPlot::makeLines() \tab Makes \code{SpatialLines} object for, e.g., drawing arrows\cr
 \code{\link[=move]{move()}} \tab A meta function that can currently only take "crw"\cr
 \code{\link[=specificNumPerPatch]{specificNumPerPatch()}} \tab Initiate a specific number of agents per patch\cr
 }
@@ -52,7 +52,7 @@ In addition to the vast amount of GIS operations available in R (mostly from
 contributed packages such as \code{sp}, \code{raster}, \code{maps}, \code{maptools}
 and many others), we provide the following GIS-related functions:
 \tabular{ll}{
-\code{\link[quickPlot:equalExtent]{quickPlot::equalExtent()}} \tab Assess whether a list of extents are all equal\cr
+quickPlot::equalExtent() \tab Assess whether a list of extents are all equal\cr
 }
 }
 

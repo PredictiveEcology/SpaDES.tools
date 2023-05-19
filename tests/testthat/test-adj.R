@@ -35,7 +35,7 @@ test_that("adj.R results not identical to adjacent", {
                                         pairs = prs, target = targs),
                         error = function(x) FALSE
                       )
-                      if (isTRUE(adj2)) {
+                      if (!isFALSE(adj2)) {
                         if (!prs) {
                           if (ma) {
                             expect_equivalent(adjDT, adj2,
