@@ -1,5 +1,11 @@
 test_that("adj.R results not identical to adjacent", {
-  for (pkg in c("raster", "terra")) {
+  # skip_if_not_installed(c("raster", "terra"))
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
+  data.table::setDTthreads(1)
+
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
     a <- switch(pkg,
                 raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1),
                 terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1))
@@ -78,7 +84,13 @@ test_that("adj.R results not identical to adjacent", {
 })
 
 test_that("errors in adj are not correct", {
-  for (pkg in c("raster", "terra")) {
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
+  data.table::setDTthreads(1)
+
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
+
     a <- switch(pkg,
                 raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1),
                 terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1))
@@ -91,7 +103,12 @@ test_that("errors in adj are not correct", {
 
 test_that("adj.R: torus does not work as expected", {
 
-  for (pkg in c("raster", "terra")) {
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
+  data.table::setDTthreads(1)
+
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
     a <- switch(pkg,
                 raster = raster::raster(raster::extent(0, 4, 0, 4), res = 1),
                 terra = terra::rast(terra::ext(0, 4, 0, 4), res = 1))

@@ -10,19 +10,26 @@ test_that("numerical-comparisons: inRange handles various inputs", {
 
   f <- system.file("ex/test.grd", package = "terra")
 
-  for (pkg in c("raster", "terra")) {
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
+  data.table::setDTthreads(1)
+
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
+
     r <- switch(pkg,
                 raster = raster::raster(f),
                 terra = terra::rast(f))
 
     ids <- which(inRange(r, 850, 875))
-    if (packageVersion("raster") < "3.3.3" &
-        pkg == "raster") {
-      expect_equal(ids, c(708L, 1502L, 2853L, 3553L, 3638L, 3950L, 5708L, 6333L))
-    } else {
-      expect_equal(ids, c(1741L, 2774L, 3091L, 3092L, 3171L, 3645L, 3873L, 3878L, 3951L,
-                          3952L, 4031L, 7486L, 7646L))
-    }
+    if (requireNamespace("raster", quietly = TRUE))
+      if (packageVersion("raster") < "3.3.3" &
+          pkg == "raster") {
+        expect_equal(ids, c(708L, 1502L, 2853L, 3553L, 3638L, 3950L, 5708L, 6333L))
+      } else {
+        expect_equal(ids, c(1741L, 2774L, 3091L, 3092L, 3171L, 3645L, 3873L, 3878L, 3951L,
+                            3952L, 4031L, 7486L, 7646L))
+      }
 
     # inputs for a & b
     expect_error(inRange(0.5, 1, 0))

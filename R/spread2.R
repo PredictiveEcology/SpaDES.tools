@@ -357,7 +357,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   #### assertions ###############
   checkmate::assertMultiClass(landscape, c("Raster", "SpatRaster"))
-  fmatch2 <- if (requireNamespace("fastmatch")) fastmatch::fmatch else base::match
+  fmatch2 <- if (requireNamespace("fastmatch", quietly = TRUE)) fastmatch::fmatch else base::match
   landscapeOrigClass <- is(landscape)
   ncells <- ncell(landscape)
   numCols <- ncol(landscape)
