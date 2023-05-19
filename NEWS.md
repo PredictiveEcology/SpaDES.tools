@@ -2,8 +2,6 @@
 
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
-# SpaDES.tools 1.0.4
-
 ## Enhancements
 * wholesale transition to `terra` from `raster` and `sp`. Some functionality is available for `sf`, but this will not be complete.
 * `splitRaster()` uses ".tif" as the default raster file type
