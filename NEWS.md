@@ -1,20 +1,24 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
-# SpaDES.tools 1.0.3
+# SpaDES.tools 1.0.4
 
 ## Enhancements
-* begin transition to `terra` and `sf`
+* wholesale transition to `terra` from `raster` and `sp`. Some functionality is available for `sf`, but this will not be complete.
 * `splitRaster()` uses ".tif" as the default raster file type
+* most example plotting uses `terra::plot` directly, but in a few cases, `quickPlot::Plot` is used as it is much better (e.g., `spread2(plot.it = TRUE)`)
 
 ## Dependency changes
+* now has only 7 Imports and Depends, which becomes 15 recursive dependencies (down from 40)
 * drop support for R 4.0 (dependency package `reproducible` supports R >= 4.1);
-* removed dependencies `magrittr`, `raster`, `sp`, `rgeos`;
-* added dependency `rlang`;
-* `quickPlot` moved to Suggests;
-* added `snow` to Suggests as it's used for parallel `raster` operations;
+* add `terra` to Imports
+* removed dependencies `magrittr`, `rgeos`, `rlang`, `Require`, `graphics`
+* added to `Suggests`: `withr`
+* moved to Suggests: `quickPlot`, `fastmatch`, `raster`, `sp`, `sf`, `CircStats`
+* added `snow` to Suggests as it's used for parallel `raster` operations; `tools` for `file.ext`
 
 ## Bugfixes
 * minor bug fixes
+* all open issues dealt with
 * bug fixes related to migration to `terra`
 
 # SpaDES.tools 1.0.2
