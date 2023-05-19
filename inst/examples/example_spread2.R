@@ -72,7 +72,7 @@ chisq.test(keep, unname(tabulate(sp[out$pixels]$lyr.1, 9)[keep]),
            simulate.p.value = TRUE)
 
 ## Example showing asymmetry
-if (requireNamespace("CircStats", quietly = TRUE)) {
+if (require("CircStats")) {
   sams <- ncell(a) / 4 - ncol(a) / 4 * 3
   circs <- spread2(a, spreadProb = 0.213, start = sams,
                    asymmetry = 2, asymmetryAngle = 135,
@@ -95,10 +95,12 @@ if (requireNamespace("CircStats", quietly = TRUE)) {
     }
     goalSize <- mean(sizes)
 
-    if (requireNamespace("DEoptim", quietly = TRUE)) {
+    if (require("DEoptim")) {
       library(parallel)
       library(DEoptim)
-      cl <- makeCluster(pmin(10, detectCores() - 2)) # need 10 cores for 10 populations in DEoptim
+
+      # need 10 cores for 10 populations in DEoptim
+      cl <- makeCluster(pmin(10, detectCores() - 2))
       parallel::clusterEvalQ(cl, {
         library(SpaDES.tools)
         library(fpCompare)

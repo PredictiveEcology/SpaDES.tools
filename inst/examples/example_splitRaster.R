@@ -20,7 +20,7 @@ y1 <- splitRaster(r, nx, ny, c(10, 10), path = file.path(tmpdir, "y1"))
 y2 <- splitRaster(r, nx, ny, c(0.5, 0.5), path = file.path(tmpdir, "y2"))
 
 # parallel cropping
-if (requireNamespace("raster", quietly = TRUE) && requireNamespace("snow", quietly = TRUE)) {
+if (require("raster") && require("snow")) {
   if (interactive()) {
     n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
     raster::beginCluster(n)

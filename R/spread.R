@@ -324,7 +324,7 @@ utils::globalVariables(c(
 #' @export
 #' @importFrom data.table := data.table setcolorder set
 #' @importFrom fpCompare %<=%
-#' @importFrom reproducible maxFn minFn .requireNamespace
+#' @importFrom reproducible maxFn minFn
 #' @importFrom stats runif
 #' @importFrom terra ext ncell rast res setValues
 #' @importFrom utils assignInMyNamespace
@@ -363,8 +363,8 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
     if (isTRUE(lowMemory)) {
       stop("lowMemory is no longer supported due to removal of ffbase from CRAN.")
-      # requireNamespace("ff", quietly = TRUE)
-      # requireNamespace("ffbase", quietly = TRUE)
+      # .requireNamespace("ff")
+      # .requireNamespace("ffbase")
     }
 
     spreadStateExists <- is(spreadState, "data.table")
@@ -493,7 +493,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
 
     # circle needs directions to be 8
     if (circle | !is.na(asymmetry)) {
-      if (!requireNamespace("CircStats")) stop("Need to install.packages('CircStats')")
+      .requireNamespace("CircStats")
       if (circle) directions <- 8L # only required for circle
       initialLociXY <- cbind(id = seq_along(initialLoci), xyFromCell(landscape, initialLoci))
       id <- TRUE
@@ -1138,7 +1138,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       }
 
       if (plot.it) {
-        # if (requireNamespace("quickPlot")) {
+        # if (requireNamespace("quickPlot", quietly = TRUE)) {
         #   if (n == 2 & !spreadStateExists) quickPlot::clearPlot()
         #   if (allowOverlapOrReturnDistances) {
         #     spreadsDT <- data.table(spreads)
@@ -1164,8 +1164,9 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     } # end of while loop
 
     # Reset the base R seed so it is deterministic
-    if (requireNamespace("dqrng", quietly = TRUE))
+    if (requireNamespace("dqrng", quietly = TRUE)) {
       set.seed(dqrng::dqsample.int(1e9, 1) + sample.int(1e9, 1))
+    }
 
     if (!allowOverlap & !returnDistances) {
       spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
@@ -1262,7 +1263,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
 
     ## remove colour table
     if (inherits(landscape, "RasterLayer")) {
-      if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
+      .requireNamespace("raster")
       raster::colortable(landscape) <- logical(0)
     } else if (inherits(landscape, "SpatRaster")) {
       terra::coltab(landscape) <- NULL

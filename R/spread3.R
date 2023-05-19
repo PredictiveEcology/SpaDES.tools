@@ -63,7 +63,6 @@ utils::globalVariables(c(
 #' @importFrom fpCompare %>=% %>>%
 #' @importFrom graphics par
 #' @importFrom terra distance xyFromCell
-#' @importFrom reproducible .requireNamespace
 #' @importFrom stats pexp dweibull pweibull
 #'
 #' @example inst/examples/example_spread3.R
@@ -152,11 +151,10 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     iteration <- spreadState$totalIterations
     if (verbose > 1) message("Iteration ", iteration)
     if (isTRUE(plot.it > 1)) {
-      # .requireNamespace("quickPlot", stopOnFALSE = TRUE)
+      # .requireNamespace("quickPlot")
       rasIterations[b[active]$pixels] <- iteration
       terra::plot(rasIterations, range = c(0, meanDist / (res(rasQuality)[1] / 12)))
     }
-
 
     fromPts <- xyFromCell(rasQuality, b[["from"]][active])
     toPts <- xyFromCell(rasQuality, b[["pixels"]][active])
@@ -308,13 +306,14 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
         plotMultiplier <- plotMultiplier * 1.5
         needNew <- TRUE
       }
-      if (requireNamespace("quickPlot")) {
+      if (requireNamespace("quickPlot", quietly = TRUE)) {
         if (iteration == 1) quickPlot::clearPlot()
         quickPlot::Plot(rasAbundance, new = iteration == 1 || needNew,
-                    legendRange = c(0, plotMultiplier), title = "Abundance")
-      } else
-          terra::plot(rasAbundance, # new = iteration == 1 || needNew,
-                      range = c(0, plotMultiplier), main = "Abundance")
+                        legendRange = c(0, plotMultiplier), title = "Abundance")
+      } else {
+        terra::plot(rasAbundance, # new = iteration == 1 || needNew,
+                    range = c(0, plotMultiplier), main = "Abundance")
+      }
     }
 
     newInactive <- b[["abundActive"]][active] == 0
