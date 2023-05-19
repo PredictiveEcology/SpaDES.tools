@@ -1,3 +1,5 @@
+# SpaDES.tools 2.0.0
+
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
 # SpaDES.tools 1.0.4
