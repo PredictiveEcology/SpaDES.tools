@@ -510,7 +510,7 @@ test_that("asymmetry doesn't work properly", {
     # function to calculate mean angle -- returns in degrees
     if (requireNamespace("CircStats", quietly = TRUE)) {
       meanAngle <- function(angles) {
-        CircStats::deg(atan2(mean(sin(rad(angles))), mean(cos(CircStats::rad(angles)))))
+        CircStats::deg(atan2(mean(sin(CircStats::rad(angles))), mean(cos(CircStats::rad(angles)))))
       }
 
       # if (interactive()) clearPlot()

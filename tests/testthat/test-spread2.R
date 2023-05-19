@@ -428,7 +428,7 @@ test_that("spread2 tests -- asymmetry", {
       # function to calculate mean angle -- returns in degrees
       if (!requireNamespace("CircStats")) stop("Need to install.packages('CircStats')")
       meanAngle <- function(angles) {
-        CircStats::deg(atan2(mean(sin(rad(angles))), mean(cos(CircStats::rad(angles)))))
+        CircStats::deg(atan2(mean(sin(CircStats::rad(angles))), mean(cos(CircStats::rad(angles)))))
       }
 
       # if (interactive()) {
