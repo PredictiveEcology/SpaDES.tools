@@ -6,11 +6,10 @@ library(terra)
 # nlayers: 3
 b <- rast(system.file("ex/logo.tif", package = "terra"))
 r <- b[[1]] # use first layer only
-nx <- 1
-ny <- 2
+nx <- 3
+ny <- 4
 
-tmpdir <- reproducible::checkPath(file.path(tempdir(), "splitRaster-example"),
-                                  create = TRUE)
+tmpdir <- dir.create(file.path(tempdir(), "splitRaster-example"), showWarnings = FALSE)
 
 y0 <- splitRaster(r, nx, ny, path = file.path(tmpdir, "y0")) # no buffer
 
@@ -21,11 +20,13 @@ y1 <- splitRaster(r, nx, ny, c(10, 10), path = file.path(tmpdir, "y1"))
 y2 <- splitRaster(r, nx, ny, c(0.5, 0.5), path = file.path(tmpdir, "y2"))
 
 # parallel cropping
-if (interactive()) {
-  n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
-  beginCluster(n)
-  y3 <- splitRaster(r, nx, ny, c(0.7, 0.7), path = file.path(tmpdir, "y3"))
-  endCluster()
+if (requireNamespace("raster", quietly = TRUE)) {
+  if (interactive()) {
+    n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
+    beginCluster(n)
+    y3 <- splitRaster(r, nx, ny, c(0.7, 0.7), path = file.path(tmpdir, "y3"))
+    endCluster()
+  }
 }
 
 # the original raster:
@@ -33,10 +34,10 @@ if (interactive()) plot(r) # may require a call to `dev()` if using RStudio
 
 # the split raster:
 layout(mat = matrix(seq_len(nx * ny), ncol = nx, nrow = ny))
-plotOrder <- c(4, 8, 12, 3, 7, 11, 2, 6, 10, 1, 5, 9)
-if (interactive()) invisible(lapply(y0[plotOrder], plot))
+plotOrder <- unlist(lapply(split(1:12, rep(1:nx, each = ny)), rev))
+if (interactive()) invisible(lapply(y0[plotOrder], terra::plot))
 
-# can be recombined using `raster::merge`
+# can be recombined using `terra::merge`
 m0 <- do.call(merge, y0)
 all.equal(m0, r) ## TRUE
 

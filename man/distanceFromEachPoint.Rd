@@ -63,9 +63,9 @@ but with one extra column, \code{"dists"}, indicating the distance
 between \code{from} and \code{to}.
 }
 \description{
-This is a modification of \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} for the case of many points.
+This is a modification of \code{\link[terra:distance]{terra::distance()}} for the case of many points.
 This version can often be faster for a single point because it does not return a RasterLayer.
-This is different than \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} because it does not take the
+This is different than \code{\link[terra:distance]{terra::distance()}} because it does not take the
 minimum distance from the set of points to all cells.
 Rather this returns the every pair-wise point distance.
 As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -76,8 +76,9 @@ This function has the potential to use a lot of memory if there are a lot of
 \code{from} and \code{to} points.
 }
 \details{
-This function is cluster aware. If there is a cluster running, it will use it.
-To start a cluster use \code{\link[raster:cluster]{beginCluster()}}, with \code{N} being
+This function is cluster aware if the \code{raster} package is available.
+If there is a cluster running, it will use it.
+To start a cluster use \code{raster::beginCluster()}, with \code{N} being
 the number of cores to use. See examples in \code{SpaDES.core::experiment}.
 
 If the user requires an id (indicating the \code{from} cell for each \code{to} cell)
@@ -159,7 +160,7 @@ if (identical(Sys.info()["sysname"], "Linux")) {
 }
 }
 \seealso{
-\code{\link[=rings]{rings()}}, \code{\link[=cir]{cir()}}, \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}},
+\code{\link[=rings]{rings()}}, \code{\link[=cir]{cir()}}, \code{\link[terra:distance]{terra::distance()}},
 which can all be made to do the same thing, under specific combinations of arguments.
 But each has different primary use cases. Each is also faster under different conditions.
 For instance, if \code{maxDistance} is relatively small compared to the number of cells

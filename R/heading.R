@@ -15,6 +15,7 @@
 #'
 #' @examples
 #' library(terra)
+#' if (requireNamespace("CircStats", quietly = TRUE)) {
 #' N <- 10L                # number of agents
 #' x1 <- stats::runif(N, -50, 50) # previous X location
 #' y1 <- stats::runif(N, -50, 50) # previous Y location
@@ -39,6 +40,7 @@
 #' prev <- matrix(c(x1, y1), ncol = 2, dimnames = list(NULL, c("x","y")))
 #' curr <- terra::vect(cbind(x = x0, y = y0))
 #' heading(prev, curr)
+#' }
 #'
 heading <- function(from, to) {
   if (!requireNamespace("CircStats")) stop("Need to install.packages('CirsStats')")

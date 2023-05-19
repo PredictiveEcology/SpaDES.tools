@@ -132,7 +132,7 @@ adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8,
 
 }
 \seealso{
-\code{\link[raster:adjacent]{raster::adjacent()}}
+\code{\link[terra:adjacent]{terra::adjacent()}}
 }
 \author{
 Eliot McIntire

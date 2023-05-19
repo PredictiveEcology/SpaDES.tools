@@ -1,9 +1,14 @@
 #' Vectorized wrapped normal density function
 #'
-#'  This is a modified version of [CircStats::dwrpnorm()].
+#'  This is a modified version of `CircStats::dwrpnorm()`.
 #'  to allow for multiple angles at once (i.e., vectorized on `theta` and `mu`).
 #'
-#' @inheritParams CircStats::dwrpnorm
+#' @param theta	value at which to evaluate the density function, measured in radians.
+#' @param mu	mean direction of distribution, measured in radians.
+#' @param rho	mean resultant length of distribution.
+#' @param sd different way of select rho, see details below.
+#' @param acc	parameter defining the accuracy of the estimation of the density. Terms are added to the infinite summation that defines the density function until successive estimates are within acc of each other.
+#' @param tol	the same as acc.
 #'
 #' @author Eliot McIntire
 #' @export

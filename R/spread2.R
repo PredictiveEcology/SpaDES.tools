@@ -97,7 +97,7 @@ utils::globalVariables(c(
 #'              `data.table` that is the output of a previous `spread2`.
 #'              If a vector, they should be cell indices (pixels) on the `landscape`.
 #'              If user has x and y coordinates, these can be converted with
-#'              [`cellFromXY()`][raster::cellFromXY].
+#'              [`cellFromXY()`][terra::cellFromXY].
 #'
 #' @param spreadProb  Numeric of length 1 or length `ncell(landscape)` or
 #'                    a `RasterLayer` that is the identical dimensions as

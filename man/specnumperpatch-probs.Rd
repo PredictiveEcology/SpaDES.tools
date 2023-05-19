@@ -27,7 +27,6 @@ linked by a column in that table called \code{pops}.
 }
 \examples{
 library(data.table)
-library(raster)
 
 set.seed(1234)
 Ntypes <- 4

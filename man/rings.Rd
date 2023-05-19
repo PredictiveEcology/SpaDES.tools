@@ -24,7 +24,7 @@ This can also be used as part of \code{stopRule}.}
 \item{loci}{A vector of locations in \code{landscape}.
 These should be cell indices.
 If user has x and y coordinates, these can be converted
-with \code{\link[raster:cellFrom]{cellFromXY()}}.}
+with \code{\link[terra:xyCellFrom]{cellFromXY()}}.}
 
 \item{id}{Logical. If \code{TRUE}, returns a raster of events ids.
 If \code{FALSE}, returns a raster of iteration numbers,
@@ -70,28 +70,30 @@ Under many situations, this may be faster than using \code{sf::st_buffer} twice
 }
 \examples{
 library(terra)
+if (requireNamespace("CircStats", quietly = TRUE)) {
 
-# Make random forest cover map
-emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  # Make random forest cover map
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
 
-# start from two cells near middle
-loci <- (ncell(emptyRas) / 2 - ncol(emptyRas)) / 2 + c(-3, 3)
+  # start from two cells near middle
+  loci <- (ncell(emptyRas) / 2 - ncol(emptyRas)) / 2 + c(-3, 3)
 
-# No overlap is default, occurs randomly
-emptyRas[] <- 0
-rngs <- rings(emptyRas, loci = loci, minRadius = 7, maxRadius = 9, returnIndices = TRUE)
-emptyRas[rngs$indices] <- rngs$id
-if (interactive()) {
-  terra::plot(emptyRas)
-}
+  # No overlap is default, occurs randomly
+  emptyRas[] <- 0
+  rngs <- rings(emptyRas, loci = loci, minRadius = 7, maxRadius = 9, returnIndices = TRUE)
+  emptyRas[rngs$indices] <- rngs$id
+  if (interactive()) {
+    terra::plot(emptyRas)
+  }
 
-# Variable ring widths, including centre cell for smaller one
-emptyRas[] <- 0
-rngs <- rings(emptyRas, loci = loci, minRadius = c(0, 7), maxRadius = c(8, 18),
-              returnIndices = TRUE)
-emptyRas[rngs$indices] <- rngs$id
-if (interactive()) {
-  terra::plot(emptyRas)
+  # Variable ring widths, including centre cell for smaller one
+  emptyRas[] <- 0
+  rngs <- rings(emptyRas, loci = loci, minRadius = c(0, 7), maxRadius = c(8, 18),
+                returnIndices = TRUE)
+  emptyRas[rngs$indices] <- rngs$id
+  if (interactive()) {
+    terra::plot(emptyRas)
+  }
 }
 }
 \seealso{

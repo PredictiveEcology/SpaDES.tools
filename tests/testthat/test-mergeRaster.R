@@ -1,14 +1,17 @@
 test_that("mergeRaster will return a message if tiles are resampled", {
 
-  df <- data.frame(pkg = c("raster", "terra"),
-                   cls = c("RasterLayer", "SpatRaster"),
-                   read = c("raster::raster", "terra::rast"))
+  withr::local_package("terra")
+  rastDF <- needTerraAndRaster() #
+  data.table::setDTthreads(1)
+
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
 
   nx <- ny <- 3
-  for (i in seq(NROW(df))) {
-    pkg <- df$pkg[i]
-    cls <- df$cls[i]
-    read <- df$read[i]
+  # for (i in seq(NROW(df))) {
+    pkg <- df$pkg[ii]
+    cls <- df$cls[ii]
+    read <- df$read[ii]
 
     withr::local_package(pkg)
     withr::local_options(reproducible.rasterRead = read)
@@ -58,10 +61,10 @@ test_that("mergeRaster will produce a raster layer", {
                    read = c("raster::raster", "terra::rast"))
 
   nx <- ny <- 3
-  for (i in seq(NROW(df))) {
-    pkg <- df$pkg[i]
-    cls <- df$cls[i]
-    read <- df$read[i]
+  for (ii in seq(NROW(df))) {
+    pkg <- df$pkg[ii]
+    cls <- df$cls[ii]
+    read <- df$read[ii]
 
     withr::local_package(pkg)
     withr::local_options(reproducible.rasterRead = read)
@@ -88,9 +91,9 @@ test_that("mergeRaster will produce error if only one raster passed", {
   df <- data.frame(pkg = c("raster", "terra"),
                    read = c("raster::raster", "terra::rast"))
 
-  for (i in seq(NROW(df))) {
-    pkg <- df$pkg[i]
-    read <- df$read[i]
+  for (ii in seq(NROW(df))) {
+    pkg <- df$pkg[ii]
+    read <- df$read[ii]
 
     withr::local_package(pkg)
     withr::local_options(reproducible.rasterRead = read)
@@ -117,10 +120,10 @@ test_that("mergeRaster will use mosaic with default mean if rasters are resample
 
   nx <- ny <- 3
 
-  for (i in seq(NROW(df))) {
-    pkg <- df$pkg[i]
-    cls <- df$cls[i]
-    read <- df$read[i]
+  for (ii in seq(NROW(df))) {
+    pkg <- df$pkg[ii]
+    cls <- df$cls[ii]
+    read <- df$read[ii]
 
     withr::local_package(pkg)
     withr::local_options(reproducible.rasterRead = read)

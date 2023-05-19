@@ -18,7 +18,7 @@ Several functions assist with these:
 
 \tabular{ll}{
 \code{\link[=adj]{adj()}} \tab An optimized (i.e., faster) version of
-\code{\link[raster:adjacent]{raster::adjacent()}}\cr
+\code{\link[terra:adjacent]{terra::adjacent()}}\cr
 \code{\link[=cir]{cir()}} \tab Identify pixels in a circle around a
 \code{\link[sp:SpatialPoints-class]{SpatialPoints*()}} object\cr
 \code{\link[=directionFromEachPoint]{directionFromEachPoint()}} \tab Fast calculation of direction and

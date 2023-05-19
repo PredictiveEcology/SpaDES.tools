@@ -1,5 +1,4 @@
 library(terra)
-library(data.table)
 
 set.seed(1462)
 
@@ -44,29 +43,31 @@ coords <- vect(cbind(x = stats::runif(n, xmin(hab), xmax(hab)),
 # cirs
 cirs <- cir(hab, coords, maxRadius = rep(radius, length(coords)), simplify = TRUE)
 
-# rings
-loci <- cellFromXY(hab, crds(coords))
-cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
-
-# Plot both
 ras1 <- rast(hab)
 ras1[] <- 0
 ras1[cirs[, "indices"]] <- cirs[, "id"]
-
-ras2 <- rast(hab)
-ras2[] <- 0
-ras2[cirs2$indices] <- cirs2$id
 if (interactive()) {
-  # clearPlot()
   terra::plot(ras1)
-  terra::plot(ras2)
+}
+
+# rings
+if (requireNamespace("CircStats", quietly = TRUE)) {
+  loci <- cellFromXY(hab, crds(coords))
+  cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
+
+  ras2 <- rast(hab)
+  ras2[] <- 0
+  ras2[cirs2$indices] <- cirs2$id
+  if (interactive()) {
+    terra::plot(c(ras1, ras2))
+  }
 }
 
 hab <- rast(system.file("extdata", "hab2.tif", package = "SpaDES.tools"))
 cirs <- cir(hab, coords, maxRadius = 44, minRadius = 0)
 ras1 <- rast(hab)
 ras1[] <- 0
-cirsOverlap <- data.table(cirs)[, list(sumIDs = sum(id)), by = indices]
+cirsOverlap <- data.table::data.table(cirs)[, list(sumIDs = sum(id)), by = indices]
 ras1[cirsOverlap$indices] <- cirsOverlap$sumIDs
 if (interactive()) {
   terra::plot(ras1)
@@ -81,3 +82,4 @@ coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
 circ <- cir(ras, coords, angles = seq(0, 2 * pi, length.out = 21),
             maxRadius = 200, minRadius = 0, returnIndices = FALSE,
             allowOverlap = TRUE, returnAngles = TRUE)
+

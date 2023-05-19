@@ -1,17 +1,23 @@
 test_that("splitRaster and mergeRaster work on small in-memory rasters", {
-  withr::local_package("reproducible")
+  # withr::local_package("reproducible")
+  withr::local_package("tools")
+  rastDF <- needTerraAndRaster() #
+  testFiles = data.frame(pkg = c("raster", "terra"),
+                         testFile = c("external/rlogo.grd", "ex/logo.tif"))
+  rastDF <- merge(testFiles, rastDF)
 
-  df <- data.frame(pkg = c("raster", "terra"),
-                   read = c("raster::brick", "terra::rast"),
-                   testFile = c("external/rlogo.grd", "ex/logo.tif"))
+  data.table::setDTthreads(1)
 
-  for (i in seq(NROW(df))) {
-    pkg <- df$pkg[i]
-    read <- df$read[i]
-    testFile <- system.file(df$testFile[i], package = pkg)
+  for (ii in seq(NROW(rastDF))) {
+    pkg <- rastDF$pkg[ii]
+    cls <- rastDF$class[ii]
+    read <- eval(parse(text = rastDF$read[ii]))
+    extFun <- eval(parse(text = rastDF$ext[ii]))
+
+    testFile <- system.file(rastDF$testFile[ii], package = pkg)
 
     withr::local_package(pkg)
-    withr::local_options(reproducible.rasterRead = read)
+    # withr::local_options(reproducible.rasterRead = read)
 
     owd <- getwd()
     on.exit({
@@ -21,7 +27,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     tmpdir <- file.path(tempdir(), "splitRaster-test", pkg) |> checkPath(create = TRUE)
     setwd(tmpdir)
 
-    b <- reproducible::rasterRead(testFile)
+    b <- read(testFile)
     r <- b[[1]] # use first layer only
     nx <- 3
     ny <- 4
@@ -197,10 +203,10 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
 
     ## use different file extensions
     y7 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".grd")
-    expect_true(all(raster::extension(reproducible::Filenames(y7[[1]])) %in% c(".grd", ".gri")))
+    expect_true(all(tools::file_ext(reproducible::Filenames(y7[[1]])) %in% c("grd", "gri")))
 
     y8 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".tif")
-    expect_true(raster::extension(reproducible::Filenames(y8[[1]])) == ".tif")
+    expect_true(tools::file_ext(reproducible::Filenames(y8[[1]])) == "tif")
 
     setwd(owd)
   }

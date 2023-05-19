@@ -18,7 +18,7 @@
 #'
 #' \tabular{ll}{
 #'   [adj()] \tab An optimized (i.e., faster) version of
-#'                          [raster::adjacent()]\cr
+#'                          [terra::adjacent()]\cr
 #'   [cir()] \tab Identify pixels in a circle around a
 #'                          [`SpatialPoints*()`][sp::SpatialPoints-class] object\cr
 #'   [directionFromEachPoint()] \tab Fast calculation of direction and

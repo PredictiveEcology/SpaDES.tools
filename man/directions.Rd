@@ -31,11 +31,11 @@ If the user wants this between say, \code{0} and \code{2*pi},
 then \verb{angles \\\%\\\% (2*pi)} will do the trick. See example.
 }
 \description{
-This is a modification of \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} for the case
+This is a modification of \code{\link[terra:distance]{terra::distance()}} for the case
 of many points.
 This version can often be faster for a single point because it does not return
 a \code{RasterLayer}.
-This is different than \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} because it does
+This is different than \code{\link[terra:distance]{terra::distance()}} because it does
 not take the minimum distance from the set of points to all cells.
 Rather this returns the every pair-wise point distance.
 As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -64,7 +64,7 @@ coords <- cbind(x = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
                 id = 1:N)
 
 dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
-if (requireNamespace("CircStats")) {
+if (requireNamespace("CircStats", quietly = TRUE)) {
   dirs1[, "angles"] <- CircStats::deg(dirs1[,"angles"] \%\% (2*pi))
   indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
   minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle

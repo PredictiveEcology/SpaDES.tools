@@ -251,7 +251,6 @@ rndmPolygonSpatVector <- function(x, hectares, area) {
 #' @importFrom reproducible .requireNamespace
 #' @importFrom terra vect crs
 rndmPolygonMatrix <- function(x, hectares, area) {
-  .requireNamespace("sf", stopOnFALSE = TRUE)
 
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
@@ -356,7 +355,6 @@ rndmPolygonSpatialPolygons <- function(x, hectares, area) {
 #'
 #' @examples
 #' library(data.table)
-#' library(raster)
 #'
 #' set.seed(1234)
 #' Ntypes <- 4

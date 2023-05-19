@@ -88,7 +88,7 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #' The variable output is done to minimize coercion to maintain speed.
 #' The columns will be one or more of `id`, `from`, `to`.
 #'
-#' @seealso [raster::adjacent()]
+#' @seealso [terra::adjacent()]
 #'
 #' @author Eliot McIntire
 #' @export

@@ -1,8 +1,8 @@
 #' Calculate distances and directions between many points and many grid cells
 #'
-#' This is a modification of [raster::distanceFromPoints()] for the case of many points.
+#' This is a modification of [terra::distance()] for the case of many points.
 #' This version can often be faster for a single point because it does not return a RasterLayer.
-#' This is different than [raster::distanceFromPoints()] because it does not take the
+#' This is different than [terra::distance()] because it does not take the
 #' minimum distance from the set of points to all cells.
 #' Rather this returns the every pair-wise point distance.
 #' As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -12,8 +12,9 @@
 #' This function has the potential to use a lot of memory if there are a lot of
 #' `from` and `to` points.
 #'
-#' This function is cluster aware. If there is a cluster running, it will use it.
-#' To start a cluster use [`beginCluster()`][raster::beginCluster], with `N` being
+#' This function is cluster aware if the `raster` package is available.
+#' If there is a cluster running, it will use it.
+#' To start a cluster use `raster::beginCluster()`, with `N` being
 #' the number of cores to use. See examples in `SpaDES.core::experiment`.
 #'
 #' @param from Numeric matrix with 2 or 3 or more columns. They must include x and y,
@@ -57,7 +58,7 @@
 #'         but with one extra column, `"dists"`, indicating the distance
 #'         between `from` and `to`.
 #'
-#' @seealso [rings()], [cir()], [raster::distanceFromPoints()],
+#' @seealso [rings()], [cir()], [terra::distance()],
 #' which can all be made to do the same thing, under specific combinations of arguments.
 #' But each has different primary use cases. Each is also faster under different conditions.
 #' For instance, if `maxDistance` is relatively small compared to the number of cells
@@ -343,11 +344,11 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
 #' Calculate distances and directions between many points and many grid cells
 #'
-#' This is a modification of [raster::distanceFromPoints()] for the case
+#' This is a modification of [terra::distance()] for the case
 #' of many points.
 #' This version can often be faster for a single point because it does not return
 #' a `RasterLayer`.
-#' This is different than [raster::distanceFromPoints()] because it does
+#' This is different than [terra::distance()] because it does
 #' not take the minimum distance from the set of points to all cells.
 #' Rather this returns the every pair-wise point distance.
 #' As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -392,7 +393,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'                 id = 1:N)
 #'
 #' dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
-#' if (requireNamespace("CircStats")) {
+#' if (requireNamespace("CircStats", quietly = TRUE)) {
 #'   dirs1[, "angles"] <- CircStats::deg(dirs1[,"angles"] %% (2*pi))
 #'   indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
 #'   minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle

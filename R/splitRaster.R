@@ -35,7 +35,7 @@
 #'
 #' @return `splitRaster` returns a list (length `nx*ny`) of cropped raster tiles.
 #'
-#' @seealso [do.call()], [raster::merge()].
+#' @seealso [do.call()], [terra::merge()].
 #'
 #' @author Alex Chubaty and Yong Luo
 #' @export

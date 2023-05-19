@@ -42,6 +42,7 @@ Imports:
     Rcpp (>= 0.12.12),
     reproducible (>= 2.0.2),
     stats,
+    tools,
     terra
 Suggests:
     animation,

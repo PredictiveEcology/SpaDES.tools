@@ -1,8 +1,9 @@
 ## these tests are fairly heavy, so don't run during automated tests
-if (interactive()) {
-  #########################################################
-  # Simple case, no variation in rasQuality, numeric advectionDir and advectionMag
-  #########################################################
+#########################################################
+# Simple case, no variation in rasQuality, numeric advectionDir and advectionMag
+#########################################################
+if (requireNamespace("CircStats", quietly = TRUE)) {
+
   maxDim <- 10000
   ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
   rasQuality <- terra::rast(ras)
@@ -46,7 +47,7 @@ if (interactive()) {
   #########################################################
   ### The case of variable quality raster
   #########################################################
-  if (require(sf) && require(fasterize)) {
+  if (requireNamespace("sf", quietly = TRUE)) {
     rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif", package = "SpaDES.tools"))
     theCRS <- sf::st_crs(readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools")))
     terra::crs(rasQuality) <- theCRS$wkt

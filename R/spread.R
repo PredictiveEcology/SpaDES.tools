@@ -104,8 +104,8 @@ utils::globalVariables(c(
 #'
 #' `stopRule` has many use cases. One common use case is evaluating
 #' a neighbourhood around a focal set of points. This provides,
-#' therefore, an alternative to the [raster::buffer()] function or
-#' [raster::focal()] function.
+#' therefore, an alternative to the [terra::buffer()] function or
+#' [terra::focal()] function.
 #' In both of those cases, the window/buffer size must be an input to the function. Here,
 #' the resulting size can be emergent based on the incremental growing and calculating
 #' of the `landscape` values underlying the spreading event.
@@ -138,7 +138,7 @@ utils::globalVariables(c(
 #' argument combinations.
 #' Also, [rings()] which uses `spread` but with specific argument
 #' values selected for a specific purpose.
-#' [raster::distanceFromPoints()].
+#' [terra::distance()].
 #' [cir()] to create "circles"; it is fast for many small problems.
 #'
 #' @param landscape     A `RasterLayer` or `SpatRaster` object. This defines the possible
@@ -148,7 +148,7 @@ utils::globalVariables(c(
 #' @param loci          A vector of locations in `landscape`.
 #'                      These should be cell indices.
 #'                      If user has x and y coordinates, these can be converted
-#'                      with [`cellFromXY()`][raster::cellFromXY].
+#'                      with [`cellFromXY()`][terra::cellFromXY].
 #'
 #' @param spreadProb    Numeric, `RasterLayer`, or `SpatRaster`.
 #'                      If numeric of length 1, then this is the global probability
@@ -1262,6 +1262,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
 
     ## remove colour table
     if (inherits(landscape, "RasterLayer")) {
+      if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
       raster::colortable(landscape) <- logical(0)
     } else if (inherits(landscape, "SpatRaster")) {
       terra::coltab(landscape) <- NULL
