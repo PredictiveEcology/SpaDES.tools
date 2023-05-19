@@ -83,6 +83,7 @@ They are "rounded" to pixel centres.
 #########################################################
 if (requireNamespace("CircStats", quietly = TRUE)) {
 
+  library(terra)
   maxDim <- 10000
   ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
   rasQuality <- terra::rast(ras)
@@ -90,7 +91,7 @@ if (requireNamespace("CircStats", quietly = TRUE)) {
   rasAbundance <- terra::rast(rasQuality)
   rasAbundance[] <- 0
   # startPixel <- middlePixel(rasAbundance)
-  startPixel <- sample(seq(ncell(rasAbundance)), 30)
+  startPixel <- sample(seq(terra::ncell(rasAbundance)), 30)
   rasAbundance[startPixel] <- 1000
   advectionDir <- 70
   advectionMag <- 4 * res(rasAbundance)[1]
@@ -209,7 +210,7 @@ if (requireNamespace("CircStats", quietly = TRUE)) {
     out2 <- terra::rast(tmpStack)
     gifName <- file.path(tempdir(), "animation.gif")
     saveGIF(interval = 0.1, movie.name = gifName, expr = {
-      for (i in seq(numLayers(out2))) plot(out2[[i]])
+      for (i in seq(length(names(out2)))) plot(out2[[i]])
     })
   }
 }

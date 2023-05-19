@@ -28,7 +28,7 @@ that contains two columns, \code{x1} and \code{y1}, with the immediately
 previous agent locations.
 }
 \examples{
-if (require("sf")) {
+if (requireNamespace("sf", quietly = TRUE)) {
 xrange <- yrange <- c(-50, 50)
 hab <- terra::rast(terra::ext(c(xrange, yrange)))
 hab[] <- 0
