@@ -3,7 +3,7 @@ test_that("randomPolygon: does not work properly", {
   withr::local_package("terra")
 
   set.seed(1234) ## TODO: some seeds produce failing area test below!!
-  latLong <- crs("+init=epsg:4326")
+  latLong <- crs("epsg:4326")
 
   area <- 1e4
   center <- cbind(-110, 59)
