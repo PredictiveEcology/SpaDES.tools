@@ -589,6 +589,7 @@ neutralLandscapeMap <- function(x, pad = 10L,
                                          "nlm_randomrectangularcluster"),
                                 ...) {
   if (requireNamespace("NLMR", quietly = TRUE)) {
+    if (!requireNamespace("raster", quietly = TRUE) ) stop("neutralLandscapeMap requires install.packages('raster')")
     type <- match.arg(type)
     typeFun <- getFromNamespace(type, ns = "NLMR")
 
