@@ -573,7 +573,7 @@ long2UTM <- function(long) {
 #'     ## or with raster package:
 #'     # r <- raster::raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
 #'     map1 <- neutralLandscapeMap(r,
-#'                                 type = "nlm_mpd"
+#'                                 type = "nlm_mpd",
 #'                                 roughness = 0.65,
 #'                                 rand_dev = 200,
 #'                                 rescale = FALSE,

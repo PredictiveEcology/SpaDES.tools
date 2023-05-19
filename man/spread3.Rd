@@ -131,8 +131,10 @@ They are "rounded" to pixel centres.
       ### The case of variable quality raster
       #########################################################
       if (requireNamespace("sf", quietly = TRUE)) {
-        rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif", package = "SpaDES.tools"))
-        theCRS <- sf::st_crs(readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools")))
+        rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif",
+                                              package = "SpaDES.tools"))
+        theCRS <- sf::st_crs(readRDS(system.file("extdata", "targetCRS.rds",
+                                                 package = "SpaDES.tools")))
         terra::crs(rasQuality) <- theCRS$wkt
         mask <- rasQuality < 5
         rasQuality[mask[] \%in\% TRUE] <- 0
@@ -170,13 +172,15 @@ They are "rounded" to pixel centres.
       rasAbundance[startPixel] <- 1000
 
       # raster for advectionDir
-      advectionDir <- terra::rast(system.file("extdata", "advectionDir.tif", package = "SpaDES.tools"))
+      advectionDir <- terra::rast(system.file("extdata", "advectionDir.tif",
+                                              package = "SpaDES.tools"))
       crs(advectionDir) <- crs(rasQuality)
       # rescale so min is 0.75 and max is 1
       advectionDir[] <- advectionDir[] / (reproducible::maxFn(advectionDir)) * 180
 
       # raster for advectionMag
-      advectionMag <- terra::rast(system.file("extdata", "advectionMag.tif", package = "SpaDES.tools"))
+      advectionMag <- terra::rast(system.file("extdata", "advectionMag.tif",
+                                              package = "SpaDES.tools"))
       crs(advectionMag) <- crs(rasQuality)
       # rescale so min is 0.75 and max is 1
       advectionMag[] <- advectionMag[] / (reproducible::maxFn(advectionMag)) * 600
