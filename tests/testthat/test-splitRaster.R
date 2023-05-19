@@ -211,7 +211,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
 test_that("splitRaster works in parallel", {
   skip_on_cran()
   skip_on_ci()
-  skip_if_not_installed("snow")
+  skip_if_not_installed("snow") # needed for beginCluster
   skip_if_not_installed("raster")
   skip_if_not(interactive())
 
