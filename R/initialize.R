@@ -166,7 +166,7 @@ randomPolygon.default <- function(x, hectares, area) {
 
 rndmPolygonSpatialPoints <- function(x, hectares, area) {
   .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
-  if (!requireNamespace("sp")) stop("Need to install.packages('sp')")
+  .requireNamespace("sp")
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
@@ -217,7 +217,8 @@ rndmPolygonSpatialPoints <- function(x, hectares, area) {
       outPolygon <- sf::st_transform(outPolygon, origCRS)
       outPolygon <- as(outPolygon, "Spatial")
     } else {
-      outPolygon <- suppressWarnings(sp::spTransform(outPolygon, origCRS)) # this should use reproducible:::suppressWarningsSpecific
+      ## TODO: this should use reproducible:::suppressWarningsSpecific
+      outPolygon <- suppressWarnings(sp::spTransform(outPolygon, origCRS))
     }
   }
   return(outPolygon)
@@ -248,7 +249,6 @@ rndmPolygonSpatVector <- function(x, hectares, area) {
   sp2
 }
 
-#' @importFrom reproducible .requireNamespace
 #' @importFrom terra vect crs
 rndmPolygonMatrix <- function(x, hectares, area) {
 
@@ -267,8 +267,8 @@ rndmPolygonMatrix <- function(x, hectares, area) {
 #' @importFrom reproducible .requireNamespace
 rndmPolygonSpatialPolygons <- function(x, hectares, area) {
   .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
-  .requireNamespace("sf", stopOnFALSE = TRUE)
-  .requireNamespace("sp", stopOnFALSE = TRUE)
+  .requireNamespace("sf")
+  .requireNamespace("sp")
 
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
@@ -566,7 +566,7 @@ long2UTM <- function(long) {
 #'
 #' @examples
 #' \donttest{
-#'   if (requireNamespace("NLMR", quietly = TRUE)) {
+#'   if (require("NLMR")) {
 #'     library(terra)
 #'     nx <- ny <- 100L
 #'     r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)
@@ -589,7 +589,7 @@ neutralLandscapeMap <- function(x, pad = 10L,
                                          "nlm_randomrectangularcluster"),
                                 ...) {
   if (requireNamespace("NLMR", quietly = TRUE)) {
-    if (!requireNamespace("raster", quietly = TRUE) ) stop("neutralLandscapeMap requires install.packages('raster')")
+    .requireNamespace("raster")
     type <- match.arg(type)
     typeFun <- getFromNamespace(type, ns = "NLMR")
 

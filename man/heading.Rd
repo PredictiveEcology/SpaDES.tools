@@ -19,7 +19,7 @@ Determines the heading between spatial points.
 }
 \examples{
 library(terra)
-if (requireNamespace("CircStats", quietly = TRUE)) {
+if (require("CircStats")) {
 N <- 10L                # number of agents
 x1 <- stats::runif(N, -50, 50) # previous X location
 y1 <- stats::runif(N, -50, 50) # previous Y location

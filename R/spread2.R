@@ -337,7 +337,6 @@ utils::globalVariables(c(
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom terra ncell res ncol distance
-#' @importFrom reproducible .requireNamespace
 #' @importFrom stats runif
 #'
 #' @seealso [spread()] for a different implementation of the same algorithm.
@@ -475,10 +474,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # A "new" entry into spread2 -- need to set up stuff
     if (canUseAvailable) {
       #if (smallRaster) {
-      notAvailable <- if (requireNamespace("bit", quietly = TRUE))
+      notAvailable <- if (requireNamespace("bit", quietly = TRUE)) {
         bit::bit(ncells)
-      else
+      } else {
         logical(ncells)
+      }
       #} else {
       #  notAvailable <- ff(vmode = "boolean", FALSE, length = ncells)
       #}
@@ -1105,7 +1105,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # Step 11 - plot it if necessary
     if (plot.it) {
-      # .requireNamespace("quickPlot", stopOnFALSE = TRUE)
+      # .requireNamespace("quickPlot")
 
       newPlot <- FALSE
       if (totalIterations == 1) {

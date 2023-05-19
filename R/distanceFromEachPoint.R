@@ -393,7 +393,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'                 id = 1:N)
 #'
 #' dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
-#' if (requireNamespace("CircStats", quietly = TRUE)) {
+#' if (require("CircStats")) {
 #'   dirs1[, "angles"] <- CircStats::deg(dirs1[,"angles"] %% (2*pi))
 #'   indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
 #'   minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
@@ -542,7 +542,7 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
 }
 
 spiralDistances <- function(pixelGroupMap, maxDis, cellSize) {
-  if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
+  .requireNamespace("raster")
   spiral <- which(raster::focalWeight(pixelGroupMap, maxDis, type = "circle") > 0, arr.ind = TRUE) -
     ceiling(maxDis/cellSize) - 1
   spiral <- cbind(spiral, dists = sqrt( (0 - spiral[, 1]) ^ 2 + (0 - spiral[, 2]) ^ 2))

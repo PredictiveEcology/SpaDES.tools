@@ -3,8 +3,7 @@
 # Simple case, no variation in rasQuality, numeric advectionDir and advectionMag
 #########################################################
 \donttest{
-  if (requireNamespace("CircStats", quietly = TRUE)) {
-
+  if (require("CircStats")) {
     library(terra)
     maxDim <- 10000
     ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
@@ -51,7 +50,7 @@
       #########################################################
       ### The case of variable quality raster
       #########################################################
-      if (requireNamespace("sf", quietly = TRUE)) {
+      if (require("sf")) {
         rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif",
                                               package = "SpaDES.tools"))
         theCRS <- sf::st_crs(readRDS(system.file("extdata", "targetCRS.rds",

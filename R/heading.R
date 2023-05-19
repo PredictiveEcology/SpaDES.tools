@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' library(terra)
-#' if (requireNamespace("CircStats", quietly = TRUE)) {
+#' if (require("CircStats")) {
 #' N <- 10L                # number of agents
 #' x1 <- stats::runif(N, -50, 50) # previous X location
 #' y1 <- stats::runif(N, -50, 50) # previous Y location
@@ -43,7 +43,7 @@
 #' }
 #'
 heading <- function(from, to) {
-  if (!requireNamespace("CircStats")) stop("Need to install.packages('CirsStats')")
+  .requireNamespace("CircStats")
   from <- coords(from)
   to <- coords(to)
   ys <- to[, 2] - from[, 2]
@@ -56,36 +56,34 @@ heading <- function(from, to) {
   return(heading %% 360)
 }
 
-#' @importFrom reproducible .requireNamespace
 coords <- function(crds) {
   if (inherits(crds, "SpatVector")) {
-    .requireNamespace("terra", stopOnFALSE = TRUE)
+    .requireNamespace("terra")
     crds <- terra::crds(crds)
   } else if (inherits(crds, "sf")) {
-    .requireNamespace("sf", stopOnFALSE = TRUE)
+    .requireNamespace("sf")
     crds <- sf::st_coordinates(crds)
   } else if (inherits(crds, "Spatial")) {
-    .requireNamespace("sp", stopOnFALSE = TRUE)
+    .requireNamespace("sp")
     crds <- sp::coordinates(crds)
   }
 
  crds
 }
 
-#' @importFrom reproducible .requireNamespace
 `coords<-` <- function(obj, value) {
   if (inherits(obj, "SpatVector")) {
-    .requireNamespace("terra", stopOnFALSE = TRUE)
+    .requireNamespace("terra")
     crdsdf <- data.frame(value, as.data.frame(coords(obj)))
     colnames(crdsdf) <- c("x", "y", "x1", "y1")
     obj <- terra::vect(crdsdf, geom = c("x", "y"))
   } else if (inherits(obj, "sf")) {
-    .requireNamespace("sf", stopOnFALSE = TRUE)
+    .requireNamespace("sf")
     obj2 <- sf::st_as_sfc(sf::st_as_sf(as.data.frame(value), coords = c("x", "y")))
     obj <- sf::st_set_geometry(obj, value = obj2)
     obj
   } else if (inherits(obj, "Spatial")) {
-    .requireNamespace("sp", stopOnFALSE = TRUE)
+    .requireNamespace("sp")
     obj@coords <- value
   }
 

@@ -482,8 +482,8 @@ cir <- function(landscape, coords, loci,
       stop("Need either a numeric loci or coords")
     }
   } else if (inherits(coords, "Spatial")) {
-    if (!requireNamespace("sp")) stop("Need to install.packages('sp') or use SpatVect")
-      coords <- sp::coordinates(coords)
+    .requireNamespace("sp")
+    coords <- sp::coordinates(coords)
   } else if (inherits(coords, "SpatVector")) {
     coords <- crds(coords)
   } else if (!is.numeric(coords)) {
@@ -777,7 +777,7 @@ cir <- function(landscape, coords, loci,
 #'         reflect the wrapping.
 #'
 #' @examples
-#' if (requireNamespace("sf", quietly = TRUE)) {
+#' if (require("sf")) {
 #' xrange <- yrange <- c(-50, 50)
 #' hab <- terra::rast(terra::ext(c(xrange, yrange)))
 #' hab[] <- 0
@@ -810,7 +810,6 @@ cir <- function(landscape, coords, loci,
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom reproducible .requireNamespace
 #' @rdname wrap
 wrap <- function(X, bounds, withHeading = FALSE) {
   classX <- is(X)
@@ -873,7 +872,7 @@ wrap <- function(X, bounds, withHeading = FALSE) {
   if ("matrix" %in% classX) {
     return(coords(X))
   } else if ("sf" %in% classX) {
-    .requireNamespace("sf", stopOnFALSE = TRUE)
+    .requireNamespace("sf")
     return(sf::st_as_sf(X))
   } else if ("SpatVector" %in% classX) {
     return(X)
