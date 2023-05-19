@@ -222,7 +222,7 @@ test_that("splitRaster works in parallel", {
   skip_if_not_installed("raster")
   skip_if_not(interactive())
 
-  tmpdir <- file.path(tempdir(), "splitRaster-test-parallel") |>
+  tmpdir <- file.path(tempdir(), "splitRaster-test-parallel", basename(tempfile())) |>
     checkPath(create = TRUE)
 
   on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
@@ -267,7 +267,7 @@ test_that("splitRaster works in parallel", {
 
   m11 <- mergeRaster(y11)
   expect_equal(dim(m11), dim(r))
-  expect_equal(extent(m11), extent(r))
+  expect_equal(raster::extent(m11), raster::extent(r))
   expect_equal(names(m11), names(r))
   expect_equal(res(m11), res(r))
   expect_equal(max(values(m11)), max(values(r)))

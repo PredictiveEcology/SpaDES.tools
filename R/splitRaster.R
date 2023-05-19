@@ -104,23 +104,20 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
 
   tiles <- if (!is.null(cl)) {
     clusterApplyLB(cl = cl, x = seq_along(extents), fun = .croppy, e = extents,
-                   r = terra::wrap(r), path = path, rType = rType, fExt = fExt) |>
-      lapply(terra::unwrap)
+                   r = terra::wrap(r), path = path, rType = rType, fExt = fExt) #|>
+      # lapply(terra::unwrap)
+
   } else {
     lapply(X = seq_along(extents),
            FUN = .croppy,
            e = extents,
-           r = terra::wrap(r),
+           r = r,
            path = path,
            rType = rType,
            fExt = fExt)
   }
-
-  if (any(vapply(tiles, function(x) is(x, "PackedSpatRaster"), FUN.VALUE = logical(1))))
-    tiles <- lapply(tiles, terra::unwrap)
-
-  if (isRasterLayer) {
-    tiles <- lapply(tiles, function(t) {
+  tiles <- if (isRasterLayer) {
+    lapply(tiles, function(t) {
       withCallingHandlers({
         t <- raster::raster(t)
       },
@@ -132,8 +129,20 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
       raster::dataType(t) <- rType
       t
     })
+  } else {
+    if (is.character(tiles[[1]]))
+      tiles <- lapply(tiles, terra::rast)
+    if (grepl("INT", rType))
+      for (i in 1:length(tiles))
+        tiles[[i]][] <- as.integer(tiles[[i]][])
+    tiles
   }
 
+  # The crs doesn't always stick with `raster::raster` --> it will add LongLat if it is ""
+  #  Override here
+  if (!identical(terra::crs(tiles[[1]]), terra::crs(r)))
+    for (i in seq(tiles))
+      terra::crs(tiles[[i]]) <- terra::crs(r)
 
   return(tiles)
 }
@@ -156,10 +165,10 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
     filename <- paste0(file.path(path, paste0(names(r), "_tile", i)), fExt)
     terra::writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
 
-    if (isWrapped) {
-      return(terra::rast(filename) |> terra::wrap())
-    } else {
-      return(terra::rast(filename))
-    }
+    # if (isWrapped) {
+    return(filename)
+    # } else {
+    #   return(terra::rast(filename))
+    # }
   }
 }
