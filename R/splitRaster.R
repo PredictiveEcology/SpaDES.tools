@@ -97,7 +97,7 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
         buffer[2] * terra::yres(r)
       y1 <- terra::ymin(ext) + (j + 1L) * ((terra::ymax(ext) - terra::ymin(ext)) / ny) +
         buffer[2] * terra::yres(r)
-      extents[[n]] <- terra::ext(x0, x1, y0, y1)
+      extents[[n]] <- list(x0, x1, y0, y1) # don't make an SpatExtent  yet because it doesn't copy to parallel
       n <- n + 1L
     }
   }
@@ -110,7 +110,7 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
     lapply(X = seq_along(extents),
            FUN = .croppy,
            e = extents,
-           r = r,
+           r = terra::wrap(r),
            path = path,
            rType = rType,
            fExt = fExt)
@@ -131,6 +131,9 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
     })
   }
 
+  if (any(vapply(tiles, function(x) is(x, "PackedSpatRaster"), FUN.VALUE = logical(1))))
+    tiles <- lapply(tiles, terra::unwrap)
+
   return(tiles)
 }
 
@@ -142,6 +145,8 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
     r <- terra::unwrap(r)
   }
 
+  if (is(e[[i]], "list"))
+    e[[i]] <- do.call(terra::ext, e[[i]])
   ri <- terra::crop(r, e[[i]], datatype = rType)
   terra::crs(ri) <- terra::crs(r)
   if (is.na(path)) {

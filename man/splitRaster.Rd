@@ -100,23 +100,30 @@ y1 <- splitRaster(r, nx, ny, c(10, 10), path = file.path(tmpdir, "y1"))
 # buffer: half the width and length of each tile
 y2 <- splitRaster(r, nx, ny, c(0.5, 0.5), path = file.path(tmpdir, "y2"))
 
-# parallel cropping
-if (require("raster") && require("snow")) {
-  if (interactive()) {
-    n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
-    raster::beginCluster(n)
-    y3 <- splitRaster(r, nx, ny, c(0.7, 0.7), path = file.path(tmpdir, "y3"))
-    raster::endCluster()
-  }
-}
-
 # the original raster:
 if (interactive()) plot(r) # may require a call to `dev()` if using RStudio
 
 # the split raster:
 layout(mat = matrix(seq_len(nx * ny), ncol = nx, nrow = ny))
 plotOrder <- unlist(lapply(split(1:12, rep(1:nx, each = ny)), rev))
-if (interactive()) invisible(lapply(y0[plotOrder], terra::plot))
+
+if (interactive()) {
+  invisible(lapply(y0[plotOrder], terra::plot))
+}
+
+# parallel splitting
+if (require("raster") && require("snow")) {
+  if (interactive()) {
+    n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
+    raster::beginCluster(n)
+    y3 <- splitRaster(r, nx, ny, c(0.7, 0.7), path = file.path(tmpdir, "y3"))
+    raster::endCluster()
+    if (interactive()) {
+      invisible(lapply(y3[plotOrder], terra::plot))
+    }
+  }
+}
+
 
 # can be recombined using `terra::merge`
 m0 <- do.call(merge, y0)
