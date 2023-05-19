@@ -69,8 +69,6 @@ Suggests:
     testthat (>= 1.0.2),
     tools,
     withr
-Remotes:
-    ropensci/NLMR
 Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
