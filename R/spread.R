@@ -1,7 +1,6 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLocus"))
-}
-
+utils::globalVariables(c(
+  ".", ".I", "dists", "dup", "id", "indices", "initialLocus"
+))
 
 ###############################################################################
 #' Simulate a spread process on a landscape.
@@ -18,8 +17,7 @@ if (getRversion() >= "3.1.0") {
 #' **NOTE:** See also [spread2()], which is more robust and can be
 #' used to build custom functions.
 #' However, under some conditions, this `spread` function is faster.
-#' The two functions can accomplish many of the same things, and key differences
-#' are internal.
+#' The two functions can accomplish many of the same things, and key differences are internal.
 #'
 #' For large rasters, a combination of `lowMemory = TRUE` and
 #' `returnIndices = TRUE` or `returnIndices = 2`
@@ -50,7 +48,7 @@ if (getRversion() >= "3.1.0") {
 #' to
 #' `asymmetryAngle`
 #' using:
-#' `angleQuality <- (cos(angles - rad(asymmetryAngle))+1)/2`
+#' `angleQuality <- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2`
 #'
 #' These are then converted to multiple spreadProbs by
 #' `spreadProbs <- lowSpreadProb+(angleQuality * diff(spreadProbsLH))`
@@ -98,17 +96,16 @@ if (getRversion() >= "3.1.0") {
 #'                       after the function has finished.\cr
 #' }
 #'
-#' The spread function does not return the result of this stopRule. If,
-#' say, an event has both `circleMaxRadius` and `stopRule`,
-#' and it is
-#' the `circleMaxRadius` that caused the event spreading to stop,
+#' The spread function does not return the result of this `stopRule`.
+#' If, say, an event has both `circleMaxRadius` and `stopRule`,
+#' and it is the `circleMaxRadius` that caused the event spreading to stop,
 #' there will be no indicator returned from this function that indicates
 #' which rule caused the stop.
 #'
 #' `stopRule` has many use cases. One common use case is evaluating
 #' a neighbourhood around a focal set of points. This provides,
-#' therefore, an alternative to the [raster::buffer()] function or
-#' [raster::focal()] function.
+#' therefore, an alternative to the [terra::buffer()] function or
+#' [terra::focal()] function.
 #' In both of those cases, the window/buffer size must be an input to the function. Here,
 #' the resulting size can be emergent based on the incremental growing and calculating
 #' of the `landscape` values underlying the spreading event.
@@ -135,20 +132,28 @@ if (getRversion() >= "3.1.0") {
 #'                             that caused the `stopRule` to be `TRUE`\cr
 #' }
 #'
+#' @seealso [spread2()] for a different implementation of the same algorithm.
+#' It is more robust, meaning, there will be fewer unexplainable errors, and the behaviour
+#' has been better tested, so it is more likely to be exactly as described under all
+#' argument combinations.
+#' Also, [rings()] which uses `spread` but with specific argument
+#' values selected for a specific purpose.
+#' [terra::distance()].
+#' [cir()] to create "circles"; it is fast for many small problems.
 #'
-#' @param landscape     A `RasterLayer` object. This defines the possible
+#' @param landscape     A `RasterLayer` or `SpatRaster` object. This defines the possible
 #'                      locations for spreading events to start and spread into.
 #'                      This can also be used as part of `stopRule`.
 #'
 #' @param loci          A vector of locations in `landscape`.
 #'                      These should be cell indices.
 #'                      If user has x and y coordinates, these can be converted
-#'                      with [`cellFromXY()`][raster::cellFromXY].
+#'                      with [`cellFromXY()`][terra::cellFromXY].
 #'
-#' @param spreadProb    Numeric, or `RasterLayer`.
+#' @param spreadProb    Numeric, `RasterLayer`, or `SpatRaster`.
 #'                      If numeric of length 1, then this is the global probability
 #'                      of spreading into each cell from a neighbour.
-#'                      If a raster (or a vector of length `ncell(landscape)`,
+#'                      If a raster (or a vector of length `terra::ncell(landscape)`,
 #'                      resolution and extent of `landscape`), then this will
 #'                      be the cell-specific probability. Default is `0.23`.
 #'                      If a `spreadProbLater` is provided, then this is
@@ -158,16 +163,14 @@ if (getRversion() >= "3.1.0") {
 #' @param persistence   A length 1 probability that an active cell will continue
 #'                      to burn, per time step.
 #'
-#' @param mask          non-`NULL`, a `RasterLayer` object congruent with
-#'                      `landscape` whose elements are `0,1`, where
-#'                      `1` indicates "cannot spread to".
+#' @param mask          `RasterLayer` or `SpatRaster` object congruent with `landscape`,
+#'                      whose elements are `0,1`, where `1` indicates "cannot spread to".
 #'                      Currently not implemented, but identical behaviour can be
 #'                      achieved if `spreadProb` has zeros in all unspreadable
 #'                      locations.
 #'
-#' @param maxSize       Numeric. Maximum number of cells for a single or
-#'                      all events to be spread. Recycled to match `loci` length,
-#'                      if it is not as long as `loci`.
+#' @param maxSize       Numeric. Maximum number of cells for a single or all events to be spread.
+#'                      Recycled to match `loci` length, if it is not as long as `loci`.
 #'                      See section on `Breaking out of spread events`.
 #'
 #' @param directions    The number of adjacent cells in which to look;
@@ -179,17 +182,17 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @param lowMemory     Deprecated.
 #'
-#' @param returnIndices Logical or numeric. If `1` or `TRUE`, will
-#'                      return a `data.table` with indices and values of
-#'                      successful spread events.
+#' @param returnIndices Logical or numeric. If `1` or `TRUE`, will return a `data.table`
+#'                      with indices and values of successful spread events.
 #'                      If `2`, it will simply return a vector of pixel indices of
-#'                      all cells that were touched. This will be the fastest option. If
-#'                      `FALSE`, then it will return a raster with
-#'                      values. See Details.
+#'                      all cells that were touched. This will be the fastest option.
+#'                      If `FALSE`, then it will return a raster with values.
+#'                      See Details.
 #'
 #' @param returnDistances Logical. Should the function include a column with the
 #'                      individual cell distances from the locus where that event
-#'                      started. Default is `FALSE`. See Details.
+#'                      started. Default is `FALSE`.
+#'                      See Details.
 #'
 #' @param spreadProbLater Numeric, or `RasterLayer`. If provided, then this
 #'                      will become the spreadProb after the first iteration.
@@ -203,8 +206,7 @@ if (getRversion() >= "3.1.0") {
 #' @param circle        Logical. If `TRUE`, then outward spread will be by
 #'                      equidistant rings, rather than solely by adjacent cells
 #'                      (via `directions` arg.). Default is `FALSE`.
-#'                      Using `circle = TRUE` can be dramatically slower for
-#'                      large problems.
+#'                      Using `circle = TRUE` can be dramatically slower for large problems.
 #'                      Note, this should usually be used with `spreadProb = 1`.
 #'
 #' @param circleMaxRadius Numeric. A further way to stop the outward spread of events.
@@ -215,9 +217,11 @@ if (getRversion() >= "3.1.0") {
 #' @param stopRule      A function which will be used to assess whether each
 #'                      individual cluster should stop growing.
 #'                      This function can be an argument of `"landscape"`,
-#'                      `"id"`, `"cells"`, and any other named vectors,
-#'                      a named list of named vectors, or a named `data.frame`
-#'                      with column names passed to `spread` in the `...`.
+#'                      `"id"`, `"cells"`, and any other variables passed to
+#'                      `spread` in the `...`. `cells` and `landscape` will both
+#'                      be numeric vectors of length of active cells. `cells` will
+#'                      be the raster index, so can be used to extract values
+#'                      from another raster passed via ... .
 #'                      Default `NA`, meaning that spreading will not stop
 #'                      as a function of the landscape.
 #'                      See section on "Breaking out of spread events" and examples.
@@ -242,8 +246,7 @@ if (getRversion() >= "3.1.0") {
 #'                      **Use with caution.**
 #'
 #' @param asymmetryAngle A numeric indicating the angle in degrees (0 is "up",
-#'                      as in North on a map), that describes which way the
-#'                      `asymmetry` is.
+#'                       as in North on a map), that describes which way the `asymmetry` is.
 #'
 #' @param quick  Logical. If `TRUE`, then several potentially time consuming
 #'               checking (such as `inRange`) will be skipped.
@@ -275,6 +278,16 @@ if (getRversion() >= "3.1.0") {
 #'                      required for `stopRule`. These
 #'                      vectors should be as long as required e.g., length
 #'                      `loci` if there is one value per event.
+#' @param plot.it  If `TRUE`, then plot the raster at every iteration,
+#'                 so one can watch the spread event grow.
+#'
+#' @param mapID    Deprecated. Use `id`.
+#'
+#' @param id    Logical. If `TRUE`, returns a raster of events ids.
+#'              If `FALSE`, returns a raster of iteration numbers,
+#'              i.e., the spread history of one or more events.
+#'              NOTE: this is overridden if `returnIndices` is `TRUE`
+#'              or `1` or `2`.
 #'
 #' @return Either a `RasterLayer` indicating the spread of the process in
 #' the landscape or a `data.table` if `returnIndices` is `TRUE`.
@@ -305,65 +318,27 @@ if (getRversion() >= "3.1.0") {
 #'
 #' This will generally be more useful when `allowOverlap` is `TRUE`.
 #'
+#' @example inst/examples/example_spread.R
+#'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
 #' @importFrom data.table := data.table setcolorder set
-#' @importFrom fastmatch %fin%
 #' @importFrom fpCompare %<=%
-#' @importFrom quickPlot clearPlot Plot
-#' @importFrom raster extent maxValue minValue ncell ncol nrow raster res setValues
+#' @importFrom reproducible maxFn minFn .requireNamespace
 #' @importFrom stats runif
+#' @importFrom terra ext ncell rast res setValues
 #' @importFrom utils assignInMyNamespace
 #' @rdname spread
-#'
-#' @seealso [spread2()] for a different implementation of the same algorithm.
-#' It is more robust, meaning, there will be fewer unexplainable errors, and the behaviour
-#' has been better tested, so it is more likely to be exactly as described under all
-#' argument combinations.
-#' Also, [rings()] which uses `spread` but with specific argument
-#' values selected for a specific purpose.
-#' [raster::distanceFromPoints()].
-#' [cir()] to create "circles"; it is fast for many small problems.
-#'
-setGeneric(
-  "spread",
-  function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 0,
-           mask = NA, maxSize = 1e8L, directions = 8L, iterations = 1e6L,
-           lowMemory = NULL, # getOption("spades.lowMemory"),
-           returnIndices = FALSE,
-           returnDistances = FALSE, mapID = NULL, id = FALSE, plot.it = FALSE,
-           spreadProbLater = NA_real_, spreadState = NA,
-           circle = FALSE, circleMaxRadius = NA_real_,
-           stopRule = NA, stopRuleBehavior = "includeRing", allowOverlap = FALSE,
-           asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
-           neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE, ...) {
-    standardGeneric("spread")
-})
-
-#' @param plot.it  If `TRUE`, then plot the raster at every iteration,
-#'                 so one can watch the spread event grow.
-#'
-#' @param mapID    Deprecated. Use `id`.
-#'
-#' @param id    Logical. If `TRUE`, returns a raster of events ids.
-#'              If `FALSE`, returns a raster of iteration numbers,
-#'              i.e., the spread history of one or more events.
-#'              NOTE: this is overridden if `returnIndices` is `TRUE`
-#'              or `1` or `2`.
-#'
-#' @rdname spread
-#'
-#' @example inst/examples/example_spread.R
-#'
-setMethod(
-  "spread",
-  signature(landscape = "RasterLayer"),
-  definition = function(landscape, loci, spreadProb, persistence, mask, maxSize,
-                        directions, iterations, lowMemory, returnIndices,
-                        returnDistances, mapID, id, plot.it, spreadProbLater,
-                        spreadState, circle, circleMaxRadius, stopRule,
-                        stopRuleBehavior, allowOverlap, asymmetry, asymmetryAngle,
-                        quick, neighProbs, exactSizes, relativeSpreadProb, ...) {
+spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 0,
+                   mask = NA, maxSize = 1e8L, directions = 8L, iterations = 1e6L,
+                   lowMemory = NULL, # getOption("spades.lowMemory"),
+                   returnIndices = FALSE,
+                   returnDistances = FALSE, mapID = NULL, id = FALSE, plot.it = FALSE,
+                   spreadProbLater = NA_real_, spreadState = NA,
+                   circle = FALSE, circleMaxRadius = NA_real_,
+                   stopRule = NA, stopRuleBehavior = "includeRing", allowOverlap = FALSE,
+                   asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
+                   neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE, ...) {
 
     if (!is.null(neighProbs)) {
       if (isTRUE(allowOverlap))
@@ -383,9 +358,8 @@ setMethod(
     }
     if (!quick) {
       allowedRules <- c("includePixel", "excludePixel", "includeRing", "excludeRing")
-      if (!any(stopRuleBehavior %fin% allowedRules))
-        stop("stopRuleBehaviour must be one of \"",
-             paste(allowedRules, collapse = "\", \""), "\".")
+      if (!any(stopRuleBehavior %in% allowedRules))
+        stop("stopRuleBehaviour must be one of '", paste(allowedRules, collapse = "', '"), "'.")
     }
     if (isTRUE(lowMemory)) {
       stop("lowMemory is no longer supported due to removal of ffbase from CRAN.")
@@ -407,7 +381,7 @@ setMethod(
     if (any(is.na(loci)))  {
       # start it in the centre cell, if there is no spreadState
       if (!spreadStateExists)
-        loci <- middlePixel(landscape) #(nrow(landscape) / 2L + 0.5) * ncol(landscape)
+        loci <- middlePixel(landscape)
     }
     if (!is.integer(loci)) {
       loci <- as.integer(loci)
@@ -442,14 +416,15 @@ setMethod(
 
     # Check for probabilities
     if (!quick) {
-      if (is(spreadProbLater, "RasterLayer") | is(spreadProb, "Rasterlayer")) {
-        if ((minValue(spreadProb) > 1L) || (maxValue(spreadProb) < 0L) ||
-            (maxValue(spreadProb) > 1L) || (minValue(spreadProb) < 0L)) {
+      if (inherits(spreadProbLater, "RasterLayer") || inherits(spreadProb, "Rasterlayer") ||
+          inherits(spreadProbLater, "SpatRaster") || inherits(spreadProb, "SpatRaster")) {
+        if ((minFn(spreadProb) > 1L) || (maxFn(spreadProb) < 0L) ||
+            (maxFn(spreadProb) > 1L) || (minFn(spreadProb) < 0L)) {
           relativeSpreadProb <- TRUE
         }
         if (spreadProbLaterExists)
-          if (((minValue(spreadProbLater) > 1L) || (maxValue(spreadProbLater) < 0L) ||
-              (maxValue(spreadProbLater) > 1L) || (minValue(spreadProbLater) < 0L))) {
+          if ((minFn(spreadProbLater) > 1L) || (maxFn(spreadProbLater) < 0L) ||
+              (maxFn(spreadProbLater) > 1L) || (minFn(spreadProbLater) < 0L)) {
             relativeSpreadProb <- TRUE
           }
       } else {
@@ -464,7 +439,7 @@ setMethod(
       }
     }
 
-    ncells <- as.integer(ncell(landscape))
+    ncells <- as.integer(terra::ncell(landscape))
 
     #browser(expr = exists("aaaaa"))
     allowOverlapOrReturnDistances <- allowOverlap | returnDistances
@@ -474,7 +449,7 @@ setMethod(
         spreads <- as.matrix(spreadState[, list(initialLocus, indices, id, active)])
       } else {
         spreads <- cbind(initialLocus = initialLoci, indices = initialLoci,
-                         id = 1:length(loci), active = 1)
+                         id = seq_along(loci), active = 1)
       }
     } else {
       if (!is.null(lowMemory)) {
@@ -510,7 +485,7 @@ setMethod(
         set(spreadsDT, NULL, "spreads", 0L)
         # put the empty data.table into the SpaDES.tools namespace
         assignInMyNamespace("spreadsDTInNamespace", spreadsDT)
-        on.exit({assignInMyNamespace("spreadsDTInNamespace", integer())})
+        on.exit(assignInMyNamespace("spreadsDTInNamespace", integer()), add = TRUE)
       }
     }
 
@@ -518,6 +493,7 @@ setMethod(
 
     # circle needs directions to be 8
     if (circle | !is.na(asymmetry)) {
+      if (!requireNamespace("CircStats")) stop("Need to install.packages('CircStats')")
       if (circle) directions <- 8L # only required for circle
       initialLociXY <- cbind(id = seq_along(initialLoci), xyFromCell(landscape, initialLoci))
       id <- TRUE
@@ -559,20 +535,21 @@ setMethod(
       # Raster indexing is slow. If there is are Rasters submitted with the stopRule
       #  then this will convert them to vectors first. Clearly, this will have
       #  memory consequences if the Rasters are on disk, but spread is optimized for speed
-      rasters <- unlist(lapply(otherVars[names(otherVars)], function(x) is(x, "Raster")))
-      if (any(rasters)) {
-        for (i in 1:which(rasters)) {
-          otherVars[[names(rasters[i])]] <- otherVars[[names(rasters[i])]][]
-        }
-      }
+
+      # rasters <- unlist(lapply(otherVars[names(otherVars)], function(x) is(x, "Raster")))
+      # if (any(rasters)) {
+      #   for (i in 1:which(rasters)) {
+      #     otherVars[[names(rasters[i])]] <- otherVars[[names(rasters[i])]][]
+      #   }
+      # }
       landRas <- landscape[] # For speed
     }
 
     if (!allowOverlap && !returnDistances) {
       if (id | returnIndices > 0 | relativeSpreadProb) {
         if (!spreadStateExists) {
-          set(spreadsDT, loci, "spreads", 1L:length(loci))
-          ##DT spreads[loci] <- 1L:length(loci)
+          set(spreadsDT, loci, "spreads", seq_along(loci))
+          ##DT spreads[loci] <- seq_along(loci)
           # give values to spreads vector at initialLoci
         }
       } else {
@@ -596,7 +573,7 @@ setMethod(
     } else if (is.numeric(spreadProb)) {
       # Translate numeric spreadProb into a Raster, if there is a mask
       if (is(mask, "Raster")) {
-        spreadProb <- raster(extent(landscape), res = res(landscape), vals = spreadProb)
+        spreadProb <- terra::rast(terra::ext(landscape), res = res(landscape), vals = spreadProb)
       }
     }
 
@@ -605,7 +582,8 @@ setMethod(
     } else if (is.numeric(spreadProbLater)) {
       # Translate numeric spreadProbLater into a Raster, if there is a mask
       if (is(mask, "Raster")) {
-        spreadProbLater <- raster(extent(landscape), res = res(landscape), vals = spreadProbLater)
+        spreadProbLater <- terra::rast(terra::ext(landscape), res = res(landscape),
+                                       vals = spreadProbLater)
       }
     }
 
@@ -620,7 +598,7 @@ setMethod(
         stop("Using spreadState with either allowOverlap = TRUE",
              " or returnDistances = TRUE is not implemented")
       } else {
-        if (sum(colnames(spreadState) %fin% c("indices", "id", "active", "initialLocus")) != 4) {
+        if (sum(colnames(spreadState) %in% c("indices", "id", "active", "initialLocus")) != 4) {
           stop("spreadState must have at least columns: ",
                "indices, id, active, and initialLocus.")
         }
@@ -661,7 +639,6 @@ setMethod(
     #browser(expr = exists("aaaaa"))
     # while there are active cells
     while (length(loci) & (n <= iterations)) {
-
       if (!is.null(neighProbs)) {
         numNeighs <- if (is.list(neighProbs)) {
           unlist(lapply(neighProbs, function(x) {
@@ -744,8 +721,8 @@ setMethod(
 
       # extract spreadProb values from spreadProb argument
       if (is.numeric(spreadProb)) {
-        if (!(length(spreadProb) == 1 || length(spreadProb) == ncell(landscape)))
-          stop("spreadProb must be length 1 or length ncell(landscape), or a raster")
+        if (!(length(spreadProb) == 1 || length(spreadProb) == terra::ncell(landscape)))
+          stop("spreadProb must be length 1 or length terra::ncell(landscape), or a raster")
         if (n == 1 & spreadProbLaterExists) {
           # need cell specific values
           spreadProbs <- rep(spreadProb, NROW(potentials))
@@ -785,14 +762,14 @@ setMethod(
         }
         d <- directionFromEachPoint(from = initialLociXY, to = a)
         newSpreadProbExtremes <- (spreadProb[] * 2) / (asymmetry + 1) * c(1, asymmetry)
-        angleQuality <- (cos(d[, "angles"] - rad(asymmetryAngle)) + 1) / 2
+        angleQuality <- (cos(d[, "angles"] - CircStats::rad(asymmetryAngle)) + 1) / 2
         spreadProbs <- newSpreadProbExtremes[1] + (angleQuality * diff(newSpreadProbExtremes))
         spreadProbs <- spreadProbs - diff(c(spreadProb[], mean(spreadProbs)))
       }
 
       if (!is.null(neighProbs) | relativeSpreadProb) {
         aaa <- split(seq_along(potentials[, toColumn[spreadStateExists + 1]]),
-                     potentials[, "from"]);
+                     potentials[, "from"])
         if (length(aaa) != length(numNeighs)) {
           activeCellContinue <- loci %in% unique(potentials[, "from"])
           numNeighs <- numNeighs[activeCellContinue]
@@ -807,8 +784,9 @@ setMethod(
           rescaledProbs <- tapply(spreadProbs, potentials[, "from"], function(x) {
             x / sum(x, na.rm = TRUE)
           }, simplify = FALSE)
-          neighIndexToKeep <- unlist(lapply(seq_along(aaa), function(x)
-            resample(aaa[[x]], size = numNeighs[x], prob = rescaledProbs[[x]])))
+          neighIndexToKeep <- unlist(lapply(seq_along(aaa), function(x) {
+            resample(aaa[[x]], size = numNeighs[x], prob = rescaledProbs[[x]])
+          }))
         } else {
           neighIndexToKeep <- unlist(lapply(seq_along(aaa), function(x)
             resample(aaa[[x]], size = numNeighs[x])))
@@ -824,7 +802,7 @@ setMethod(
       # random ordering so not always same:
       lenPot <- NROW(potentials)
       if (lenPot) {
-        reorderVals <- samInt(lenPot)
+        reorderVals <- samInt(lenPot) ## TODO: uses sample.int(..., replace = FALSE)
         potentials <- potentials[reorderVals, , drop = FALSE]
       }
       if (!allowOverlap) {
@@ -856,7 +834,7 @@ setMethod(
               }
             }
             # need to remove dists column because distanceFromEachPoint, adds one back
-            a <- a[, !(colnames(a) %fin% c("dists")), drop = FALSE]
+            a <- a[, !(colnames(a) %in% c("dists")), drop = FALSE]
             # need 3 columns, id, x, y in both initialLociXY and a
             d <- distanceFromEachPoint(initialLociXY, a, angles = asymmetry) # d is sorted
             cMR <- (n - 1) * res(landscape)[1]
@@ -871,7 +849,7 @@ setMethod(
                 }
               }
             }
-            potentials <- d[, !(colnames(d) %fin% c("x", "y")), drop = FALSE]
+            potentials <- d[, !(colnames(d) %in% c("x", "y")), drop = FALSE]
             potentials <- potentials[(d[, "dists"] %<=% cMR), , drop = FALSE]
           }
         }
@@ -893,7 +871,7 @@ setMethod(
             # remove some active cells, if more than maxSize
             toRm <- (size + len)[whichID] - maxSize[whichID]
 
-            for (i in 1:length(whichID)) {
+            for (i in seq_len(length(whichID))) {
               if (useMatrixVersionSpreads) {
                 thisID <- which(potentials[, 3L] == whichID[i])
               } else {
@@ -943,7 +921,7 @@ setMethod(
             eventCells <- cbind(eventCells, dist = potentials[, "dists"])
           }
           # don't need to continue doing ids that are not active
-          tmp <- rbind(prevCells[prevCells[, "id"] %fin% unique(eventCells[, "id"]), ], eventCells)
+          tmp <- rbind(prevCells[prevCells[, "id"] %in% unique(eventCells[, "id"]), ], eventCells)
 
           ids <- unique(tmp[, "id"])
 
@@ -955,6 +933,7 @@ setMethod(
             args <- append(args, otherVars)
             do.call(stopRule, args[whArgs])
           })
+
           if (any(lapply(shouldStopList, length) > 1))
             stop("stopRule does not return a length-one logical.",
                  " Perhaps stopRule need indexing by cells or id?")
@@ -967,10 +946,10 @@ setMethod(
             if (stopRuleBehavior != "includeRing") {
               if (stopRuleBehavior != "excludeRing") {
                 whStop <- as.numeric(names(shouldStop)[shouldStop])
-                whStopAll <- tmp[, "id"] %fin% whStop
+                whStopAll <- tmp[, "id"] %in% whStop
                 tmp2 <- tmp[whStopAll, ]
 
-                whStopEvents <- eventCells[, "id"] %fin% whStop
+                whStopEvents <- eventCells[, "id"] %in% whStop
 
                 # If an event needs to stop, then must identify which cells are included
                 out <- lapply(whStop, function(id) {
@@ -1009,7 +988,7 @@ setMethod(
                   tmp3[sequ, , drop = FALSE]
                 })
                 eventRm <- do.call(rbind, out)[, "cells"]
-                cellsKeep <- !(potentials[, 2L] %fin% eventRm)
+                cellsKeep <- !(potentials[, 2L] %in% eventRm)
               } else {
                 cellsKeep <- rep(FALSE, NROW(potentials))
               }
@@ -1017,7 +996,7 @@ setMethod(
               events <- as.integer(potentials[, 2L])
               eventCells <- eventCells[cellsKeep, , drop = FALSE]
             }
-            toKeepSR <- !(eventCells[, "id"] %fin% as.numeric(names(which((shouldStop)))))
+            toKeepSR <- !(eventCells[, "id"] %in% as.numeric(names(which((shouldStop)))))
           }
         }
 
@@ -1063,13 +1042,13 @@ setMethod(
             # must update toKeepSR in case that is a second reason to stop event
             if (exists("toKeepSR", inherits = FALSE)) {
               if (allowOverlapOrReturnDistances) {
-                maxSizeKeep <- !(spreads[spreads[, "active"] == 1, "id"] %fin% whichID)
+                maxSizeKeep <- !(spreads[spreads[, "active"] == 1, "id"] %in% whichID)
                 spreads <- spreads[c(rep(TRUE, sum(spreads[, "active"] == 0)), maxSizeKeep), ]
               } else {
                 if (useMatrixVersionSpreads) {
-                  maxSizeKeep <- !spreads[events] %fin% whichID
+                  maxSizeKeep <- !spreads[events] %in% whichID
                 } else {
-                  maxSizeKeep <- !spreadsDT$spreads[events] %fin% whichID
+                  maxSizeKeep <- !spreadsDT$spreads[events] %in% whichID
                 }
               }
               events <- events[maxSizeKeep]
@@ -1079,7 +1058,7 @@ setMethod(
           }
         } else {
           if (all(size >= maxSize)) {
-            potentials <- potentials[0L,] # remove any potential cells, as size is met
+            potentials <- potentials[0L, ] ## remove any potential cells, as size is met
             events <- NULL
           }
         }
@@ -1139,7 +1118,7 @@ setMethod(
                 }
               }
             } else {
-              keepLoci <- spreads[loci] %fin% which(tooSmall & inactive)
+              keepLoci <- spreads[loci] %in% which(tooSmall & inactive)
               events <- c(loci[keepLoci], events)
             }
           }
@@ -1159,19 +1138,25 @@ setMethod(
       }
 
       if (plot.it) {
-        if (n == 2 & !spreadStateExists) clearPlot()
-        if (allowOverlapOrReturnDistances) {
-          spreadsDT <- data.table(spreads);
-          hab2 <- landscape;
-          hab2[] <- 0;
-          pixVal <- spreadsDT[, sum(id), by = indices]
-          hab2[pixVal$indices] <- pixVal$V1;
-          Plot(hab2, legendRange = c(0, sum(seq_along(initialLoci))))
-        } else {
-          plotCur <- raster(landscape)
-          plotCur <- setValues(plotCur, spreads)
-          Plot(plotCur)
-        }
+        # if (requireNamespace("quickPlot")) {
+        #   if (n == 2 & !spreadStateExists) quickPlot::clearPlot()
+        #   if (allowOverlapOrReturnDistances) {
+        #     spreadsDT <- data.table(spreads)
+        #     hab2 <- landscape
+        #     hab2[] <- 0
+        #     pixVal <- spreadsDT[, sum(id), by = indices]
+        #     hab2[pixVal$indices] <- pixVal$V1
+        #     quickPlot::Plot(hab2, legendRange = c(0, sum(seq_along(initialLoci))))
+        #   } else {
+        #     plotCur <- terra::rast(landscape)
+        #     plotCur <- setValues(plotCur, spreads)
+        #     quickPlot::Plot(plotCur)
+        #   }
+        # } else {
+             plotCur <- terra::rast(landscape)
+             plotCur <- setValues(plotCur, spreadsDT$spreads)
+             terra::plot(plotCur)
+        # }
       }
 
       # new loci list for next while loop, concat of persistent and new events
@@ -1211,7 +1196,7 @@ setMethod(
       if (returnIndices > 0) {
         # wh already contains the potentials for next iteration -- these should be not duplicated
         #   inside "completed"
-        wh <- wh[!(wh %in% potentials[,2L])]
+        wh <- wh[!(wh %in% potentials[, 2L])]
         completed <- data.table(indices = wh, id = spreadsDT$spreads[wh], active = FALSE)
         if (NROW(potentials) > 0) {
           active <- data.table(indices = as.integer(potentials[, 2L]),
@@ -1238,7 +1223,7 @@ setMethod(
         if (spreadStateExists) {
           initEventID <- unique(spreadState$id)
         } else {
-          initEventID <- allCells[indices %fin% initialLoci, id]
+          initEventID <- allCells[indices %in% initialLoci, id]
         }
         if (!all(is.na(initialLoci))) {
           attr(initialLoci, ".match.hash") <- NULL # something in data.table put this
@@ -1274,12 +1259,20 @@ setMethod(
     }
 
     landscape[] <- 0
-    landscape@legend@colortable <- logical(0) # remove colour table
+
+    ## remove colour table
+    if (inherits(landscape, "RasterLayer")) {
+      if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
+      raster::colortable(landscape) <- logical(0)
+    } else if (inherits(landscape, "SpatRaster")) {
+      terra::coltab(landscape) <- NULL
+    }
+
     if (allowOverlapOrReturnDistances) {
       if (returnDistances & !allowOverlap) {
         landscape[spreads[, "indices"]] <- spreads[, "dists"]
       } else {
-        spreadsDTFinal <- data.table(spreads);
+        spreadsDTFinal <- data.table(spreads)
         if (returnDistances & allowOverlap) {
           pixVal <- spreadsDTFinal[, min(dists), by = indices]
           message("returnDistances is TRUE, allowOverlap is TRUE, but returnIndices is FALSE; ",
@@ -1287,7 +1280,7 @@ setMethod(
         } else {
           pixVal <- spreadsDTFinal[, sum(id), by = indices]
         }
-        landscape[pixVal$indices] <- pixVal$V1;
+        landscape[pixVal$indices] <- pixVal$V1
       }
     } else {
       landscape[wh] <- spreadsDT$spreads[wh]
@@ -1301,6 +1294,6 @@ setMethod(
 
     }
     return(landscape)
-})
+}
 
 spreadsDTInNamespace <- integer()

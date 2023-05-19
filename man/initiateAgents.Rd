@@ -2,24 +2,9 @@
 % Please edit documentation in R/SELES.R
 \name{initiateAgents}
 \alias{initiateAgents}
-\alias{initiateAgents,Raster,missing,missing,ANY,missing-method}
-\alias{initiateAgents,Raster,missing,Raster,ANY,missing-method}
-\alias{initiateAgents,Raster,numeric,missing,ANY,missing-method}
-\alias{initiateAgents,Raster,numeric,Raster,ANY,missing-method}
-\alias{initiateAgents,Raster,missing,missing,ANY,numeric-method}
 \title{\code{SELES} - Initiate agents}
 \usage{
 initiateAgents(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
-
-\S4method{initiateAgents}{Raster,missing,missing,ANY,missing}(map, numAgents, probInit, asSpatialPoints)
-
-\S4method{initiateAgents}{Raster,missing,Raster,ANY,missing}(map, probInit, asSpatialPoints)
-
-\S4method{initiateAgents}{Raster,numeric,missing,ANY,missing}(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
-
-\S4method{initiateAgents}{Raster,numeric,Raster,ANY,missing}(map, numAgents, probInit, asSpatialPoints)
-
-\S4method{initiateAgents}{Raster,missing,missing,ANY,numeric}(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
 }
 \arguments{
 \item{map}{RasterLayer with extent and resolution of desired return object}
@@ -28,13 +13,13 @@ initiateAgents(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
 
 \item{probInit}{a Raster resulting from a \code{\link[=probInit]{probInit()}} call}
 
-\item{asSpatialPoints}{logical. Should returned object be \code{RasterLayer}
-or \code{SpatialPointsDataFrame} (default)}
+\item{asSpatialPoints}{logical or \code{"sf"}. Should returned object be \code{RasterLayer}
+or \code{SpatVector} default (or legacy \code{TRUE} \code{SpatialPointsDataFrame})}
 
 \item{indices}{numeric. Indices of where agents should start}
 }
 \value{
-A SpatialPointsDataFrame, with each row representing an individual agent
+A \code{SpatialPointsDataFrame}, with each row representing an individual agent
 }
 \description{
 Sets the the number of agents to initiate. THIS IS NOT FULLY IMPLEMENTED.
@@ -47,51 +32,36 @@ You must know how to use SELES for these to be useful.
 }
 \examples{
 if (require("sf", quietly = TRUE)) {
-  library(raster)
-  library(quickPlot)
+  library(terra)
 
-  map <- raster(system.file("extdata", "map.tif", package = "SpaDES.tools"))
+  map <- rast(system.file("extdata", "map.tif", package = "SpaDES.tools"))
   names(map) <- "layer"
-  pr <- probInit(map, p = (map/maxValue(map))^2)
-  agents <- initiateAgents(map, 100, pr)
+  pr <- probInit(map, p = (map[] / terra::minmax(map)[2])^2)
+  agents <- initiateAgents(map, 100, pr, asSpatialPoints = "sf")
   if (interactive()) {
-    clearPlot()
-    Plot(map)
-    Plot(agents, addTo = "map")
+    terra::plot(map)
+    terra::plot(agents, add = TRUE)
   }
   # Test that they are indeed selecting according to probabilities in pr
   library(data.table)
-  dt1 <- data.table(table(round(map[agents], 0)))
+  dt1 <- data.table(table(round(extract(map, agents), 0)[, "layer"]))
   setnames(dt1, old = "N", new = "count")
   dt2 <- data.table(table(round(map[], 0)))
   setnames(dt2, old = "N", new = "available")
   dt <- dt1[dt2, on = "V1"]  # join the counts and available data.tables
   setnames(dt, old = "V1", new = "mapValue")
-  dt[, selection := count/available]
+  dt[, selection := count / available]
   dt[is.na(selection), selection := 0]
-  if (interactive())
-    with(dt, {plot(mapValue, selection)})
+  if (interactive()) {
+    with(dt, plot(mapValue, selection))
+  }
   #'
   # Note, can also produce a Raster representing agents,
   # then the number of points produced can't be more than
   # the number of pixels:
   agentsRas <- initiateAgents(map, 30, pr, asSpatialPoints = FALSE)
-  if (interactive()) Plot(agentsRas)
-  #'
-  if (require(dplyr)) {
-    # Check that the agents are more often at the higher probability areas based on pr
-    if (utils::packageVersion("raster") >= "2.8-11") {
-      out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) \%>\%
-               dplyr::mutate(selectionRatio = Freq / Freq.1) \%>\%
-               dplyr::select(-layer.1, -Var1) \%>\%
-               dplyr::rename(Present = Freq, Avail = Freq.1, Type = layer.2)
-    } else {
-      out <- data.frame(stats::na.omit(crosstab(agentsRas, map)), table(round(map[]))) \%>\%
-               dplyr::mutate(selectionRatio = Freq/Freq.1) \%>\%
-               dplyr::select(-Var1, -Var1.1) \%>\%
-               dplyr::rename(Present = Freq, Avail = Freq.1, Type = Var2)
-    }
-    out
+  if (interactive()) {
+    terra::plot(agentsRas)
   }
 }
 }

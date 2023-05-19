@@ -18,7 +18,7 @@ Several functions assist with these:
 
 \tabular{ll}{
 \code{\link[=adj]{adj()}} \tab An optimized (i.e., faster) version of
-\code{\link[raster:adjacent]{raster::adjacent()}}\cr
+\code{\link[terra:adjacent]{terra::adjacent()}}\cr
 \code{\link[=cir]{cir()}} \tab Identify pixels in a circle around a
 \code{\link[sp:SpatialPoints-class]{SpatialPoints*()}} object\cr
 \code{\link[=directionFromEachPoint]{directionFromEachPoint()}} \tab Fast calculation of direction and
@@ -38,9 +38,8 @@ Agents have several methods and functions specific to them:
 
 \tabular{ll}{
 \code{\link[=crw]{crw()}} \tab Simple correlated random walk function\cr
-\code{\link[=heading]{heading()}} \tab Determines the heading between SpatialPoints*\cr
-\code{\link[quickPlot:makeLines]{quickPlot::makeLines()}} \tab Makes \code{SpatialLines} object for,
-e.g., drawing arrows\cr
+\code{\link[=heading]{heading()}} \tab Determines the heading between \verb{SpatialPoints*}\cr
+quickPlot::makeLines() \tab Makes \code{SpatialLines} object for, e.g., drawing arrows\cr
 \code{\link[=move]{move()}} \tab A meta function that can currently only take "crw"\cr
 \code{\link[=specificNumPerPatch]{specificNumPerPatch()}} \tab Initiate a specific number of agents per patch\cr
 }
@@ -53,7 +52,7 @@ In addition to the vast amount of GIS operations available in R (mostly from
 contributed packages such as \code{sp}, \code{raster}, \code{maps}, \code{maptools}
 and many others), we provide the following GIS-related functions:
 \tabular{ll}{
-\code{\link[=equalExtent]{equalExtent()}} \tab Assess whether a list of extents are all equal\cr
+quickPlot::equalExtent() \tab Assess whether a list of extents are all equal\cr
 }
 }
 

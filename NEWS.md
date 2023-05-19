@@ -1,15 +1,34 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
-# SpaDES.tools 1.0.2
-* `terra` compatibility added
+# SpaDES.tools 1.0.4
 
-# SpaDES.tools 1.0.1.9000
+## Enhancements
+* wholesale transition to `terra` from `raster` and `sp`. Some functionality is available for `sf`, but this will not be complete.
+* `splitRaster()` uses ".tif" as the default raster file type
+* most example plotting uses `terra::plot` directly, but in a few cases, `quickPlot::Plot` is used as it is much better (e.g., `spread2(plot.it = TRUE)`)
+
+## Dependency changes
+* now has only 7 Imports and Depends, which becomes 15 recursive dependencies (down from 40)
+* drop support for R 4.0 (dependency package `reproducible` supports R >= 4.1);
+* add `terra` to Imports
+* removed dependencies `magrittr`, `rgeos`, `rlang`, `Require`, `graphics`
+* added to `Suggests`: `withr`
+* moved to Suggests: `quickPlot`, `fastmatch`, `raster`, `sp`, `sf`, `CircStats`
+* added `snow` to Suggests as it's used for parallel `raster` operations; `tools` for `file.ext`
+
+## Bugfixes
+* minor bug fixes
+* all open issues dealt with
+* bug fixes related to migration to `terra`
+
+# SpaDES.tools 1.0.2
 
 ## Dependency changes
 * none
 
 ## Enhancements
-* none
+* `terra` compatibility added
+* `neutralLandscapeMap` expanded to use more `NLMR` functions
 
 ## Bug Fixes
 * suppress additional spurious warnings
@@ -21,7 +40,7 @@ Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
 # SpaDES.tools 1.0.0
 
-This is a major `SpaDES.tools` update causing breaking changes due to multiple CRAN packages no longer available as of R # SpaDES.tools 4.2 released April 2022.
+This is a major `SpaDES.tools` update causing breaking changes due to multiple CRAN packages no longer available as of R version 4.2 released April 2022.
 
 ## Dependency changes
 * Removed dependencies `ffbase` and `ff` and deprecated use of `lowMemory` argument in `spread` (`ffbase` was removed from CRAN April 2022).

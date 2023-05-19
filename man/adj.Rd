@@ -121,9 +121,9 @@ left to right)
 }
 }
 \examples{
-library(raster)
-a <- raster(extent(0, 1000, 0, 1000), res = 1)
-sam <- sample(1:length(a), 1e4)
+library(terra)
+a <- rast(ext(0, 1000, 0, 1000), res = 1)
+sam <- sample(1:ncell(a), 1e4)
 numCol <- ncol(a)
 numCell <- ncell(a)
 adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8)
@@ -132,7 +132,7 @@ adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8,
 
 }
 \seealso{
-\code{\link[raster:adjacent]{raster::adjacent()}}
+\code{\link[terra:adjacent]{terra::adjacent()}}
 }
 \author{
 Eliot McIntire

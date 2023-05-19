@@ -3,17 +3,11 @@
 \name{move}
 \alias{move}
 \alias{crw}
-\alias{crw,SpatialPointsDataFrame-method}
-\alias{crw,SpatialPoints-method}
 \title{Move}
 \usage{
 move(hypothesis = "crw", ...)
 
 crw(agent, extent, stepLength, stddev, lonlat, torus = FALSE)
-
-\S4method{crw}{SpatialPointsDataFrame}(agent, extent, stepLength, stddev, lonlat, torus = FALSE)
-
-\S4method{crw}{SpatialPoints}(agent, extent, stepLength, stddev, lonlat, torus = FALSE)
 }
 \arguments{
 \item{hypothesis}{Character vector, length one, indicating which movement
@@ -22,10 +16,11 @@ hypothesis/method to test/use. Currently defaults to
 
 \item{...}{arguments passed to the function in \code{hypothesis}}
 
-\item{agent}{A \verb{SpatialPoints*} object.
-If a \code{SpatialPointsDataFrame}, 2 of the columns must
+\item{agent}{A \code{SpatVector} points geometry or a \verb{SpatialPoints*} (deprecated) object.
+If is has attributes, e.g., \code{SpatialPointsDataFrame},
+2 of the columns must
 be \code{x1} and \code{y1}, indicating the previous location.
-If a \code{SpatialPoints} object, then \code{x1} and
+If it does not have these columns as attributes, \code{x1} and
 \code{y1} will be assigned randomly.}
 
 \item{extent}{An optional \code{Extent} object that will be used for \code{torus}.}
@@ -45,7 +40,7 @@ side of the map, as determined by the \code{extent} argument.
 Default \code{FALSE}.}
 }
 \value{
-A SpatialPointsDataFrame object with updated spatial position defined
+A SpatVector points object with updated spatial position defined
 by a single occurrence of step length(s) and turn angle(s).
 }
 \description{
@@ -69,7 +64,7 @@ individuals, populations and landscapes interact.
 Journal of Applied Ecology 44:725-736.
 }
 \seealso{
-\code{\link[=pointDistance]{pointDistance()}}
+\code{\link[terra:distance]{terra::distance()}}
 }
 \author{
 Eliot McIntire

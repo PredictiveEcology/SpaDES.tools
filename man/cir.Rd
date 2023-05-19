@@ -48,37 +48,35 @@ This is useful if the actual x, y coordinates are desired, rather
 than the cell indices. This will increase the size of the returned
 object.}
 
-\item{includeBehavior}{Character string. Currently accepts only "includePixels", the default,
-and "excludePixels". See details.}
+\item{includeBehavior}{Character string. Currently accepts only \code{"includePixels"}, the default,
+and \code{"excludePixels"}. See details.}
 
-\item{returnDistances}{Logical. If TRUE, then a column will be added to the returned
+\item{returnDistances}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the distance from \code{coords} to every
 point that was in the circle/donut surrounding \code{coords}. Default
-FALSE, which is faster.}
+\code{FALSE}, which is faster.}
 
 \item{angles}{Numeric. Optional vector of angles, in radians, to use. This will create
-"spokes" outward from coords. Default is NA, meaning, use internally
+"spokes" outward from coords. Default is \code{NA}, meaning, use internally
 derived angles that will "fill" the circle.}
 
-\item{returnAngles}{Logical. If TRUE, then a column will be added to the returned
+\item{returnAngles}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the angle from \code{coords} to every
-point that was in the circle/donut surrounding \code{coords}. Default
-FALSE.}
+point that was in the circle/donut surrounding \code{coords}. Default \code{FALSE.}}
 
-\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
-return a \code{data.table} with indices and values of
-successful spread events.
+\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will return a \code{data.table}
+with indices and values of successful spread events.
 If \code{2}, it will simply return a vector of pixel indices of
-all cells that were touched. This will be the fastest option. If
-\code{FALSE}, then it will return a raster with
-values. See Details.}
+all cells that were touched. This will be the fastest option.
+If \code{FALSE}, then it will return a raster with values.
+See Details.}
 
 \item{closest}{Logical. When determining non-overlapping circles, should the function
 give preference to the closest \code{loci} or the first one (much faster).
-Default is FALSE, meaning the faster, though maybe not desired behaviour.}
+Default is \code{FALSE}, meaning the faster, though maybe not desired behaviour.}
 
-\item{simplify}{logical. If TRUE, then all duplicate pixels are removed. This means
-that some x, y combinations will disappear.}
+\item{simplify}{logical. If \code{TRUE}, then all duplicate pixels are removed.
+This means that some x, y combinations will disappear.}
 }
 \value{
 A \code{matrix} with 4 columns, \code{id}, \code{indices},
@@ -89,8 +87,7 @@ associated with the ring or circle being identified by this function.
 \description{
 Identify the pixels and coordinates that are at a (set of) buffer distance(s)
 of the objects passed into \code{coords}.
-This is similar to \code{rgeos::gBuffer} but much faster and without
-the geo referencing information.
+This is similar to \code{sf::st_buffer} but much faster and without the geo referencing information.
 In other words, it can be used for similar problems, but where speed is important.
 This code is substantially adapted from \code{PlotRegionHighlighter::createCircle}.
 }
@@ -104,84 +101,83 @@ If this is \code{excludePixels}, and if a \code{minRadius} and
 \code{maxRadius} are equal, this will return no pixels.
 }
 \examples{
-library(data.table)
-library(sp)
-library(raster)
-library(quickPlot)
+library(terra)
 
 set.seed(1462)
 
 # circle centred
-ras <- raster(extent(0, 15, 0, 15), res = 1, val = 0)
+ras <- rast(ext(0, 15, 0, 15), res = 1, val = 0)
 middleCircle <- cir(ras)
 ras[middleCircle[, "indices"]] <- 1
-circlePoints <- SpatialPoints(middleCircle[, c("x", "y")])
+circlePoints <- vect(middleCircle[, c("x", "y")])
 if (interactive()) {
-  clearPlot()
-  Plot(ras)
-  Plot(circlePoints, addTo = "ras")
+  # clearPlot()
+  terra::plot(ras)
+  terra::plot(circlePoints, add = TRUE)
 }
 
 # circles non centred
 ras <- randomPolygons(ras, numTypes = 4)
 n <- 2
-agent <- SpatialPoints(coords = cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
-                                      y = stats::runif(n, xmin(ras), xmax(ras))))
+agent <- vect(cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
+                    y = stats::runif(n, xmin(ras), xmax(ras))))
 
 cirs <- cir(ras, agent, maxRadius = 15, simplify = TRUE) ## TODO: empty with some seeds! e.g. 1642
-cirsSP <- SpatialPoints(coords = cirs[, c("x", "y")]) ## TODO: error with some seeds! e.g. 1642
-cirsRas <- raster(ras)
+cirsSP <- vect(cirs[, c("x", "y")]) ## TODO: error with some seeds! e.g. 1642
+cirsRas <- rast(ras)
 cirsRas[] <- 0
 cirsRas[cirs[, "indices"]] <- 1
 
 if (interactive()) {
-  clearPlot()
-  Plot(ras)
-  Plot(cirsRas, addTo = "ras", cols = c("transparent", "#00000055"))
-  Plot(agent, addTo = "ras")
-  Plot(cirsSP, addTo = "ras")
+  # clearPlot()
+  terra::plot(ras)
+  terra::plot(cirsRas, add = TRUE, col = c("transparent", "#00000055"))
+  terra::plot(agent, add = TRUE)
+  terra::plot(cirsSP, add = TRUE)
 }
 
 # Example comparing rings and cir
-hab <- raster(system.file("extdata", "hab1.tif", package = "SpaDES.tools"))
+hab <- rast(system.file("extdata", "hab1.tif", package = "SpaDES.tools"))
 radius <- 4
 n <- 2
-coords <- SpatialPoints(coords = cbind(x = stats::runif(n, xmin(hab), xmax(hab)),
-                                       y = stats::runif(n, xmin(hab), xmax(hab))))
+coords <- vect(cbind(x = stats::runif(n, xmin(hab), xmax(hab)),
+                     y = stats::runif(n, xmin(hab), xmax(hab))))
 
 # cirs
 cirs <- cir(hab, coords, maxRadius = rep(radius, length(coords)), simplify = TRUE)
 
-# rings
-loci <- cellFromXY(hab, coordinates(coords))
-cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
-
-# Plot both
-ras1 <- raster(hab)
+ras1 <- rast(hab)
 ras1[] <- 0
 ras1[cirs[, "indices"]] <- cirs[, "id"]
-
-ras2 <- raster(hab)
-ras2[] <- 0
-ras2[cirs2$indices] <- cirs2$id
 if (interactive()) {
-  clearPlot()
-  Plot(ras1, ras2)
+  terra::plot(ras1)
 }
 
-hab <- raster(system.file("extdata", "hab2.tif", package = "SpaDES.tools"))
+# rings
+if (requireNamespace("CircStats", quietly = TRUE)) {
+  loci <- cellFromXY(hab, crds(coords))
+  cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
+
+  ras2 <- rast(hab)
+  ras2[] <- 0
+  ras2[cirs2$indices] <- cirs2$id
+  if (interactive()) {
+    terra::plot(c(ras1, ras2))
+  }
+}
+
+hab <- rast(system.file("extdata", "hab2.tif", package = "SpaDES.tools"))
 cirs <- cir(hab, coords, maxRadius = 44, minRadius = 0)
-ras1 <- raster(hab)
+ras1 <- rast(hab)
 ras1[] <- 0
-cirsOverlap <- data.table(cirs)[, list(sumIDs = sum(id)), by = indices]
+cirsOverlap <- data.table::data.table(cirs)[, list(sumIDs = sum(id)), by = indices]
 ras1[cirsOverlap$indices] <- cirsOverlap$sumIDs
 if (interactive()) {
-  clearPlot()
-  Plot(ras1)
+  terra::plot(ras1)
 }
 
 # Provide a specific set of angles
-ras <- raster(extent(0, 330, 0, 330), res = 1)
+ras <- rast(ext(0, 330, 0, 330), res = 1)
 ras[] <- 0
 n <- 2
 coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
@@ -189,15 +185,15 @@ coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
 circ <- cir(ras, coords, angles = seq(0, 2 * pi, length.out = 21),
             maxRadius = 200, minRadius = 0, returnIndices = FALSE,
             allowOverlap = TRUE, returnAngles = TRUE)
+
 }
 \seealso{
 \code{\link[=rings]{rings()}} which uses \code{spread} internally.
-\code{cir} tends to be faster when there are few starting points, \code{rings}
-tends to be faster when there are many starting points. \code{cir} scales with
-\code{maxRadius} ^ 2 and \code{coords}. Another difference
-between the two functions is that \code{rings} takes the centre of the pixel
+\code{cir} tends to be faster when there are few starting points, \code{rings} tends to be faster
+when there are many starting points. \code{cir} scales with \code{maxRadius^2} and \code{coords}.
+Another difference between the two functions is that \code{rings} takes the centre of the pixel
 as the centre of a circle, whereas \code{cir} takes the exact coordinates.
 See example. For the specific case of creating distance surfaces from specific
 points, see \code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}}, which is often faster.
-For the more general GIS buffering, see \code{rgeos::gBuffer}.
+For the more general GIS buffering, see \code{sf::st_buffer}.
 }

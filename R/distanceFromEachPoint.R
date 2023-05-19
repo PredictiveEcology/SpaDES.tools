@@ -1,8 +1,8 @@
 #' Calculate distances and directions between many points and many grid cells
 #'
-#' This is a modification of [raster::distanceFromPoints()] for the case of many points.
+#' This is a modification of [terra::distance()] for the case of many points.
 #' This version can often be faster for a single point because it does not return a RasterLayer.
-#' This is different than [raster::distanceFromPoints()] because it does not take the
+#' This is different than [terra::distance()] because it does not take the
 #' minimum distance from the set of points to all cells.
 #' Rather this returns the every pair-wise point distance.
 #' As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -12,8 +12,9 @@
 #' This function has the potential to use a lot of memory if there are a lot of
 #' `from` and `to` points.
 #'
-#' This function is cluster aware. If there is a cluster running, it will use it.
-#' To start a cluster use [`beginCluster()`][raster::beginCluster], with `N` being
+#' This function is cluster aware if the `raster` package is available.
+#' If there is a cluster running, it will use it.
+#' To start a cluster use `raster::beginCluster()`, with `N` being
 #' the number of cores to use. See examples in `SpaDES.core::experiment`.
 #'
 #' @param from Numeric matrix with 2 or 3 or more columns. They must include x and y,
@@ -57,7 +58,7 @@
 #'         but with one extra column, `"dists"`, indicating the distance
 #'         between `from` and `to`.
 #'
-#' @seealso [rings()], [cir()], [raster::distanceFromPoints()],
+#' @seealso [rings()], [cir()], [terra::distance()],
 #' which can all be made to do the same thing, under specific combinations of arguments.
 #' But each has different primary use cases. Each is also faster under different conditions.
 #' For instance, if `maxDistance` is relatively small compared to the number of cells
@@ -88,7 +89,7 @@
 #' See examples.
 #'
 #' @export
-#' @importFrom raster getCluster ncell returnCluster xyFromCell
+#' @importFrom terra ncell xyFromCell
 #' @importFrom parallel clusterApply mclapply
 #'
 #' @example inst/examples/example_distanceFromEachPoint.R
@@ -111,15 +112,16 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
   if (!is.null(cumulativeFn)) {
     forms <- names(formals(distFn))
-    fromC <- "fromCell" %fin% forms
+    # browser()
+    fromC <- "fromCell" %in% forms
     if (fromC) fromCell <- cellFromXY(landscape, from[, c("x", "y")])
-    toC <- "toCells" %fin% forms
+    toC <- "toCells" %in% forms
     if (toC) toCells <- cellFromXY(landscape, to[, c("x", "y")])
-    land <- "landscape" %fin% forms
+    land <- "landscape" %in% forms
     distFnArgs <- if (land) list(landscape = landscape[]) else list()
     if (length(list(...)) > 0) distFnArgs <- append(distFnArgs, list(...))
-    xDist <- "dist" %fin% forms
-    xDir <- "angle" %fin% forms
+    xDist <- "dist" %in% forms
+    xDir <- "angle" %in% forms
     if (is.character(cumulativeFn)) {
       cumulativeFn <- get(cumulativeFn)
     }
@@ -196,8 +198,8 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
         # }
 
         if (missing(cl)) {
-          cl <- tryCatch(getCluster(), error = function(e) NULL)
-          on.exit(if (!is.null(cl)) returnCluster(), add = TRUE)
+          cl <- tryCatch(raster::getCluster(), error = function(e) NULL)
+          on.exit(if (!is.null(cl)) raster::returnCluster(), add = TRUE)
         }
 
         outerCumFunArgs <- list(landscape = landscape, to = to, angles = angles,
@@ -342,11 +344,11 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
 #' Calculate distances and directions between many points and many grid cells
 #'
-#' This is a modification of [raster::distanceFromPoints()] for the case
+#' This is a modification of [terra::distance()] for the case
 #' of many points.
 #' This version can often be faster for a single point because it does not return
 #' a `RasterLayer`.
-#' This is different than [raster::distanceFromPoints()] because it does
+#' This is different than [terra::distance()] because it does
 #' not take the minimum distance from the set of points to all cells.
 #' Rather this returns the every pair-wise point distance.
 #' As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -370,44 +372,42 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'           optional `id` which will be matched with `id` from `from`.
 #'           It makes no sense to have `id` column here with no `id` column
 #'           in `from`.
-#' @param landscape (optional) `RasterLayer`. This is only used if `to = NULL`,
-#'                  in which case all cells are considered `to`.
+#' @param landscape (optional) `RasterLayer` or `SpatRaster`.
+#'                  This is only used if `to = NULL`, in which case all cells are considered `to`.
 #'
 #' @return A sorted matrix on `id` with same number of rows as `to`,
-#'         but with one extra column, `angles` indicating the angle in radians
-#'         between from and to. For speed, this angle will be between `-pi/2`
-#'         and `3*pi/2`.
+#'         but with one extra column, `angles` indicating the angle in radians between from and to.
+#'         For speed, this angle will be between `-pi/2` and `3*pi/2`.
 #'         If the user wants this between say, `0` and `2*pi`,
 #'         then `angles \%\% (2*pi)` will do the trick. See example.
 #'
-#' @export
-#' @rdname directions
-#' @seealso [distanceFromEachPoint()], which will also return directions
-#'          if `angles = TRUE`.
+#' @seealso [distanceFromEachPoint()], which will also return directions if `angles = TRUE`.
 #'
 #' @examples
-#' library(raster)
-#' library(quickPlot)
+#' library(terra)
 #'
 #' N <- 2
-#' dirRas <- raster(extent(0,40,0,40), res = 1)
+#' dirRas <- terra::rast(terra::ext(0,40,0,40), res = 1)
 #' coords <- cbind(x = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
 #'                 y = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
 #'                 id = 1:N)
 #'
 #' dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
-#' library(CircStats)
-#' dirs1[, "angles"] <- deg(dirs1[,"angles"] %% (2*pi))
-#' indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
-#' minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
-#' dirRas[] <- as.vector(minDir)
-#' if (interactive()) {
-#'   clearPlot()
-#'   Plot(dirRas)
-#'   library(sp)
-#'   start <- SpatialPoints(coords[, c("x", "y"), drop = FALSE])
-#'   Plot(start, addTo = "dirRas")
+#' if (requireNamespace("CircStats", quietly = TRUE)) {
+#'   dirs1[, "angles"] <- CircStats::deg(dirs1[,"angles"] %% (2*pi))
+#'   indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
+#'   minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
+#'   dirRas[] <- as.vector(minDir)
+#'   if (interactive()) {
+#'     terra::plot(dirRas)
+#'     start <- terra::vect(coords[, c("x", "y"), drop = FALSE])
+#'     terra::plot(start, add = TRUE)
+#'   }
 #' }
+#'
+#' @export
+#' @importFrom terra ncell xyFromCell
+#' @rdname directions
 directionFromEachPoint <- function(from, to = NULL, landscape) {
   matched <- FALSE
   nrowFrom <- NROW(from)
@@ -461,7 +461,7 @@ directionFromEachPoint <- function(from, to = NULL, landscape) {
 }
 
 
-docall <- function (what, args, quote = FALSE, envir = parent.frame()) {
+docall <- function(what, args, quote = FALSE, envir = parent.frame()) {
   if (quote) {
     args <- lapply(args, enquote)
   }
@@ -469,8 +469,7 @@ docall <- function (what, args, quote = FALSE, envir = parent.frame()) {
   if (is.null(namsArgs) || is.data.frame(args)) {
     argn <- args
     args <- list()
-  }
-  else {
+  } else {
     hasName <- namsArgs != ""
     argn <- lapply(namsArgs[hasName], as.name)
     names(argn) <- namsArgs[hasName]
@@ -482,26 +481,23 @@ docall <- function (what, args, quote = FALSE, envir = parent.frame()) {
       fn <- strsplit(what, "[:]{2,3}")[[1]]
       what <- if (length(fn) == 1) {
         get(fn[[1]], envir = envir, mode = "function")
-      }
-      else {
+      } else {
         get(fn[[2]], envir = asNamespace(fn[[1]]), mode = "function")
       }
     }
     call <- as.call(c(list(what), argn))
-  }
-  else if ("function" %in% class(what)) {
+  } else if ("function" %in% class(what)) {
     f_name <- deparse(substitute(what))
     call <- as.call(c(list(as.name(f_name)), argn))
     args[[f_name]] <- what
-  }
-  else if ("name" %in% class(what)) {
+  } else if ("name" %in% class(what)) {
     call <- as.call(c(list(what, argn)))
   }
   eval(call, envir = args, enclos = envir)
 }
 
-outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, xDir,
-                        distFnArgs, fromC, toC, xDist, cumulativeFn, distFn, nrowFrom, otherFromCols) {
+outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, xDir, distFnArgs,
+                        fromC, toC, xDist, cumulativeFn, distFn, nrowFrom, otherFromCols) {
 
   cumVal <- rep_len(0, NROW(to))
   needAngles <- isTRUE(angles) && isTRUE(xDir)
@@ -541,17 +537,15 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
       }
       # cumVal <- docall(cumulativeFn, args = list(cumVal, docall(distFn, args = distFnArgs)))
     }
-
   }
   return(cumVal)
 }
 
-#' @importFrom raster focalWeight
 spiralDistances <- function(pixelGroupMap, maxDis, cellSize) {
-  spiral <- which(focalWeight(pixelGroupMap, maxDis, type = "circle") > 0, arr.ind = TRUE) -
+  if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
+  spiral <- which(raster::focalWeight(pixelGroupMap, maxDis, type = "circle") > 0, arr.ind = TRUE) -
     ceiling(maxDis/cellSize) - 1
-  spiral <- cbind(spiral, dists = sqrt( (0 - spiral[,1]) ^ 2 + (0 - spiral[, 2]) ^ 2))
+  spiral <- cbind(spiral, dists = sqrt( (0 - spiral[, 1]) ^ 2 + (0 - spiral[, 2]) ^ 2))
   spiral <- spiral[order(spiral[, "dists"], apply(abs(spiral), 1, sum),
                          abs(spiral[, 1]), abs(spiral[, 2])), NULL, drop = FALSE]
 }
-

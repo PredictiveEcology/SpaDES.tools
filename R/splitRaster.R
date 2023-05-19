@@ -4,10 +4,11 @@
 #' Split rasters can be recombined using `do.call(merge, y)` or `mergeRaster(y)`,
 #' where `y <- splitRaster(x)`.
 #'
-#' This function is parallel-aware, using the same mechanism as used in \pkg{raster}.
-#' Specifically, if you start a cluster using [beginCluster()],
+#' This function is parallel-aware using the same mechanism as used in \pkg{raster}:
+#' NOTE: This may not work as expected as we transition away from `raster`.
+#' Specifically, if you start a cluster using `raster::beginCluster()`,
 #' then this function will automatically use that cluster.
-#' It is always a good idea to stop the cluster when finished, using [endCluster()].
+#' It is always a good idea to stop the cluster when finished, using `raster::endCluster()`.
 #'
 #' @param r       The raster to be split.
 #'
@@ -16,7 +17,7 @@
 #' @param ny      The number of tiles to make along the y-axis.
 #'
 #' @param buffer  Numeric vector of length 2 giving the size of the buffer along the x and y axes.
-#'                If these values less than or equal to `1` are used, this
+#'                If values greater than or equal to `1` are used, this
 #'                is interpreted as the number of pixels (cells) to use as a buffer.
 #'                Values between `0` and `1` are interpreted as proportions
 #'                of the number of pixels in each tile (rounded up to an integer value).
@@ -34,93 +35,125 @@
 #'
 #' @return `splitRaster` returns a list (length `nx*ny`) of cropped raster tiles.
 #'
-#' @seealso [do.call()], [raster::merge()].
+#' @seealso [do.call()], [terra::merge()].
 #'
 #' @author Alex Chubaty and Yong Luo
 #' @export
 #' @importFrom parallel clusterApplyLB
-#' @importFrom raster crop crs<- extent getCluster returnCluster writeRaster
-#' @importFrom raster xmax xmin xres ymax ymin yres
-#' @importFrom Require checkPath
+#' @importFrom terra crop crs<- ext writeRaster
+#' @importFrom reproducible checkPath
+#' @importFrom terra ext unwrap wrap xmax xmin xres yres
 #' @rdname splitRaster
 #'
 #' @example inst/examples/example_splitRaster.R
 #'
-setGeneric(
-  "splitRaster",
-  function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rType = "FLT4S", fExt = ".grd") {
-  standardGeneric("splitRaster")
-})
+splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rType = "FLT4S",
+                        fExt = ".tif") {
+  if (!is.numeric(nx) | !is.numeric(ny) | !is.numeric(buffer)) {
+    stop("nx, ny, and buffer must be numeric")
+  }
+  if (!is.integer(nx)) nx <- as.integer(nx)
+  if (!is.integer(ny)) ny <- as.integer(ny)
+  if (is.integer(buffer)) buffer <- as.numeric(buffer)
 
-#' @export
-#' @rdname splitRaster
-setMethod(
-  "splitRaster",
-  signature = signature(r = "RasterLayer"),
-  definition = function(r, nx, ny, buffer, path, cl, rType, fExt) {
-    if (!is.numeric(nx) | !is.numeric(ny) | !is.numeric(buffer)) {
-      stop("nx, ny, and buffer must be numeric")
-    }
-    if (!is.integer(nx)) nx <- as.integer(nx)
-    if (!is.integer(ny)) ny <- as.integer(ny)
-    if (is.integer(buffer)) buffer <- as.numeric(buffer)
+  if (!is.na(path)) {
+    path <- checkPath(path, create = TRUE)
+  }
 
-    if (!is.na(path)) {
-      checkPath(path, create = TRUE)
-    }
+  isRasterLayer <- is(r, "RasterLayer")
+  if (isRasterLayer) {
+    r <- terra::rast(r)
+  }
 
-    if (missing(cl)) {
-      cl <- tryCatch(getCluster(), error = function(e) NULL)
-      on.exit(if (!is.null(cl)) returnCluster(), add = TRUE)
-    }
+  if (missing(cl)) {
+    cl <- tryCatch(raster::getCluster(), error = function(e) NULL)
+    on.exit(if (!is.null(cl)) raster::returnCluster(), add = TRUE)
+  }
 
-    if (length(buffer) > 2) {
-      warning("buffer contains more than 2 elements - only the first two will be used.")
-      buffer <- buffer[1:2]
-    } else if (length(buffer) == 1) {
-      buffer <- c(buffer, buffer)
-    }
-    if (buffer[1] < 1) {
-      buffer[1] <- ceiling((buffer[1] * (xmax(r) - xmin(r)) / nx) / xres(r)) # nolint
-    }
-    if (buffer[2] < 1) {
-      buffer[2] <- ceiling((buffer[2] * (ymax(r) - ymin(r)) / ny) / yres(r)) # nolint
-    }
+  if (length(buffer) > 2) {
+    warning("buffer contains more than 2 elements - only the first two will be used.")
+    buffer <- buffer[1:2]
+  } else if (length(buffer) == 1) {
+    buffer <- c(buffer, buffer)
+  }
+  if (buffer[1] < 1) {
+    buffer[1] <- ceiling((buffer[1] * (terra::xmax(r) - terra::xmin(r)) / nx) / terra::xres(r))
+  }
+  if (buffer[2] < 1) {
+    buffer[2] <- ceiling((buffer[2] * (terra::ymax(r) - terra::ymin(r)) / ny) / terra::yres(r))
+  }
 
-    ext <- extent(r)
-    extents <- vector("list", length = nx * ny)
-    n <- 1L
-    for (i in seq_len(nx) - 1L) {
-      for (j in seq_len(ny) - 1L) {
-        x0 <- ext@xmin + i * ((ext@xmax - ext@xmin) / nx) - buffer[1] * xres(r) # nolint
-        x1 <- ext@xmin + (i + 1L) * ((ext@xmax - ext@xmin) / nx) + buffer[1] * xres(r) # nolint
-        y0 <- ext@ymin + j * ((ext@ymax - ext@ymin) / ny) - buffer[2] * yres(r) # nolint
-        y1 <- ext@ymin + (j + 1L) * ((ext@ymax - ext@ymin) / ny) + buffer[2] * yres(r) # nolint
-        extents[[n]] <- extent(x0, x1, y0, y1)
-        n <- n + 1L
-      }
+  ext <- terra::ext(r)
+
+  extents <- vector("list", length = nx * ny)
+  n <- 1L
+  for (i in seq_len(nx) - 1L) {
+    for (j in seq_len(ny) - 1L) {
+      x0 <- terra::xmin(ext) + i * ((terra::xmax(ext) - terra::xmin(ext)) / nx) -
+        buffer[1] * terra::xres(r)
+      x1 <- terra::xmin(ext) + (i + 1L) * ((terra::xmax(ext) - terra::xmin(ext)) / nx) +
+        buffer[1] * terra::xres(r)
+      y0 <- terra::ymin(ext) + j * ((terra::ymax(ext) - terra::ymin(ext)) / ny) -
+        buffer[2] * terra::yres(r)
+      y1 <- terra::ymin(ext) + (j + 1L) * ((terra::ymax(ext) - terra::ymin(ext)) / ny) +
+        buffer[2] * terra::yres(r)
+      extents[[n]] <- terra::ext(x0, x1, y0, y1)
+      n <- n + 1L
     }
+  }
 
-    tiles <- if (!is.null(cl)) {
-      clusterApplyLB(cl = cl, x = seq_along(extents), fun = .croppy, e = extents, r = r,
-                     path = path, rType = rType, fExt = fExt)
-    } else {
-      lapply(X = seq_along(extents), FUN = .croppy, e = extents, r = r, path = path, rType = rType, fExt = fExt)
-    }
+  tiles <- if (!is.null(cl)) {
+    clusterApplyLB(cl = cl, x = seq_along(extents), fun = .croppy, e = extents,
+                   r = terra::wrap(r), path = path, rType = rType, fExt = fExt) |>
+      lapply(terra::unwrap)
+  } else {
+    lapply(X = seq_along(extents),
+           FUN = .croppy,
+           e = extents,
+           r = r,
+           path = path,
+           rType = rType,
+           fExt = fExt)
+  }
 
-    return(tiles)
-})
+  if (isRasterLayer) {
+    tiles <- lapply(tiles, function(t) {
+      withCallingHandlers({
+        t <- raster::raster(t)
+      },
+      warning = function(w) {
+        if (getRversion() <= "4.1.3")
+          if (grepl("NAs introduced by coercion", w$message))
+            invokeRestart("muffleWarning")
+      })
+      raster::dataType(t) <- rType
+      t
+    })
+  }
 
-#' @importFrom raster crop crs extension raster writeRaster
+  return(tiles)
+}
+
+#' @importFrom terra crop crs rast unwrap wrap writeRaster
 #' @keywords internal
 .croppy <- function(i, e, r, path, rType, fExt) {
-  ri <- crop(r, e[[i]], datatype = rType)
-  crs(ri) <- crs(r)
+  isWrapped <- is(r, "PackedSpatRaster")
+  if (isWrapped) {
+    r <- terra::unwrap(r)
+  }
+
+  ri <- terra::crop(r, e[[i]], datatype = rType)
+  terra::crs(ri) <- terra::crs(r)
   if (is.na(path)) {
     return(ri)
   } else {
-    filename <- extension(file.path(path, paste0(names(r), "_tile", i)), fExt)
-    writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
-    return(raster(filename))
+    filename <- paste0(file.path(path, paste0(names(r), "_tile", i)), fExt)
+    terra::writeRaster(ri, filename, overwrite = TRUE, datatype = rType)
+
+    if (isWrapped) {
+      return(terra::rast(filename) |> terra::wrap())
+    } else {
+      return(terra::rast(filename))
+    }
   }
 }

@@ -37,7 +37,7 @@ locations for spreading events to start and spread2 into. Required.}
 \code{data.table} that is the output of a previous \code{spread2}.
 If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
-\code{\link[raster:cellFrom]{cellFromXY()}}.}
+\code{\link[terra:xyCellFrom]{cellFromXY()}}.}
 
 \item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
 a \code{RasterLayer} that is the identical dimensions as
@@ -256,7 +256,7 @@ exactly one of the 8 angles of the 8 neighbours. This means that
 \deqn{max(spreadProb)/min(spreadProb)} will generally be less than
 \code{asymmetry}, for the 8 neighbours. The exact adjustment to the spreadProb
 is calculated with:
-\deqn{angleQuality <- (cos(angles - rad(asymmetryAngle))+1)/2}
+\deqn{angleQuality <- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2}
 which is multiplied to get an angle-adjusted spreadProb:
 \deqn{spreadProbAdj <- actualSpreadProb * angleQuality}
 which is then rescaled:
@@ -362,20 +362,15 @@ say, insect swarms.
 }
 
 \examples{
-library(data.table)
-library(raster)
-library(quickPlot)
+library(terra)
 
-data.table::setDTthreads(1)
-
-a <- raster(extent(0, 10, 0, 10), res = 1)
+a <- rast(ext(0, 10, 0, 10), res = 1)
 sams <- sort(sample(ncell(a), 3))
 
 # Simple use -- similar to spread(...)
 out <- spread2(a, start = sams, 0.225)
 if (interactive()) {
-  clearPlot()
-  Plot(out)
+  terra::plot(out)
 }
 
 # Use maxSize -- this gives an upper limit
@@ -410,7 +405,7 @@ out1 <- spreadWithEscape(a, sams, escapeProb = 0.25, spreadProb = 0.225)
 set.seed(421)
 out2 <- spread2(a, sams, 0.225, asRaster = FALSE)
 # The one with high escape probability is larger (most of the time)
-NROW(out1) > NROW(out2)
+NROW(out1) > NROW(out2) ## TODO: not true
 
 ## Use neighProbs, with a spreadProb that is a RasterLayer
 # Create a raster of different values, which will be the relative probabilities
@@ -419,7 +414,7 @@ NROW(out1) > NROW(out2)
 #   30\% of the time 2 neighbours.
 #   The cells with spreadProb of 5 are 5 times more likely than cells with 1 to be chosen,
 #   when they are both within the 8 neighbours
-sp <- raster(extent(0, 3, 0, 3), res = 1, vals = 1:9) #small raster, simple values
+sp <- rast(ext(0, 3, 0, 3), res = 1, vals = 1:9) #small raster, simple values
 # Check neighProbs worked
 out <- list()
 
@@ -437,19 +432,21 @@ table(sp[out$pixels])
 #  spread to it as cell 1. This comes from sp object above which is providing
 #  the relative spread probabilities
 keep <- c(1:4, 6:9)
-chisq.test(keep, unname(tabulate(sp[out$pixels], 9)[keep]), simulate.p.value = TRUE)
+chisq.test(keep, unname(tabulate(sp[out$pixels]$lyr.1, 9)[keep]),
+           simulate.p.value = TRUE)
 
 ## Example showing asymmetry
-sams <- ncell(a) / 4 - ncol(a) / 4 * 3
-circs <- spread2(a, spreadProb = 0.213, start = sams,
-                 asymmetry = 2, asymmetryAngle = 135,
-                 asRaster = TRUE)
-
+if (requireNamespace("CircStats", quietly = TRUE)) {
+  sams <- ncell(a) / 4 - ncol(a) / 4 * 3
+  circs <- spread2(a, spreadProb = 0.213, start = sams,
+                   asymmetry = 2, asymmetryAngle = 135,
+                   asRaster = TRUE)
+}
 ## ADVANCED: Estimate spreadProb when using asymmetry, such that the expected
 ##   event size is the same as without using asymmetry
-\dontrun{
+\donttest{
   if (interactive()) {
-    ras <- raster(a)
+    ras <- rast(a)
     ras[] <- 1
 
     n <- 100
@@ -462,36 +459,38 @@ circs <- spread2(a, spreadProb = 0.213, start = sams,
     }
     goalSize <- mean(sizes)
 
-    library(parallel)
-    library(DEoptim)
-    cl <- makeCluster(pmin(10, detectCores() - 2)) # need 10 cores for 10 populations in DEoptim
-    parallel::clusterEvalQ(cl, {
-      library(SpaDES.tools)
-      library(raster)
-      library(fpCompare)
-    })
+    if (requireNamespace("DEoptim", quietly = TRUE)) {
+      library(parallel)
+      library(DEoptim)
+      cl <- makeCluster(pmin(10, detectCores() - 2)) # need 10 cores for 10 populations in DEoptim
+      parallel::clusterEvalQ(cl, {
+        library(SpaDES.tools)
+        library(fpCompare)
+      })
 
-    objFn <- function(sp, n = 20, ras, goalSize) {
-      sizes <- integer(n)
-      for (i in 1:n) {
-        circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
-                         asymmetry = 2, asymmetryAngle = 135,
-                         asRaster = FALSE)
-        sizes[i] <- circs[, .N]
+      objFn <- function(sp, n = 20, ras, goalSize) {
+        sizes <- integer(n)
+        for (i in 1:n) {
+          circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
+                           asymmetry = 2, asymmetryAngle = 135,
+                           asRaster = FALSE)
+          sizes[i] <- circs[, .N]
+        }
+        abs(mean(sizes) - goalSize)
       }
-      abs(mean(sizes) - goalSize)
+      aa <- DEoptim(objFn, lower = 0.2, upper = 0.23,
+                    control = DEoptim.control(cluster = cl, NP = 10, VTR = 0.02,
+                                              initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
+                    ras = a, goalSize = goalSize)
+
+      # The value of spreadProb that will give the
+      #    same expected event sizes to spreadProb = 0.225 is:
+      sp <- aa$optim$bestmem
+      circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
+                       asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)
+
+      stopCluster(cl)
     }
-    aa <- DEoptim(objFn, lower = 0.2, upper = 0.23,
-                  control = DEoptim.control(cluster = cl, NP = 10, VTR = 0.02,
-                                            initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
-                  ras = a, goalSize = goalSize)
-
-    # The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:
-    sp <- aa$optim$bestmem
-    circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
-                      asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)
-
-    stopCluster(cl)
   }
 }
 }

@@ -1,6 +1,4 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("..colsToKeep", ".N", "row_number"))
-}
+utils::globalVariables(c("..colsToKeep", ".N", ".SD", "row_number"))
 
 ################################################################################
 #' Convert reduced representation to full raster
@@ -9,7 +7,10 @@ if (getRversion() >= "3.1.0") {
 #' column of codes that are represented in the `fullRaster`.
 #'
 #' @param fullRaster `RasterLayer`/`SpatRaster` of codes used in `reduced` that
-#'                   represents a spatial representation of the data.
+#'                   represents a spatial representation of the data. Note that
+#'                   if `fullRaster` is a `factor` `SpatRaster`, the active category
+#'                   level values are used, not the IDs (see `terra::activeCat` and
+#'                   `terra::cats`)
 #'
 #' @param newRasterCols Character vector, length 1 or more, with the name(s) of
 #'                      the column(s) in `reduced` whose value will be
@@ -26,30 +27,30 @@ if (getRversion() >= "3.1.0") {
 #'  `newRasterCols` spatially, according to the join between the `mapcode`
 #'  contained within `reduced` and `fullRaster`
 #'
-#' @seealso [raster()]
+#' @seealso [terra::rast()]
 #'
 #' @author Eliot McIntire
 #' @export
 #' @importFrom data.table := data.table key setkeyv setnames
-#' @importFrom raster raster
-#' @importFrom terra ext values rast res levels
+#' @importFrom terra ext levels rast res values
 #' @rdname rasterizeReduced
 #'
 #' @example inst/examples/example_mapReduce.R
 #'
 rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names(fullRaster), ...) {
-
   if (!inherits(fullRaster, c("Raster", "SpatRaster"))) {
     stop("fullRaster must be a Raster or SpatRaster")
   }
 
-  ## don't use rasterRead; rasterizweReduced can be used independently of reproducible
+  ## don't use rasterRead; rasterizeReduced can be used independently of reproducible
   if (is(fullRaster, "Raster")) {
-    rasterFUN <- function(...)
-      raster(...)
+    rasterFUN <- function(...) {
+      raster::raster(...)
+    }
   } else {
-      rasterFUN <- function(...)
-        rast(...)
+    rasterFUN <- function(...) {
+      rast(...)
+    }
   }
 
   if (!is.data.table(reduced))
@@ -62,8 +63,26 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   } else {
     setkeyv(reduced, mapcode)
   }
-  fullRasterVals <- as.data.table(list(as.vector(values(fullRaster))))
+
+  ## instead of `.as.vector(values(fullRaster))` extract by pix ID so that
+  ## for factor rasters the value/label of the active category (not its code/level) is extracted
+  ## presumably this is the value in reduced.
+  fullRasterVals <- as.data.table(fullRaster[1:ncell(fullRaster)])
   setnames(fullRasterVals, 1, new = mapcode)
+
+  ## with RasterLayer we need to use factorValues to convert the mapcodes
+  ## to the levels.
+  if (is(fullRaster, "Raster")) {
+    if (raster::is.factor(fullRaster)) {
+      fullRasterVals <- as.data.table(raster::factorValues(fullRaster, fullRasterVals[[mapcode]]))
+      setnames(fullRasterVals, 1, new = mapcode)
+    }
+  }
+
+  if (is.factor(fullRasterVals[[mapcode]])) {
+    fullRasterVals[, (mapcode) := lapply(.SD, as.character), .SDcols = mapcode]
+  }
+
   set(fullRasterVals, NULL, "row_number", seq(ncell(fullRaster)))
   setkeyv(fullRasterVals, mapcode)
 

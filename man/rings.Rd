@@ -2,7 +2,6 @@
 % Please edit documentation in R/rings.R
 \name{rings}
 \alias{rings}
-\alias{rings,RasterLayer-method}
 \title{Identifies all cells within a ring around the focal cells}
 \usage{
 rings(
@@ -16,28 +15,16 @@ rings(
   returnDistances = TRUE,
   ...
 )
-
-\S4method{rings}{RasterLayer}(
-  landscape,
-  loci = NA_real_,
-  id = FALSE,
-  minRadius = 2,
-  maxRadius = 5,
-  allowOverlap = FALSE,
-  returnIndices = FALSE,
-  returnDistances = TRUE,
-  ...
-)
 }
 \arguments{
-\item{landscape}{A \code{RasterLayer} object. This defines the possible
+\item{landscape}{A \code{RasterLayer} or \code{SpatRaster} object. This defines the possible
 locations for spreading events to start and spread into.
 This can also be used as part of \code{stopRule}.}
 
 \item{loci}{A vector of locations in \code{landscape}.
 These should be cell indices.
 If user has x and y coordinates, these can be converted
-with \code{\link[raster:cellFrom]{cellFromXY()}}.}
+with \code{\link[terra:xyCellFrom]{cellFromXY()}}.}
 
 \item{id}{Logical. If \code{TRUE}, returns a raster of events ids.
 If \code{FALSE}, returns a raster of iteration numbers,
@@ -56,17 +43,17 @@ with one another, i.e., they do not interact (this is slower
 than if \code{allowOverlap = FALSE}).
 Default is \code{FALSE}.}
 
-\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will
-return a \code{data.table} with indices and values of
-successful spread events.
+\item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will return a \code{data.table}
+with indices and values of successful spread events.
 If \code{2}, it will simply return a vector of pixel indices of
-all cells that were touched. This will be the fastest option. If
-\code{FALSE}, then it will return a raster with
-values. See Details.}
+all cells that were touched. This will be the fastest option.
+If \code{FALSE}, then it will return a raster with values.
+See Details.}
 
 \item{returnDistances}{Logical. Should the function include a column with the
 individual cell distances from the locus where that event
-started. Default is \code{FALSE}. See Details.}
+started. Default is \code{FALSE}.
+See Details.}
 
 \item{...}{Any other argument passed to \code{spread}}
 }
@@ -78,49 +65,35 @@ This will return  a \code{data.table} with columns as described in
 Identifies the cell numbers of all cells within a ring defined by  minimum
 and maximum distances from focal cells.
 Uses \code{\link[=spread]{spread()}} under the hood, with specific values set.
-Under many situations, this will be faster than using \code{rgeos::gBuffer}
-twice (once for smaller ring and once for larger ring, then removing the
-smaller ring cells).
+Under many situations, this may be faster than using \code{sf::st_buffer} twice
+(once for smaller ring and once for larger ring, then removing the smaller ring cells).
 }
 \examples{
-library(raster)
-library(quickPlot)
+library(terra)
+if (requireNamespace("CircStats", quietly = TRUE)) {
 
-# Make random forest cover map
-emptyRas <- raster(extent(0, 1e2, 0, 1e2), res = 1)
+  # Make random forest cover map
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
 
-# start from two cells near middle
-loci <- (ncell(emptyRas) / 2 - ncol(emptyRas)) / 2 + c(-3, 3)
+  # start from two cells near middle
+  loci <- (ncell(emptyRas) / 2 - ncol(emptyRas)) / 2 + c(-3, 3)
 
-# Allow overlap
-## TODO: need to fix a bug when allowOverlap = TRUE
-# emptyRas[] <- 0
-# rngs <- rings(emptyRas, loci = loci, allowOverlap = TRUE, returnIndices = TRUE)
-# # Make a raster that adds together all id in a cell
-# wOverlap <- rngs[, list(sumEventID = sum(id)), by = "indices"]
-# emptyRas[wOverlap$indices] <- wOverlap$sumEventID
-# if (interactive()) {
-#  clearPlot()
-#  Plot(emptyRas)
-# }
+  # No overlap is default, occurs randomly
+  emptyRas[] <- 0
+  rngs <- rings(emptyRas, loci = loci, minRadius = 7, maxRadius = 9, returnIndices = TRUE)
+  emptyRas[rngs$indices] <- rngs$id
+  if (interactive()) {
+    terra::plot(emptyRas)
+  }
 
-# No overlap is default, occurs randomly
-emptyRas[] <- 0
-rngs <- rings(emptyRas, loci = loci, minRadius = 7, maxRadius = 9, returnIndices = TRUE)
-emptyRas[rngs$indices] <- rngs$id
-if (interactive()) {
-  clearPlot()
-  Plot(emptyRas)
-}
-
-# Variable ring widths, including centre cell for smaller one
-emptyRas[] <- 0
-rngs <- rings(emptyRas, loci = loci, minRadius = c(0, 7), maxRadius = c(8, 18),
-              returnIndices = TRUE)
-emptyRas[rngs$indices] <- rngs$id
-if (interactive()) {
-  clearPlot()
-  Plot(emptyRas)
+  # Variable ring widths, including centre cell for smaller one
+  emptyRas[] <- 0
+  rngs <- rings(emptyRas, loci = loci, minRadius = c(0, 7), maxRadius = c(8, 18),
+                returnIndices = TRUE)
+  emptyRas[rngs$indices] <- rngs$id
+  if (interactive()) {
+    terra::plot(emptyRas)
+  }
 }
 }
 \seealso{
@@ -131,7 +104,7 @@ between the two functions is that \code{rings} takes the centre of the pixel
 as the centre of a circle, whereas \code{cir} takes the exact coordinates.
 See example.
 
-\code{rgeos::gBuffer}
+\code{sf::st_buffer}
 }
 \author{
 Eliot McIntire

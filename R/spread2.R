@@ -51,7 +51,7 @@ utils::globalVariables(c(
 #' \deqn{max(spreadProb)/min(spreadProb)} will generally be less than
 #' `asymmetry`, for the 8 neighbours. The exact adjustment to the spreadProb
 #' is calculated with:
-#' \deqn{angleQuality <- (cos(angles - rad(asymmetryAngle))+1)/2}
+#' \deqn{angleQuality <- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2}
 #' which is multiplied to get an angle-adjusted spreadProb:
 #' \deqn{spreadProbAdj <- actualSpreadProb * angleQuality}
 #' which is then rescaled:
@@ -97,7 +97,7 @@ utils::globalVariables(c(
 #'              `data.table` that is the output of a previous `spread2`.
 #'              If a vector, they should be cell indices (pixels) on the `landscape`.
 #'              If user has x and y coordinates, these can be converted with
-#'              [`cellFromXY()`][raster::cellFromXY].
+#'              [`cellFromXY()`][terra::cellFromXY].
 #'
 #' @param spreadProb  Numeric of length 1 or length `ncell(landscape)` or
 #'                    a `RasterLayer` that is the identical dimensions as
@@ -330,16 +330,14 @@ utils::globalVariables(c(
 #'
 #' @author Eliot McIntire and Steve Cumming
 #' @export
-#' @importFrom checkmate assert assertClass assertNumeric
+#' @importFrom checkmate assert assertClass assertMultiClass assertNumeric
 #' @importFrom checkmate checkClass checkDataTable checkLogical checkNumeric checkScalarNA
-#' @importFrom checkmate qassert
+#' @importFrom checkmate qassert checkMultiClass
 #' @importFrom data.table := alloc.col as.data.table copy data.table is.data.table
 #' @importFrom data.table rbindlist set setattr setcolorder setkeyv setnames uniqueN
-#' @importFrom fastmatch fmatch
 #' @importFrom fpCompare %<=% %>>%
-#' @importFrom magrittr %>%
-#' @importFrom quickPlot Plot
-#' @importFrom raster fromDisk ncell raster res ncol pointDistance
+#' @importFrom terra ncell res ncol distance
+#' @importFrom reproducible .requireNamespace
 #' @importFrom stats runif
 #'
 #' @seealso [spread()] for a different implementation of the same algorithm.
@@ -358,45 +356,52 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                     skipChecks = FALSE) {
 
   #### assertions ###############
-  assertClass(landscape, "Raster")
+  checkmate::assertMultiClass(landscape, c("Raster", "SpatRaster"))
+  fmatch2 <- if (requireNamespace("fastmatch", quietly = TRUE)) fastmatch::fmatch else base::match
+  landscapeOrigClass <- is(landscape)
   ncells <- ncell(landscape)
   numCols <- ncol(landscape)
   anyNAneighProbs <- any(is.na(neighProbs))
   if (!skipChecks) {
     assert(
       checkNumeric(start, min.len = 0, max.len = ncells, lower = 1, upper = ncells),
-      checkClass(start, "Raster"),
+      checkMultiClass(start, c("Raster", "SpatRaster")),
       checkDataTable(start))
 
     qassert(neighProbs, "n[0,1]")
     assertNumeric(sum(neighProbs), lower = 1, upper = 1)
 
-    assert(
-      checkNumeric(spreadProb, 0, 1, min.len = ncell(landscape), max.len = ncell(landscape)),
+    # if (!inherits(spreadProb, "Raster") && !inherits(spreadProb, "SpatRaster")) {
+    assert(# this is "or"
+      checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = ncell(landscape)),
       checkNumeric(spreadProb, 0, 1, min.len = 1, max.len = 1),
-      checkClass(spreadProb, "RasterLayer")
+      checkClass(spreadProb, "Raster"),
+      checkClass(spreadProb, "SpatRaster")
     )
+    # }
 
-    if (is(spreadProb, "Raster")) {
-      if (fromDisk(spreadProb)) {
+    if (is(spreadProb, "Raster") || is(spreadProb, "SpatRaster")) {
+      if (!terra::inMemory(spreadProb)) {
         warning("spreadProb is a raster layer stored on disk. This may cause spread2 to be",
                 " very slow. We suggest extracting the values to a numeric vector first, ",
                 "then passing this to spreadProb")
       }
     }
-    assert(checkNumeric(persistProb, 0, 1, min.len = 1, max.len = 1),
-           checkClass(persistProb, "RasterLayer"))
     assert(
-      checkScalarNA(spreadProbRel),
-      checkClass(spreadProbRel, "RasterLayer")
+      checkNumeric(persistProb, 0, 1, min.len = 1, max.len = 1),
+      checkMultiClass(persistProb,  c("RasterLayer", "SpatRaster"))
+    )
+    assert(
+      checkMultiClass(spreadProbRel, c("RasterLayer", "SpatRaster")),
+      checkScalarNA(spreadProbRel) ## needs to be checked second; will fail if SpatRaster
     )
     assert(
       checkNumeric(asymmetry, 0, Inf, min.len = 1, max.len = 1),
-      checkClass(asymmetry, "RasterLayer")
+      checkMultiClass(asymmetry, c("RasterLayer", "SpatRaster"))
     )
     assert(
       checkNumeric(asymmetryAngle, 0, 360, min.len = 1, max.len = 1),
-      checkClass(asymmetryAngle, "RasterLayer")
+      checkMultiClass(asymmetryAngle,  c("RasterLayer", "SpatRaster"))
     )
     qassert(directions, "N1[4,8]")
     qassert(iterations, "N1[0,Inf]")
@@ -450,12 +455,15 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   # returnDistances = TRUE and circle = TRUE both require distance calculations
   needDistance <- returnDistances | circle | returnDirections
   usingAsymmetry <- !is.na(asymmetry)
+  asymmetryAngleNeedSubset <- (inherits(asymmetryAngle, "Raster") ||
+                                 inherits(asymmetryAngle, "SpatRaster")) &&
+    NROW(asymmetryAngle) != 1 # length was previously used, but has different meaning for SpatRaster & Raster
 
   # This means that if an event can not spread any more, it will try 10 times, incl. 2 jumps
   # maxRetriesPerID <- 10
 
   if (!is.numeric(start) & !is.data.table(start)) {
-    if (is(start, "Raster")) {
+    if (is(start, "Raster") || is(start, "SpatRaster")) {
       start <- attr(start, "pixel")
     } else {
       stop("Start must be either a vector of pixels, a data.table from",
@@ -604,7 +612,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                              includeBehavior = "excludePixels",
                              minRadius = resCur,
                              maxRadius = 20 * resCur)[, "indices"]) # 20 pixels
-        }) %>%
+        }) |>
           do.call(what = rbind)
 
         dtPotential <- matrix(as.integer(dtPotential), ncol = 2)
@@ -666,7 +674,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     if (needDistance) {
       fromPts <- xyFromCell(landscape, dtPotential$id)
       toPts <- xyFromCell(landscape, dtPotential$to)
-      dists <- pointDistance(p1 = fromPts, p2 = toPts, lonlat = FALSE)
+      dists <- terra::distance(fromPts, toPts, pairwise=TRUE, lonlat = FALSE)
       if (isTRUE(returnDirections))
         dirs <- .pointDirection(fromPts, toPts)
       if (usingAsymmetry) {
@@ -675,7 +683,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         } else {
           asymmetry[dtPotential$to]
         }
-        actualAsymmetryAngle <- if (length(asymmetryAngle) == 1) {
+        actualAsymmetryAngle <- if (!asymmetryAngleNeedSubset) {
           asymmetryAngle
         } else {
           asymmetryAngle[dtPotential$to]
@@ -712,7 +720,6 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         pureCircle <- cbind(pureCircle[, c("id", "indices", "dists"), drop = FALSE],
                             distClass = ceiling(pureCircle[, "dists"]))
         colnames(pureCircle)[2] <- c("to")
-
         theoreticalAngleQualities <- angleQuality(pureCircle[, "id", drop = FALSE],
                                                   pureCircle[, "to", drop = FALSE],
                                                   landscape,
@@ -815,7 +822,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       setkeyv(dtPotential, c("id", "from")) # sort so it is the same as numNeighsByPixel
 
       if (NROW(dtPotential)) {
-        if (is(spreadProbRel, "RasterLayer")) {
+        if (is(spreadProbRel, "RasterLayer") || is(spreadProbRel, "SpatRaster")) {
           set(dtPotential, NULL, "spreadProbRel", spreadProbRel[][dtPotential$to])
         } else {
           set(dtPotential, NULL, "spreadProbRel", 1)
@@ -855,15 +862,15 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 6 -- spreadProb implementation - uses an absolute probability for
     # each potential neighbour
     # Extract spreadProb for the current set of potentials
-    if (length(spreadProb) == 1) {
+    if (length(spreadProb) == 1 & !inherits(spreadProb, "SpatRaster")) {
       actualSpreadProb <- rep(spreadProb, NROW(dtPotential))
     } else {
-      actualSpreadProb <- spreadProb[dtPotential$to]
+      actualSpreadProb <- as.vector(spreadProb)[dtPotential$to]
       # remove NA values that may come from a spreadProb raster
       NAaSP <- !is.na(actualSpreadProb)
       if (any(NAaSP)) {
         if (!all(NAaSP)) {
-        dtPotential <- dtPotential[NAaSP,]
+        dtPotential <- dtPotential[NAaSP, ]
         actualSpreadProb <- actualSpreadProb[NAaSP]
       }
       }
@@ -879,10 +886,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         asymmetry[dtPotential$to]
       }
 
-      actualAsymmetryAngle <- if (length(asymmetryAngle) == 1) {
-        asymmetryAngle
+      actualAsymmetryAngle <- if (asymmetryAngleNeedSubset) {
+        asymmetryAngle[][dtPotential$to]
       } else {
-        asymmetryAngle[dtPotential$to]
+        asymmetryAngle
       }
 
       angleQualities <- angleQuality(from = dtPotential$id, to = dtPotential$to,
@@ -899,7 +906,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       set(dtPotential, NULL, "actualSpreadProb", actualSpreadProb)
       randoms <- runifC(length(unique(dtPotential$from)))
       dtPotential[, keep := {
-        cumProb = cumsum(actualSpreadProb)/sum(actualSpreadProb)
+        cumProb <- cumsum(actualSpreadProb) / sum(actualSpreadProb)
         draw <- randoms[.GRP]
         .I[min(which(draw <= cumProb))]},
         by = "from"]
@@ -915,13 +922,14 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 8 - Remove duplicates & bind dt and dtPotential
     if (anyNAneighProbs) {
       if (isTRUE(allowOverlap > 0) | is.na(allowOverlap) | !canUseAvailable) {
-        # overlapping allowed
+        ## overlapping allowed
         dtPotential <- dtPotential[spreadProbSuccess]
         dtNROW <- NROW(dt)
         dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
 
-        # this is to prevent overlap within an event... in some cases, overlap within event is desired, so skip this block
-        if (!is.na(allowOverlap) && (any(allowOverlap %in% c(1,3) ) || isTRUE(allowOverlap))) {
+        ## this is to prevent overlap within an event...
+        ## in some cases, overlap within event is desired, so skip this block
+        if (!is.na(allowOverlap) && (any(allowOverlap %in% c(1, 3) ) || isTRUE(allowOverlap))) {
           if (identical(allowOverlap, 1) || isTRUE(allowOverlap)) {
             dt[, `:=`(dups = duplicatedInt(pixels)), by = "initialPixels"]
           } else {
@@ -938,7 +946,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           dt <- dt[!dupes]
         }
 
-        # remove all the duplicated ones from dtPotential
+        ## remove all the duplicated ones from dtPotential
         dtPotential <- dt[-seq_len(dtNROW)]
       } else {
         # no overlapping allowed
@@ -1063,14 +1071,14 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # breaking some tests
 
     ## Extract persistenceProb for the current set of source pixels
-    if (length(persistProb) == 1) {
+    if (length(persistProb) == 1 && (!is(persistProb, "Raster") && !is(persistProb, "SpatRaster"))) {
       if (is.na(persistProb)) {
         actualPersistProb <- NULL
       } else {
         actualPersistProb <- rep(persistProb, sum(dt$state == "activeSource"))
       }
     } else {
-      actualPersistProb <- persistProb[dt[state == "activeSource", initialPixels]]
+      actualPersistProb <- persistProb[][dt[state == "activeSource", initialPixels]]
     }
 
     ## "activeSource" fires become "successful" depending on prob of persistence
@@ -1093,16 +1101,22 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     #   tooSmall ==> tooSmall
     set(dt, whNotInactive, "state",
         c("inactive", "activeSource", "activeSource", "tooSmall")[
-          fmatch(activeStates, c("activeSource", "holding", "successful", "tooSmall"))])
+          fmatch2(activeStates, c("activeSource", "holding", "successful", "tooSmall"))])
 
     # Step 11 - plot it if necessary
     if (plot.it) {
+      # .requireNamespace("quickPlot", stopOnFALSE = TRUE)
+
       newPlot <- FALSE
       if (totalIterations == 1) {
         newPlot <- TRUE
       }
-      if (newPlot | !(exists("spread2Ras", inherits = FALSE)))
-        spread2Ras <- raster(landscape)
+      if (newPlot | !(exists("spread2Ras", inherits = FALSE))) {
+        if (any(landscapeOrigClass == "Raster"))
+          spread2Ras <- raster::raster(landscape)
+        else
+          spread2Ras <- terra::rast(landscape)
+      }
       if (returnDistances) {
         spread2Ras[dt$pixels] <- dt$distance
         newPlot <- TRUE # need to rescale legend each time
@@ -1113,7 +1127,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         setkeyv(dt, "order")
         set(dt, NULL, "order", NULL)
       }
-      Plot(spread2Ras, new = newPlot)
+      terra::plot(spread2Ras, add = !newPlot)
     }
   } # end of main loop
 
@@ -1134,7 +1148,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   # Step 13 -- return either raster or data.table
   if (asRaster) {
-    ras <- raster(landscape)
+    if (any(landscapeOrigClass == "Raster"))
+      ras <- raster::raster(landscape)
+    else
+      ras <- terra::rast(landscape)
+    # ras <- raster(landscape)
     # inside unit tests, this raster gives warnings if it is only NAs
     suppressWarnings(ras[dt$pixels] <- clusterDT[dt]$id)
     setattr(ras, "pixel", dt)
@@ -1202,11 +1220,11 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
 #' @keywords internal
 #' @rdname spread2-internals
 angleQuality <- function(from, to, landscape, actualAsymmetryAngle) {
-  from1 <- cbind(id = from, xyFromCell(landscape, from))
-  to1 <- cbind(id = from, xyFromCell(landscape, to))
+  from1 <- cbind(id = from, xyFromCell(landscape, cell = as.vector(from)))
+  to1 <- cbind(id = from, xyFromCell(landscape, cell = as.vector(to)))
   d <- .pointDirection(from = from1, to = to1)
 
-  angleQuality <- cbind(angleQuality = (cos(d[, "angles"] - rad(actualAsymmetryAngle)) + 1), d)
+  angleQuality <- cbind(angleQuality = (cos(d[, "angles"] - CircStats::rad(actualAsymmetryAngle)) + 1), d)
   angleQuality
 }
 
