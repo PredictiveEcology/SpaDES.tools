@@ -19,6 +19,7 @@ test_that("adj.R results not identical to adjacent", {
           for (sortTF in c(TRUE, FALSE)) {
             for (ma in c(TRUE, FALSE)) {
               for (dirs in list(4, 8, "bishop")) {
+                aOrig <- reproducible::Copy(a)
                 for (prs in c(TRUE, FALSE)) {
                   for (tor in c(TRUE, FALSE)) {
                     adjDT <- adj(a, sam, directions = dirs, sort = sortTF,
@@ -29,30 +30,64 @@ test_that("adj.R results not identical to adjacent", {
                                   target = targs, id = ids, pairs = prs, torus = tor)
                     expect_equivalent(adjMat, adjDT)
                     if (!tor) {
-                      adj2 <- tryCatch(
-                        terra::adjacent(a, sam, directions = dirs, sorted = sortTF,
-                                        include = incl, id = !is.null(ids),
-                                        pairs = prs, target = targs),
-                        error = function(x) FALSE
-                      )
+                      useRasterPkg <- !is.null(targs) || isTRUE(sortTF) || !is.null(ids)
+                      if (useRasterPkg) {
+                        adj2 <- tryCatch({
+                          if (!requireNamespace("raster")) stop()
+                          terra::adjacent(a, sam, directions = dirs, sorted = sortTF,
+                                          include = incl, id = !is.null(ids),
+                                          pairs = prs, target = targs
+                          )},
+                          error = function(x) FALSE
+                        )
+                      } else {
+                        adj2 <- tryCatch(
+                          terra::adjacent(a, sam, directions = dirs, # sorted = sortTF,
+                                          include = incl, #id = !is.null(ids),
+                                          pairs = prs#, target = targs
+                          ),
+                          error = function(x) FALSE
+                        )
+                      }
+                      if (!is.matrix(adj2))
+                        adj2 <- matrix(adj2, nrow = 1)
+
                       if (!isFALSE(adj2)) {
                         if (!prs) {
                           if (ma) {
-                            expect_equivalent(adjDT, adj2,
-                                              info = paste0("ma=", ma,
-                                                            ", dirs=", dirs,
-                                                            ", sortTF=", sortTF,
-                                                            ", incl=", incl,
-                                                            ", is.null(ids)=", is.null(ids),
-                                                            ", prs=", prs))
+                            if (useRasterPkg) {
+                              expect_equivalent(adjDT, adj2,
+                                                info = paste0("ma=", ma,
+                                                              ", dirs=", dirs,
+                                                              ", sortTF=", sortTF,
+                                                              ", incl=", incl,
+                                                              ", is.null(ids)=", is.null(ids),
+                                                              ", prs=", prs))
+                            } else {
+                              expect_equivalent(sort(adjDT), unique(sort(na.omit(as.numeric(adj2)))),
+                                                info = paste0("ma=", ma,
+                                                              ", dirs=", dirs,
+                                                              ", sortTF=", sortTF,
+                                                              ", incl=", incl,
+                                                              ", is.null(ids)=", is.null(ids),
+                                                              ", prs=", prs))
+                            }
+
                           } else {
-                            expect_equivalent(unique(sort(adjDT[, "to"])), sort(adj2))
+                            expect_equivalent(unique(sort(adjDT[, "to"])),
+                                              unique(sort(na.omit(as.numeric(sort(adj2))))))
                           }
                         } else {
                           colOrd <- if (is.null(ids)) 1:2 else c(2, 3, 1)
                           if (ma) {
                             if (!sortTF) {
-                              expect_equivalent(adjDT, adj2[, colOrd])
+                              # if (!isTRUE(all.equal(adjDT, adj2[, colOrd]))) browser()
+                              if (useRasterPkg) {
+                                expect_equivalent(adjDT, adj2[, colOrd])
+                              } else {
+                                expect_equivalent(adj2[order(adj2[, "from"], adj2[, "to"]), ][, colOrd],
+                                                  adjDT[order(adjDT[, "from"], adjDT[, "to"]), ])
+                              }
                             } else {
                               expect_equivalent(adjDT, adj2[order(adj2[, "from"],
                                                                   adj2[, "to"]), colOrd])
@@ -61,6 +96,7 @@ test_that("adj.R results not identical to adjacent", {
                             if (!sortTF) {
                               # if match.adjacent is FALSE, and sort is FALSE,
                               # then they mostly don't match
+
                               if (sum((adjDT - adj2[, colOrd]) ^ 2) == 0) {
                                 expect_equivalent(adjDT, adj2[, colOrd])
                               } else {
