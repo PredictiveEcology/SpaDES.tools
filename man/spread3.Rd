@@ -121,7 +121,7 @@ They are "rounded" to pixel centres.
                    advectionDir = advectionDir,
                    advectionMag = advectionMag,
                    meanDist = meanDist, verbose = 2,
-                   plot.it = 2)
+                   plot.it = interactive())
 
     plotDispersalKernel(out, advectionMag)
 
@@ -148,7 +148,7 @@ They are "rounded" to pixel centres.
                      advectionDir = advectionDir,
                      advectionMag = advectionMag,
                      meanDist = meanDist, verbose = 2,
-                     plot.it = 1)
+                     plot.it = interactive())
       if (interactive()) {
         plotDispersalKernel(out, advectionMag)
       }
@@ -184,7 +184,7 @@ They are "rounded" to pixel centres.
                    advectionDir = advectionDir,
                    advectionMag = advectionMag,
                    meanDist = meanDist, verbose = 2,
-                   plot.it = 1)
+                   plot.it = interactive())
 
     if (interactive()) {
       names(advectionDir) <- "Wind direction"
@@ -204,7 +204,7 @@ They are "rounded" to pixel centres.
                    advectionDir = advectionDir,
                    advectionMag = advectionMag,
                    meanDist = 2600, verbose = 2,
-                   plot.it = 0, saveStack = tmpStack)
+                   plot.it = interactive(), saveStack = tmpStack)
 
     ## This animates the series of images into an animated GIF
     if (require(animation, quietly = TRUE)) {

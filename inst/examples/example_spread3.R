@@ -42,98 +42,101 @@
                    advectionDir = advectionDir,
                    advectionMag = advectionMag,
                    meanDist = meanDist, verbose = 2,
-                   plot.it = 2)
+                   plot.it = interactive())
 
     plotDispersalKernel(out, advectionMag)
 
-    #########################################################
-    ### The case of variable quality raster
-    #########################################################
-    if (requireNamespace("sf", quietly = TRUE)) {
-      rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif", package = "SpaDES.tools"))
-      theCRS <- sf::st_crs(readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools")))
-      terra::crs(rasQuality) <- theCRS$wkt
-      mask <- rasQuality < 5
-      rasQuality[mask[] %in% TRUE] <- 0
-      # rescale so min is 0.75 and max is 1
-      rasQuality[] <- rasQuality[] / (reproducible::maxFn(rasQuality) * 4) + 1 / 4
+    # The next examples are potentially time consuming; avoid on automated testing
+    if (interactive()) {
+      #########################################################
+      ### The case of variable quality raster
+      #########################################################
+      if (requireNamespace("sf", quietly = TRUE)) {
+        rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif", package = "SpaDES.tools"))
+        theCRS <- sf::st_crs(readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools")))
+        terra::crs(rasQuality) <- theCRS$wkt
+        mask <- rasQuality < 5
+        rasQuality[mask[] %in% TRUE] <- 0
+        # rescale so min is 0.75 and max is 1
+        rasQuality[] <- rasQuality[] / (reproducible::maxFn(rasQuality) * 4) + 1 / 4
+        rasAbundance <- terra::rast(rasQuality)
+        rasAbundance[] <- 0
+        startPixel <- sample(seq(ncell(rasAbundance)), 300)
+        rasAbundance[startPixel] <- 1000
+        advectionDir <- 75
+        advectionMag <- 4 * res(rasAbundance)[1]
+        meanDist <- 2600
+        out <- spread3(rasAbundance = rasAbundance,
+                       rasQuality = rasQuality,
+                       advectionDir = advectionDir,
+                       advectionMag = advectionMag,
+                       meanDist = meanDist, verbose = 2,
+                       plot.it = interactive())
+        if (interactive()) {
+          plotDispersalKernel(out, advectionMag)
+        }
+      }
+
+      ###############################################################################
+      ### The case of variable quality raster, raster for advectionDir & advectionMag
+      ###############################################################################
+      maxDim <- 10000
+      ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
+      rasQuality <- terra::rast(ras)
+      rasQuality[] <- 1
       rasAbundance <- terra::rast(rasQuality)
-      rasAbundance[] <- 0
-      startPixel <- sample(seq(ncell(rasAbundance)), 300)
+      rasAbundance[] <- NA
+      # startPixel <- middlePixel(rasAbundance)
+      startPixel <- sample(seq(ncell(rasAbundance)), 25)
       rasAbundance[startPixel] <- 1000
-      advectionDir <- 75
-      advectionMag <- 4 * res(rasAbundance)[1]
-      meanDist <- 2600
+
+      # raster for advectionDir
+      advectionDir <- terra::rast(system.file("extdata", "advectionDir.tif", package = "SpaDES.tools"))
+      crs(advectionDir) <- crs(rasQuality)
+      # rescale so min is 0.75 and max is 1
+      advectionDir[] <- advectionDir[] / (reproducible::maxFn(advectionDir)) * 180
+
+      # raster for advectionMag
+      advectionMag <- terra::rast(system.file("extdata", "advectionMag.tif", package = "SpaDES.tools"))
+      crs(advectionMag) <- crs(rasQuality)
+      # rescale so min is 0.75 and max is 1
+      advectionMag[] <- advectionMag[] / (reproducible::maxFn(advectionMag)) * 600
+
       out <- spread3(rasAbundance = rasAbundance,
                      rasQuality = rasQuality,
                      advectionDir = advectionDir,
                      advectionMag = advectionMag,
                      meanDist = meanDist, verbose = 2,
-                     plot.it = 1)
+                     plot.it = interactive())
+
       if (interactive()) {
-        plotDispersalKernel(out, advectionMag)
+        names(advectionDir) <- "Wind direction"
+        names(advectionMag) <- "Wind speed"
+        names(rasAbundance) <- "Initial abundances"
+        terra::plot(c(advectionDir, advectionMag, rasAbundance))
+
+        plotDispersalKernel(out, mean(advectionMag[]))
       }
-    }
 
-    ###############################################################################
-    ### The case of variable quality raster, raster for advectionDir & advectionMag
-    ###############################################################################
-    maxDim <- 10000
-    ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
-    rasQuality <- terra::rast(ras)
-    rasQuality[] <- 1
-    rasAbundance <- terra::rast(rasQuality)
-    rasAbundance[] <- NA
-    # startPixel <- middlePixel(rasAbundance)
-    startPixel <- sample(seq(ncell(rasAbundance)), 25)
-    rasAbundance[startPixel] <- 1000
+      #########################################
+      # save iterations to a stack to make animated GIF
+      ########################################
+      tmpStack <- tempfile(pattern = "stackToAnimate", fileext = ".tif")
+      out <- spread3(rasAbundance = rasAbundance,
+                     rasQuality = rasQuality,
+                     advectionDir = advectionDir,
+                     advectionMag = advectionMag,
+                     meanDist = 2600, verbose = 2,
+                     plot.it = interactive(), saveStack = tmpStack)
 
-    # raster for advectionDir
-    advectionDir <- terra::rast(system.file("extdata", "advectionDir.tif", package = "SpaDES.tools"))
-    crs(advectionDir) <- crs(rasQuality)
-    # rescale so min is 0.75 and max is 1
-    advectionDir[] <- advectionDir[] / (reproducible::maxFn(advectionDir)) * 180
-
-    # raster for advectionMag
-    advectionMag <- terra::rast(system.file("extdata", "advectionMag.tif", package = "SpaDES.tools"))
-    crs(advectionMag) <- crs(rasQuality)
-    # rescale so min is 0.75 and max is 1
-    advectionMag[] <- advectionMag[] / (reproducible::maxFn(advectionMag)) * 600
-
-    out <- spread3(rasAbundance = rasAbundance,
-                   rasQuality = rasQuality,
-                   advectionDir = advectionDir,
-                   advectionMag = advectionMag,
-                   meanDist = meanDist, verbose = 2,
-                   plot.it = 1)
-
-    if (interactive()) {
-      names(advectionDir) <- "Wind direction"
-      names(advectionMag) <- "Wind speed"
-      names(rasAbundance) <- "Initial abundances"
-      terra::plot(c(advectionDir, advectionMag, rasAbundance))
-
-      plotDispersalKernel(out, mean(advectionMag[]))
-    }
-
-    #########################################
-    # save iterations to a stack to make animated GIF
-    ########################################
-    tmpStack <- tempfile(pattern = "stackToAnimate", fileext = ".tif")
-    out <- spread3(rasAbundance = rasAbundance,
-                   rasQuality = rasQuality,
-                   advectionDir = advectionDir,
-                   advectionMag = advectionMag,
-                   meanDist = 2600, verbose = 2,
-                   plot.it = 0, saveStack = tmpStack)
-
-    ## This animates the series of images into an animated GIF
-    if (require(animation, quietly = TRUE)) {
-      out2 <- terra::rast(tmpStack)
-      gifName <- file.path(tempdir(), "animation.gif")
-      saveGIF(interval = 0.1, movie.name = gifName, expr = {
-        for (i in seq(length(names(out2)))) plot(out2[[i]])
-      })
+      ## This animates the series of images into an animated GIF
+      if (require(animation, quietly = TRUE)) {
+        out2 <- terra::rast(tmpStack)
+        gifName <- file.path(tempdir(), "animation.gif")
+        saveGIF(interval = 0.1, movie.name = gifName, expr = {
+          for (i in seq(length(names(out2)))) plot(out2[[i]])
+        })
+      }
     }
   }
 }
