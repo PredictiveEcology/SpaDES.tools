@@ -23,9 +23,9 @@
 #'
 #' @author Eliot McIntire
 transitions <- function(p, agent) {
-  if (!requireNamespace("sp")) stop("Need to install.packages('sp')")
-    sp::coordinates(agent)[which(p == 0), ] <- NA
-    return(agent)
+  .requireNamespace("sp")
+  sp::coordinates(agent)[which(p == 0), ] <- NA
+  return(agent)
 }
 
 ##############################################################
@@ -84,7 +84,6 @@ numAgents <- function(N, probInit) {
 #' @export
 #' @include heading.R
 #' @importFrom terra values ncell xyFromCell
-#' @importFrom reproducible .requireNamespace
 #' @importFrom stats runif
 #' @rdname initiateAgents
 #'
@@ -108,7 +107,7 @@ initiateAgents <- function(map, numAgents, probInit, asSpatialPoints = TRUE, ind
       diffs <- cbind(runif(length(indices), -res(map)[1] / 2, res(map)[1] / 2),
                      runif(length(indices), -res(map)[2] / 2, res(map)[2] / 2))
       if (isTRUE(asSpatialPoints)) {
-        .requireNamespace("sp", stopOnFALSE = TRUE)
+        .requireNamespace("sp")
         xys <- sp::SpatialPoints(xys)
         xys@coords <- xys@coords + diffs
         xys@bbox <- cbind(apply(sp::coordinates(xys), 2, min), apply(sp::coordinates(xys), 2, max))
@@ -216,7 +215,7 @@ probInit <- function(map, p = NULL, absolute = NULL) {
     p <- rep(p, length.out = ncell(map))
     probInit <- setValues(probInit, p / (sum(p) * (1 - absolute) + 1 * (absolute)))
   } else if (is(p, "RasterLayer")) {
-    if (!requireNamespace("raster")) stop("Need to install.packages('raster')")
+    .requireNamespace("raster")
     probInit <- p / (raster::cellStats(p, sum) * (1 - absolute) + 1 * (absolute))
   } else if (is(map, "SpatialPolygonsDataFrame")) {
     probInit <- p / sum(p)

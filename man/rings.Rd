@@ -70,7 +70,7 @@ Under many situations, this may be faster than using \code{sf::st_buffer} twice
 }
 \examples{
 library(terra)
-if (requireNamespace("CircStats", quietly = TRUE)) {
+if (require("CircStats")) {
 
   # Make random forest cover map
   emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)

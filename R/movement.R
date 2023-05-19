@@ -77,9 +77,8 @@ crw <- function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
   }
 
   if (inherits(agent, "SpatialPoints") || (inherits(agent, "SpatVect"))) {
-    if (!requireNamespace("CircStats")) stop("Need to install.packages('CircStats')")
+    .requireNamespace("CircStats")
     n <- length(agent)
-    browser()
     agent <- sp::SpatialPointsDataFrame(agent, data = data.frame(
       x1 = runif(n, -180, 180), y1 = runif(n, -180, 180)
     ))

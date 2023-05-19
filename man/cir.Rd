@@ -154,7 +154,7 @@ if (interactive()) {
 }
 
 # rings
-if (requireNamespace("CircStats", quietly = TRUE)) {
+if (require("CircStats")) {
   loci <- cellFromXY(hab, crds(coords))
   cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
 

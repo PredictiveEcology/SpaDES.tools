@@ -1,3 +1,10 @@
+#' @keywords internal
+.requireNamespace <- function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    stop(paste("Need to install.packages('", pkg, "')"))
+  }
+}
+
 # NA-aware comparison of two vectors
 # Copied from http://www.cookbook-r.com/Manipulating_data/Comparing_vectors_or_factors_with_NA/.
 compareNA <- function(v1, v2) {
@@ -6,16 +13,15 @@ compareNA <- function(v1, v2) {
   return(same)
 }
 
-#' @importFrom reproducible .requireNamespace
 extnt <- function(x, ...) {
   if (inherits(x, "Extent") || inherits(x, "SpatExtent")) {
     return(x)
   } else if (inherits(x, "Raster")) {
-    .requireNamespace("raster", stopOnFALSE = TRUE)
+    .requireNamespace("raster")
     return(raster::extent(x))
   } else if (inherits(x, "SpatRaster") || inherits(x, "sf")) {
-    if (inherits(x, "SpatRaster")) .requireNamespace("terra", stopOnFALSE = TRUE)
-    if (inherits(x, "sf")) .requireNamespace("sf", stopOnFALSE = TRUE)
+    if (inherits(x, "SpatRaster")) .requireNamespace("terra")
+    if (inherits(x, "sf")) .requireNamespace("sf")
     return(terra::ext(x))
   } else if (inherits(x, "numeric")) {
     return(terra::ext(x, ...))
@@ -30,22 +36,21 @@ extnt <- function(x, ...) {
   }
 }
 
-#' @importFrom reproducible .requireNamespace
 `extnt<-` <- function(x, value) {
   if (inherits(x, "Raster")) {
-    .requireNamespace("raster", stopOnFALSE = TRUE)
+    .requireNamespace("raster")
     if (inherits(value, "Extent")) {
       raster::extent(x) <- value
     } else if (inherits(value, "SpatExtent")) {
-      .requireNamespace("terra", stopOnFALSE = TRUE)
+      .requireNamespace("terra")
       x <- terra::rast(x)
       terra::ext(x) <- value
       x <- raster::raster(x)
     }
   } else if (inherits(x, "SpatRaster")) {
-    .requireNamespace("terra", stopOnFALSE = TRUE)
+    .requireNamespace("terra")
     if (inherits(value, "Extent")) {
-      .requireNamespace("raster", stopOnFALSE = TRUE)
+      .requireNamespace("raster")
       terra::ext(x) <- terra::ext(value)
     } else if (inherits(value, "SpatExtent")) {
       terra::ext(x) <- value
@@ -54,4 +59,3 @@ extnt <- function(x, ...) {
 
   return(x)
 }
-
