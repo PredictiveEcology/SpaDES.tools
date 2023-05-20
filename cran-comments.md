@@ -1,49 +1,42 @@
 ## Release information
 
-This is a resubmission to restore the package to CRAN following archival due to removal of dependency package `Require`, which has now been restored to CRAN.
+This is an major update of this package to address the global transition from `raster`, `sp`, `rgeos` and `rgdal` to `terra` and `sf`. The order of authors was also changed and `cre` were updated in this release to reflect a change in maintainer.  
+
 See `NEWS.md` for a full list of changes.
 
 ## Test environments
 
 ### Previous R versions
-* Ubuntu 20.04                 (GitHub), R 4.0.5
 * Ubuntu 20.04                 (GitHub), R 4.1.3
-* Windows                      (GitHub), R 4.0.5
+* Ubuntu 20.04                 (GitHub), R 4.2.3
+* Windows                      (GitHub), R 4.1.5
 * Windows                      (GitHub), R 4.1.3
-* Windows                 (win-builder), R 4.1.3
+* Windows                 (win-builder), R 4.2.3
 
 ### Current R versions
-* macOS 11.7 Big Sur           (GitHub), R 4.2.2
-* macOS 11.7 Big Sur            (local), R 4.2.2
-* macOs (m1) Big Sur             (rhub), R 4.2.2
-* Ubuntu 20.04                 (GitHub), R 4.2.2
-* Ubuntu 20.04                  (local), R 4.2.2 Patched (2022-11-10 r83330)
-* Windows                      (GitHub), R 4.2.2
-* Windows                       (local), R 4.2.2
-* Windows                 (win-builder), R 4.2.2
+* macOS 11.7 Big Sur           (GitHub), R 4.3.0
+* macOS 11.7 Big Sur            (local), R 4.3.0
+* macOs (m1) Big Sur             (rhub), R 4.3.0
+* Ubuntu 20.04                 (GitHub), R 4.3.0
+* Ubuntu 20.04                  (local), R 4.3.0 
+* Windows                      (GitHub), R 4.3.0
+* Windows                       (local), R 4.3.0
+* Windows                 (win-builder), R 4.3.0
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2022-12-20 r83482)
-* Ubuntu 20.04                  (local), R-devel (2022-12-19 r83478)
-* Windows                      (GitHub), R-devel (2022-12-20 r83482 ucrt)
-* Windows                 (win-builder), R-devel (2022-12-21 r83491 ucrt)
+* Ubuntu 20.04                 (GitHub), R-devel (2023-05-19 r84449 ucrt)
+* Windows                      (GitHub), R-devel (2023-05-19 r84449 ucrt)
+* Windows                 (win-builder), R-devel (2023-05-19 r84449 ucrt)
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
 
 There was 1 NOTEs:
 
-1. Some words were flagged as possibly misspelled, but they are false positives:
-
-    Possibly mis-spelled words in DESCRIPTION:
-      SpaDES (4:27)
-      automata (6:25)
-
-2. We provide instructions for installing suggested package `NLMR` from another repository:
+1. Related to the Suggested package that is available in a additional repository. We provide instructions for installing suggested package `NLMR` from another repository:
 
     The Description field contains
         "https://PredictiveEcology.r-universe.dev")'.
-    Please enclose URLs in angle brackets (<...>).
 
 ## Downstream dependencies
 
