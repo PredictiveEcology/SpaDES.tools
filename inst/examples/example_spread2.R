@@ -82,52 +82,61 @@ if (require("CircStats")) {
 ##   event size is the same as without using asymmetry
 \donttest{
   if (interactive()) {
-    ras <- rast(a)
-    ras[] <- 1
+    # Still using `raster` as it works more easily with parallelism due to not using pointers
+    #   This will updated at a later release
+    if (requireNamespace("raster", quietly = TRUE)) {
+      ras <- raster::raster(a)
+      ras[] <- 1
 
-    n <- 100
-    sizes <- integer(n)
-    for (i in 1:n) {
-      circs <- spread2(ras, spreadProb = 0.225,
-                       start = round(ncell(ras) / 4 - ncol(ras) / 4 * 3),
-                       asRaster = FALSE)
-      sizes[i] <- circs[, .N]
-    }
-    goalSize <- mean(sizes)
-
-    if (requireNamespace("DEoptim", quietly = TRUE)) {
-      library(parallel)
-      library(DEoptim)
-
-      # need 10 cores for 10 populations in DEoptim
-      cl <- makeCluster(pmin(10, detectCores() - 2))
-      parallel::clusterEvalQ(cl, {
-        library(SpaDES.tools)
-        library(fpCompare)
-      })
-
-      objFn <- function(sp, n = 20, ras, goalSize) {
-        sizes <- integer(n)
-        for (i in 1:n) {
-          circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
-                           asymmetry = 2, asymmetryAngle = 135,
-                           asRaster = FALSE)
-          sizes[i] <- circs[, .N]
-        }
-        abs(mean(sizes) - goalSize)
+      n <- 100
+      sizes <- integer(n)
+      for (i in 1:n) {
+        circs <- spread2(ras, spreadProb = 0.225,
+                         start = round(ncell(ras) / 4 - ncol(ras) / 4 * 3),
+                         asRaster = FALSE)
+        sizes[i] <- circs[, .N]
       }
-      aa <- DEoptim(objFn, lower = 0.2, upper = 0.23,
-                    control = DEoptim.control(cluster = cl, NP = 10, VTR = 0.02,
-                                              initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
-                    ras = a, goalSize = goalSize)
+      goalSize <- mean(sizes)
 
-      # The value of spreadProb that will give the
-      #    same expected event sizes to spreadProb = 0.225 is:
-      sp <- aa$optim$bestmem
-      circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
-                       asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)
+      if (requireNamespace("DEoptim", quietly = TRUE)) {
+        library(parallel)
+        library(DEoptim)
 
-      stopCluster(cl)
+        # need 10 cores for 10 populations in DEoptim
+        cl <- makeCluster(pmin(10, detectCores() - 2))
+        parallel::clusterEvalQ(cl, {
+          library(SpaDES.tools)
+          library(terra)
+          library(raster)
+          library(fpCompare)
+        })
+
+        objFn <- function(sp, n = 20, ras, goalSize) {
+          sizes <- integer(n)
+          for (i in 1:n) {
+            circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
+                             asymmetry = 2, asymmetryAngle = 135,
+                             asRaster = FALSE)
+            sizes[i] <- circs[, .N]
+          }
+          abs(mean(sizes) - goalSize)
+        }
+        aa <- DEoptim(objFn, lower = 0.2, upper = 0.23,
+                      control =
+                        DEoptim.control(
+                          cluster = cl, NP = 10, VTR = 0.02,
+                          itermax = 20, # imposing this simply for example
+                          initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
+                      ras = ras, goalSize = goalSize)
+
+        # The value of spreadProb that will give the
+        #    same expected event sizes to spreadProb = 0.225 is:
+        sp <- aa$optim$bestmem
+        circs <- spread2(ras, spreadProb = sp, start = ncell(ras) / 4 - ncol(ras) / 4 * 3,
+                         asymmetry = 2, asymmetryAngle = 135, asRaster = FALSE)
+
+        stopCluster(cl)
+      }
     }
   }
 }
