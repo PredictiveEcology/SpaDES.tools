@@ -1,15 +1,9 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables("num.in.pop")
-}
+utils::globalVariables("num.in.pop")
 
 ################################################################################
 #' Produce a `raster` of a random Gaussian process.
 #'
-#' This is a wrapper for the `RFsimulate` function in the `RandomFields`
-#' package. The main addition is the `speedup` argument which allows
-#' for faster map generation. A `speedup` of 1 is normal and will get
-#' progressively faster as the number increases, at the expense of coarser
-#' pixel resolution of the pattern generated.
+#' Defunct.
 #'
 #' @param x        A spatial object (e.g., a `RasterLayer`).
 #'
@@ -37,26 +31,9 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @return A raster map with same extent as `x`, with a Gaussian random pattern.
 #'
-#' @seealso `RFsimulate` and [extent()]
-#'
-#' @importFrom raster cellStats disaggregate extent extent<- raster res
+#' @importFrom terra res
 #' @export
 #' @rdname gaussMap
-#'
-#' @examples
-#' \dontrun{
-#' if (require(RandomFields)) {
-#'   library(raster)
-#'   nx <- ny <- 100L
-#'   r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
-#'   speedup <- max(1, nx/5e2)
-#'   map1 <- gaussMap(r, scale = 300, var = 0.03, speedup = speedup, inMemory = TRUE)
-#'   if (interactive()) Plot(map1)
-#'
-#'   # with non-default method
-#'   map1 <- gaussMap(r, scale = 300, var = 0.03, method = "RMgauss")
-#' }
-#' }
 #'
 gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
                      alpha = 1, inMemory = FALSE, ...) {
@@ -86,7 +63,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   return(div[x %% div == 0L])
 }
 
-#' Produce a `RasterLayer` of  random polygons
+#' Produce a `SpatRaster` of  random polygons
 #'
 #' These are built with the [spread()] function internally.
 #'
@@ -98,37 +75,28 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #'
 #' @return A map of extent `ext` with random polygons.
 #'
-#' @seealso [spread()], [raster()], [randomPolygons()]
+#' @seealso [spread()], [randomPolygons()]
 #'
 #' @export
-#' @importFrom raster cellFromXY extent raster xmax xmin ymax ymin
-#' @importFrom sp SpatialPoints
+#' @importFrom terra cellFromXY ext xmax xmin ymax ymin
 #' @rdname randomPolygons
 #'
 #' @examples
-#' library(quickPlot)
-#'
 #' set.seed(1234)
 #' Ras <- randomPolygons(numTypes = 5)
-#' if (interactive()) {
-#'   clearPlot()
-#'   Plot(Ras, cols = c("yellow", "dark green", "blue", "dark red"))
+#' if (interactive() ) {
+#'   terra::plot(Ras, col = c("yellow", "dark green", "blue", "dark red"))
 #' }
 #'
-#' library(raster)
 #' # more complex patterning, with a range of patch sizes
-#' a <- randomPolygons(numTypes = 400, raster(extent(0, 50, 0, 50), res = 1, vals = 0))
+#' a <- randomPolygons(numTypes = 400, terra::rast(terra::ext(0, 50, 0, 50), res = 1, vals = 0))
 #' a[a < 320] <- 0
 #' a[a >= 320] <- 1
-#' suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important
-#' aHist <- hist(table(getValues(clumped)), plot = FALSE)
+#' clumped <- terra::patches(a)
 #' if (interactive()) {
-#'   clearPlot()
-#'   Plot(a)
-#'   Plot(aHist)
+#'   terra::plot(a)
 #' }
-#'
-randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
+randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
                            numTypes = 2, ...) {
   args <- list(...)
   if (any(c("p", "A", "speedup", "minpatch") %in% names(args))) {
@@ -136,19 +104,21 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
             "See new function definition.")
   }
 
-  starts <- SpatialPoints(coords = cbind(x = stats::runif(numTypes, xmin(ras), xmax(ras)),
-                                         y = stats::runif(numTypes, ymin(ras), ymax(ras))))
-  loci <- raster::cellFromXY(starts, object = ras)
+  xy <- cbind(x = stats::runif(numTypes, xmin(ras), xmax(ras)),
+              y = stats::runif(numTypes, ymin(ras), ymax(ras)))
+  starts <- terra::vect(xy)
+  loci <- terra::cellFromXY(xy, object = ras)
   a <- spread(landscape = ras, spreadProb = 1, loci, allowOverlap = FALSE, id = TRUE, ...)
   return(a)
 }
 
 #' Create a single random polygon object
 #'
-#' Produces a `SpatialPolygons` object with 1 feature that will have approximately an area
+#' Produces a `SpatVector` polygons object with 1 feature that will have approximately an area
 #' equal to `area` (expecting area in hectares), #' and a centre at approximately `x`.
 #'
-#' @param x Either a `SpatialPoints`, `SpatialPolygons`, or `matrix` with two
+#' @param x Either a `SpatVector`, or `SpatialPoints` (deprecated), `SpatialPolygons`
+#'          (deprecated), or `matrix` with two
 #'          dimensions, 1 row, with the approximate centre of the new random polygon to create.
 #'          If `matrix`, then longitude and latitude are assumed (epsg:4326)
 #'
@@ -156,20 +126,20 @@ randomPolygons <- function(ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0)
 #'
 #' @param hectares Deprecated. Use `area` in meters squared.
 #'
-#' @return A `SpatialPolygons` object, with approximately the area request,
+#' @return A `SpatVector` polygons object, with approximately the area request,
 #'         centred approximately at the coordinates requested, in the projection of `x`
 #'
-#' @importFrom raster crs crs<-
-#' @importFrom sp coordinates CRS Polygon Polygons SpatialPoints SpatialPolygons spTransform
+#' @importFrom terra crs crs<-
 #' @importFrom stats rbeta runif
+#' @importFrom terra crs
 #' @export
 #' @docType methods
 #' @rdname randomPolygons
 #'
 #' @examples
-#' library(raster)
-#' b <- SpatialPoints(cbind(-110, 59))
-#' crs(b) <- sp::CRS("+init=epsg:4326")
+#' library(terra)
+#' b <- terra::vect(cbind(-110, 59))
+#' crs(b) <- terra::crs("epsg:4326")
 #' a <- randomPolygon(b, area = 1e6)
 #' if (interactive()) {
 #'   plot(a)
@@ -182,7 +152,21 @@ randomPolygon <- function(x, hectares, area) {
 
 #' @export
 #' @rdname randomPolygons
-randomPolygon.SpatialPoints <- function(x, hectares, area) {
+randomPolygon.default <- function(x, hectares, area) {
+  if (inherits(x, "SpatialPoints")) {
+    rndmPolygonSpatialPoints(x = x, hectares = hectares, area = area)
+  } else if (inherits(x, "SpatVector")) {
+    rndmPolygonSpatVector(x, hectares, area)
+  } else if (inherits(x, "matrix")) {
+    rndmPolygonMatrix(x, hectares, area)
+  } else if (inherits(x, "SpatialPolygons")) {
+    rndmPolygonSpatialPolygons(x, hectares, area)
+  }
+}
+
+rndmPolygonSpatialPoints <- function(x, hectares, area) {
+  .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
+  .requireNamespace("sp")
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
@@ -198,18 +182,13 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
     crsInUTM <- utmCRS(x)
     if (is.na(crsInUTM))
       stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
-    x <- spTransform(x, CRSobj = crsInUTM)
+    x <- sp::spTransform(x, CRSobj = crsInUTM)
     message("The CRS provided is not in meters; ",
             "converting internally to UTM so area will be approximately correct.")
   }
-  # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
-  #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
-  #                       " +units=m +no_defs"))
 
-  #y <- spTransform(x, areaCRS)
-
-  meanX <- mean(coordinates(x)[, 1]) - radius
-  meanY <- mean(coordinates(x)[, 2]) - radius
+  meanX <- mean(sp::coordinates(x)[, 1]) - radius
+  meanY <- mean(sp::coordinates(x)[, 2]) - radius
 
   minX <- meanX - radius
   maxX <- meanX + radius
@@ -227,38 +206,70 @@ randomPolygon.SpatialPoints <- function(x, hectares, area) {
          jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxY - minY) + minY, decreasing = TRUE)),
          jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (meanY - minY) + minY)))
 
-  Sr1 <- Polygon(cbind(X + xAdd, Y + yAdd))
-  Srs1 <- Polygons(list(Sr1), "s1")
-  outPolygon <- SpatialPolygons(list(Srs1), 1L)
-  crs(outPolygon) <- crs(x)
-  if (exists("origCRS", inherits = FALSE)) {
-    outPolygon <- spTransform(outPolygon, origCRS)
+  Sr1 <- sp::Polygon(cbind(X + xAdd, Y + yAdd))
+  Srs1 <- sp::Polygons(list(Sr1), "s1")
+  outPolygon <- sp::SpatialPolygons(list(Srs1), 1L)
+  terra::crs(outPolygon) <- terra::crs(x)
+  wasSpatial <- is(outPolygon, "Spatial")
+  if (exists("origCRS", inherits = FALSE))  {
+    if (requireNamespace("sf", quietly = TRUE)) {
+      outPolygon <- sf::st_as_sf(outPolygon)
+      outPolygon <- sf::st_transform(outPolygon, origCRS)
+      outPolygon <- as(outPolygon, "Spatial")
+    } else {
+      ## TODO: this should use reproducible:::suppressWarningsSpecific
+      outPolygon <- suppressWarnings(sp::spTransform(outPolygon, origCRS))
+    }
   }
-  outPolygon
+  return(outPolygon)
 }
 
-#' @importFrom sp spsample
-#' @importFrom rgeos gContains
-#' @rdname randomPolygons
-#' @export
-randomPolygon.matrix <- function(x, hectares, area) {
+#' @importFrom terra geomtype is.related spatSample
+rndmPolygonSpatVector <- function(x, hectares, area) {
+  if (!missing(hectares)) {
+    message("hectares argument is deprecated; please use area")
+    if (missing(area))
+      area <- hectares * 1e4
+  }
+
+  if (geomtype(x) == "polygons") {
+    need <- TRUE
+    while (need) {
+      sp1 <- spatSample(x, 1, "random")
+      sp2 <- .randomPolygonSpatPoint(sp1, area)
+      contain <- is.related(sp1, sp2, relation = "within")
+      if (isTRUE(contain))
+        need <- FALSE
+    }
+  } else if (geomtype(x) == "points") {
+    sp2 <- .randomPolygonSpatPoint(x, area)
+  } else {
+    stop("if x is a SpatVector, geom type must be points or polygons")
+  }
+  sp2
+}
+
+#' @importFrom terra vect crs
+rndmPolygonMatrix <- function(x, hectares, area) {
+
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
       area <- hectares
   }
-  latLong <-   sp::CRS("+init=epsg:4326")
+  latLong <- crs("epsg:4326")
   message("Assuming matrix is in latitude/longitude")
-  x <- SpatialPoints(coords = x)
+  x <- vect(x, type = "points")
   crs(x) <- latLong
   randomPolygon(x, area = area)
 }
 
-#' @importFrom sp spsample
-#' @importFrom rgeos gContains
-#' @rdname randomPolygons
-#' @export
-randomPolygon.SpatialPolygons <- function(x, hectares, area) {
+#' @importFrom reproducible .requireNamespace
+rndmPolygonSpatialPolygons <- function(x, hectares, area) {
+  .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
+  .requireNamespace("sf")
+  .requireNamespace("sp")
+
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
@@ -266,15 +277,63 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
   }
   need <- TRUE
   while (need) {
-    sp1 <- spsample(x, 1, "random")
+    sp1 <- sp::spsample(x, 1, "random")
     sp2 <- randomPolygon(sp1, area)
-    contain <- gContains(sp2, sp1)
+    contain <- sf::st_contains(sf::st_as_sf(sp2), sf::st_as_sf(sp1))
     if (isTRUE(contain))
       need <- FALSE
   }
   sp2
 }
 
+#' @importFrom terra project crs crds vect
+.randomPolygonSpatPoint <- function(x, area) {
+  units <- gsub(".*units=(.) .*", "\\1", crs(x, proj = TRUE))
+
+  areaM2 <- area * 1.304 # rescale so mean area is close to hectares
+  radius <- sqrt(areaM2 / pi)
+  if (!identical(units, "m")) {
+    origCRS <- crs(x)
+    crsInUTM <- utmCRS(x)
+    if (is.na(crsInUTM))
+      stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
+    x <- project(x, crsInUTM)
+    message("The CRS provided is not in meters; ",
+            "converting internally to UTM so area will be approximately correct.")
+  }
+  # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
+  #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
+  #                       " +units=m +no_defs"))
+
+  #y <- spTransform(x, areaCRS)
+
+  meanX <- mean(crds(x)[, 1]) - radius
+  meanY <- mean(crds(x)[, 2]) - radius
+
+  minX <- meanX - radius
+  maxX <- meanX + radius
+  minY <- meanY - radius
+  maxY <- meanY + radius
+
+  # Add random noise to polygon
+  xAdd <- round(runif(1, radius * 0.8, radius * 1.2))
+  yAdd <- round(runif(1, radius * 0.8, radius * 1.2))
+  nPoints <- 20
+  betaPar <- 0.6
+  X <- c(jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX)),
+         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX, decreasing = TRUE)))
+  Y <- c(jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (maxY - meanY) + meanY)),
+         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxY - minY) + minY, decreasing = TRUE)),
+         jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (meanY - minY) + minY)))
+
+  outPolygon <- vect(cbind(X + xAdd, Y + yAdd), type = "polygons")
+  crs(outPolygon) <- crs(x)
+
+  if (exists("origCRS", inherits = FALSE))  {
+    outPolygon <- project(outPolygon, origCRS)
+  }
+  outPolygon
+}
 ################################################################################
 #' Initiate a specific number of agents in a map of patches
 #'
@@ -282,35 +341,26 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #' The user can either supply a table of how many to initiate in each patch,
 #' linked by a column in that table called `pops`.
 #'
-#' @param patches `RasterLayer` of patches, with some sort of a patch id.
+#' @param patches `SpatRaster` of patches, with some sort of a patch id.
 #'
 #' @param numPerPatchTable A `data.frame` or `data.table` with a
 #'  column named `pops` that matches the `patches` patch ids, and a
 #'  second column `num.in.pop` with population size in each patch.
 #'
-#' @param numPerPatchMap A `RasterLayer` exactly the same as `patches`
+#' @param numPerPatchMap A `SpatRaster` exactly the same as `patches`
 #' but with agent numbers rather than ids as the cell values per patch.
 #'
 #' @return A raster with 0s and 1s, where the 1s indicate starting locations of
 #' agents following the numbers above.
 #'
-#' @export
-#' @importFrom data.table data.table setkey
-#' @importFrom raster getValues raster Which
-#' @importFrom stats na.omit
-#' @rdname specnumperpatch-probs
-#'
 #' @examples
 #' library(data.table)
-#' library(raster)
-#' library(quickPlot)
 #'
 #' set.seed(1234)
 #' Ntypes <- 4
 #' ras <- randomPolygons(numTypes = Ntypes)
 #' if (interactive()) {
-#'   clearPlot()
-#'   Plot(ras)
+#'   terra::plot(ras)
 #' }
 #'
 #' # Use numPerPatchTable
@@ -327,19 +377,29 @@ randomPolygon.SpatialPolygons <- function(x, hectares, area) {
 #'   rasPatches[rasPatches==i] <- patchDT$num.in.pop[i]
 #' }
 #' if (interactive()) {
-#'   clearPlot()
-#'   Plot(ras, rasPatches)
+#'   terra::plot(c(ras, rasPatches))
 #' }
 #' rasAgents <- specificNumPerPatch(ras, numPerPatchMap = rasPatches)
 #' rasAgents[is.na(rasAgents)] <- 0
 #' if (interactive()) {
-#'   clearPlot()
-#'   Plot(rasAgents)
+#'   terra::plot(rasAgents)
 #' }
 #'
+#' @export
+#' @importFrom data.table data.table setkey
+#' @importFrom stats na.omit
+#' @importFrom terra ext rast values
+#' @rdname specnumperpatch-probs
 specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap = NULL) {
-  patchids <- as.numeric(na.omit(getValues(patches)))
-  wh <- Which(patches, cells = TRUE)
+  isRaster <- inherits(patches, "RasterLayer")
+  if (isRaster) {
+    patches <- terra::rast(patches)
+    if (!is.null(numPerPatchMap) && inherits(numPerPatchMap, "RasterLayer")) {
+      numPerPatchMap <- terra::rast(numPerPatchMap)
+    }
+  }
+  patchids <- as.numeric(terra::values(patches, na.rm = TRUE))
+  wh <- which(as.logical(terra::values(patches)))
   if (!is.null(numPerPatchTable)) {
     dt1 <- data.table(wh, pops = patchids)
     setkeyv(dt1, "pops")
@@ -349,7 +409,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
     setkeyv(numPerPatchTable, "pops")
     dt2 <- dt1[numPerPatchTable]
   } else if (!is.null(numPerPatchMap)) {
-    numPerPatchTable <- as.numeric(na.omit(getValues(numPerPatchMap)))
+    numPerPatchTable <- as.numeric(na.omit(terra::values(numPerPatchMap)))
     dt2 <- data.table(wh, pops = patchids, num.in.pop = numPerPatchTable)
   } else {
     stop("need numPerPatchMap or numPerPatchTable")
@@ -358,8 +418,12 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
   dt3 <- dt2[, list(cells = resample(wh, unique(num.in.pop))), by = "pops"]
   dt3$ids <- rownames(dt3)
 
-  al <- raster(extent(patches), res = res(patches), vals = 0)
+  al <- terra::rast(terra::ext(patches), res = res(patches), vals = 0)
   al[dt3$cells] <- 1
+
+  if (isRaster) {
+    al <- raster::raster(al)
+  }
 
   return(al)
 }
@@ -466,13 +530,14 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #   return(.Object)
 # })
 
+#' @importFrom terra crs
 utmCRS <- function(x) {
   zone <- long2UTM(mean(c(xmax(x), xmin(x))))
-  sp::CRS(paste0("+proj=utm +zone=", zone, " +datum=WGS84"))
+  crs(paste0("+proj=utm +zone=", zone, " +datum=WGS84"), proj = TRUE)
 }
 
 long2UTM <- function(long) {
-  (floor((long + 180)/6) %% 60) + 1
+  (floor((long + 180) / 6) %% 60) + 1
 }
 
 #' Produce a neutral landscape using a midpoint displacement algorithm
@@ -481,38 +546,54 @@ long2UTM <- function(long) {
 #' The main addition is that it makes sure that the output raster conforms
 #' in extent with the input raster `x`, since `nlm_mpd` can output a smaller raster.
 #'
-#' @param x        A `RasterLayer` to use as a template.
+#' @param x        A `RasterLayer`/`SpatRaster` to use as a template.
 #'
 #' @param pad      Integer. Number of cells by which to pad `x` internally to ensure
 #'                 `nlm_mpd` produces a raster corresponding to the dimensions of `x`.
 #'
-#' @param ...      Further arguments passed to `NLMR::nlm_mpd`
+#' @param type     One of the supported `NLMR` functions.
 #'
-#' @importFrom raster res ncol nrow extent extend focal
+#' @param ...      Further arguments passed to `NLMR` function specified in `type`
+#'  (except ncol, nrow and resolution, which are extracted from `x`)
+#'
+#' @importFrom terra res ncol nrow ext extend focal
 #' @export
 #' @rdname neutralLandscapeMap
 #'
-#' @return A `RasterLayer` with same extent as `x`, with randomly generated values.
+#' @return A `RasterLayer`/`SpatRaster` with same extent as `x`, with randomly generated values.
 #'
 #' @seealso `nlm_mpd`
 #'
 #' @examples
-#' \dontrun{
-#'   if (require(NLMR)) {
-#'     library(raster)
+#' \donttest{
+#'   if (requireNamespace("NLMR", quietly = TRUE)) {
+#'     library(terra)
 #'     nx <- ny <- 100L
-#'     r <- raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+#'     r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)
+#'     ## or with raster package:
+#'     # r <- raster::raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
 #'     map1 <- neutralLandscapeMap(r,
+#'                                 type = "nlm_mpd",
 #'                                 roughness = 0.65,
 #'                                 rand_dev = 200,
 #'                                 rescale = FALSE,
 #'                                 verbose = FALSE)
-#'     if (interactive()) Plot(map1)
+#'     if (interactive()) plot(map1)
 #'   }
 #' }
-neutralLandscapeMap <- function(x, pad = 10L, ...) {
+neutralLandscapeMap <- function(x, pad = 10L,
+                                type = c("nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient",
+                                         "nlm_edgegradient", "nlm_fbm", "nlm_mosaicfield",
+                                         "nlm_mosaicgibbs", "nlm_mosaictess", "nlm_neigh",
+                                         "nlm_percolation", "nlm_planargradient", "nlm_random",
+                                         "nlm_randomrectangularcluster"),
+                                ...) {
   if (requireNamespace("NLMR", quietly = TRUE)) {
-    dummyVals <- NLMR::nlm_mpd(
+    .requireNamespace("raster")
+    type <- match.arg(type)
+    typeFun <- getFromNamespace(type, ns = "NLMR")
+
+    dummyVals <- typeFun(
       ncol = ncol(x) + pad, ## pad the raster so any lost cols won't affect crop etc.
       nrow = nrow(x) + pad, ## pad the raster so any lost rows won't affect crop etc.
       resolution = unique(res(x)),
@@ -524,22 +605,21 @@ neutralLandscapeMap <- function(x, pad = 10L, ...) {
     ## - we can't reproject or use x to define the extent;
     ## - need to add rows/cols by multiplying the final number by res;
     ## - crop to ensure the extra rows/cols are removed
-    dummyExt <- raster::extent(c(0, ncol(x)*unique(raster::res(x)),
-                                 0, nrow(x)*unique(raster::res(x))))
-    dummyVals <- raster::extend(dummyVals, dummyExt, values = NA)
-    dummyVals <- raster::crop(dummyVals, dummyExt)
+    dummyExt <- c(0, ncol(x) * unique(res(x)), 0, nrow(x) * unique(res(x)))
+    dummyVals <- extend(dummyVals, dummyExt, values = NA)
+    dummyVals <- crop(dummyVals, dummyExt)
 
     # ## now replace added NAs
     # maxIts <- max(nMissingColsRows) + 1L
     # it <- 1L
     # while (any(is.na(dummyVals[])) & (it < maxIts)) {
-    #   dummyVals <- raster::focal(dummyVals, w = matrix(1, 3, 3),
+    #   dummyVals <- focal(dummyVals, w = matrix(1, 3, 3),
     #                              fun = mean, NAonly = TRUE, na.rm = TRUE)
     #   it <- it + 1L
     # }
 
     dummyLandscape <- x
-    dummyLandscape[] <- dummyVals[]
+    dummyLandscape[] <- as.vector(dummyVals[])
 
     return(dummyLandscape)
   } else {

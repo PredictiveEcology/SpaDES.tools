@@ -13,12 +13,11 @@
 #'
 #' @return `mergeRaster` returns a `RasterLayer` object.
 #'
-#' @seealso [raster::merge()], [raster::mosaic()]
+#' @seealso [terra::merge()], [terra::mosaic()]
 #'
 #' @author Yong Luo, Alex Chubaty, Tati Micheletti & Ian Eddy
 #' @export
-#' @importFrom magrittr %>%
-#' @importFrom raster alignExtent crop extent merge mosaic origin projectRaster stack
+#' @importFrom terra align crop ext merge mosaic origin project rast xmax xmin ymax ymin
 #' @rdname splitRaster
 #'
 setGeneric("mergeRaster", function(x, fun = NULL) {
@@ -31,11 +30,17 @@ setMethod(
   "mergeRaster",
   signature = signature(x = "list"),
   definition = function(x, fun) {
+    isRaster <- is(x[[1]], "Raster")
+
+    if (isTRUE(isRaster)) {
+      x <- lapply(x, terra::rast)
+    }
+
     if (length(x) > 1) {
-      xminExtent <- sapply(x, xmin) %>% unique() %>% sort() # nolint
-      xmaxExtent <- sapply(x, xmax) %>% unique() %>% sort() # nolint
-      yminExtent <- sapply(x, ymin) %>% unique() %>% sort() # nolint
-      ymaxExtent <- sapply(x, ymax) %>% unique() %>% sort() # nolint
+      xminExtent <- sapply(x, terra::xmin) |> unique() |> sort()
+      xmaxExtent <- sapply(x, terra::xmax) |> unique() |> sort()
+      yminExtent <- sapply(x, terra::ymin) |> unique() |> sort()
+      ymaxExtent <- sapply(x, terra::ymax) |> unique() |> sort()
       xBuffer <- if (any(length(xminExtent) == 1, length(xmaxExtent) == 1)) {
         0.0
       } else {
@@ -48,78 +53,73 @@ setMethod(
       }
 
       ## check that all rasters share same origin (i.e., are aligned)
-      origins <- sapply(x, origin)
-      if (!do.call(identical , as.list(origins[, 1])) |
-          !do.call(identical , as.list(origins[, 2]))) {
-        x <- append(x[[1]], lapply(x[-1], function(r) {
-          template <- suppressWarnings({
-            projectRaster(from = r, to = x[[1]], alignOnly = TRUE)
-          })
-          suppressWarnings({
-            projectRaster(from = r, to = template)
-          })
-        }))
+      origins <- sapply(x, terra::origin)
+      if (!((max(origins[1, ]) - min(origins[1, ])) %==% 0) |
+          !((max(origins[1, ]) - min(origins[2, ])) %==% 0)) {
+        x <- lapply(x[-1], function(r) {
+          template <- terra::project(x = r, y = x[[1]], align = TRUE)
+          terra::project(x = r, y = template)
+        }) |>
+          rev() |>
+          append(x[[1]]) |>
+          rev()
       }
 
       if (any(length(xBuffer) > 1, length(yBuffer) > 1)) {
         message(paste0("The tiles present different buffers (likely due to resampling).",
-                       " mergeRaster() will use raster::mosaic()."))
+                       " mergeRaster() will use terra::mosaic()."))
+
         rTemplate <- x[[1]]
         for (i in seq_along(x)) {
           if (i == 1) next
-          raster::extent(x[[i]]) <- raster::alignExtent(extent = raster::extent(x[[i]]),
-                                                        object = rTemplate,
-                                                        snap = "near")
+          extnt(x[[i]]) <- terra::align(terra::ext(x[[i]]), rTemplate, snap = "near")
         }
-        rasMosaicArgs <- x
+
+        mosaicArgs <- x
         if (!is.null(fun)) {
-          rasMosaicArgs$fun <- fun
+          mosaicArgs$fun <- fun
         } else {
-          rasMosaicArgs$fun <- mean
+          mosaicArgs$fun <- "mean"
         }
-        y <- do.call(what = raster::mosaic, args = rasMosaicArgs) ## TODO: use alist with do.call for spatial objects!!!
+        y <- do.call(terra::mosaic, mosaicArgs) ## TODO: avoid do.call
       } else {
         for (i in seq_along(x)) {
           r <- x[[i]]
-          if (xmin(r) != min(xminExtent)) {
-            xminCut <- xmin(r) + xBuffer
+          if (terra::xmin(r) != min(xminExtent)) {
+            xminCut <- terra::xmin(r) + xBuffer
           } else {
-            xminCut <- xmin(r)
+            xminCut <- terra::xmin(r)
           }
           if (xmax(r) != max(xmaxExtent)) {
-            xmaxCut <- xmax(r) - xBuffer
+            xmaxCut <- terra::xmax(r) - xBuffer
           } else {
-            xmaxCut <- xmax(r)
+            xmaxCut <- terra::xmax(r)
           }
-          if (ymin(r) != min(yminExtent)) {
-            yminCut <- ymin(r) + yBuffer
+          if (terra::ymin(r) != min(yminExtent)) {
+            yminCut <- terra::ymin(r) + yBuffer
           } else {
-            yminCut <- ymin(r)
+            yminCut <- terra::ymin(r)
           }
-          if (ymax(r) != max(ymaxExtent)) {
-            ymaxCut <- ymax(r) - yBuffer
+          if (terra::ymax(r) != max(ymaxExtent)) {
+            ymaxCut <- terra::ymax(r) - yBuffer
           } else {
-            ymaxCut <- ymax(r)
+            ymaxCut <- terra::ymax(r)
           }
-          x[[i]] <- crop(r, extent(xminCut, xmaxCut, yminCut, ymaxCut))
+          x[[i]] <- terra::crop(r, ext(xminCut, xmaxCut, yminCut, ymaxCut))
         }
 
-        y <- do.call(raster::merge, x) ## TODO: use alist with do.call for spatial objects!!!
+        y <- do.call(merge, x) ## TODO: avoid do.call
       }
 
-      if (all(vapply(x, is, logical(1), class2 = "RasterLayer"))) {
-        regex_tile <- "_tile[0-9].*$"
-        names(y) <- if (any(grepl(regex_tile, sapply(x, names)))) {
-          gsub("regex_tile", "", names(x[[1]]))
+      if (isTRUE(isRaster)) {
+        if (terra::nlyr(y) > 1) {
+          return(raster::stack(y))
         } else {
-          paste(unique(vapply(x, names, character(1))), collapse = "_")
+          return(raster::raster(y))
         }
-      } else if (all(sapply(x, is, class2 = "RasterBrick")) |
-                 all(sapply(x, is, class2 = "RasterStack"))) {
-        names(y) <- names(x[[1]])
-        y <- stack(y)
+      } else {
+        return(y)
       }
-      return(y)
     } else {
       return(x[[1]]) ## original raster if it's the only one in the list
     }

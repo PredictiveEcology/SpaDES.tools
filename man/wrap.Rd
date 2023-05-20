@@ -2,38 +2,14 @@
 % Please edit documentation in R/neighbourhood.R
 \name{wrap}
 \alias{wrap}
-\alias{wrap,matrix,Extent,missing-method}
-\alias{wrap,SpatialPoints,ANY,missing-method}
-\alias{wrap,matrix,Raster,missing-method}
-\alias{wrap,matrix,matrix,missing-method}
-\alias{wrap,SpatialPointsDataFrame,Extent,logical-method}
-\alias{wrap,SpatialPointsDataFrame,Raster,logical-method}
-\alias{wrap,SpatialPointsDataFrame,matrix,logical-method}
 \title{Wrap coordinates or pixels in a torus-like fashion}
 \usage{
-wrap(X, bounds, withHeading)
-
-\S4method{wrap}{matrix,Extent,missing}(X, bounds)
-
-\S4method{wrap}{SpatialPoints,ANY,missing}(X, bounds)
-
-\S4method{wrap}{matrix,Raster,missing}(X, bounds)
-
-\S4method{wrap}{matrix,Raster,missing}(X, bounds)
-
-\S4method{wrap}{matrix,matrix,missing}(X, bounds)
-
-\S4method{wrap}{SpatialPointsDataFrame,Extent,logical}(X, bounds, withHeading)
-
-\S4method{wrap}{SpatialPointsDataFrame,Raster,logical}(X, bounds, withHeading)
-
-\S4method{wrap}{SpatialPointsDataFrame,matrix,logical}(X, bounds, withHeading)
+wrap(X, bounds, withHeading = FALSE)
 }
 \arguments{
-\item{X}{A \verb{SpatialPoints*} object, or matrix of coordinates.}
+\item{X}{\code{SpatVector}, \code{sf}, or matrix of coordinates.}
 
-\item{bounds}{Either a \verb{Raster*}, \code{Extent}, or \code{bbox} object
-defining bounds to wrap around.}
+\item{bounds}{Either a \verb{SpatRaster*}, \code{Extent}, or \code{bbox} object defining bounds to wrap around.}
 
 \item{withHeading}{logical. If \code{TRUE}, the previous points must be wrapped
 also so that the subsequent heading calculation will work.
@@ -47,44 +23,42 @@ reflect the wrapping.
 Generally useful for model development purposes.
 }
 \details{
-If \code{withHeading} used, then \code{X} must be a \code{SpatialPointsDataFrame}
+If \code{withHeading} used, then \code{X} must be an \code{sf} or \code{SpatVector} object
 that contains two columns, \code{x1} and \code{y1}, with the immediately
 previous agent locations.
 }
 \examples{
-library(raster)
-library(quickPlot)
-
+if (require("sf")) {
 xrange <- yrange <- c(-50, 50)
-hab <- raster(extent(c(xrange, yrange)))
+hab <- terra::rast(terra::ext(c(xrange, yrange)))
 hab[] <- 0
 
 # initialize agents
 N <- 10
 
 # previous points
-x1 <- rep(0, N)
-y1 <- rep(0, N)
+x1 <- y1 <- rep(0, N)
 # initial points
 starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
                 y = stats::runif(N, yrange[1], yrange[2]))
 
-# create the agent object
-agent <- SpatialPointsDataFrame(coords = starts, data = data.frame(x1, y1))
-
+# create the agent object # the x1 and y1 are needed for "previous location"
+agent <- terra::vect(data.frame(x1, y1, starts), geom = c("x", "y"))
 
 ln <- rlnorm(N, 1, 0.02) # log normal step length
 sd <- 30 # could be specified globally in params
 
 if (interactive()) {
-  clearPlot()
-  Plot(hab, zero.color = "white", axes = "L")
+  # clearPlot()
+  terra::plot(hab, col = "white")
 }
 for (i in 1:10) {
-  agent <- crw(agent = agent, extent = extent(hab), stepLength = ln,
+  agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
                stddev = sd, lonlat = FALSE, torus = TRUE)
-  if (interactive()) Plot(agent, addTo = "hab", axes = TRUE)
+if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 }
+}
+
 }
 \author{
 Eliot McIntire

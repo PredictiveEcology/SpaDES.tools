@@ -1,5 +1,38 @@
 Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
+# SpaDES.tools 2.0.0
+
+## Enhancements
+* wholesale transition to `terra` from `raster` and `sp`. Some functionality is available for `sf`, but this will not be complete.
+* `splitRaster()` uses ".tif" as the default raster file type
+* most example plotting uses `terra::plot` directly, but in a few cases, `quickPlot::Plot` is used as it is much better (e.g., `spread2(plot.it = TRUE)`)
+
+## Dependency changes
+* drop support for R 4.0 (dependency package `reproducible` supports R >= 4.1);
+* now has only 7 Imports and Depends, which becomes 15 recursive dependencies (down from 40)
+* add `terra` to Imports
+* removed dependencies `magrittr`, `rgeos`, `rlang`, `Require`, `graphics`
+* added to `Suggests`: `withr`
+* moved to Suggests: `quickPlot`, `fastmatch`, `raster`, `sp`, `sf`, `CircStats`
+* added `snow` to Suggests as it's used for parallel `raster` operations; `tools` for `file.ext`
+
+## Bugfixes
+* all open issues dealt with
+* fixes related to migration to `terra`
+* other minor bug fixes
+
+# SpaDES.tools 1.0.2
+
+## Dependency changes
+* none
+
+## Enhancements
+* `terra` compatibility added
+* `neutralLandscapeMap` expanded to use more `NLMR` functions
+
+## Bug Fixes
+* suppress additional spurious warnings
+
 # SpaDES.tools 1.0.1
 
 ## Enhancements
@@ -7,7 +40,7 @@ Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
 
 # SpaDES.tools 1.0.0
 
-This is a major # SpaDES.tools update causing breaking changes due to multiple CRAN packages no longer available as of R # SpaDES.tools 4.2 released April 2022.
+This is a major `SpaDES.tools` update causing breaking changes due to multiple CRAN packages no longer available as of R version 4.2 released April 2022.
 
 ## Dependency changes
 * Removed dependencies `ffbase` and `ff` and deprecated use of `lowMemory` argument in `spread` (`ffbase` was removed from CRAN April 2022).
@@ -16,7 +49,7 @@ This is a major # SpaDES.tools update causing breaking changes due to multiple C
 ## Enhancements
 * `mergeRaster()` can deal with rasters with different origins extents (i.e., that were not produced using `splitRaster()`)
 
-## bug fixes
+## Bug Fixes
 * `spread2` was unable to use `maxSize` when `start` was the output of a previous `spread2` call to which `maxSize` had not been supplied. This has now been fixed.
 
 # SpaDES.tools 0.3.10
@@ -27,7 +60,7 @@ This is a major # SpaDES.tools update causing breaking changes due to multiple C
 ## Enhancements
 * none
 
-## bug fixes
+## Bug Fixes
 * fix error in `spread2()` causing failures on R-devel
 
 # SpaDES.tools 0.3.9
@@ -38,7 +71,7 @@ This is a major # SpaDES.tools update causing breaking changes due to multiple C
 ## Enhancements
 * none
 
-## bug fixes
+## Bug Fixes
 * fixed misc CRAN check issues with Suggested packages
 * fixed bug in `splitRaster()` (#62; @anbm-dk)
 
@@ -55,7 +88,7 @@ This is a major # SpaDES.tools update causing breaking changes due to multiple C
 * `splitRaster()` can now specify file extension, instead of defaulting to `.grd`
 * several under the hood improvements for stability, speed
 
-## bug fixes
+## Bug Fixes
 * `distanceFromEachPoint` bugfixes under some cases (some values of `toCells`, `angles` would cause errors)
 
 # SpaDES.tools 0.3.6
@@ -63,7 +96,7 @@ This is a major # SpaDES.tools update causing breaking changes due to multiple C
 ## Dependency changes
 * none
 
-## Bugfixes
+## Bug Fixes
 * `spread` with `allowOverlap = TRUE` would give wrong results. Fixed.
 * update a test to deal with forthcoming `raster` changes.
 
@@ -106,7 +139,7 @@ We are currently working on a fix, which may take some time.
 * Removed `profvis` and `microbenchmark` from Suggests: all benchmarking is removed from automated tests
 
 ## Bugfixes
-* minor bug fixes
+* minor Bug Fixes
 
 ## Enhancements
 * `spread2` speed enhancements
@@ -153,7 +186,7 @@ We are currently working on a fix, which may take some time.
 * `fastCrop()`: `raster::crop` is faster than `velox::crop` under many tests.
 * `fastMask()`: moved to the `reproducible` package.
 
-## Bug fixes
+## Bug Fixes
 * minor bug fixes (`spread2`)
 * minor test fixes.
 

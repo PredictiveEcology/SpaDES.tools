@@ -3,29 +3,28 @@
 #'
 #' Determines the heading between spatial points.
 #'
-#' @param from The starting position; an object of class SpatialPoints.
+#' @param from The starting position; an object of class SpatVector
 #'
-#' @param to The ending position;  an object of class SpatialPoints.
+#' @param to The ending position;  an object of class SpatVector
 #'
 #' @return The heading between the points, in degrees.
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom CircStats deg
-#' @importFrom sp SpatialPoints
 #' @rdname heading
 #'
 #' @examples
-#' library(sp)
+#' library(terra)
+#' if (require("CircStats")) {
 #' N <- 10L                # number of agents
 #' x1 <- stats::runif(N, -50, 50) # previous X location
 #' y1 <- stats::runif(N, -50, 50) # previous Y location
 #' x0 <- stats::rnorm(N, x1, 5)   # current X location
 #' y0 <- stats::rnorm(N, y1, 5)   # current Y location
 #'
-#' # using SpatialPoints
-#' prev <- SpatialPoints(cbind(x = x1, y = y1))
-#' curr <- SpatialPoints(cbind(x = x0, y = y0))
+#' # using SpatVector
+#' prev <- terra::vect(cbind(x = x1, y = y1))
+#' curr <- terra::vect(cbind(x = x0, y = y0))
 #' heading(prev, curr)
 #'
 #' # using matrix
@@ -34,54 +33,59 @@
 #' heading(prev, curr)
 #'
 #' #using both
-#' prev <- SpatialPoints(cbind(x = x1, y = y1))
+#' prev <- terra::vect(cbind(x = x1, y = y1))
 #' curr <- matrix(c(x0, y0), ncol = 2, dimnames = list(NULL, c("x","y")))
 #' heading(prev, curr)
 #'
 #' prev <- matrix(c(x1, y1), ncol = 2, dimnames = list(NULL, c("x","y")))
-#' curr <- SpatialPoints(cbind(x = x0, y = y0))
+#' curr <- terra::vect(cbind(x = x0, y = y0))
 #' heading(prev, curr)
+#' }
 #'
-setGeneric("heading", function(from, to) {
-    standardGeneric("heading")
-})
+heading <- function(from, to) {
+  .requireNamespace("CircStats")
+  from <- coords(from)
+  to <- coords(to)
+  ys <- to[, 2] - from[, 2]
+  xs <- to[, 1] - from[, 1]
+  heading <- CircStats::deg(atan(xs / ys)) ## 0/0 produces NaN; correct this below
+  heading[xs == 0 & ys == 0] <- 0
+  ys <- (ys < 0)
+  heading[(ys) & (xs) < 0] <- heading[(ys) & (xs) < 0] - 180
+  heading[(ys) & (xs) > 0] <- heading[(ys) & (xs) > 0] + 180
+  return(heading %% 360)
+}
 
-#' @export
-#' @rdname heading
-setMethod("heading",
-          signature(from = "SpatialPoints", to = "SpatialPoints"),
-          definition = function(from, to) {
-            to <- coordinates(to)
-            from <- coordinates(from)
-            ys <- to[, 2] - from[, 2]
-            xs <- to[, 1] - from[, 1]
-            heading <- deg(atan(xs / ys))
-            ys <- (ys < 0)
-            heading[(ys) & (xs) < 0] <- heading[(ys) & (xs) < 0] - 180
-            heading[(ys) & (xs) > 0] <- heading[(ys) & (xs) > 0] + 180
-            return(heading %% 360)
-})
+coords <- function(crds) {
+  if (inherits(crds, "SpatVector")) {
+    .requireNamespace("terra")
+    crds <- terra::crds(crds)
+  } else if (inherits(crds, "sf")) {
+    .requireNamespace("sf")
+    crds <- sf::st_coordinates(crds)
+  } else if (inherits(crds, "Spatial")) {
+    .requireNamespace("sp")
+    crds <- sp::coordinates(crds)
+  }
 
-#' @export
-#' @rdname heading
-setMethod("heading",
-          signature(from = "matrix", to = "matrix"),
-          definition = function(from, to) {
-            return(heading(SpatialPoints(from), SpatialPoints(to)))
-})
+ crds
+}
 
-#' @export
-#' @rdname heading
-setMethod("heading",
-          signature(from = "matrix", to = "SpatialPoints"),
-          definition = function(from, to) {
-            return(heading(SpatialPoints(from), to))
-})
+`coords<-` <- function(obj, value) {
+  if (inherits(obj, "SpatVector")) {
+    .requireNamespace("terra")
+    crdsdf <- data.frame(value, as.data.frame(coords(obj)))
+    colnames(crdsdf) <- c("x", "y", "x1", "y1")
+    obj <- terra::vect(crdsdf, geom = c("x", "y"))
+  } else if (inherits(obj, "sf")) {
+    .requireNamespace("sf")
+    obj2 <- sf::st_as_sfc(sf::st_as_sf(as.data.frame(value), coords = c("x", "y")))
+    obj <- sf::st_set_geometry(obj, value = obj2)
+    obj
+  } else if (inherits(obj, "Spatial")) {
+    .requireNamespace("sp")
+    obj@coords <- value
+  }
 
-#' @export
-#' @rdname heading
-setMethod("heading",
-          signature(from = "SpatialPoints", to = "matrix"),
-          definition = function(from, to) {
-            return(heading(from, SpatialPoints(to)))
-})
+  obj
+}

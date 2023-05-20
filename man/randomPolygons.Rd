@@ -4,24 +4,18 @@
 \name{randomPolygons}
 \alias{randomPolygons}
 \alias{randomPolygon}
-\alias{randomPolygon.SpatialPoints}
-\alias{randomPolygon.matrix}
-\alias{randomPolygon.SpatialPolygons}
-\title{Produce a \code{RasterLayer} of  random polygons}
+\alias{randomPolygon.default}
+\title{Produce a \code{SpatRaster} of  random polygons}
 \usage{
 randomPolygons(
-  ras = raster(extent(0, 15, 0, 15), res = 1, vals = 0),
+  ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
   numTypes = 2,
   ...
 )
 
 randomPolygon(x, hectares, area)
 
-\method{randomPolygon}{SpatialPoints}(x, hectares, area)
-
-\method{randomPolygon}{matrix}(x, hectares, area)
-
-\method{randomPolygon}{SpatialPolygons}(x, hectares, area)
+\method{randomPolygon}{default}(x, hectares, area)
 }
 \arguments{
 \item{ras}{A raster that whose extent will be used for the random polygons.}
@@ -30,7 +24,8 @@ randomPolygon(x, hectares, area)
 
 \item{...}{Other arguments passed to \code{spread}. No known uses currently.}
 
-\item{x}{Either a \code{SpatialPoints}, \code{SpatialPolygons}, or \code{matrix} with two
+\item{x}{Either a \code{SpatVector}, or \code{SpatialPoints} (deprecated), \code{SpatialPolygons}
+(deprecated), or \code{matrix} with two
 dimensions, 1 row, with the approximate centre of the new random polygon to create.
 If \code{matrix}, then longitude and latitude are assumed (epsg:4326)}
 
@@ -41,41 +36,33 @@ If \code{matrix}, then longitude and latitude are assumed (epsg:4326)}
 \value{
 A map of extent \code{ext} with random polygons.
 
-A \code{SpatialPolygons} object, with approximately the area request,
+A \code{SpatVector} polygons object, with approximately the area request,
 centred approximately at the coordinates requested, in the projection of \code{x}
 }
 \description{
 These are built with the \code{\link[=spread]{spread()}} function internally.
 
-Produces a \code{SpatialPolygons} object with 1 feature that will have approximately an area
+Produces a \code{SpatVector} polygons object with 1 feature that will have approximately an area
 equal to \code{area} (expecting area in hectares), #' and a centre at approximately \code{x}.
 }
 \examples{
-library(quickPlot)
-
 set.seed(1234)
 Ras <- randomPolygons(numTypes = 5)
-if (interactive()) {
-  clearPlot()
-  Plot(Ras, cols = c("yellow", "dark green", "blue", "dark red"))
+if (interactive() ) {
+  terra::plot(Ras, col = c("yellow", "dark green", "blue", "dark red"))
 }
 
-library(raster)
 # more complex patterning, with a range of patch sizes
-a <- randomPolygons(numTypes = 400, raster(extent(0, 50, 0, 50), res = 1, vals = 0))
+a <- randomPolygons(numTypes = 400, terra::rast(terra::ext(0, 50, 0, 50), res = 1, vals = 0))
 a[a < 320] <- 0
 a[a >= 320] <- 1
-suppressWarnings(clumped <- clump(a)) # warning sometimes occurs, but not important
-aHist <- hist(table(getValues(clumped)), plot = FALSE)
+clumped <- terra::patches(a)
 if (interactive()) {
-  clearPlot()
-  Plot(a)
-  Plot(aHist)
+  terra::plot(a)
 }
-
-library(raster)
-b <- SpatialPoints(cbind(-110, 59))
-crs(b) <- sp::CRS("+init=epsg:4326")
+library(terra)
+b <- terra::vect(cbind(-110, 59))
+crs(b) <- terra::crs("epsg:4326")
 a <- randomPolygon(b, area = 1e6)
 if (interactive()) {
   plot(a)
@@ -84,5 +71,5 @@ if (interactive()) {
 
 }
 \seealso{
-\code{\link[=spread]{spread()}}, \code{\link[=raster]{raster()}}, \code{\link[=randomPolygons]{randomPolygons()}}
+\code{\link[=spread]{spread()}}, \code{\link[=randomPolygons]{randomPolygons()}}
 }

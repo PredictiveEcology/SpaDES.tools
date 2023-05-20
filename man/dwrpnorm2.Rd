@@ -13,17 +13,14 @@ dwrpnorm2(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc)
 
 \item{rho}{mean resultant length of distribution.}
 
-\item{sd}{different way of select \code{rho}, see details below.}
+\item{sd}{different way of select rho, see details below.}
 
-\item{acc}{parameter defining the accuracy of the estimation of the
-  density.  Terms are added to the infinite summation that defines the
-  density function until successive estimates are within \code{acc} of each
-  other.}
+\item{acc}{parameter defining the accuracy of the estimation of the density. Terms are added to the infinite summation that defines the density function until successive estimates are within acc of each other.}
 
-\item{tol}{the same as \code{acc}.}
+\item{tol}{the same as acc.}
 }
 \description{
-This is a modified version of \link[CircStats:dwrpnorm]{dwrpnorm}.
+This is a modified version of \code{CircStats::dwrpnorm()}.
 to allow for multiple angles at once (i.e., vectorized on \code{theta} and \code{mu}).
 }
 \examples{

@@ -20,23 +20,22 @@ optional \code{id} which will be matched with \code{id} from \code{from}.
 It makes no sense to have \code{id} column here with no \code{id} column
 in \code{from}.}
 
-\item{landscape}{(optional) \code{RasterLayer}. This is only used if \code{to = NULL},
-in which case all cells are considered \code{to}.}
+\item{landscape}{(optional) \code{RasterLayer} or \code{SpatRaster}.
+This is only used if \code{to = NULL}, in which case all cells are considered \code{to}.}
 }
 \value{
 A sorted matrix on \code{id} with same number of rows as \code{to},
-but with one extra column, \code{angles} indicating the angle in radians
-between from and to. For speed, this angle will be between \code{-pi/2}
-and \code{3*pi/2}.
+but with one extra column, \code{angles} indicating the angle in radians between from and to.
+For speed, this angle will be between \code{-pi/2} and \code{3*pi/2}.
 If the user wants this between say, \code{0} and \code{2*pi},
 then \verb{angles \\\%\\\% (2*pi)} will do the trick. See example.
 }
 \description{
-This is a modification of \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} for the case
+This is a modification of \code{\link[terra:distance]{terra::distance()}} for the case
 of many points.
 This version can often be faster for a single point because it does not return
 a \code{RasterLayer}.
-This is different than \code{\link[raster:distanceFromPoints]{raster::distanceFromPoints()}} because it does
+This is different than \code{\link[terra:distance]{terra::distance()}} because it does
 not take the minimum distance from the set of points to all cells.
 Rather this returns the every pair-wise point distance.
 As a result, this can be used for doing inverse distance weightings, seed rain,
@@ -56,32 +55,30 @@ If knowing the which from cell matches with which to cell is important,
 put a column "id" (e.g., starting cell) in the \code{from} matrix.
 }
 \examples{
-library(raster)
-library(quickPlot)
+library(terra)
 
 N <- 2
-dirRas <- raster(extent(0,40,0,40), res = 1)
+dirRas <- terra::rast(terra::ext(0,40,0,40), res = 1)
 coords <- cbind(x = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
                 y = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
                 id = 1:N)
 
 dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
-library(CircStats)
-dirs1[, "angles"] <- deg(dirs1[,"angles"] \%\% (2*pi))
-indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
-minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
-dirRas[] <- as.vector(minDir)
-if (interactive()) {
-  clearPlot()
-  Plot(dirRas)
-  library(sp)
-  start <- SpatialPoints(coords[, c("x", "y"), drop = FALSE])
-  Plot(start, addTo = "dirRas")
+if (require("CircStats")) {
+  dirs1[, "angles"] <- CircStats::deg(dirs1[,"angles"] \%\% (2*pi))
+  indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
+  minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
+  dirRas[] <- as.vector(minDir)
+  if (interactive()) {
+    terra::plot(dirRas)
+    start <- terra::vect(coords[, c("x", "y"), drop = FALSE])
+    terra::plot(start, add = TRUE)
+  }
 }
+
 }
 \seealso{
-\code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}}, which will also return directions
-if \code{angles = TRUE}.
+\code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}}, which will also return directions if \code{angles = TRUE}.
 }
 \author{
 Eliot McIntire

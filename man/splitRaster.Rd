@@ -4,7 +4,6 @@
 \alias{mergeRaster}
 \alias{mergeRaster,list-method}
 \alias{splitRaster}
-\alias{splitRaster,RasterLayer-method}
 \title{Split and re-merge \code{RasterLayer}(s)}
 \usage{
 mergeRaster(x, fun = NULL)
@@ -19,18 +18,7 @@ splitRaster(
   path = NA,
   cl,
   rType = "FLT4S",
-  fExt = ".grd"
-)
-
-\S4method{splitRaster}{RasterLayer}(
-  r,
-  nx = 1,
-  ny = 1,
-  buffer = c(0, 0),
-  path = NA,
-  cl,
-  rType = "FLT4S",
-  fExt = ".grd"
+  fExt = ".tif"
 )
 }
 \arguments{
@@ -46,7 +34,7 @@ accepts a \code{na.rm} argument. The default is \code{mean}.}
 \item{ny}{The number of tiles to make along the y-axis.}
 
 \item{buffer}{Numeric vector of length 2 giving the size of the buffer along the x and y axes.
-If these values less than or equal to \code{1} are used, this
+If values greater than or equal to \code{1} are used, this
 is interpreted as the number of pixels (cells) to use as a buffer.
 Values between \code{0} and \code{1} are interpreted as proportions
 of the number of pixels in each tile (rounded up to an integer value).
@@ -84,25 +72,25 @@ over the values in any buffered regions.
 This is useful for reducing edge effects when performing raster operations involving
 contagious processes.
 
-This function is parallel-aware, using the same mechanism as used in \pkg{raster}.
-Specifically, if you start a cluster using \code{\link[=beginCluster]{beginCluster()}},
+This function is parallel-aware using the same mechanism as used in \pkg{raster}:
+NOTE: This may not work as expected as we transition away from \code{raster}.
+Specifically, if you start a cluster using \code{raster::beginCluster()},
 then this function will automatically use that cluster.
-It is always a good idea to stop the cluster when finished, using \code{\link[=endCluster]{endCluster()}}.
+It is always a good idea to stop the cluster when finished, using \code{raster::endCluster()}.
 }
 \examples{
-library(raster)
-library(Require)
+library(terra)
 
 # an example with dimensions:
 # nrow: 77
 # ncol: 101
 # nlayers: 3
-b <- brick(system.file("external/rlogo.grd", package = "raster"))
+b <- rast(system.file("ex/logo.tif", package = "terra"))
 r <- b[[1]] # use first layer only
-nx <- 1
-ny <- 2
+nx <- 3
+ny <- 4
 
-tmpdir <- checkPath(file.path(tempdir(), "splitRaster-example"), create = TRUE)
+tmpdir <- dir.create(file.path(tempdir(), "splitRaster-example"), showWarnings = FALSE)
 
 y0 <- splitRaster(r, nx, ny, path = file.path(tmpdir, "y0")) # no buffer
 
@@ -112,23 +100,32 @@ y1 <- splitRaster(r, nx, ny, c(10, 10), path = file.path(tmpdir, "y1"))
 # buffer: half the width and length of each tile
 y2 <- splitRaster(r, nx, ny, c(0.5, 0.5), path = file.path(tmpdir, "y2"))
 
-# parallel cropping
-if (interactive()) {
-  n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
-  beginCluster(n)
-  y3 <- splitRaster(r, nx, ny, c(0.7, 0.7), path = file.path(tmpdir, "y3"))
-  endCluster()
-}
-
 # the original raster:
 if (interactive()) plot(r) # may require a call to `dev()` if using RStudio
 
 # the split raster:
 layout(mat = matrix(seq_len(nx * ny), ncol = nx, nrow = ny))
-plotOrder <- c(4, 8, 12, 3, 7, 11, 2, 6, 10, 1, 5, 9)
-if (interactive()) invisible(lapply(y0[plotOrder], plot))
+plotOrder <- unlist(lapply(split(1:12, rep(1:nx, each = ny)), rev))
 
-# can be recombined using `raster::merge`
+if (interactive()) {
+  invisible(lapply(y0[plotOrder], terra::plot))
+}
+
+# parallel splitting
+if (require("raster") && require("snow")) {
+  if (interactive()) {
+    n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
+    raster::beginCluster(n)
+    y3 <- splitRaster(r, nx, ny, c(0.7, 0.7), path = file.path(tmpdir, "y3"))
+    raster::endCluster()
+    if (interactive()) {
+      invisible(lapply(y3[plotOrder], terra::plot))
+    }
+  }
+}
+
+
+# can be recombined using `terra::merge`
 m0 <- do.call(merge, y0)
 all.equal(m0, r) ## TRUE
 
@@ -151,9 +148,9 @@ all.equal(n2, r) ## TRUE
 unlink(tmpdir, recursive = TRUE)
 }
 \seealso{
-\code{\link[raster:merge]{raster::merge()}}, \code{\link[raster:mosaic]{raster::mosaic()}}
+\code{\link[terra:merge]{terra::merge()}}, \code{\link[terra:mosaic]{terra::mosaic()}}
 
-\code{\link[=do.call]{do.call()}}, \code{\link[raster:merge]{raster::merge()}}.
+\code{\link[=do.call]{do.call()}}, \code{\link[terra:merge]{terra::merge()}}.
 }
 \author{
 Yong Luo, Alex Chubaty, Tati Micheletti & Ian Eddy

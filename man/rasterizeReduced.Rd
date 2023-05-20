@@ -16,12 +16,16 @@ rasterizeReduced(
 \item{reduced}{\code{data.frame} or \code{data.table} that has at least one
 column of codes that are represented in the \code{fullRaster}.}
 
-\item{fullRaster}{\code{RasterLayer} of codes used in \code{reduced} that
-represents a spatial representation of the data.}
+\item{fullRaster}{\code{RasterLayer}/\code{SpatRaster} of codes used in \code{reduced} that
+represents a spatial representation of the data. Note that
+if \code{fullRaster} is a \code{factor} \code{SpatRaster}, the active category
+level values are used, not the IDs (see \code{terra::activeCat} and
+\code{terra::cats})}
 
 \item{newRasterCols}{Character vector, length 1 or more, with the name(s) of
 the column(s) in \code{reduced} whose value will be
-returned as a \code{Raster} or list of \code{Raster}s.}
+returned as a \code{RasterLayer}/\code{SpatRaster} or list
+of \code{RasterLayer}/\code{SpatRaster}s.}
 
 \item{mapcode}{a character, length 1, with the name of the column in \code{reduced}
 that is represented in \code{fullRaster}.}
@@ -29,8 +33,8 @@ that is represented in \code{fullRaster}.}
 \item{...}{Other arguments. None used yet.}
 }
 \value{
-A \code{RasterLayer} or list of \code{RasterLayer} of with same
-dimensions as \code{fullRaster} representing
+A \code{RasterLayer}/\code{SpatRaster} or list of
+\code{RasterLayer}/\code{SpatRaster} of with same dimensions as \code{fullRaster} representing
 \code{newRasterCols} spatially, according to the join between the \code{mapcode}
 contained within \code{reduced} and \code{fullRaster}
 }
@@ -39,14 +43,13 @@ Convert reduced representation to full raster
 }
 \examples{
 library(data.table)
-library(raster)
-library(quickPlot)
+library(terra)
 
-ras <- raster(extent(0, 15, 0, 15), res = 1)
+ras <- rast(ext(0, 15, 0, 15), res = 1)
 fullRas <- randomPolygons(ras, numTypes = 2)
 names(fullRas) <- "mapcodeAll"
 uniqueComms <- unique(fullRas)
-reducedDT <- data.table(mapcodeAll = uniqueComms,
+reducedDT <- data.table(uniqueComms,
                         communities = sample(1:1000, length(uniqueComms)),
                         biomass = rnbinom(length(uniqueComms), mu = 4000, 0.4))
 biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
@@ -55,14 +58,29 @@ biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
 setkey(reducedDT, biomass)
 
 communities <- rasterizeReduced(reducedDT, fullRas, "communities")
-setColors(communities) <- c("blue", "orange", "red")
+coltab(communities) <- c("blue", "orange", "red")
 if (interactive()) {
-  clearPlot()
-  Plot(biomass, communities, fullRas)
+  terra::plot(c(biomass, communities, fullRas))
 }
+
+## with a factor SpatRaster, the mapcode should correspond to the
+## active category (not the ids)
+cls <- data.frame(id = sort(unique(as.vector(fullRas[]))))
+cls$Bclass <- LETTERS[cls$id]
+levels(fullRas) <- cls
+is.factor(fullRas)
+
+clsDT <- as.data.table(cls)
+reducedDT <- reducedDT[clsDT, on = "mapcodeAll==id"]
+reducedDT[, mapcodeAll := Bclass]
+
+biomass2 <- rasterizeReduced(reducedDT, fullRas, "biomass")
+
+
+
 }
 \seealso{
-\code{\link[=raster]{raster()}}
+\code{\link[terra:rast]{terra::rast()}}
 }
 \author{
 Eliot McIntire

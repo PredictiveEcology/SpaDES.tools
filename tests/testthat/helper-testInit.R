@@ -2,6 +2,19 @@
 #   optsAsk in this environment,
 # loads and libraries indicated plus testthat,
 # sets options("reproducible.ask" = FALSE) if ask = FALSE
+rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"),
+                     read = c("raster::raster", "terra::rast"),
+                     stack = c("raster::stack", "terra::rast"),
+                     stackClass = c("RasterStack", "SpatRaster"),
+                     extent = c("raster::extent", "terra::ext"))
+
+needTerraAndRaster <- function(envir = parent.frame()) {
+  if (!requireNamespace("raster", quietly = TRUE)) {
+    rastDF <- rastDF[rastDF$pkg == "terra",]
+  }
+  return(rastDF)
+}
+
 testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
                      opts = NULL, needGoogle = FALSE) {
 
@@ -19,7 +32,7 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
   unlist(lapply(libraries, require, character.only = TRUE))
   require("testthat")
   subDir <- paste(sample(LETTERS, 8), collapse = "")
-  tmpdir <- Require::tempdir2(subDir)
+  tmpdir <- reproducible::tempdir2(subDir)
 
   if (isTRUE(needGoogle)) {
     if (requireNamespace("googledrive", quietly = TRUE)) {
@@ -29,8 +42,10 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
         googledrive::drive_auth_config(active = TRUE)
     }
 
-    if (quickPlot::isRstudioServer()) {
-      options(httr_oob_default = TRUE)
+    if (requireNamespace("quickPlot", quietly = TRUE)) {
+      if (quickPlot::isRstudioServer()) {
+        options(httr_oob_default = TRUE)
+      }
     }
 
     ## #119 changed use of .httr-oauth (i.e., no longer used)
@@ -55,7 +70,7 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
   }
   checkPath(tmpdir, create = TRUE)
   origDir <- setwd(tmpdir)
-  tmpCache <- Require::normPath(file.path(tmpdir, "testCache"))
+  tmpCache <- reproducible::normPath(file.path(tmpdir, "testCache"))
   checkPath(tmpCache, create = TRUE)
 
   defaultOpts <- list(reproducible.showSimilar = FALSE,
@@ -69,12 +84,10 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
 
   if (!is.null(opts)) {
     if (needGoogle) {
-      optsGoogle <- if (utils::packageVersion("googledrive") >= "1.0.0") {
-        # list(httr_oob_default = quickPlot::isRstudioServer(),
-        #      httr_oauth_cache = "~/.httr-oauth")
-      } else {
-        list(httr_oob_default = quickPlot::isRstudioServer())
-      }
+      optsGoogle <- list(
+        # httr_oob_default = quickPlot::isRstudioServer(),
+        # httr_oauth_cache = "~/.httr-oauth"
+      )
       opts <- append(opts, optsGoogle)
     }
     opts <- options(opts)
@@ -86,7 +99,7 @@ testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
     tmpfile <- file.path(tmpdir, ranfiles)
     tmpfile <- gsub(pattern = "\\.\\.", tmpfile, replacement = "\\.")
     file.create(tmpfile)
-    tmpfile <- Require::normPath(tmpfile)
+    tmpfile <- reproducible::normPath(tmpfile)
   }
 
   try(clearCache(tmpdir, ask = FALSE), silent = TRUE)
@@ -131,6 +144,6 @@ testOnExit <- function(testInitOut) {
   }
 
   lapply(testInitOut$libs, function(lib) {
-    try(detach(paste0("package:", lib), character.only = TRUE), silent = TRUE)}
-  )
+    try(detach(paste0("package:", lib), character.only = TRUE), silent = TRUE)
+  })
 }

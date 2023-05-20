@@ -1,6 +1,4 @@
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
-}
+utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 
 ##############################################################
 #' Fast `adjacent` function, and Just In Time compiled version
@@ -90,19 +88,19 @@ if (getRversion() >= "3.1.0") {
 #' The variable output is done to minimize coercion to maintain speed.
 #' The columns will be one or more of `id`, `from`, `to`.
 #'
-#' @seealso [raster::adjacent()]
+#' @seealso [terra::adjacent()]
 #'
 #' @author Eliot McIntire
 #' @export
 #' @importFrom data.table := data.table key set setcolorder setkeyv
-#' @importFrom raster ncell ncol nrow
+#' @importFrom terra ncell ncol nrow
 #' @importFrom stats na.omit
 #' @rdname adj
 #'
 #' @examples
-#' library(raster)
-#' a <- raster(extent(0, 1000, 0, 1000), res = 1)
-#' sam <- sample(1:length(a), 1e4)
+#' library(terra)
+#' a <- rast(ext(0, 1000, 0, 1000), res = 1)
+#' sam <- sample(1:ncell(a), 1e4)
 #' numCol <- ncol(a)
 #' numCell <- ncell(a)
 #' adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8)
@@ -369,12 +367,11 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'
 #' Identify the pixels and coordinates that are at a (set of) buffer distance(s)
 #' of the objects passed into `coords`.
-#' This is similar to `rgeos::gBuffer` but much faster and without
-#' the geo referencing information.
+#' This is similar to `sf::st_buffer` but much faster and without the geo referencing information.
 #' In other words, it can be used for similar problems, but where speed is important.
 #' This code is substantially adapted from `PlotRegionHighlighter::createCircle`.
 #'
-#' @param landscape    Raster on which the circles are built.
+#' @param landscape Raster on which the circles are built.
 #'
 #' @param coords Either a matrix with 2 (or 3) columns, x and y (and id), representing the
 #'               coordinates (and an associated id, like cell index),
@@ -400,29 +397,28 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'                        than the cell indices. This will increase the size of the returned
 #'                        object.
 #'
-#' @param includeBehavior Character string. Currently accepts only "includePixels", the default,
-#'                        and "excludePixels". See details.
+#' @param includeBehavior Character string. Currently accepts only `"includePixels"`, the default,
+#'                        and `"excludePixels"`. See details.
 #'
-#' @param returnDistances Logical. If TRUE, then a column will be added to the returned
+#' @param returnDistances Logical. If `TRUE`, then a column will be added to the returned
 #'                        data.table that reports the distance from `coords` to every
 #'                        point that was in the circle/donut surrounding `coords`. Default
-#'                        FALSE, which is faster.
+#'                        `FALSE`, which is faster.
 #'
 #' @param angles Numeric. Optional vector of angles, in radians, to use. This will create
-#'               "spokes" outward from coords. Default is NA, meaning, use internally
+#'               "spokes" outward from coords. Default is `NA`, meaning, use internally
 #'               derived angles that will "fill" the circle.
 #'
-#' @param returnAngles Logical. If TRUE, then a column will be added to the returned
-#'                        data.table that reports the angle from `coords` to every
-#'                        point that was in the circle/donut surrounding `coords`. Default
-#'                        FALSE.
+#' @param returnAngles Logical. If `TRUE`, then a column will be added to the returned
+#'                     data.table that reports the angle from `coords` to every
+#'                     point that was in the circle/donut surrounding `coords`. Default `FALSE.`
 #'
 #' @param closest Logical. When determining non-overlapping circles, should the function
 #'                give preference to the closest `loci` or the first one (much faster).
-#'                Default is FALSE, meaning the faster, though maybe not desired behaviour.
+#'                Default is `FALSE`, meaning the faster, though maybe not desired behaviour.
 #'
-#' @param simplify logical. If TRUE, then all duplicate pixels are removed. This means
-#' that some x, y combinations will disappear.
+#' @param simplify logical. If `TRUE`, then all duplicate pixels are removed.
+#' This means that some x, y combinations will disappear.
 #'
 #' @inheritParams spread
 #'
@@ -441,21 +437,19 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' associated with the ring or circle being identified by this function.
 #'
 #' @importFrom data.table data.table set setkeyv
-#' @importFrom sp coordinates
 #' @importFrom fpCompare %==%
-#' @importFrom raster cellFromXY extract res xyFromCell ncell ncol
+#' @importFrom terra cellFromXY extract res xyFromCell ncell ncol
 #' @export
 #' @rdname cir
 #'
 #' @seealso [rings()] which uses `spread` internally.
-#' `cir` tends to be faster when there are few starting points, `rings`
-#' tends to be faster when there are many starting points. `cir` scales with
-#' `maxRadius` ^ 2 and `coords`. Another difference
-#' between the two functions is that `rings` takes the centre of the pixel
+#' `cir` tends to be faster when there are few starting points, `rings` tends to be faster
+#' when there are many starting points. `cir` scales with `maxRadius^2` and `coords`.
+#' Another difference between the two functions is that `rings` takes the centre of the pixel
 #' as the centre of a circle, whereas `cir` takes the exact coordinates.
 #' See example. For the specific case of creating distance surfaces from specific
 #' points, see [distanceFromEachPoint()], which is often faster.
-#' For the more general GIS buffering, see `rgeos::gBuffer`.
+#' For the more general GIS buffering, see `sf::st_buffer`.
 #'
 #' @example inst/examples/example_cir.R
 #'
@@ -471,25 +465,29 @@ cir <- function(landscape, coords, loci,
                 returnAngles = FALSE, returnIndices = TRUE,
                 closest = FALSE, simplify = TRUE)  {
 
+  origClass <- class(landscape)
   if (missing(coords)) {
     if (missing(loci)) {
-      ncells <- ncell(landscape)
+      ncells <- terra::ncell(landscape)
       middleCell <- if (identical(ncells / 2, floor(ncells / 2))) {
-        ncells / 2 - ncol(landscape) / 2
+        ncells / 2 - terra::ncol(landscape) / 2
       } else {
         round(ncells / 2)
       }
-      coords <- xyFromCell(landscape, middleCell)
+      coords <- terra::xyFromCell(landscape, middleCell)
     } else if (is.numeric(loci)) {
-      coords <- xyFromCell(landscape, loci)
+      coords <- terra::xyFromCell(landscape, loci)
       coords <- cbind(coords, id = loci)
     } else {
       stop("Need either a numeric loci or coords")
     }
   } else if (inherits(coords, "Spatial")) {
-    coords <- coordinates(coords)
+    .requireNamespace("sp")
+    coords <- sp::coordinates(coords)
+  } else if (inherits(coords, "SpatVector")) {
+    coords <- crds(coords)
   } else if (!is.numeric(coords)) {
-    stop("Need either a numeric loci or coords with matrix or SpatialPoints")
+    stop("Need either a numeric loci or coords with matrix or SpatialPoints or SpatVector")
   }
 
   ### adapted from createCircle of the package PlotRegionHighlighter
@@ -499,7 +497,7 @@ cir <- function(landscape, coords, loci,
   }
   suppliedAngles <- if (all(!is.na(angles))) TRUE else FALSE
 
-  scaleRaster <- res(landscape)
+  scaleRaster <- terra::res(landscape)
   if (!isTRUE(all.equal(scaleRaster[1], scaleRaster[2]))) {
     stop("cir function only accepts rasters with identical resolution in x and y dimensions")
   }
@@ -671,14 +669,14 @@ cir <- function(landscape, coords, loci,
                  x = matDT2[, "x"], y = matDT2[, "y"], to = matDT2[, "indices"])
 
     } else {
-      xyC <- xyFromCell(landscape, matDT2[, "indices"]);
+      xyC <- xyFromCell(landscape, matDT2[, "indices"])
       a <- cbind(id = matDT2[, "id"], rads = matDT2[, "rads"], angles = matDT2[, "angles"],
                  x = xyC[, "x"], y = xyC[, "y"], to = matDT2[, "indices"])
     }
     if (!equalRadii)
       a <- cbind(a, maxRad = matDT2[, "maxRad"], minRad = matDT2[, "minRad"])
 
-    b <- cbind(coords, id = 1:NROW(coords))
+    b <- cbind(coords, id = seq_len(NROW(coords)))
 
     colnames(b)[1:2] <- c("x", "y")
     d <- distanceFromEachPoint(b, a)
@@ -733,7 +731,10 @@ cir <- function(landscape, coords, loci,
     matDT <- matDT[, -which(colnames(matDT) == "rads"), drop = FALSE]
   }
   if (!(returnIndices > 0)) {
-    ras <- raster(landscape)
+    if (isTRUE(origClass == "SpatRaster"))
+      ras <- terra::rast(landscape)
+    else
+      ras <- raster::raster(landscape)
     ras[] <- 0
     if (!allowOverlap) {
       if (!returnDistances) {
@@ -760,14 +761,13 @@ cir <- function(landscape, coords, loci,
 #'
 #' Generally useful for model development purposes.
 #'
-#' If `withHeading` used, then `X` must be a `SpatialPointsDataFrame`
+#' If `withHeading` used, then `X` must be an `sf` or `SpatVector` object
 #' that contains two columns, `x1` and `y1`, with the immediately
 #' previous agent locations.
 #'
-#' @param X A `SpatialPoints*` object, or matrix of coordinates.
+#' @param X `SpatVector`, `sf`, or matrix of coordinates.
 #'
-#' @param bounds Either a `Raster*`, `Extent`, or `bbox` object
-#'               defining bounds to wrap around.
+#' @param bounds Either a `SpatRaster*`, `Extent`, or `bbox` object defining bounds to wrap around.
 #'
 #' @param withHeading logical. If `TRUE`, the previous points must be wrapped
 #'                    also so that the subsequent heading calculation will work.
@@ -776,159 +776,189 @@ cir <- function(landscape, coords, loci,
 #' @return Object of the same class as `X`, but with coordinates updated to
 #'         reflect the wrapping.
 #'
-#' @author Eliot McIntire
-#' @export
-#' @rdname wrap
-#'
 #' @examples
-#' library(raster)
-#' library(quickPlot)
-#'
+#' if (require("sf")) {
 #' xrange <- yrange <- c(-50, 50)
-#' hab <- raster(extent(c(xrange, yrange)))
+#' hab <- terra::rast(terra::ext(c(xrange, yrange)))
 #' hab[] <- 0
 #'
 #' # initialize agents
 #' N <- 10
 #'
 #' # previous points
-#' x1 <- rep(0, N)
-#' y1 <- rep(0, N)
+#' x1 <- y1 <- rep(0, N)
 #' # initial points
 #' starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
 #'                 y = stats::runif(N, yrange[1], yrange[2]))
 #'
-#' # create the agent object
-#' agent <- SpatialPointsDataFrame(coords = starts, data = data.frame(x1, y1))
-#'
+#' # create the agent object # the x1 and y1 are needed for "previous location"
+#' agent <- terra::vect(data.frame(x1, y1, starts), geom = c("x", "y"))
 #'
 #' ln <- rlnorm(N, 1, 0.02) # log normal step length
 #' sd <- 30 # could be specified globally in params
 #'
 #' if (interactive()) {
-#'   clearPlot()
-#'   Plot(hab, zero.color = "white", axes = "L")
+#'   # clearPlot()
+#'   terra::plot(hab, col = "white")
 #' }
 #' for (i in 1:10) {
-#'   agent <- crw(agent = agent, extent = extent(hab), stepLength = ln,
+#'   agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
 #'                stddev = sd, lonlat = FALSE, torus = TRUE)
-#'   if (interactive()) Plot(agent, addTo = "hab", axes = TRUE)
+#' if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 #' }
-setGeneric("wrap", function(X, bounds, withHeading) {
-  standardGeneric("wrap")
-})
-
+#' }
+#'
+#' @author Eliot McIntire
 #' @export
 #' @rdname wrap
-setMethod(
-  "wrap",
-  signature(X = "matrix", bounds = "Extent", withHeading = "missing"),
-  definition = function(X, bounds) {
-    if (identical(colnames(X), c("x", "y"))) {
-      return(cbind(
-        x = (X[, "x"] - bounds@xmin) %% (bounds@xmax - bounds@xmin) + bounds@xmin,
-        y = (X[, "y"] - bounds@ymin) %% (bounds@ymax - bounds@ymin) + bounds@ymin
-      ))
-    } else {
-      stop("When X is a matrix, it must have 2 columns, x and y,",
-           "as from say, coordinates(SpatialPointsObj)")
-    }
-})
+wrap <- function(X, bounds, withHeading = FALSE) {
+  classX <- is(X)
 
-#' @export
-#' @rdname wrap
-setMethod(
-  "wrap",
-  signature(X = "SpatialPoints", bounds = "ANY", withHeading = "missing"),
-  definition = function(X, bounds) {
-    X@coords <- wrap(X@coords, bounds = bounds)
+  if (is(X, "matrix")) {
+    X <- terra::vect(data.frame(x1 = X[, 1], y1 = X[, 2], X), geom = c("x", "y"))
+  } else if (is(X, "sf")) {
+    X <- terra::vect(X)
+  }
+
+  crdsStart <- coords(X)
+  ext <- extnt(bounds)
+  if (isTRUE(withHeading)) {
+    Xmin <- terra::xmin(ext)
+    Xmax <- terra::xmax(ext)
+    Ymin <- terra::ymin(ext)
+    Ymax <- terra::ymax(ext)
+    # This requires that previous points be "moved" as if they are
+    #  off the bounds, so that the heading is correct
+    xmins <- crdsStart[, 1] < Xmin
+    ymins <- crdsStart[, 2] < Ymin
+    xmaxs <- crdsStart[, 1] > Xmax
+    ymaxs <- crdsStart[, 2] > Ymax
+
+    # SpatVector returns data.frame; sf returns vector
+    x1 <- if (is.data.frame(X[["x1"]])) X[["x1"]][, 1] else X[["x1"]]
+    y1 <- if (is.data.frame(X[["y1"]])) X[["y1"]][, 1] else X[["y1"]]
+
+     # if (any(c(xmins, ymins, xmaxs, ymaxs)))
+     #   browser()
+    if (any(xmins))
+      X[xmins, "x1"] <- (x1[xmins] - Xmin) %% (Xmax - Xmin) + Xmax
+    if (any(xmaxs))
+      X[xmaxs, "x1"] <- (x1[xmaxs] - Xmax) %% (Xmin - Xmax) + Xmin
+    if (any(ymins))
+      X[ymins, "y1"] <- (y1[ymins] - Ymin) %% (Ymax - Ymin) + Ymax
+    if (any(ymaxs))
+      X[ymaxs, "y1"] <- (y1[ymaxs] - Ymax) %% (Ymin - Ymax) + Ymin
+
+  }
+  # signature(X = "matrix", bounds = "Extent", withHeading = "missing"),
+  # definition = function(X, bounds) {
+  if (identical(tolower(colnames(crdsStart)), c("x", "y"))) {
+    # terra::vect uses capitals X Y
+    crds <- cbind(
+      x = (crdsStart[, 1] - terra::xmin(bounds)) %% (terra::xmax(bounds) - terra::xmin(bounds)) +
+        terra::xmin(bounds),
+      y = (crdsStart[, 2] - terra::ymin(bounds)) %% (terra::ymax(bounds) - terra::ymin(bounds)) +
+        terra::ymin(bounds)
+    )
+  } else {
+    stop("When X is a matrix, it must have 2 columns, x and y,",
+         "as from say, coordinates(SpatialPointsObj)")
+  }
+  if (!(isTRUE(identical(crdsStart[, 1], crds[, 1])) &&
+        isTRUE(identical(crdsStart[, 2], crds[, 2])))) {
+    coords(X) <- crds
+  }
+
+  if ("matrix" %in% classX) {
+    return(coords(X))
+  } else if ("sf" %in% classX) {
+    .requireNamespace("sf")
+    return(sf::st_as_sf(X))
+  } else if ("SpatVector" %in% classX) {
     return(X)
-})
+  }
+}
 
-#' @export
-#' @rdname wrap
-setMethod(
-  "wrap",
-  signature(X = "matrix", bounds = "Raster", withHeading = "missing"),
-  definition = function(X, bounds) {
-    X <- wrap(X, bounds = extent(bounds))
-    return(X)
-})
+# setMethod(
+#   "wrap",
+#   signature(X = "SpatialPoints", bounds = "ANY", withHeading = "missing"),
+#   definition = function(X, bounds) {
+#     X@coords <- wrap(X@coords, bounds = bounds)
+#     return(X)
+# })
 
-#' @export
-#' @rdname wrap
-setMethod(
-  "wrap",
-  signature(X = "matrix", bounds = "Raster", withHeading = "missing"),
-  definition = function(X, bounds) {
-    X <- wrap(X, bounds = extent(bounds))
-    return(X)
-})
+# setMethod(
+#   "wrap",
+#   signature(X = "matrix", bounds = "Raster", withHeading = "missing"),
+#   definition = function(X, bounds) {
+#     X <- wrap(X, bounds = extent(bounds))
+#     return(X)
+# })
 
-#' @export
-#' @rdname wrap
-setMethod(
-  "wrap",
-  signature(X = "matrix", bounds = "matrix", withHeading = "missing"),
-  definition = function(X, bounds) {
-    if (identical(colnames(bounds), c("min", "max")) &
-         (identical(rownames(bounds), c("s1", "s2")))) {
-      X <- wrap(X, bounds = extent(bounds))
-      return(X)
-    } else {
-      stop("Must use either a bbox, Raster*, or Extent for 'bounds'")
-    }
-})
+# setMethod(
+#   "wrap",
+#   signature(X = "matrix", bounds = "Raster", withHeading = "missing"),
+#   definition = function(X, bounds) {
+#     X <- wrap(X, bounds = extent(bounds))
+#     return(X)
+# })
 
-#' @export
-#' @rdname wrap
-setMethod(
-  "wrap",
-  signature(X = "SpatialPointsDataFrame", bounds = "Extent", withHeading = "logical"),
-  definition = function(X, bounds, withHeading) {
-    if (withHeading) {
-      # This requires that previous points be "moved" as if they are
-      #  off the bounds, so that the heading is correct
-      X@data[coordinates(X)[, "x"] < bounds@xmin, "x1"] <-
-        (X@data[coordinates(X)[, "x"] < bounds@xmin, "x1"] - bounds@xmin) %%
-        (bounds@xmax - bounds@xmin) + bounds@xmax
-      X@data[coordinates(X)[, "x"] > bounds@xmax, "x1"] <-
-        (X@data[coordinates(X)[, "x"] > bounds@xmax, "x1"] - bounds@xmax) %%
-        (bounds@xmin - bounds@xmax) + bounds@xmin
-      X@data[coordinates(X)[, "y"] < bounds@ymin, "y1"] <-
-        (X@data[coordinates(X)[, "y"] < bounds@ymin, "y1"] - bounds@ymin) %%
-        (bounds@ymax - bounds@ymin) + bounds@ymax
-      X@data[coordinates(X)[, "y"] > bounds@ymax, "y1"] <-
-        (X@data[coordinates(X)[, "y"] > bounds@ymax, "y1"] - bounds@ymax) %%
-        (bounds@ymin - bounds@ymax) + bounds@ymin
-    }
-    return(wrap(X, bounds = bounds))
-})
+# setMethod(
+#   "wrap",
+#   signature(X = "matrix", bounds = "matrix", withHeading = "missing"),
+#   definition = function(X, bounds) {
+#     if (identical(colnames(bounds), c("min", "max")) &
+#          (identical(rownames(bounds), c("s1", "s2")))) {
+#       X <- wrap(X, bounds = extent(bounds))
+#       return(X)
+#     } else {
+#       stop("Must use either a bbox, Raster*, or Extent for 'bounds'")
+#     }
+# })
 
-#' @export
-#' @rdname wrap
-setMethod(
-  "wrap",
-  signature(X = "SpatialPointsDataFrame", bounds = "Raster", withHeading = "logical"),
-  definition = function(X, bounds, withHeading) {
-      X <- wrap(X, bounds = extent(bounds), withHeading = withHeading)
-      return(X)
-})
+# setMethod(
+#   "wrap",
+#   signature(X = "SpatialPointsDataFrame", bounds = "Extent", withHeading = "logical"),
+#   definition = function(X, bounds, withHeading) {
+#     if (withHeading) {
+#       # This requires that previous points be "moved" as if they are
+#       #  off the bounds, so that the heading is correct
+#       X@data[coordinates(X)[, "x"] < bounds@xmin, "x1"] <-
+#         (X@data[coordinates(X)[, "x"] < bounds@xmin, "x1"] - bounds@xmin) %%
+#         (bounds@xmax - bounds@xmin) + bounds@xmax
+#       X@data[coordinates(X)[, "x"] > bounds@xmax, "x1"] <-
+#         (X@data[coordinates(X)[, "x"] > bounds@xmax, "x1"] - bounds@xmax) %%
+#         (bounds@xmin - bounds@xmax) + bounds@xmin
+#       X@data[coordinates(X)[, "y"] < bounds@ymin, "y1"] <-
+#         (X@data[coordinates(X)[, "y"] < bounds@ymin, "y1"] - bounds@ymin) %%
+#         (bounds@ymax - bounds@ymin) + bounds@ymax
+#       X@data[coordinates(X)[, "y"] > bounds@ymax, "y1"] <-
+#         (X@data[coordinates(X)[, "y"] > bounds@ymax, "y1"] - bounds@ymax) %%
+#         (bounds@ymin - bounds@ymax) + bounds@ymin
+#     }
+#     return(wrap(X, bounds = bounds))
+# })
 
-#' @export
-#' @rdname wrap
-setMethod(
-  "wrap",
-  signature(X = "SpatialPointsDataFrame", bounds = "matrix", withHeading = "logical"),
-  definition = function(X, bounds, withHeading) {
-    if (identical(colnames(bounds), c("min", "max")) &
-        identical(rownames(bounds), c("s1", "s2"))) {
-      X <- wrap(X, bounds = extent(bounds), withHeading = withHeading)
-      return(X)
-    } else {
-      stop("Must use either a bbox, Raster*, or Extent for 'bounds'")
-    }
-})
+# setMethod(
+#   "wrap",
+#   signature(X = "SpatialPointsDataFrame", bounds = "Raster", withHeading = "logical"),
+#   definition = function(X, bounds, withHeading) {
+#       X <- wrap(X, bounds = extent(bounds), withHeading = withHeading)
+#       return(X)
+# })
+
+# setMethod(
+#   "wrap",
+#   signature(X = "SpatialPointsDataFrame", bounds = "matrix", withHeading = "logical"),
+#   definition = function(X, bounds, withHeading) {
+#     if (identical(colnames(bounds), c("min", "max")) &
+#         identical(rownames(bounds), c("s1", "s2"))) {
+#       X <- wrap(X, bounds = extent(bounds), withHeading = withHeading)
+#       return(X)
+#     } else {
+#       stop("Must use either a bbox, Raster*, or Extent for 'bounds'")
+#     }
+# })
 
 ################################################################################
 #' Identify outward radiating spokes from initial points
@@ -965,24 +995,13 @@ setMethod(
 #'
 #' @example inst/examples/example_spokes.R
 #'
-setGeneric(
-  "spokes",
-  function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
+spokes <- function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
            minRadius = maxRadius, allowOverlap = TRUE, stopRule = NULL,
            includeBehavior = "includePixels", returnDistances = FALSE,
            angles = NA_real_, nAngles = NA_real_, returnAngles = FALSE,
            returnIndices = TRUE, ...) {
-  standardGeneric("spokes")
-})
-
-#' @export
-#' @rdname spokes
-setMethod(
-  "spokes",
-  signature(landscape = "RasterLayer", coords = "SpatialPoints", loci = "missing"),
-  definition = function(landscape, coords, loci, maxRadius, minRadius = maxRadius,
-                        allowOverlap, stopRule, includeBehavior, returnDistances,
-                        angles, nAngles, returnAngles, returnIndices, ...) {
+  message("This function is very experimental and may not behave as expected")
+#  signature(landscape = "RasterLayer", coords = "SpatialPoints", loci = "missing"),
   if (!missing(nAngles)) {
     if (missing(angles)) {
     angles <- seq(0, pi * 2, length.out = 17)
@@ -1000,15 +1019,16 @@ setMethod(
   if (!is.null(stopRule)) {
     forms <- names(formals(stopRule))
     fromC <- "fromCell" %in% forms
-    if (fromC) fromCell <- cellFromXY(landscape, coordinates(coords))
+    if (fromC) fromCell <- cellFromXY(landscape, terra::crds(coords))
     toC <- "toCell" %in% forms
     if (toC) toCell <- cellFromXY(landscape, to[, c("x", "y")])
     land <- "landscape" %in% forms
-    listArgs <- if (land) list(landscape = landscape[aCir[, "indices"]]) else NULL
+    listArgs <- if (land) list(landscape = landscape[aCir[, "indices"]][[1]]) else NULL
     if (length(list(...)) > 0) listArgs <- append(listArgs, list(...))
     xDist <- "x" %in% forms
 
-    a <- cbind(aCir, stop = do.call(stopRule, args = listArgs))
+    a <- cbind(aCir, do.call(stopRule, args = listArgs))
+    colnames(a)[ncol(a)] <- "stop"
     a <- cbind(a, stopDist = a[, "stop"] * a[, "dists"])
     a[a[, "stop"] %==% 0, "stopDist"] <- maxRadius
 
@@ -1029,7 +1049,7 @@ setMethod(
     whDrop <- match(c("stopDist"), colnames(d2xx))
     d2xx[, -whDrop, drop = FALSE]
   }
-})
+}
 
 #' This is a very fast version of `cir` with `allowOverlap = TRUE`,
 #' `allowDuplicates = FALSE`, `returnIndices = TRUE`, `returnDistances = TRUE`, and
@@ -1067,7 +1087,7 @@ setMethod(
   dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, c("x", "y")]),
               dists = distsAll)
 
-  dd[!as.logical(dd[, "x"] > xmax(landscape) | dd[, "x"] < xmin(landscape) |
-                       dd[, "y"] > ymax(landscape) | dd[, "y"] < ymin(landscape)), ]
+  dd[!as.logical(dd[, "x"] > terra::xmax(landscape) | dd[, "x"] < terra::xmin(landscape) |
+                       dd[, "y"] > terra::ymax(landscape) | dd[, "y"] < terra::ymin(landscape)), ]
 
 }
