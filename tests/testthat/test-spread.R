@@ -886,8 +886,10 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
 
   if (interactive()) {
 
+    withr::local_package("DEoptim")
     withr::local_package("raster")
-    withr::local_package("parallel")
+    library(parallel)
+    # withr::local_package("parallel")
 
     hab <- randomPolygons(terra::rast(terra::ext(0, 1e2, 0, 1e2)), res = 1)
 

@@ -257,7 +257,7 @@ rndmPolygonMatrix <- function(x, hectares, area) {
     if (missing(area))
       area <- hectares
   }
-  latLong <- crs("+init=epsg:4326")
+  latLong <- crs("epsg:4326")
   message("Assuming matrix is in latitude/longitude")
   x <- vect(x, type = "points")
   crs(x) <- latLong

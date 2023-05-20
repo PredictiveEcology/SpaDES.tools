@@ -459,7 +459,7 @@ if (require("CircStats")) {
     }
     goalSize <- mean(sizes)
 
-    if (require("DEoptim")) {
+    if (requireNamespace("DEoptim", quietly = TRUE)) {
       library(parallel)
       library(DEoptim)
 
