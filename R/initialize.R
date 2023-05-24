@@ -138,8 +138,7 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 #'
 #' @examples
 #' library(terra)
-#' b <- terra::vect(cbind(-110, 59))
-#' crs(b) <- terra::crs("epsg:4326")
+#' b <- terra::vect(cbind(-110, 59), crs = "epsg:4326")
 #' a <- randomPolygon(b, area = 1e6)
 #' if (interactive()) {
 #'   plot(a)

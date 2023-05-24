@@ -61,8 +61,7 @@ if (interactive()) {
   terra::plot(a)
 }
 library(terra)
-b <- terra::vect(cbind(-110, 59))
-crs(b) <- terra::crs("epsg:4326")
+b <- terra::vect(cbind(-110, 59), crs = "epsg:4326")
 a <- randomPolygon(b, area = 1e6)
 if (interactive()) {
   plot(a)
