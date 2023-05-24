@@ -264,9 +264,8 @@ rndmPolygonMatrix <- function(x, hectares, area) {
   randomPolygon(x, area = area)
 }
 
-#' @importFrom reproducible .requireNamespace
 rndmPolygonSpatialPolygons <- function(x, hectares, area) {
-  .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
+  .Deprecated("User should convert to using SpatVector rather than SpatialPoints")
   .requireNamespace("sf")
   .requireNamespace("sp")
 
@@ -334,6 +333,7 @@ rndmPolygonSpatialPolygons <- function(x, hectares, area) {
   }
   outPolygon
 }
+
 ################################################################################
 #' Initiate a specific number of agents in a map of patches
 #'
