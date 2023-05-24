@@ -15,9 +15,11 @@ dwrpnorm2(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc)
 
 \item{sd}{different way of select rho, see details below.}
 
-\item{acc}{parameter defining the accuracy of the estimation of the density. Terms are added to the infinite summation that defines the density function until successive estimates are within acc of each other.}
+\item{acc}{parameter defining the accuracy of the estimation of the density.
+Terms are added to the infinite summation that defines the density function
+until successive estimates are within acc of each other.}
 
-\item{tol}{the same as acc.}
+\item{tol}{same as \code{acc}.}
 }
 \description{
 This is a modified version of \code{CircStats::dwrpnorm()}.

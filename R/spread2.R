@@ -33,10 +33,10 @@ utils::globalVariables(c(
 #' cells to `spread2` into. The interrupted output (a `data.table`) can be passed
 #' subsequently as an input to this same function (as `start`).
 #' This is intended to be used for situations where external events happen during
-#' a spread2 event, or where one or more arguments to the spread2 function
+#' a `spread2` event, or where one or more arguments to the `spread2` function
 #' change before a `spread2` event is completed.
 #' For example, if it is desired that the `spreadProb` change before a
-#' spread2 event is completed because, for example, a fire is spreading, and a
+#' `spread2` event is completed because, for example, a fire is spreading, and a
 #' new set of conditions arise due to a change in weather.
 #'
 #' `asymmetry` here is slightly different than in the `spread` function,
@@ -56,7 +56,7 @@ utils::globalVariables(c(
 #' \deqn{spreadProbAdj <- actualSpreadProb * angleQuality}
 #' which is then rescaled:
 #' \deqn{adjustedSpreadProb = (spreadProbAdj - min(spreadProbAdj)) * par2 + par1},
-#' where par1 and par2 are parameters calculated internally to make the 2 conditions above true.
+#' where `par1` and `par2` are parameters calculated internally to make the 2 conditions above true.
 #'
 #' @section Breaking out of `spread2` events:
 #'
@@ -91,7 +91,7 @@ utils::globalVariables(c(
 #' }
 #'
 #' @param landscape Required. A `RasterLayer` object. This defines the possible
-#'                  locations for spreading events to start and spread2 into. Required.
+#'                  locations for spreading events to start and `spread2` into. Required.
 #'
 #' @param start Required. Either a vector of pixel numbers to initiate spreading, or a
 #'              `data.table` that is the output of a previous `spread2`.
@@ -146,7 +146,7 @@ utils::globalVariables(c(
 #'
 #' @param exactSize Numeric vector, length 1 or `length(start)`.
 #'                  Similar to `maxSize`, but these will be the exact
-#'                  final sizes of the events.  i.e., the spread2 events
+#'                  final sizes of the events.  i.e., the `spread2` events
 #'                  will continue until they are `floor(exactSize)`.
 #'                  This will override `maxSize` if both provided.
 #'                  See Details.
@@ -155,7 +155,7 @@ utils::globalVariables(c(
 #'                      default is 8 (Queen case). Can only be 4 or 8.
 #'
 #' @param iterations    Number of iterations to `spread2`.
-#'                      Leaving this `NULL` allows the spread2 to continue
+#'                      Leaving this `NULL` allows the `spread2` to continue
 #'                      until stops spreading itself (i.e., exhausts itself).
 #'
 #' @param returnDistances Logical. Should the function include a column with the
@@ -169,7 +169,7 @@ utils::globalVariables(c(
 #' @param returnFrom Logical. Should the function return a column with the
 #'                      source, i.e, the lag 1 "from" pixel, for each iteration.
 #'
-#' @param circle  Logical. If TRUE, then outward spread2 will be by equidistant rings,
+#' @param circle  Logical. If TRUE, then outward `spread2` will be by equidistant rings,
 #'                rather than solely by adjacent cells (via `directions` arg.).
 #'                Default is `FALSE`.
 #'                Using `circle = TRUE` can be dramatically slower for large problems.
@@ -211,8 +211,8 @@ utils::globalVariables(c(
 #'                         for an animal moving. If this is `TRUE`, then `allowOverlap`
 #'                         will be set to `2` if it is `0` or `1`.
 #'
-#' @param plot.it  If TRUE, then plot the raster at every iteration,
-#'                   so one can watch the spread2 event grow.
+#' @param plot.it If `TRUE`, then plot the raster at every iteration,
+#'                so one can watch the `spread2` event grow.
 #'
 #' @details
 #'
@@ -272,7 +272,7 @@ utils::globalVariables(c(
 #'  pixel is activated, it cannot be re-activated, within or between event.
 #'  This allows events to not interfere with one another i.e.,
 #'  they do not interact (this is slower than if
-#'  allowOverlap = FALSE). Default is 0. In the case of 2 or 3,
+#'  `allowOverlap = FALSE`). Default is 0. In the case of 2 or 3,
 #'  this would be, perhaps, useful for dispersal of,
 #'  say, insect swarms.
 #'
@@ -306,7 +306,7 @@ utils::globalVariables(c(
 #'                    Only returned if `returnFrom` is `TRUE` \cr
 #' }
 #'
-#' The attribute saved with the name "spreadState" (e.g., `attr(output, "spreadState")`)
+#' The attribute saved with the name `"spreadState"` (e.g., `attr(output, "spreadState")`)
 #' includes a `data.table` with columns:
 #' \tabular{ll}{
 #'   `id` \tab An arbitrary code, from 1 to `length(start)` for each "event".\cr

@@ -67,11 +67,11 @@ numAgents <- function(N, probInit) {
 #'
 #' You must know how to use SELES for these to be useful.
 #'
-#' @param map RasterLayer with extent and resolution of desired return object
+#' @param map `RasterLayer` with extent and resolution of desired return object
 #'
 #' @param numAgents numeric resulting from a call to [numAgents()]
 #'
-#' @param probInit a Raster resulting from a [probInit()] call
+#' @param probInit a `Raster` resulting from a [probInit()] call
 #'
 #' @param asSpatialPoints logical or `"sf"`. Should returned object be `RasterLayer`
 #'                        or `SpatVector` default (or legacy `TRUE` `SpatialPointsDataFrame`)
@@ -80,15 +80,14 @@ numAgents <- function(N, probInit) {
 #'
 #' @return A `SpatialPointsDataFrame`, with each row representing an individual agent
 #'
+#' @example inst/examples/example_initiateAgents.R
+#'
 #' @author Eliot McIntire
 #' @export
 #' @include heading.R
 #' @importFrom terra values ncell xyFromCell
 #' @importFrom stats runif
 #' @rdname initiateAgents
-#'
-#' @example inst/examples/example_initiateAgents.R
-#'
 initiateAgents <- function(map, numAgents, probInit, asSpatialPoints = TRUE, indices) {
   if (missing(numAgents) && missing(probInit) && missing(indices))
     indices <- 1:ncell(map)

@@ -1,11 +1,9 @@
 test_that("mergeRaster will return a message if tiles are resampled", {
-
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
   nx <- ny <- 3
 
   for (ii in seq(NROW(rastDF))) {
-
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
@@ -16,9 +14,10 @@ test_that("mergeRaster will return a message if tiles are resampled", {
     if (pkg == "terra") {
       names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
     }
-    rastArgs <- append(rastArgs, list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
-                                      resolution = c(30, 30),
-                                      vals = round(runif(n = 14400, min = 1, max = 10))))
+    rastArgs <- append(rastArgs,
+                       list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
+                            resolution = c(30, 30),
+                            vals = round(runif(n = 14400, min = 1, max = 10))))
 
     ras <- do.call(read, rastArgs)
 
@@ -38,7 +37,9 @@ test_that("mergeRaster will return a message if tiles are resampled", {
       y <- do.call(read, rastArgs)
 
       expect_false(any(res(y) == res(ras)))
-      r <- terra::resample(x = ras, y = y)  ## always use `terra`, it's compatible with RasterLayer - getFromNameSpace("resample", "raster") doesn't work.
+      ## always use `terra`, it's compatible with RasterLayer  objects;
+      ##   getFromNameSpace("resample", "raster") doesn't work.
+      r <- terra::resample(x = ras, y = y)
       return(r)
     }, pkg = pkg, ras = ras)
 
@@ -51,7 +52,7 @@ test_that("mergeRaster will return a message if tiles are resampled", {
 })
 
 test_that("mergeRaster will produce a raster layer", {
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
   nx <- ny <- 3
 
@@ -66,9 +67,10 @@ test_that("mergeRaster will produce a raster layer", {
     if (pkg == "terra") {
       names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
     }
-    rastArgs <- append(rastArgs, list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
-                                      resolution = c(30, 30),
-                                      vals = round(runif(n = 14400, min = 1, max = 10))))
+    rastArgs <- append(rastArgs,
+                       list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
+                            resolution = c(30, 30),
+                            vals = round(runif(n = 14400, min = 1, max = 10))))
 
     ras <- do.call(read, rastArgs)
 
@@ -81,8 +83,7 @@ test_that("mergeRaster will produce a raster layer", {
 })
 
 test_that("mergeRaster will produce error if only one raster passed", {
-
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 
   for (ii in seq(NROW(rastDF))) {
@@ -95,9 +96,10 @@ test_that("mergeRaster will produce error if only one raster passed", {
     if (pkg == "terra") {
       names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
     }
-    rastArgs <- append(rastArgs, list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
-                                      resolution = c(30, 30),
-                                      vals = round(runif(n = 14400, min = 1, max = 10))))
+    rastArgs <- append(rastArgs,
+                       list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
+                            resolution = c(30, 30),
+                            vals = round(runif(n = 14400, min = 1, max = 10))))
 
     ras <- do.call(read, rastArgs)
     expect_error({
@@ -107,7 +109,7 @@ test_that("mergeRaster will produce error if only one raster passed", {
 })
 
 test_that("mergeRaster will use mosaic with default mean if rasters are resampled and fun if passed", {
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
   nx <- ny <- 3
 
@@ -122,9 +124,10 @@ test_that("mergeRaster will use mosaic with default mean if rasters are resample
     if (pkg == "terra") {
       names(rastArgs) <- c("xmin", "xmax", "ymin", "ymax")
     }
-    rastArgs <- append(rastArgs, list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
-                                      resolution = c(30, 30),
-                                      vals = round(runif(n = 14400, min = 1, max = 10))))
+    rastArgs <- append(rastArgs,
+                       list(crs = "+proj=utm +zone=15 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
+                            resolution = c(30, 30),
+                            vals = round(runif(n = 14400, min = 1, max = 10))))
 
     ras <- do.call(read, rastArgs)
 

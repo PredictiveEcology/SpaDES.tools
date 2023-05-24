@@ -7,8 +7,10 @@
 #' @param mu	mean direction of distribution, measured in radians.
 #' @param rho	mean resultant length of distribution.
 #' @param sd different way of select rho, see details below.
-#' @param acc	parameter defining the accuracy of the estimation of the density. Terms are added to the infinite summation that defines the density function until successive estimates are within acc of each other.
-#' @param tol	the same as acc.
+#' @param acc	parameter defining the accuracy of the estimation of the density.
+#'            Terms are added to the infinite summation that defines the density function
+#'            until successive estimates are within acc of each other.
+#' @param tol same as `acc`.
 #'
 #' @author Eliot McIntire
 #' @export

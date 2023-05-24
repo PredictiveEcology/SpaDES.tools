@@ -51,7 +51,7 @@ move <- function(hypothesis = "crw", ...) {
 #'                    If `FALSE` coordinates represent planar ('Euclidean')
 #'                    space (e.g. units of meters)
 #'
-#' @return A SpatVector points object with updated spatial position defined
+#' @return A `SpatVector` points object with updated spatial position defined
 #'         by a single occurrence of step length(s) and turn angle(s).
 #'
 #' @seealso [terra::distance()]

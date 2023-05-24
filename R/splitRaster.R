@@ -26,7 +26,7 @@
 #' @param path    Character specifying the directory to which the split tiles will be saved.
 #'                If missing, the function will write to memory.
 #' @param cl      A cluster object. Optional. This would generally be created using
-#'                parallel::makeCluster or equivalent. This is an alternative way, instead
+#'                [parallel::makeCluster()] or equivalent. This is an alternative way, instead
 #'                of `beginCluster()`, to use parallelism for this function, allowing for
 #'                more control over cluster use.
 #' @param rType   Data type of the split rasters. Defaults to FLT4S.

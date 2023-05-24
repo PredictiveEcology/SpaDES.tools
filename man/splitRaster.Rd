@@ -44,7 +44,7 @@ Default is \code{c(0, 0)}, which means no buffer.}
 If missing, the function will write to memory.}
 
 \item{cl}{A cluster object. Optional. This would generally be created using
-parallel::makeCluster or equivalent. This is an alternative way, instead
+\code{\link[parallel:makeCluster]{parallel::makeCluster()}} or equivalent. This is an alternative way, instead
 of \code{beginCluster()}, to use parallelism for this function, allowing for
 more control over cluster use.}
 

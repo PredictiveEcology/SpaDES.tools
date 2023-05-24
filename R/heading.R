@@ -3,9 +3,9 @@
 #'
 #' Determines the heading between spatial points.
 #'
-#' @param from The starting position; an object of class SpatVector
+#' @param from The starting position; an object of class `SpatVector`.
 #'
-#' @param to The ending position;  an object of class SpatVector
+#' @param to The ending position; an object of class `SpatVector`.
 #'
 #' @return The heading between the points, in degrees.
 #'

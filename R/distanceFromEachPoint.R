@@ -1,7 +1,7 @@
 #' Calculate distances and directions between many points and many grid cells
 #'
 #' This is a modification of [terra::distance()] for the case of many points.
-#' This version can often be faster for a single point because it does not return a RasterLayer.
+#' This version can often be faster for a single point because it does not return a `RasterLayer`.
 #' This is different than [terra::distance()] because it does not take the
 #' minimum distance from the set of points to all cells.
 #' Rather this returns the every pair-wise point distance.
@@ -27,7 +27,7 @@
 #'           x and y, representing x and y coordinates of "to" cells, and
 #'           optional "id" which will be matched with "id" from `from`. Default is all cells.
 #'
-#' @param landscape RasterLayer. optional. This is only used if `to` is NULL, in which case
+#' @param landscape `RasterLayer`. optional. This is only used if `to` is NULL, in which case
 #'                  all cells are considered `to`.
 #'
 #' @param angles Logical. If `TRUE`, then the function will return angles in radians,
@@ -78,8 +78,8 @@
 #' directly by the user.
 #'
 #' This function has the potential to return a very large object, as it is doing pairwise
-#' distances (and optionally directions) between from and to. If there are memory
-#' limitations because there are many
+#' distances (and optionally directions) between from and to.
+#' If there are memory limitations because there are many
 #' `from` and many `to` points, then `cumulativeFn` and `distFn` can be used.
 #' These two functions together will be used iteratively through the `from` points. The
 #' `distFn` should be a transformation of distances to be used by the
