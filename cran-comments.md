@@ -9,13 +9,12 @@ See `NEWS.md` for a full list of changes.
 ### Previous R versions
 * Ubuntu 20.04                 (GitHub), R 4.1.3
 * Ubuntu 20.04                 (GitHub), R 4.2.3
-* Windows                      (GitHub), R 4.1.5
 * Windows                      (GitHub), R 4.1.3
 * Windows                 (win-builder), R 4.2.3
 
 ### Current R versions
-* macOS 11.7 Big Sur           (GitHub), R 4.3.0
-* macOS 11.7 Big Sur            (local), R 4.3.0
+* macOS Monterey 12.6.5        (GitHub), R 4.3.0
+* macOS (m2) Ventura 13.2.1     (local), R 4.3.0
 * macOs (m1) Big Sur             (rhub), R 4.3.0
 * Ubuntu 20.04                 (GitHub), R 4.3.0
 * Ubuntu 20.04                  (local), R 4.3.0 
