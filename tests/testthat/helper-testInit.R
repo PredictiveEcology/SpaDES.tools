@@ -1,8 +1,5 @@
-# puts tmpdir, tmpCache, tmpfile (can be vectorized with length >1 tmpFileExt),
-#   optsAsk in this environment,
-# loads and libraries indicated plus testthat,
-# sets options("reproducible.ask" = FALSE) if ask = FALSE
-rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster"),
+rastDF <- data.frame(pkg = c("raster", "terra"),
+                     class = c("Raster", "SpatRaster"),
                      read = c("raster::raster", "terra::rast"),
                      stack = c("raster::stack", "terra::rast"),
                      stackClass = c("RasterStack", "SpatRaster"),
@@ -10,14 +7,17 @@ rastDF <- data.frame(pkg = c("raster", "terra"), class = c("Raster", "SpatRaster
 
 needTerraAndRaster <- function(envir = parent.frame()) {
   if (!requireNamespace("raster", quietly = TRUE)) {
-    rastDF <- rastDF[rastDF$pkg == "terra",]
+    rastDF <- rastDF[rastDF$pkg == "terra", ]
   }
   return(rastDF)
 }
 
+# puts tmpdir, tmpCache, tmpfile (can be vectorized with length >1 tmpFileExt),
+#   optsAsk in this environment,
+# loads and libraries indicated plus testthat,
+# sets options("reproducible.ask" = FALSE) if ask = FALSE
 testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
                      opts = NULL, needGoogle = FALSE) {
-
   optsAsk <- if (!ask)
     options("reproducible.ask" = ask)
   else

@@ -40,7 +40,7 @@ side of the map, as determined by the \code{extent} argument.
 Default \code{FALSE}.}
 }
 \value{
-A SpatVector points object with updated spatial position defined
+A \code{SpatVector} points object with updated spatial position defined
 by a single occurrence of step length(s) and turn angle(s).
 }
 \description{

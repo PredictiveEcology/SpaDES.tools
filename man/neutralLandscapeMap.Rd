@@ -23,7 +23,7 @@ neutralLandscapeMap(
 \item{type}{One of the supported \code{NLMR} functions.}
 
 \item{...}{Further arguments passed to \code{NLMR} function specified in \code{type}
-(except ncol, nrow and resolution, which are extracted from \code{x})}
+(except \code{ncol}, \code{nrow} and \code{resolution}, which are extracted from \code{x}).}
 }
 \value{
 A \code{RasterLayer}/\code{SpatRaster} with same extent as \code{x}, with randomly generated values.

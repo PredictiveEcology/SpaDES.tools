@@ -7,11 +7,11 @@
 initiateAgents(map, numAgents, probInit, asSpatialPoints = TRUE, indices)
 }
 \arguments{
-\item{map}{RasterLayer with extent and resolution of desired return object}
+\item{map}{\code{RasterLayer} with extent and resolution of desired return object}
 
 \item{numAgents}{numeric resulting from a call to \code{\link[=numAgents]{numAgents()}}}
 
-\item{probInit}{a Raster resulting from a \code{\link[=probInit]{probInit()}} call}
+\item{probInit}{a \code{Raster} resulting from a \code{\link[=probInit]{probInit()}} call}
 
 \item{asSpatialPoints}{logical or \code{"sf"}. Should returned object be \code{RasterLayer}
 or \code{SpatVector} default (or legacy \code{TRUE} \code{SpatialPointsDataFrame})}

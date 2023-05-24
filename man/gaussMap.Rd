@@ -35,7 +35,7 @@ or the default, \code{"RMexp"} (exponential covariance model).}
 Should be in the interval \verb{[0,2]} to provide a valid covariance function.
 Default is 1.}
 
-\item{inMemory}{Should the RasterLayer be forced to be in memory?
+\item{inMemory}{Should the \code{RasterLayer} be forced to be in memory?
 Default \code{FALSE}.}
 
 \item{...}{Additional arguments to \code{raster}.}

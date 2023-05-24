@@ -50,12 +50,12 @@ utils::globalVariables(c(
 #' using:
 #' `angleQuality <- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2`
 #'
-#' These are then converted to multiple spreadProbs by
-#' `spreadProbs <- lowSpreadProb+(angleQuality * diff(spreadProbsLH))`
+#' These are then converted to multiple `spreadProbs` by
+#' `spreadProbs <- lowSpreadProb + (angleQuality * diff(spreadProbsLH))`
 #' To maintain an expected `spreadProb` that is the same as the asymmetric
 #' `spreadProbs`, these are then rescaled so that the mean of the
 #' asymmetric spreadProbs is always equal to spreadProb at every iteration:
-#' `spreadProbs <- spreadProbs - diff(c(spreadProb,mean(spreadProbs)))`
+#' `spreadProbs <- spreadProbs - diff(c(spreadProb, mean(spreadProbs)))`
 #'
 #' @section Breaking out of spread events:
 #'
@@ -195,7 +195,7 @@ utils::globalVariables(c(
 #'                      See Details.
 #'
 #' @param spreadProbLater Numeric, or `RasterLayer`. If provided, then this
-#'                      will become the spreadProb after the first iteration.
+#'                      will become the `spreadProb` after the first iteration.
 #'                      See Details.
 #'
 #' @param spreadState   `data.table`. This should be the output of a previous call

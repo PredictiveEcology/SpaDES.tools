@@ -20,7 +20,7 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #' The steps used in the algorithm are:
 #' 1. Calculate indices of neighbouring cells
 #' 2. Remove "to" cells that are
-#'    - <1 or >numCells (i.e., they are above or below raster), using a single modulo
+#'    - `< 1` or `> numCells` (i.e., they are above or below raster), using a single modulo
 #'      calculation
 #'    - where the modulo of "to" cells is equal to 1 if "from" cells are 0 (wrapped right
 #'      to left)
@@ -274,12 +274,12 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     ## use data.table
     # Remove all cells that are not target cells, if target is a vector of cells
     if (!is.null(target)) {
-      set(adj, , "ord", seq_len(NROW(adj)))
+      set(adj, NULL, "ord", seq_len(NROW(adj)))
       setkeyv(adj, "to")
       adj <- adj[J(target)]
       adj <- na.omit(adj)
       setkeyv(adj, "ord")
-      set(adj, , "ord", NULL)
+      set(adj, NULL, "ord", NULL)
     }
 
     if (sort) {
@@ -297,7 +297,7 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     # Remove the "from" column if pairs is FALSE
     if (!pairs) {
       from <- as.integer(adj$from)
-      set(adj, , "from", NULL)
+      set(adj, NULL, "from", NULL)
     }
 
     if (!torus) {

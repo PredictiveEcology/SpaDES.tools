@@ -2,7 +2,7 @@ test_that("spread produces legal RasterLayer", {
   skip_if_not_installed("dqrng")
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   withr::local_package("dqrng")
 
   set.seed(123)
@@ -16,7 +16,7 @@ test_that("spread produces legal RasterLayer", {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     pkg <- rastDF$read[ii]
-    rastDF <- needTerraAndRaster() #
+    rastDF <- needTerraAndRaster()
     read <- eval(parse(text = rastDF$read[ii]))
 
     a <- read(a)
@@ -114,7 +114,7 @@ test_that("allowOverlap -- produces exact result", {
   skip_if_not_installed("dqrng")
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   N <- 10
   smallExt <- terra::ext(1, N - 1, 1, N - 1)
   smallExtRas <- terra::rast(smallExt)
@@ -202,7 +202,7 @@ test_that("allowOverlap -- produces exact result", {
 test_that("spread stopRule does not work correctly", {
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   for (ii in seq(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
@@ -485,7 +485,7 @@ test_that("asymmetry doesn't work properly", {
 
   withr::local_package("terra")
   # withr::local_package("CircStats")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
@@ -561,7 +561,7 @@ test_that("asymmetry doesn't work properly", {
 test_that("rings and cir", {
   # Only terra -- # TODO can be changed when somebody has time -- need to do polygons/vect
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   for (ii in seq(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
@@ -742,7 +742,7 @@ test_that("simple cir does not work correctly", {
   set.seed(1234)
   # dqrng::dqset.seed(1234)
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
 
   hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1)
 
@@ -928,10 +928,10 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
 })
 
 test_that("spreadProb with relative values does not work correctly", {
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   ext1 <- terra::ext(0, 1e2, 0, 1e2)
   extRas <- terra::rast(ext1, res = 1)
   for (ii in seq(NROW(rastDF))) {

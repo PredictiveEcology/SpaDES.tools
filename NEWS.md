@@ -1,12 +1,19 @@
 # SpaDES.tools (development version)
 
-Known issues: <https://github.com/PredictiveEcology/SpaDES.tools/issues>
+## Enhancements
+* improved documentation
+
+## Dependency changes
+* none
+
+## Bug fixes
+* none
 
 # SpaDES.tools 2.0.0
 
 ## Enhancements
 * wholesale transition to `terra` from `raster` and `sp`. Some functionality is available for `sf`, but this will not be complete.
-* `splitRaster()` uses ".tif" as the default raster file type
+* `splitRaster()` uses `".tif"` as the default raster file type
 * most example plotting uses `terra::plot` directly, but in a few cases, `quickPlot::Plot` is used as it is much better (e.g., `spread2(plot.it = TRUE)`)
 
 ## Dependency changes

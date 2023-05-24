@@ -24,7 +24,7 @@ utils::globalVariables("num.in.pop")
 #'                 Should be in the interval `[0,2]` to provide a valid covariance function.
 #'                 Default is 1.
 #'
-#' @param inMemory Should the RasterLayer be forced to be in memory?
+#' @param inMemory Should the `RasterLayer` be forced to be in memory?
 #'                 Default `FALSE`.
 #'
 #' @param ... Additional arguments to `raster`.
@@ -554,7 +554,7 @@ long2UTM <- function(long) {
 #' @param type     One of the supported `NLMR` functions.
 #'
 #' @param ...      Further arguments passed to `NLMR` function specified in `type`
-#'  (except ncol, nrow and resolution, which are extracted from `x`)
+#'  (except `ncol`, `nrow` and `resolution`, which are extracted from `x`).
 #'
 #' @importFrom terra res ncol nrow ext extend focal
 #' @export

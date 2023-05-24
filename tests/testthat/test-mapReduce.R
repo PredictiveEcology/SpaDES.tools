@@ -1,7 +1,7 @@
 test_that("mapReduce: file does not work correctly 1", {
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 
   for (ii in seq(NROW(rastDF))) {
@@ -55,7 +55,7 @@ test_that("mapReduce: file does not work correctly 1", {
 
 test_that("mapReduce: file does not work correctly 2", {
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   rasOrig <- terra::rast(terra::ext(0,15,0,15), res=1)
 
   for (ii in seq(NROW(rastDF))) {

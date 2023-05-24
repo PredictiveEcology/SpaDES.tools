@@ -101,7 +101,7 @@ or \code{1} or \code{2}.}
 so one can watch the spread event grow.}
 
 \item{spreadProbLater}{Numeric, or \code{RasterLayer}. If provided, then this
-will become the spreadProb after the first iteration.
+will become the \code{spreadProb} after the first iteration.
 See Details.}
 
 \item{spreadState}{\code{data.table}. This should be the output of a previous call
@@ -262,12 +262,12 @@ to
 using:
 \code{angleQuality <- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2}
 
-These are then converted to multiple spreadProbs by
-\code{spreadProbs <- lowSpreadProb+(angleQuality * diff(spreadProbsLH))}
+These are then converted to multiple \code{spreadProbs} by
+\code{spreadProbs <- lowSpreadProb + (angleQuality * diff(spreadProbsLH))}
 To maintain an expected \code{spreadProb} that is the same as the asymmetric
 \code{spreadProbs}, these are then rescaled so that the mean of the
 asymmetric spreadProbs is always equal to spreadProb at every iteration:
-\code{spreadProbs <- spreadProbs - diff(c(spreadProb,mean(spreadProbs)))}
+\code{spreadProbs <- spreadProbs - diff(c(spreadProb, mean(spreadProbs)))}
 }
 \section{Breaking out of spread events}{
 

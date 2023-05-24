@@ -33,10 +33,18 @@ There were no ERRORs or WARNINGs.
 
 There was 1 NOTEs:
 
-1. Related to the Suggested package that is available in a additional repository. We provide instructions for installing suggested package `NLMR` from another repository:
+1. Some words were flagged as possibly misspelled, but they are false positives:
+
+    Possibly mis-spelled words in DESCRIPTION:
+      SpaDES (4:27)
+      automata (6:25)
+
+2.  Related to the Suggested package that is available in a additional repository.
+    We provide instructions for installing suggested package `NLMR` from another repository:
 
     The Description field contains
         "https://PredictiveEcology.r-universe.dev")'.
+    Please enclose URLs in angle brackets (<...>).
 
 ## Downstream dependencies
 

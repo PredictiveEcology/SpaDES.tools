@@ -1,7 +1,7 @@
 test_that("splitRaster and mergeRaster work on small in-memory rasters", {
   # withr::local_package("reproducible")
   withr::local_package("tools")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   testFiles = data.frame(pkg = c("raster", "terra"),
                          testFile = c("external/rlogo.grd", "ex/logo.tif"))
   rastDF <- merge(testFiles, rastDF)
