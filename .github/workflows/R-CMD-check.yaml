@@ -66,14 +66,13 @@ jobs:
           extra-packages: |
             any::rcmdcheck
             fastshp=?ignore
-            ropensci/NLMR
-            PredictiveEcology/Require@development
-            PredictiveEcology/reproducible@development
+            NLMR=?ignore
 
       - name: Install additional package dependencies
         run: |
+          pak::pkg_install("remotes")
+          pak::pkg_install("ropensci/NLMR")
           remotes::install_github("s-u/fastshp")
-        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
 
