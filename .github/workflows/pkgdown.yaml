@@ -43,10 +43,14 @@ jobs:
             any::pkgdown
             local::.
             fastshp=?ignore
-            ropensci/NLMR
-            PredictiveEcology/Require@development
-            PredictiveEcology/reproducible@development
+            NLMR=?ignore
           needs: website
+
+      - name: Install additional package dependencies
+        run: |
+          pak::pkg_install("remotes")
+          pak::pkg_install("ropensci/NLMR")
+          remotes::install_github("s-u/fastshp")
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
