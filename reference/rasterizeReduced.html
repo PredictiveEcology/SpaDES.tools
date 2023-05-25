@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -70,14 +70,18 @@ column of codes that are represented in the <code>fullRaster</code>.</p></dd>
 
 
 <dt>fullRaster</dt>
-<dd><p><code>RasterLayer</code> of codes used in <code>reduced</code> that
-represents a spatial representation of the data.</p></dd>
+<dd><p><code>RasterLayer</code>/<code>SpatRaster</code> of codes used in <code>reduced</code> that
+represents a spatial representation of the data. Note that
+if <code>fullRaster</code> is a <code>factor</code> <code>SpatRaster</code>, the active category
+level values are used, not the IDs (see <code><a href="https://rdrr.io/pkg/terra/man/activeCat.html" class="external-link">terra::activeCat</a></code> and
+<code><a href="https://rdrr.io/pkg/terra/man/factors.html" class="external-link">terra::cats</a></code>)</p></dd>
 
 
 <dt>newRasterCols</dt>
 <dd><p>Character vector, length 1 or more, with the name(s) of
 the column(s) in <code>reduced</code> whose value will be
-returned as a <code>Raster</code> or list of <code>Raster</code>s.</p></dd>
+returned as a <code>RasterLayer</code>/<code>SpatRaster</code> or list
+of <code>RasterLayer</code>/<code>SpatRaster</code>s.</p></dd>
 
 
 <dt>mapcode</dt>
@@ -93,8 +97,8 @@ that is represented in <code>fullRaster</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>A <code>RasterLayer</code> or list of <code>RasterLayer</code> of with same
-dimensions as <code>fullRaster</code> representing
+<p>A <code>RasterLayer</code>/<code>SpatRaster</code> or list of
+<code>RasterLayer</code>/<code>SpatRaster</code> of with same dimensions as <code>fullRaster</code> representing
 <code>newRasterCols</code> spatially, according to the join between the <code>mapcode</code></p>
 
 
@@ -104,7 +108,7 @@ dimensions as <code>fullRaster</code> representing
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">terra::rast()</a></code></p></div>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -114,14 +118,13 @@ dimensions as <code>fullRaster</code> representing
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quickplot.predictiveecology.org" class="external-link">quickPlot</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">15</span>, <span class="fl">0</span>, <span class="fl">15</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">15</span>, <span class="fl">0</span>, <span class="fl">15</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fullRas</span> <span class="op">&lt;-</span> <span class="fu"><a href="randomPolygons.html">randomPolygons</a></span><span class="op">(</span><span class="va">ras</span>, numTypes <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fullRas</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"mapcodeAll"</span></span></span>
-<span class="r-in"><span><span class="va">uniqueComms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">fullRas</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">reducedDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>mapcodeAll <span class="op">=</span> <span class="va">uniqueComms</span>,</span></span>
+<span class="r-in"><span><span class="va">uniqueComms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">fullRas</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">reducedDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="va">uniqueComms</span>,</span></span>
 <span class="r-in"><span>                        communities <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">uniqueComms</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        biomass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html" class="external-link">rnbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">uniqueComms</span><span class="op">)</span>, mu <span class="op">=</span> <span class="fl">4000</span>, <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">biomass</span> <span class="op">&lt;-</span> <span class="fu">rasterizeReduced</span><span class="op">(</span><span class="va">reducedDT</span>, <span class="va">fullRas</span>, <span class="st">"biomass"</span><span class="op">)</span></span></span>
@@ -130,11 +133,30 @@ dimensions as <code>fullRaster</code> representing
 <span class="r-in"><span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">setkey</a></span><span class="op">(</span><span class="va">reducedDT</span>, <span class="va">biomass</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">communities</span> <span class="op">&lt;-</span> <span class="fu">rasterizeReduced</span><span class="op">(</span><span class="va">reducedDT</span>, <span class="va">fullRas</span>, <span class="st">"communities"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://quickplot.predictiveecology.org/reference/getSetColors.html" class="external-link">setColors</a></span><span class="op">(</span><span class="va">communities</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/colors.html" class="external-link">coltab</a></span><span class="op">(</span><span class="va">communities</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/clearPlot.html" class="external-link">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">biomass</span>, <span class="va">communities</span>, <span class="va">fullRas</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">biomass</span>, <span class="va">communities</span>, <span class="va">fullRas</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## with a factor SpatRaster, the mapcode should correspond to the</span></span></span>
+<span class="r-in"><span><span class="co">## active category (not the ids)</span></span></span>
+<span class="r-in"><span><span class="va">cls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">fullRas</span><span class="op">[</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cls</span><span class="op">$</span><span class="va">Bclass</span> <span class="op">&lt;-</span> <span class="va">LETTERS</span><span class="op">[</span><span class="va">cls</span><span class="op">$</span><span class="va">id</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/factors.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">fullRas</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">cls</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/is.bool.html" class="external-link">is.factor</a></span><span class="op">(</span><span class="va">fullRas</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">clsDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">cls</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">reducedDT</span> <span class="op">&lt;-</span> <span class="va">reducedDT</span><span class="op">[</span><span class="va">clsDT</span>, on <span class="op">=</span> <span class="st">"mapcodeAll==id"</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">reducedDT</span><span class="op">[</span>, <span class="va">mapcodeAll</span> <span class="op">:=</span> <span class="va">Bclass</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mapcodeAll communities biomass Bclass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:          A         223    1006      A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:          B         223    1006      B</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">biomass2</span> <span class="op">&lt;-</span> <span class="fu">rasterizeReduced</span><span class="op">(</span><span class="va">reducedDT</span>, <span class="va">fullRas</span>, <span class="st">"biomass"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -145,7 +167,7 @@ dimensions as <code>fullRaster</code> representing
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p><p>Developed by Eliot J B McIntire, Alex M Chubaty.</p>
 </div>
 
 <div class="pkgdown">

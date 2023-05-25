@@ -18,7 +18,7 @@ The main difference is that there can be many "viewpoints".'><!-- mathjax --><sc
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -56,24 +56,6 @@ The main difference is that there can be many "viewpoints".</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">spokes</span><span class="op">(</span></span>
-<span>  <span class="va">landscape</span>,</span>
-<span>  <span class="va">coords</span>,</span>
-<span>  <span class="va">loci</span>,</span>
-<span>  maxRadius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span><span class="op">/</span><span class="fl">4</span>,</span>
-<span>  minRadius <span class="op">=</span> <span class="va">maxRadius</span>,</span>
-<span>  allowOverlap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  stopRule <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  includeBehavior <span class="op">=</span> <span class="st">"includePixels"</span>,</span>
-<span>  returnDistances <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  angles <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
-<span>  nAngles <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
-<span>  returnAngles <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  returnIndices <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for RasterLayer,SpatialPoints,missing</span></span>
-<span><span class="fu">spokes</span><span class="op">(</span></span>
 <span>  <span class="va">landscape</span>,</span>
 <span>  <span class="va">coords</span>,</span>
 <span>  <span class="va">loci</span>,</span>
@@ -134,20 +116,20 @@ into the <code>...</code> of this function. See examples.</p></dd>
 
 
 <dt>includeBehavior</dt>
-<dd><p>Character string. Currently accepts only "includePixels", the default,
-and "excludePixels". See details.</p></dd>
+<dd><p>Character string. Currently accepts only <code>"includePixels"</code>, the default,
+and <code>"excludePixels"</code>. See details.</p></dd>
 
 
 <dt>returnDistances</dt>
-<dd><p>Logical. If TRUE, then a column will be added to the returned
+<dd><p>Logical. If <code>TRUE</code>, then a column will be added to the returned
 data.table that reports the distance from <code>coords</code> to every
 point that was in the circle/donut surrounding <code>coords</code>. Default
-FALSE, which is faster.</p></dd>
+<code>FALSE</code>, which is faster.</p></dd>
 
 
 <dt>angles</dt>
 <dd><p>Numeric. Optional vector of angles, in radians, to use. This will create
-"spokes" outward from coords. Default is NA, meaning, use internally
+"spokes" outward from coords. Default is <code>NA</code>, meaning, use internally
 derived angles that will "fill" the circle.</p></dd>
 
 
@@ -160,20 +142,18 @@ warning of both are given.</p></dd>
 
 
 <dt>returnAngles</dt>
-<dd><p>Logical. If TRUE, then a column will be added to the returned
+<dd><p>Logical. If <code>TRUE</code>, then a column will be added to the returned
 data.table that reports the angle from <code>coords</code> to every
-point that was in the circle/donut surrounding <code>coords</code>. Default
-FALSE.</p></dd>
+point that was in the circle/donut surrounding <code>coords</code>. Default <code>FALSE.</code></p></dd>
 
 
 <dt>returnIndices</dt>
-<dd><p>Logical or numeric. If <code>1</code> or <code>TRUE</code>, will
-return a <code>data.table</code> with indices and values of
-successful spread events.
+<dd><p>Logical or numeric. If <code>1</code> or <code>TRUE</code>, will return a <code>data.table</code>
+with indices and values of successful spread events.
 If <code>2</code>, it will simply return a vector of pixel indices of
-all cells that were touched. This will be the fastest option. If
-<code>FALSE</code>, then it will return a raster with
-values. See Details.</p></dd>
+all cells that were touched. This will be the fastest option.
+If <code>FALSE</code>, then it will return a raster with values.
+See Details.</p></dd>
 
 
 <dt>...</dt>
@@ -200,45 +180,44 @@ going outwards due to <code>stopRule</code>.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/edzer/sp/" class="external-link">sp</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quickplot.predictiveecology.org" class="external-link">quickPlot</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span>, val <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span>, val <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rp</span> <span class="op">&lt;-</span> <span class="fu"><a href="randomPolygons.html">randomPolygons</a></span><span class="op">(</span><span class="va">ras</span>, numTypes <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://quickplot.predictiveecology.org/reference/clearPlot.html" class="external-link">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">rp</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rp</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">angles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">pi</span> <span class="op">*</span> <span class="fl">2</span>, length.out <span class="op">=</span> <span class="fl">17</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">angles</span> <span class="op">&lt;-</span> <span class="va">angles</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">angles</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
-<span class="r-in"><span><span class="va">loci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">rp</span><span class="op">)</span>, <span class="va">n</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sp/man/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/xyCellFrom.html" class="external-link">xyFromCell</a></span><span class="op">(</span><span class="va">rp</span>, <span class="va">loci</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">loci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">rp</span><span class="op">)</span>, <span class="va">n</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/xyCellFrom.html" class="external-link">xyFromCell</a></span><span class="op">(</span><span class="va">rp</span>, <span class="va">loci</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">stopRule</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span> <span class="va">landscape</span> <span class="op">&lt;</span> <span class="fl">3</span></span></span>
 <span class="r-in"><span><span class="va">d2</span> <span class="op">&lt;-</span> <span class="fu">spokes</span><span class="op">(</span><span class="va">rp</span>, coords <span class="op">=</span> <span class="va">coords</span>, stopRule <span class="op">=</span> <span class="va">stopRule</span>,</span></span>
 <span class="r-in"><span>             minRadius <span class="op">=</span> <span class="fl">0</span>, maxRadius <span class="op">=</span> <span class="fl">50</span>,</span></span>
 <span class="r-in"><span>             returnAngles <span class="op">=</span> <span class="cn">TRUE</span>, returnDistances <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>             allowOverlap <span class="op">=</span> <span class="cn">TRUE</span>, angles <span class="op">=</span> <span class="va">angles</span>, returnIndices <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This function is very experimental and may not behave as expected</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Assign values to the "patches" that were in the viewshed of a ray</span></span></span>
-<span class="r-in"><span><span class="va">rasB</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rasB</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rasB</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
 <span class="r-in"><span><span class="va">rasB</span><span class="op">[</span><span class="va">d2</span><span class="op">[</span><span class="va">d2</span><span class="op">[</span>, <span class="st">"stop"</span><span class="op">]</span> <span class="op">==</span> <span class="fl">1</span>, <span class="st">"indices"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">rasB</span>, addTo <span class="op">=</span> <span class="st">"rp"</span>, zero.color <span class="op">=</span> <span class="st">"transparent"</span>, cols <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">rasB</span><span class="op">[</span><span class="va">rasB</span> <span class="op">==</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
+<span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rasB</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"red"</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">d2</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">sp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sp/man/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="va">d2</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">sp1</span>, addTo <span class="op">=</span> <span class="st">"rp"</span>, pch <span class="op">=</span> <span class="fl">19</span>, size <span class="op">=</span> <span class="fl">5</span>, speedup <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">sp1</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">d2</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sp1</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">coords</span>, addTo <span class="op">=</span> <span class="st">"rp"</span>, pch <span class="op">=</span> <span class="fl">19</span>, size <span class="op">=</span> <span class="fl">6</span>, cols <span class="op">=</span> <span class="st">"blue"</span>, speedup <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="spokes-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://quickplot.predictiveecology.org/reference/clearPlot.html" class="external-link">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="spokes-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coords</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -249,7 +228,7 @@ going outwards due to <code>stopRule</code>.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p><p>Developed by Eliot J B McIntire, Alex M Chubaty.</p>
 </div>
 
 <div class="pkgdown">

@@ -20,7 +20,7 @@ They are "rounded" to pixel centres.'><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -160,148 +160,283 @@ problems)</p></dd>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## these tests are fairly heavy, so don't run during automated tests</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="co">#########################################################</span></span></span>
-<span class="r-in"><span>  <span class="co"># Simple case, no variation in rasQuality, numeric advectionDir and advectionMag</span></span></span>
-<span class="r-in"><span>  <span class="co">#########################################################</span></span></span>
-<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quickplot.predictiveecology.org" class="external-link">quickPlot</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">maxDim</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span></span>
-<span class="r-in"><span>  <span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">maxDim</span>, <span class="fl">0</span>, <span class="va">maxDim</span><span class="op">)</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">100</span>, vals <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">rasQuality</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span>  <span class="va">rasAbundance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">rasAbundance</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
-<span class="r-in"><span>  <span class="co"># startPixel &lt;- middlePixel(rasAbundance)</span></span></span>
-<span class="r-in"><span>  <span class="va">startPixel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">)</span>, <span class="fl">30</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">rasAbundance</span><span class="op">[</span><span class="va">startPixel</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span></span>
-<span class="r-in"><span>  <span class="va">advectionDir</span> <span class="op">&lt;-</span> <span class="fl">70</span></span></span>
-<span class="r-in"><span>  <span class="va">advectionMag</span> <span class="op">&lt;-</span> <span class="fl">4</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">res</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></span>
-<span class="r-in"><span>  <span class="va">meanDist</span> <span class="op">&lt;-</span> <span class="fl">2600</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>   <span class="co"># Test the dispersal kernel -- create a function</span></span></span>
-<span class="r-in"><span>   <span class="va">plotDispersalKernel</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">out</span>, <span class="va">meanAdvectionMag</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>     <span class="va">out</span><span class="op">[</span>, <span class="va">disGroup</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">distance</span> <span class="op">/</span> <span class="fl">100</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">]</span></span></span>
-<span class="r-in"><span>     <span class="va">freqs</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"disGroup"</span><span class="op">]</span></span></span>
-<span class="r-in"><span>     <span class="va">freqs</span><span class="op">[</span>, <span class="fu">`:=`</span><span class="op">(</span>cumSum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span>, N <span class="op">=</span> <span class="va">N</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span>     <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">freqs</span><span class="op">$</span><span class="va">disGroup</span>, <span class="va">freqs</span><span class="op">$</span><span class="va">cumSum</span>, addTo <span class="op">=</span> <span class="st">"CumulativeNumberSettled"</span>,</span></span>
-<span class="r-in"><span>          title <span class="op">=</span> <span class="st">"Cumulative Number Settled"</span><span class="op">)</span> <span class="co"># can plot the distance X number</span></span></span>
-<span class="r-in"><span>     <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">meanAdvectionMag</span> <span class="op">+</span> <span class="va">meanDist</span><span class="op">)</span></span></span>
-<span class="r-in"><span>     <span class="va">newTitle</span> <span class="op">&lt;-</span> <span class="st">"Number Settled By Distance"</span></span></span>
-<span class="r-in"><span>     <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">freqs</span><span class="op">$</span><span class="va">disGroup</span>, <span class="va">freqs</span><span class="op">$</span><span class="va">N</span>, addTo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">" "</span>, <span class="st">""</span>, <span class="va">newTitle</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>          title <span class="op">=</span> <span class="va">newTitle</span><span class="op">)</span> <span class="co"># can plot the distance X number</span></span></span>
-<span class="r-in"><span>     <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">meanAdvectionMag</span> <span class="op">+</span> <span class="va">meanDist</span><span class="op">)</span></span></span>
-<span class="r-in"><span>     <span class="co"># should be 0.63:</span></span></span>
-<span class="r-in"><span>     <span class="va">freqs</span><span class="op">[</span><span class="va">disGroup</span> <span class="op">==</span> <span class="va">meanAdvectionMag</span> <span class="op">+</span> <span class="va">meanDist</span>, <span class="va">cumSum</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">freqs</span>,<span class="fl">1</span><span class="op">)</span><span class="op">[</span>, <span class="va">cumSum</span><span class="op">]</span></span></span>
-<span class="r-in"><span>     <span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span>side <span class="op">=</span> <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Average habitat quality: "</span>,</span></span>
-<span class="r-in"><span>           <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>           outer <span class="op">=</span> <span class="cn">TRUE</span>, line <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>, cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">}</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/dev.html" class="external-link">dev</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># don't use Rstudio windows, which is very slow</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/clearPlot.html" class="external-link">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread3</span><span class="op">(</span>rasAbundance <span class="op">=</span> <span class="va">rasAbundance</span>,</span></span>
-<span class="r-in"><span>                 rasQuality <span class="op">=</span> <span class="va">rasQuality</span>,</span></span>
-<span class="r-in"><span>                 advectionDir <span class="op">=</span> <span class="va">advectionDir</span>,</span></span>
-<span class="r-in"><span>                 advectionMag <span class="op">=</span> <span class="va">advectionMag</span>,</span></span>
-<span class="r-in"><span>                 meanDist <span class="op">=</span> <span class="va">meanDist</span>, verbose <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>                 plot.it <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="fu">plotDispersalKernel</span><span class="op">(</span><span class="va">out</span>, <span class="va">advectionMag</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co">#########################################################</span></span></span>
-<span class="r-in"><span>  <span class="co">### The case of variable quality raster</span></span></span>
-<span class="r-in"><span>  <span class="co">#########################################################</span></span></span>
-<span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ecohealthalliance/fasterize" class="external-link">fasterize</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://spades-tools.predictiveecology.org">SpaDES.tools</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/fasterize/man/fasterize.html" class="external-link">fasterize</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span>, <span class="va">ras</span><span class="op">)</span> <span class="co"># faster than raster::rasterize</span></span></span>
-<span class="r-in"><span>    <span class="va">rasQuality</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"rasQuality.tif"</span>, package <span class="op">=</span> <span class="st">"SpaDES.tools"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"targetCRS.rds"</span>, package <span class="op">=</span> <span class="st">"SpaDES.tools"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">rasQuality</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">mask</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
-<span class="r-in"><span>    <span class="co"># rescale so min is 0.75 and max is 1</span></span></span>
-<span class="r-in"><span>    <span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span> <span class="op">/</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extremeValues.html" class="external-link">maxValue</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span> <span class="op">*</span> <span class="fl">4</span> <span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">/</span><span class="fl">4</span></span></span>
-<span class="r-in"><span>    <span class="va">rasAbundance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">#########################################################</span></span></span>
+<span class="r-in"><span><span class="co"># Simple case, no variation in rasQuality, numeric advectionDir and advectionMag</span></span></span>
+<span class="r-in"><span><span class="co">#########################################################</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"CircStats"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">maxDim</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span></span>
+<span class="r-in"><span>    <span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">maxDim</span>, <span class="fl">0</span>, <span class="va">maxDim</span><span class="op">)</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">100</span>, vals <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">rasQuality</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>    <span class="va">rasAbundance</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">rasAbundance</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
-<span class="r-in"><span>    <span class="va">startPixel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">)</span>, <span class="fl">300</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="co"># startPixel &lt;- middlePixel(rasAbundance)</span></span></span>
+<span class="r-in"><span>    <span class="va">startPixel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">)</span>, <span class="fl">30</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">rasAbundance</span><span class="op">[</span><span class="va">startPixel</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span></span>
-<span class="r-in"><span>    <span class="va">advectionDir</span> <span class="op">&lt;-</span> <span class="fl">75</span></span></span>
+<span class="r-in"><span>    <span class="va">advectionDir</span> <span class="op">&lt;-</span> <span class="fl">70</span></span></span>
 <span class="r-in"><span>    <span class="va">advectionMag</span> <span class="op">&lt;-</span> <span class="fl">4</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">res</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></span>
 <span class="r-in"><span>    <span class="va">meanDist</span> <span class="op">&lt;-</span> <span class="fl">2600</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/clearPlot.html" class="external-link">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># Test the dispersal kernel -- create a function</span></span></span>
+<span class="r-in"><span>    <span class="va">plotDispersalKernel</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">out</span>, <span class="va">meanAdvectionMag</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>      <span class="va">out</span><span class="op">[</span>, <span class="va">disGroup</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">distance</span> <span class="op">/</span> <span class="fl">100</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">]</span></span></span>
+<span class="r-in"><span>      <span class="va">freqs</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"disGroup"</span><span class="op">]</span></span></span>
+<span class="r-in"><span>      <span class="va">freqs</span><span class="op">[</span>, <span class="fu">`:=`</span><span class="op">(</span>cumSum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span>, N <span class="op">=</span> <span class="va">N</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">freqs</span><span class="op">$</span><span class="va">disGroup</span>, <span class="va">freqs</span><span class="op">$</span><span class="va">cumSum</span>, <span class="co"># addTo = "CumulativeNumberSettled",</span></span></span>
+<span class="r-in"><span>           main <span class="op">=</span> <span class="st">"Cumulative Number Settled"</span><span class="op">)</span> <span class="co"># can plot the distance X number</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">meanAdvectionMag</span> <span class="op">+</span> <span class="va">meanDist</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">newTitle</span> <span class="op">&lt;-</span> <span class="st">"Number Settled By Distance"</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">freqs</span><span class="op">$</span><span class="va">disGroup</span>, <span class="va">freqs</span><span class="op">$</span><span class="va">N</span>, <span class="co"># addTo = gsub(" ", "", newTitle),</span></span></span>
+<span class="r-in"><span>           main <span class="op">=</span> <span class="va">newTitle</span><span class="op">)</span> <span class="co"># can plot the distance X number</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">meanAdvectionMag</span> <span class="op">+</span> <span class="va">meanDist</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="co"># should be 0.63:</span></span></span>
+<span class="r-in"><span>      <span class="va">freqs</span><span class="op">[</span><span class="va">disGroup</span> <span class="op">==</span> <span class="va">meanAdvectionMag</span> <span class="op">+</span> <span class="va">meanDist</span>, <span class="va">cumSum</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">freqs</span>, <span class="fl">1</span><span class="op">)</span><span class="op">[</span>, <span class="va">cumSum</span><span class="op">]</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span>side <span class="op">=</span> <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Average habitat quality: "</span>,</span></span>
+<span class="r-in"><span>                            <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            outer <span class="op">=</span> <span class="cn">TRUE</span>, line <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>, cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">}</span></span></span>
 <span class="r-in"><span>    <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread3</span><span class="op">(</span>rasAbundance <span class="op">=</span> <span class="va">rasAbundance</span>,</span></span>
 <span class="r-in"><span>                   rasQuality <span class="op">=</span> <span class="va">rasQuality</span>,</span></span>
 <span class="r-in"><span>                   advectionDir <span class="op">=</span> <span class="va">advectionDir</span>,</span></span>
 <span class="r-in"><span>                   advectionMag <span class="op">=</span> <span class="va">advectionMag</span>,</span></span>
 <span class="r-in"><span>                   meanDist <span class="op">=</span> <span class="va">meanDist</span>, verbose <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>                   plot.it <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   plot.it <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="fu">plotDispersalKernel</span><span class="op">(</span><span class="va">out</span>, <span class="va">advectionMag</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># The next examples are potentially time consuming; avoid on automated testing</span></span></span>
 <span class="r-in"><span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>      <span class="fu">plotDispersalKernel</span><span class="op">(</span><span class="va">out</span>, <span class="va">advectionMag</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="co">#########################################################</span></span></span>
+<span class="r-in"><span>      <span class="co">### The case of variable quality raster</span></span></span>
+<span class="r-in"><span>      <span class="co">#########################################################</span></span></span>
+<span class="r-in"><span>      <span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://r-spatial.github.io/sf/" class="external-link">"sf"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>        <span class="va">rasQuality</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"rasQuality.tif"</span>,</span></span>
+<span class="r-in"><span>                                              package <span class="op">=</span> <span class="st">"SpaDES.tools"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">theCRS</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/serialize.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"targetCRS.rds"</span>,</span></span>
+<span class="r-in"><span>                                                 package <span class="op">=</span> <span class="st">"SpaDES.tools"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">theCRS</span><span class="op">$</span><span class="va">wkt</span></span></span>
+<span class="r-in"><span>        <span class="va">mask</span> <span class="op">&lt;-</span> <span class="va">rasQuality</span> <span class="op">&lt;</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span>        <span class="va">rasQuality</span><span class="op">[</span><span class="va">mask</span><span class="op">[</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/pkg/terra/man/match.html" class="external-link">%in%</a></span> <span class="cn">TRUE</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span>        <span class="co"># rescale so min is 0.75 and max is 1</span></span></span>
+<span class="r-in"><span>        <span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span> <span class="op">/</span> <span class="op">(</span><span class="fu">reproducible</span><span class="fu">::</span><span class="fu"><a href="https://reproducible.predictiveecology.org/reference/terra-migration.html" class="external-link">maxFn</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">4</span></span></span>
+<span class="r-in"><span>        <span class="va">rasAbundance</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">rasAbundance</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span>        <span class="va">startPixel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">)</span>, <span class="fl">300</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">rasAbundance</span><span class="op">[</span><span class="va">startPixel</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span></span>
+<span class="r-in"><span>        <span class="va">advectionDir</span> <span class="op">&lt;-</span> <span class="fl">75</span></span></span>
+<span class="r-in"><span>        <span class="va">advectionMag</span> <span class="op">&lt;-</span> <span class="fl">4</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">res</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span>        <span class="va">meanDist</span> <span class="op">&lt;-</span> <span class="fl">2600</span></span></span>
+<span class="r-in"><span>        <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread3</span><span class="op">(</span>rasAbundance <span class="op">=</span> <span class="va">rasAbundance</span>,</span></span>
+<span class="r-in"><span>                       rasQuality <span class="op">=</span> <span class="va">rasQuality</span>,</span></span>
+<span class="r-in"><span>                       advectionDir <span class="op">=</span> <span class="va">advectionDir</span>,</span></span>
+<span class="r-in"><span>                       advectionMag <span class="op">=</span> <span class="va">advectionMag</span>,</span></span>
+<span class="r-in"><span>                       meanDist <span class="op">=</span> <span class="va">meanDist</span>, verbose <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                       plot.it <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>          <span class="fu">plotDispersalKernel</span><span class="op">(</span><span class="va">out</span>, <span class="va">advectionMag</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="op">}</span></span></span>
+<span class="r-in"><span>      <span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>      <span class="co">###############################################################################</span></span></span>
+<span class="r-in"><span>      <span class="co">### The case of variable quality raster, raster for advectionDir &amp; advectionMag</span></span></span>
+<span class="r-in"><span>      <span class="co">###############################################################################</span></span></span>
+<span class="r-in"><span>      <span class="va">maxDim</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span></span>
+<span class="r-in"><span>      <span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">maxDim</span>, <span class="fl">0</span>, <span class="va">maxDim</span><span class="op">)</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">100</span>, vals <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">rasQuality</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>      <span class="va">rasAbundance</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">rasAbundance</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
+<span class="r-in"><span>      <span class="co"># startPixel &lt;- middlePixel(rasAbundance)</span></span></span>
+<span class="r-in"><span>      <span class="va">startPixel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">)</span>, <span class="fl">25</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">rasAbundance</span><span class="op">[</span><span class="va">startPixel</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>      <span class="co"># raster for advectionDir</span></span></span>
+<span class="r-in"><span>      <span class="va">advectionDir</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"advectionDir.tif"</span>,</span></span>
+<span class="r-in"><span>                                              package <span class="op">=</span> <span class="st">"SpaDES.tools"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">advectionDir</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="co"># rescale so min is 0.75 and max is 1</span></span></span>
+<span class="r-in"><span>      <span class="va">advectionDir</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">advectionDir</span><span class="op">[</span><span class="op">]</span> <span class="op">/</span> <span class="op">(</span><span class="fu">reproducible</span><span class="fu">::</span><span class="fu"><a href="https://reproducible.predictiveecology.org/reference/terra-migration.html" class="external-link">maxFn</a></span><span class="op">(</span><span class="va">advectionDir</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">180</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>      <span class="co"># raster for advectionMag</span></span></span>
+<span class="r-in"><span>      <span class="va">advectionMag</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"advectionMag.tif"</span>,</span></span>
+<span class="r-in"><span>                                              package <span class="op">=</span> <span class="st">"SpaDES.tools"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">advectionMag</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="co"># rescale so min is 0.75 and max is 1</span></span></span>
+<span class="r-in"><span>      <span class="va">advectionMag</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">advectionMag</span><span class="op">[</span><span class="op">]</span> <span class="op">/</span> <span class="op">(</span><span class="fu">reproducible</span><span class="fu">::</span><span class="fu"><a href="https://reproducible.predictiveecology.org/reference/terra-migration.html" class="external-link">maxFn</a></span><span class="op">(</span><span class="va">advectionMag</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">600</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>      <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread3</span><span class="op">(</span>rasAbundance <span class="op">=</span> <span class="va">rasAbundance</span>,</span></span>
+<span class="r-in"><span>                     rasQuality <span class="op">=</span> <span class="va">rasQuality</span>,</span></span>
+<span class="r-in"><span>                     advectionDir <span class="op">=</span> <span class="va">advectionDir</span>,</span></span>
+<span class="r-in"><span>                     advectionMag <span class="op">=</span> <span class="va">advectionMag</span>,</span></span>
+<span class="r-in"><span>                     meanDist <span class="op">=</span> <span class="va">meanDist</span>, verbose <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                     plot.it <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">advectionDir</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Wind direction"</span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">advectionMag</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Wind speed"</span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Initial abundances"</span></span></span>
+<span class="r-in"><span>        <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">advectionDir</span>, <span class="va">advectionMag</span>, <span class="va">rasAbundance</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>        <span class="fu">plotDispersalKernel</span><span class="op">(</span><span class="va">out</span>, <span class="fu"><a href="https://rdrr.io/pkg/terra/man/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">advectionMag</span><span class="op">[</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>      <span class="co">#########################################</span></span></span>
+<span class="r-in"><span>      <span class="co"># save iterations to a stack to make animated GIF</span></span></span>
+<span class="r-in"><span>      <span class="co">########################################</span></span></span>
+<span class="r-in"><span>      <span class="va">tmpStack</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"stackToAnimate"</span>, fileext <span class="op">=</span> <span class="st">".tif"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread3</span><span class="op">(</span>rasAbundance <span class="op">=</span> <span class="va">rasAbundance</span>,</span></span>
+<span class="r-in"><span>                     rasQuality <span class="op">=</span> <span class="va">rasQuality</span>,</span></span>
+<span class="r-in"><span>                     advectionDir <span class="op">=</span> <span class="va">advectionDir</span>,</span></span>
+<span class="r-in"><span>                     advectionMag <span class="op">=</span> <span class="va">advectionMag</span>,</span></span>
+<span class="r-in"><span>                     meanDist <span class="op">=</span> <span class="fl">2600</span>, verbose <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                     plot.it <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span>, saveStack <span class="op">=</span> <span class="va">tmpStack</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>      <span class="co">## This animates the series of images into an animated GIF</span></span></span>
+<span class="r-in"><span>      <span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/animation/" class="external-link">animation</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>        <span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">tmpStack</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">gifName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"animation.gif"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>        <span class="co"># Only works on some systems; may need to configure</span></span></span>
+<span class="r-in"><span>        <span class="co"># Works on Windows without system adjustments</span></span></span>
+<span class="r-in"><span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">.Platform</span><span class="op">$</span><span class="va">OS.type</span>, <span class="st">"windows"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>          <span class="fu"><a href="https://rdrr.io/pkg/animation/man/saveGIF.html" class="external-link">saveGIF</a></span><span class="op">(</span>interval <span class="op">=</span> <span class="fl">0.1</span>, movie.name <span class="op">=</span> <span class="va">gifName</span>, expr <span class="op">=</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>            <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out2</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>          <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="op">}</span></span></span>
 <span class="r-in"><span>    <span class="op">}</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co">###############################################################################</span></span></span>
-<span class="r-in"><span>  <span class="co">### The case of variable quality raster, raster for advectionDir &amp; advectionMag</span></span></span>
-<span class="r-in"><span>  <span class="co">###############################################################################</span></span></span>
-<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quickplot.predictiveecology.org" class="external-link">quickPlot</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://spades-tools.predictiveecology.org">SpaDES.tools</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">maxDim</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span></span>
-<span class="r-in"><span>  <span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">maxDim</span>, <span class="fl">0</span>, <span class="va">maxDim</span><span class="op">)</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">100</span>, vals <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">rasQuality</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">rasQuality</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span>  <span class="va">rasAbundance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">rasAbundance</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
-<span class="r-in"><span>  <span class="co"># startPixel &lt;- middlePixel(rasAbundance)</span></span></span>
-<span class="r-in"><span>  <span class="va">startPixel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">rasAbundance</span><span class="op">)</span><span class="op">)</span>, <span class="fl">25</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">rasAbundance</span><span class="op">[</span><span class="va">startPixel</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># raster for advectionDir</span></span></span>
-<span class="r-in"><span>  <span class="va">advectionDir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"advectionDir.tif"</span>, package <span class="op">=</span> <span class="st">"SpaDES.tools"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">advectionDir</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="co"># rescale so min is 0.75 and max is 1</span></span></span>
-<span class="r-in"><span>  <span class="va">advectionDir</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">advectionDir</span><span class="op">[</span><span class="op">]</span> <span class="op">/</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extremeValues.html" class="external-link">maxValue</a></span><span class="op">(</span><span class="va">advectionDir</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">180</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># raster for advectionMag</span></span></span>
-<span class="r-in"><span>  <span class="va">advectionMag</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"advectionMag.tif"</span>, package <span class="op">=</span> <span class="st">"SpaDES.tools"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">advectionMag</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">rasQuality</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="co"># rescale so min is 0.75 and max is 1</span></span></span>
-<span class="r-in"><span>  <span class="va">advectionMag</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">advectionMag</span><span class="op">[</span><span class="op">]</span> <span class="op">/</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extremeValues.html" class="external-link">maxValue</a></span><span class="op">(</span><span class="va">advectionMag</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">600</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread3</span><span class="op">(</span>rasAbundance <span class="op">=</span> <span class="va">rasAbundance</span>,</span></span>
-<span class="r-in"><span>                 rasQuality <span class="op">=</span> <span class="va">rasQuality</span>,</span></span>
-<span class="r-in"><span>                 advectionDir <span class="op">=</span> <span class="va">advectionDir</span>,</span></span>
-<span class="r-in"><span>                 advectionMag <span class="op">=</span> <span class="va">advectionMag</span>,</span></span>
-<span class="r-in"><span>                 meanDist <span class="op">=</span> <span class="va">meanDist</span>, verbose <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>                 plot.it <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/dev.html" class="external-link">dev</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># don't use Rstudio windows, which is very slow</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/clearPlot.html" class="external-link">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">advectionDir</span>, title <span class="op">=</span> <span class="st">"Wind direction"</span>, cols <span class="op">=</span> <span class="st">"Reds"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">advectionMag</span>, title <span class="op">=</span> <span class="st">"Wind speed"</span>, cols <span class="op">=</span> <span class="st">"Blues"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu">plotDispersalKernel</span><span class="op">(</span><span class="va">out</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">advectionMag</span><span class="op">[</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">rasAbundance</span>, addTo <span class="op">=</span> <span class="st">"rasAbundance"</span>, cols <span class="op">=</span> <span class="st">"black"</span>, title <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co">#########################################</span></span></span>
-<span class="r-in"><span>  <span class="co"># save iterations to a stack to make animated GIF</span></span></span>
-<span class="r-in"><span>  <span class="co">########################################</span></span></span>
-<span class="r-in"><span>  <span class="va">tmpStack</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterTmpFile.html" class="external-link">rasterTmpFile</a></span><span class="op">(</span><span class="st">"stackToAnimate"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread3</span><span class="op">(</span>rasAbundance <span class="op">=</span> <span class="va">rasAbundance</span>,</span></span>
-<span class="r-in"><span>                 rasQuality <span class="op">=</span> <span class="va">rasQuality</span>,</span></span>
-<span class="r-in"><span>                 advectionDir <span class="op">=</span> <span class="va">advectionDir</span>,</span></span>
-<span class="r-in"><span>                 advectionMag <span class="op">=</span> <span class="va">advectionMag</span>,</span></span>
-<span class="r-in"><span>                 meanDist <span class="op">=</span> <span class="fl">2600</span>, verbose <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>                 plot.it <span class="op">=</span> <span class="fl">0</span>, saveStack <span class="op">=</span> <span class="va">tmpStack</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co">## This animates the series of images into an animated GIF</span></span></span>
-<span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/animation/" class="external-link">animation</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">tmpStack</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">gifName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"animation.gif"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/pkg/animation/man/saveGIF.html" class="external-link">saveGIF</a></span><span class="op">(</span>interval <span class="op">=</span> <span class="fl">0.1</span>, movie.name <span class="op">=</span> <span class="va">gifName</span>, expr <span class="op">=</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>      <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://quickplot.predictiveecology.org/reference/numLayers.html" class="external-link">numLayers</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out2</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">}</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> assuming that advectionDir is in geographic degrees(i.e., North is 0)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29942.6974241127</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29845.2355120556</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29684.8907058857</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28961.0363094562</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28689.172882837</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28297.5381929262</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 27874.7434601112</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 26484.7181518992</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 9</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 25582.8367937818</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 10</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 24950.0287991057</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 11</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 23810.3470626647</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 12</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 23138.6878916629</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 13</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 22478.8630156612</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 14</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 21493.294194617</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 15</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 20878.3755159988</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 16</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 20230.8132430021</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 19558.2859208612</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 18</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 18798.6791665058</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 19</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 18114.4685714799</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 20</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 17335.5307185944</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 21</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 16617.7831503639</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 22</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 15886.9462151914</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 23</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 15193.9920401682</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 24</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 14475.3920643484</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 13773.1118090256</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 26</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 13098.0798618491</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 27</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 12267.94522178</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 28</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 11605.0397688509</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 29</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 10952.5137443267</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 30</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 9991.87560873532</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 31</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 9320.07536604412</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 32</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 8608.22893176744</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 33</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 8019.3137539911</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 34</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 7419.6941039023</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 35</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 6824.49671291095</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 36</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 6317.9586758525</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 37</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 5865.93380825119</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 38</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 5377.47629354724</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 39</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 4919.23529026206</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 40</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 4529.38133634955</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 41</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 4118.66865850671</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 42</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 3713.52728051165</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 43</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 3336.93962976748</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 44</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2980.35984067639</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2697.3979402356</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 46</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2415.25223056504</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 47</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2116.82733879199</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 48</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1918.09641472157</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 49</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1647.41511007985</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1442.02030855928</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 51</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1252.53030232797</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 52</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1068.17138783792</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 53</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 898.580870314861</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 54</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 737.905987640094</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 55</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 656.285745925141</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 56</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 514.584219321668</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 57</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 440.522016969407</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 58</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 388.674735204424</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 59</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 295.769875692062</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 60</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 215.171705314287</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 61</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 178.493658565594</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 62</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 97.6754223744511</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 63</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 21.8713131945417</span>
+<span class="r-plt img"><img src="spread3-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="spread3-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -312,7 +447,7 @@ problems)</p></dd>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p><p>Developed by Eliot J B McIntire, Alex M Chubaty.</p>
 </div>
 
 <div class="pkgdown">

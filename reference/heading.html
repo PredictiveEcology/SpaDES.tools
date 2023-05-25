@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -53,29 +53,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">heading</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for SpatialPoints,SpatialPoints</span></span>
-<span><span class="fu">heading</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for matrix,matrix</span></span>
-<span><span class="fu">heading</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for matrix,SpatialPoints</span></span>
-<span><span class="fu">heading</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for SpatialPoints,matrix</span></span>
-<span><span class="fu">heading</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">heading</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>from</dt>
-<dd><p>The starting position; an object of class SpatialPoints.</p></dd>
+<dd><p>The starting position; an object of class SpatVector</p></dd>
 
 
 <dt>to</dt>
-<dd><p>The ending position;  an object of class SpatialPoints.</p></dd>
+<dd><p>The ending position;  an object of class SpatVector</p></dd>
 
 </dl></div>
     <div id="value">
@@ -91,37 +79,33 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/edzer/sp/" class="external-link">sp</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"CircStats"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">10L</span>                <span class="co"># number of agents</span></span></span>
 <span class="r-in"><span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">N</span>, <span class="op">-</span><span class="fl">50</span>, <span class="fl">50</span><span class="op">)</span> <span class="co"># previous X location</span></span></span>
 <span class="r-in"><span><span class="va">y1</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">N</span>, <span class="op">-</span><span class="fl">50</span>, <span class="fl">50</span><span class="op">)</span> <span class="co"># previous Y location</span></span></span>
 <span class="r-in"><span><span class="va">x0</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">x1</span>, <span class="fl">5</span><span class="op">)</span>   <span class="co"># current X location</span></span></span>
 <span class="r-in"><span><span class="va">y0</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">y1</span>, <span class="fl">5</span><span class="op">)</span>   <span class="co"># current Y location</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># using SpatialPoints</span></span></span>
-<span class="r-in"><span><span class="va">prev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sp/man/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x1</span>, y <span class="op">=</span> <span class="va">y1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">curr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sp/man/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x0</span>, y <span class="op">=</span> <span class="va">y0</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># using SpatVector</span></span></span>
+<span class="r-in"><span><span class="va">prev</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x1</span>, y <span class="op">=</span> <span class="va">y1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">curr</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x0</span>, y <span class="op">=</span> <span class="va">y0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">heading</span><span class="op">(</span><span class="va">prev</span>, <span class="va">curr</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  15.787641  77.638872 105.303395 290.088318 299.359140 145.182989</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] 354.502373 263.513987  51.258376   5.642971</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># using matrix</span></span></span>
 <span class="r-in"><span><span class="va">prev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x1</span>, <span class="va">y1</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>,<span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">curr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x0</span>, <span class="va">y0</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>,<span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">heading</span><span class="op">(</span><span class="va">prev</span>, <span class="va">curr</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  15.787641  77.638872 105.303395 290.088318 299.359140 145.182989</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] 354.502373 263.513987  51.258376   5.642971</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#using both</span></span></span>
-<span class="r-in"><span><span class="va">prev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sp/man/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x1</span>, y <span class="op">=</span> <span class="va">y1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">prev</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x1</span>, y <span class="op">=</span> <span class="va">y1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">curr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x0</span>, <span class="va">y0</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>,<span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">heading</span><span class="op">(</span><span class="va">prev</span>, <span class="va">curr</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  15.787641  77.638872 105.303395 290.088318 299.359140 145.182989</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] 354.502373 263.513987  51.258376   5.642971</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">prev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x1</span>, <span class="va">y1</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>,<span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">curr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sp/man/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x0</span>, y <span class="op">=</span> <span class="va">y0</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">curr</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x0</span>, y <span class="op">=</span> <span class="va">y0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">heading</span><span class="op">(</span><span class="va">prev</span>, <span class="va">curr</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  15.787641  77.638872 105.303395 290.088318 299.359140 145.182989</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] 354.502373 263.513987  51.258376   5.642971</span>
 <span class="r-in"><span></span></span>
@@ -135,7 +119,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p><p>Developed by Eliot J B McIntire, Alex M Chubaty.</p>
 </div>
 
 <div class="pkgdown">

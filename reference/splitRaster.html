@@ -19,7 +19,7 @@ where y &amp;lt;- splitRaster(x)."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -70,19 +70,7 @@ where <code>y &lt;- splitRaster(x)</code>.</p>
 <span>  path <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  <span class="va">cl</span>,</span>
 <span>  rType <span class="op">=</span> <span class="st">"FLT4S"</span>,</span>
-<span>  fExt <span class="op">=</span> <span class="st">".grd"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for RasterLayer</span></span>
-<span><span class="fu">splitRaster</span><span class="op">(</span></span>
-<span>  <span class="va">r</span>,</span>
-<span>  nx <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  ny <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  buffer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  path <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  <span class="va">cl</span>,</span>
-<span>  rType <span class="op">=</span> <span class="st">"FLT4S"</span>,</span>
-<span>  fExt <span class="op">=</span> <span class="st">".grd"</span></span>
+<span>  fExt <span class="op">=</span> <span class="st">".tif"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -111,7 +99,7 @@ accepts a <code>na.rm</code> argument. The default is <code>mean</code>.</p></dd
 
 <dt>buffer</dt>
 <dd><p>Numeric vector of length 2 giving the size of the buffer along the x and y axes.
-If these values less than or equal to <code>1</code> are used, this
+If values greater than or equal to <code>1</code> are used, this
 is interpreted as the number of pixels (cells) to use as a buffer.
 Values between <code>0</code> and <code>1</code> are interpreted as proportions
 of the number of pixels in each tile (rounded up to an integer value).
@@ -157,15 +145,16 @@ On the other hand, <code>mergeRaster</code> retains the values of the tile regio
 over the values in any buffered regions.
 This is useful for reducing edge effects when performing raster operations involving
 contagious processes.</p>
-<p>This function is parallel-aware, using the same mechanism as used in <span class="pkg">raster</span>.
-Specifically, if you start a cluster using <code><a href="https://rdrr.io/pkg/raster/man/cluster.html" class="external-link">beginCluster()</a></code>,
+<p>This function is parallel-aware using the same mechanism as used in <span class="pkg">raster</span>:
+NOTE: This may not work as expected as we transition away from <code>raster</code>.
+Specifically, if you start a cluster using <code><a href="https://rdrr.io/pkg/raster/man/cluster.html" class="external-link">raster::beginCluster()</a></code>,
 then this function will automatically use that cluster.
-It is always a good idea to stop the cluster when finished, using <code><a href="https://rdrr.io/pkg/raster/man/cluster.html" class="external-link">endCluster()</a></code>.</p>
+It is always a good idea to stop the cluster when finished, using <code><a href="https://rdrr.io/pkg/raster/man/cluster.html" class="external-link">raster::endCluster()</a></code>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/r/base/merge.html" class="external-link">raster::merge()</a></code>, <code><a href="https://rdrr.io/pkg/terra/man/mosaic.html" class="external-link">raster::mosaic()</a></code></p>
-<p><code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call()</a></code>, <code><a href="https://rdrr.io/r/base/merge.html" class="external-link">raster::merge()</a></code>.</p></div>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/terra/man/merge.html" class="external-link">terra::merge()</a></code>, <code><a href="https://rdrr.io/pkg/terra/man/mosaic.html" class="external-link">terra::mosaic()</a></code></p>
+<p><code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call()</a></code>, <code><a href="https://rdrr.io/pkg/terra/man/merge.html" class="external-link">terra::merge()</a></code>.</p></div>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -175,24 +164,18 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://Require.predictiveecology.org" class="external-link">Require</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘Require’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:testthat’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     setup</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># an example with dimensions:</span></span></span>
 <span class="r-in"><span><span class="co"># nrow: 77</span></span></span>
 <span class="r-in"><span><span class="co"># ncol: 101</span></span></span>
 <span class="r-in"><span><span class="co"># nlayers: 3</span></span></span>
-<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"external/rlogo.grd"</span>, package <span class="op">=</span> <span class="st">"raster"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"ex/logo.tif"</span>, package <span class="op">=</span> <span class="st">"terra"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="va">b</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co"># use first layer only</span></span></span>
-<span class="r-in"><span><span class="va">nx</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span><span class="va">ny</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="va">nx</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span><span class="va">ny</span> <span class="op">&lt;-</span> <span class="fl">4</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tmpdir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Require.predictiveecology.org/reference/checkPath.html" class="external-link">checkPath</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"splitRaster-example"</span><span class="op">)</span>, create <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tmpdir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"splitRaster-example"</span><span class="op">)</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">y0</span> <span class="op">&lt;-</span> <span class="fu">splitRaster</span><span class="op">(</span><span class="va">r</span>, <span class="va">nx</span>, <span class="va">ny</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>, <span class="st">"y0"</span><span class="op">)</span><span class="op">)</span> <span class="co"># no buffer</span></span></span>
 <span class="r-in"><span></span></span>
@@ -202,46 +185,63 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 <span class="r-in"><span><span class="co"># buffer: half the width and length of each tile</span></span></span>
 <span class="r-in"><span><span class="va">y2</span> <span class="op">&lt;-</span> <span class="fu">splitRaster</span><span class="op">(</span><span class="va">r</span>, <span class="va">nx</span>, <span class="va">ny</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>, <span class="st">"y2"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># parallel cropping</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span> <span class="co"># use up to 4 cores</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/cluster.html" class="external-link">beginCluster</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">y3</span> <span class="op">&lt;-</span> <span class="fu">splitRaster</span><span class="op">(</span><span class="va">r</span>, <span class="va">nx</span>, <span class="va">ny</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fl">0.7</span><span class="op">)</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>, <span class="st">"y3"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/cluster.html" class="external-link">endCluster</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the original raster:</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="co"># may require a call to `dev()` if using RStudio</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="co"># may require a call to `dev()` if using RStudio</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the split raster:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span>mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nx</span> <span class="op">*</span> <span class="va">ny</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">nx</span>, nrow <span class="op">=</span> <span class="va">ny</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">plotOrder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">8</span>, <span class="fl">12</span>, <span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">11</span>, <span class="fl">2</span>, <span class="fl">6</span>, <span class="fl">10</span>, <span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">9</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">y0</span><span class="op">[</span><span class="va">plotOrder</span><span class="op">]</span>, <span class="va">plot</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">plotOrder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/split.html" class="external-link">split</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">nx</span>, each <span class="op">=</span> <span class="va">ny</span><span class="op">)</span><span class="op">)</span>, <span class="va">rev</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># can be recombined using `raster::merge`</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">y0</span><span class="op">[</span><span class="va">plotOrder</span><span class="op">]</span>, <span class="fu">terra</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># parallel splitting</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://rspatial.org/raster" class="external-link">"raster"</a></span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"snow"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span> <span class="co"># use up to 4 cores</span></span></span>
+<span class="r-in"><span>    <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/cluster.html" class="external-link">beginCluster</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">y3</span> <span class="op">&lt;-</span> <span class="fu">splitRaster</span><span class="op">(</span><span class="va">r</span>, <span class="va">nx</span>, <span class="va">ny</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fl">0.7</span><span class="op">)</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>, <span class="st">"y3"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/cluster.html" class="external-link">endCluster</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">y3</span><span class="op">[</span><span class="va">plotOrder</span><span class="op">]</span>, <span class="fu">terra</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">}</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: raster</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: sp</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘raster’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:MASS’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     select</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: snow</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># can be recombined using `terra::merge`</span></span></span>
 <span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">merge</span>, <span class="va">y0</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">merge</span>, <span class="va">y1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">merge</span>, <span class="va">y2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">m2</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">m2</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># or recombine using mergeRaster</span></span></span>
 <span class="r-in"><span><span class="va">n0</span> <span class="op">&lt;-</span> <span class="fu">mergeRaster</span><span class="op">(</span><span class="va">y0</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">n0</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">n0</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">n1</span> <span class="op">&lt;-</span> <span class="fu">mergeRaster</span><span class="op">(</span><span class="va">y1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">n1</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">n1</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">n2</span> <span class="op">&lt;-</span> <span class="fu">mergeRaster</span><span class="op">(</span><span class="va">y2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">n2</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">n2</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">tmpdir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -255,7 +255,7 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p><p>Developed by Eliot J B McIntire, Alex M Chubaty.</p>
 </div>
 
 <div class="pkgdown">

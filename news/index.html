@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -48,6 +48,55 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.0" id="spadestools-200">SpaDES.tools 2.0.0<small>2023-05-23</small><a class="anchor" aria-label="anchor" href="#spadestools-200"></a></h2>
+<div class="section level3">
+<h3 id="enhancements-2-0-0">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-2-0-0"></a></h3>
+<ul><li>wholesale transition to <code>terra</code> from <code>raster</code> and <code>sp</code>. Some functionality is available for <code>sf</code>, but this will not be complete.</li>
+<li>
+<code><a href="../reference/splitRaster.html">splitRaster()</a></code> uses “.tif” as the default raster file type</li>
+<li>most example plotting uses <code><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">terra::plot</a></code> directly, but in a few cases, <code><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">quickPlot::Plot</a></code> is used as it is much better (e.g., <code>spread2(plot.it = TRUE)</code>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="dependency-changes-2-0-0">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-2-0-0"></a></h3>
+<ul><li>drop support for R 4.0 (dependency package <code>reproducible</code> supports R &gt;= 4.1);</li>
+<li>now has only 7 Imports and Depends, which becomes 15 recursive dependencies (down from 40)</li>
+<li>add <code>terra</code> to Imports</li>
+<li>removed dependencies <code>magrittr</code>, <code>rgeos</code>, <code>rlang</code>, <code>Require</code>, <code>graphics</code>
+</li>
+<li>added to <code>Suggests</code>: <code>withr</code>
+</li>
+<li>moved to Suggests: <code>quickPlot</code>, <code>fastmatch</code>, <code>raster</code>, <code>sp</code>, <code>sf</code>, <code>CircStats</code>
+</li>
+<li>added <code>snow</code> to Suggests as it’s used for parallel <code>raster</code> operations; <code>tools</code> for <code>file.ext</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bugfixes-2-0-0">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-2-0-0"></a></h3>
+<ul><li>all open issues dealt with</li>
+<li>fixes related to migration to <code>terra</code>
+</li>
+<li>other minor bug fixes</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.2" id="spadestools-102">SpaDES.tools 1.0.2<a class="anchor" aria-label="anchor" href="#spadestools-102"></a></h2>
+<div class="section level3">
+<h3 id="dependency-changes-1-0-2">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-1-0-2"></a></h3>
+<ul><li>none</li>
+</ul></div>
+<div class="section level3">
+<h3 id="enhancements-1-0-2">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-1-0-2"></a></h3>
+<ul><li>
+<code>terra</code> compatibility added</li>
+<li>
+<code>neutralLandscapeMap</code> expanded to use more <code>NLMR</code> functions</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-0-2">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-2"></a></h3>
+<ul><li>suppress additional spurious warnings</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.1" id="spadestools-101">SpaDES.tools 1.0.1<small>2023-01-05</small><a class="anchor" aria-label="anchor" href="#spadestools-101"></a></h2>
 <div class="section level3">
 <h3 id="enhancements-1-0-1">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-1-0-1"></a></h3>
@@ -56,7 +105,7 @@
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.0" id="spadestools-100">SpaDES.tools 1.0.0<small>2022-08-16</small><a class="anchor" aria-label="anchor" href="#spadestools-100"></a></h2>
-<p>This is a major # SpaDES.tools update causing breaking changes due to multiple CRAN packages no longer available as of R # SpaDES.tools 4.2 released April 2022.</p>
+<p>This is a major <code>SpaDES.tools</code> update causing breaking changes due to multiple CRAN packages no longer available as of R version 4.2 released April 2022.</p>
 <div class="section level3">
 <h3 id="dependency-changes-1-0-0">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-1-0-0"></a></h3>
 <ul><li>Removed dependencies <code>ffbase</code> and <code>ff</code> and deprecated use of <code>lowMemory</code> argument in <code>spread</code> (<code>ffbase</code> was removed from CRAN April 2022).</li>
@@ -68,7 +117,7 @@
 <code><a href="../reference/splitRaster.html">mergeRaster()</a></code> can deal with rasters with different origins extents (i.e., that were not produced using <code><a href="../reference/splitRaster.html">splitRaster()</a></code>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-1-0-0">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-0"></a></h3>
+<h3 id="bug-fixes-1-0-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-0"></a></h3>
 <ul><li>
 <code>spread2</code> was unable to use <code>maxSize</code> when <code>start</code> was the output of a previous <code>spread2</code> call to which <code>maxSize</code> had not been supplied. This has now been fixed.</li>
 </ul></div>
@@ -84,7 +133,7 @@
 <ul><li>none</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-3-10">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-10"></a></h3>
+<h3 id="bug-fixes-0-3-10">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-10"></a></h3>
 <ul><li>fix error in <code><a href="../reference/spread2.html">spread2()</a></code> causing failures on R-devel</li>
 </ul></div>
 </div>
@@ -100,7 +149,7 @@
 <ul><li>none</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-3-9">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-9"></a></h3>
+<h3 id="bug-fixes-0-3-9">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-9"></a></h3>
 <ul><li>fixed misc CRAN check issues with Suggested packages</li>
 <li>fixed bug in <code><a href="../reference/splitRaster.html">splitRaster()</a></code> (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/62" class="external-link">#62</a>; <a href="https://github.com/anbm-dk" class="external-link">@anbm-dk</a>)</li>
 </ul></div>
@@ -126,7 +175,7 @@
 <li>several under the hood improvements for stability, speed</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-3-8">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-8"></a></h3>
+<h3 id="bug-fixes-0-3-8">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-8"></a></h3>
 <ul><li>
 <code>distanceFromEachPoint</code> bugfixes under some cases (some values of <code>toCells</code>, <code>angles</code> would cause errors)</li>
 </ul></div>
@@ -138,7 +187,7 @@
 <ul><li>none</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bugfixes-0-3-6">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-3-6"></a></h3>
+<h3 id="bug-fixes-0-3-6">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-6"></a></h3>
 <ul><li>
 <code>spread</code> with <code>allowOverlap = TRUE</code> would give wrong results. Fixed.</li>
 <li>update a test to deal with forthcoming <code>raster</code> changes.</li>
@@ -194,7 +243,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bugfixes-0-3-3">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-3-3"></a></h3>
-<ul><li>minor bug fixes</li>
+<ul><li>minor Bug Fixes</li>
 </ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-3-3">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-3-3"></a></h3>
@@ -267,7 +316,7 @@
 <code>fastMask()</code>: moved to the <code>reproducible</code> package.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
+<h3 id="bug-fixes-0-2-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
 <ul><li>minor bug fixes (<code>spread2</code>)</li>
 <li>minor test fixes.</li>
 </ul></div>
@@ -301,7 +350,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p><p>Developed by Eliot J B McIntire, Alex M Chubaty.</p>
 </div>
 
 <div class="pkgdown">

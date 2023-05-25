@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -93,8 +93,7 @@ The basic algorithm is to run <code>cir</code> just once, then add to the x,y co
       </tr><tr><td>
           <p><code><a href="deprecated.html">fastCrop()</a></code> </p>
         </td>
-        <td><p><code>fastCrop</code> is a wrapper around <code>velox::VeloxRaster_crop</code>, though
-<code><a href="https://rdrr.io/pkg/terra/man/crop.html" class="external-link">raster::crop</a></code> is faster under many tests.</p></td>
+        <td><p><code>fastCrop</code> is deprecated.</p></td>
       </tr><tr><td>
           <p><code><a href="distanceFromEachPoint.html">distanceFromEachPoint()</a></code> </p>
         </td>
@@ -142,7 +141,7 @@ The basic algorithm is to run <code>cir</code> just once, then add to the x,y co
       </tr><tr><td>
           <p><code><a href="randomPolygons.html">randomPolygons()</a></code> <code><a href="randomPolygons.html">randomPolygon()</a></code> </p>
         </td>
-        <td><p>Produce a <code>RasterLayer</code> of  random polygons</p></td>
+        <td><p>Produce a <code>SpatRaster</code> of  random polygons</p></td>
       </tr><tr><td>
           <p><code><a href="randomStudyArea.html">randomStudyArea()</a></code> </p>
         </td>
@@ -178,7 +177,7 @@ The basic algorithm is to run <code>cir</code> just once, then add to the x,y co
       </tr><tr><td>
           <p><code><a href="spread2.html">spread2()</a></code> </p>
         </td>
-        <td><p>Simulate a contagious spread process on a landscape, with data.table internals</p></td>
+        <td><p>Simulate a contagious spread process on a landscape, with <code>data.table</code> internals</p></td>
       </tr><tr><td>
           <p><code><a href="spread3.html">spread3()</a></code> </p>
         </td>
@@ -200,7 +199,7 @@ The basic algorithm is to run <code>cir</code> just once, then add to the x,y co
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p><p>Developed by Eliot J B McIntire, Alex M Chubaty.</p>
 </div>
 
 <div class="pkgdown">

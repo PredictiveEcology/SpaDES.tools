@@ -23,7 +23,7 @@ robust, and more difficult to use iteratively.'><!-- mathjax --><script src="htt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ robust, and more difficult to use iteratively.'><!-- mathjax --><script src="htt
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Simulate a contagious spread process on a landscape, with data.table internals</h1>
+    <h1>Simulate a contagious spread process on a landscape, with <code>data.table</code> internals</h1>
     <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/HEAD/R/spread2.R" class="external-link"><code>R/spread2.R</code></a></small>
     <div class="hidden name"><code>spread2.Rd</code></div>
     </div>
@@ -67,7 +67,7 @@ robust, and more difficult to use iteratively.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">spread2</span><span class="op">(</span></span>
 <span>  <span class="va">landscape</span>,</span>
-<span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,</span>
+<span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  spreadProb <span class="op">=</span> <span class="fl">0.23</span>,</span>
 <span>  persistProb <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
 <span>  asRaster <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -100,7 +100,7 @@ locations for spreading events to start and spread2 into. Required.</p></dd>
 
 <dt>start</dt>
 <dd><p>Required. Either a vector of pixel numbers to initiate spreading, or a
-data.table that is the output of a previous <code>spread2</code>.
+<code>data.table</code> that is the output of a previous <code>spread2</code>.
 If a vector, they should be cell indices (pixels) on the <code>landscape</code>.
 If user has x and y coordinates, these can be converted with
 <code><a href="https://rdrr.io/pkg/terra/man/xyCellFrom.html" class="external-link">cellFromXY()</a></code>.</p></dd>
@@ -139,11 +139,10 @@ value is the initial starting pixel.</p></dd>
 
 
 <dt>maxSize</dt>
-<dd><p>Numeric. Maximum number of cells for a single or
-all events to be spread2. Recycled to match <code>start</code> length,
-if it is not as long as <code>start</code>. This will be overridden if
-<code>exactSize</code> also provided.
-See section on <code>Breaking out of spread2 events</code>.</p></dd>
+<dd><p>Numeric. Maximum number of cells for a single or all events to be <code>spread2</code>.
+Recycled to match <code>start</code> length, if it is not as long as <code>start</code>.
+This will be overridden if <code>exactSize</code> also provided.
+See section on 'Breaking out of <code>spread2</code> events'.</p></dd>
 
 
 <dt>exactSize</dt>
@@ -161,7 +160,7 @@ default is 8 (Queen case). Can only be 4 or 8.</p></dd>
 
 
 <dt>iterations</dt>
-<dd><p>Number of iterations to spread2.
+<dd><p>Number of iterations to <code>spread2</code>.
 Leaving this <code>NULL</code> allows the spread2 to continue
 until stops spreading itself (i.e., exhausts itself).</p></dd>
 
@@ -186,7 +185,7 @@ source, i.e, the lag 1 "from" pixel, for each iteration.</p></dd>
 <dt>maxRetriesPerID</dt>
 <dd><p>Only active if <code>exactSize</code> is used. This is the number of attempts
 that will be made per event ID, before abandoning, therefore completing
-the spread2 for that event with a size that is smaller than
+the <code>spread2</code> for that event with a size that is smaller than
 <code>exactSize</code>. Default 10 times.</p></dd>
 
 
@@ -241,11 +240,11 @@ See details.  Default is 0, i.e., no overlapping.</p></dd>
 
 
 <dt>neighProbs</dt>
-<dd><p>An optional numeric vector, whose sum is 1. It indicates the
-probabilities that an individual
-spread iteration will spread to <code>1, 2, ..., length(neighProbs)</code>
-neighbours, respectively. If this is used (i.e., something other than
-NA), <code>circle</code> and <code>returnDistances</code> will not work currently.</p></dd>
+<dd><p>An optional numeric vector, whose sum is 1.
+It indicates the probabilities that an individual spread iteration
+will spread to <code>1, 2, ..., length(neighProbs)</code> neighbours, respectively.
+If this is used (i.e., something other than <code>NA</code>), <code>circle</code> and
+<code>returnDistances</code> will not work currently.</p></dd>
 
 
 <dt>oneNeighbourOnly</dt>
@@ -282,7 +281,7 @@ If <code>asRaster=TRUE</code>, then the <code>data.table</code> (with its <code>
 provides pixel-level information about the spread events.</p>
 
 
-<p>The <code>RasterLayer</code> represents every cell in which a successful spread2 event occurred.
+<p>The <code>RasterLayer</code> represents every cell in which a successful <code>spread2</code> event occurred.
 For the case of, say, a fire this would represent every cell that burned.
 If <code>allowOverlap</code> is <code>TRUE</code>, the return will always be a <code>data.table</code>.</p>
 
@@ -292,18 +291,18 @@ If <code>allowOverlap</code> is <code>TRUE</code>, the return will always be a <
 
 
 <table class="table table"><tr><td><code>initialPixels</code></td><td>the initial cell number of that particular
-spread2 event.</td></tr><tr><td><code>pixels</code></td><td>The cell indices of cells that have
-been touched by the spread2 algorithm.</td></tr><tr><td><code>state</code></td><td>a logical indicating whether the cell is active (i.e.,
+<code>spread2</code> event.</td></tr><tr><td><code>pixels</code></td><td>The cell indices of cells that have
+been touched by the <code>spread2</code> algorithm.</td></tr><tr><td><code>state</code></td><td>a logical indicating whether the cell is active (i.e.,
 could still be a source for spreading) or not (no
-spreading will occur from these cells).</td></tr><tr><td><code>from</code></td><td>The pixel indices that were the immediately preceeding
+spreading will occur from these cells).</td></tr><tr><td><code>from</code></td><td>The pixel indices that were the immediately preceding
 "source" for each <code>pixels</code>, i.e., the lag 1 pixels.
 Only returned if <code>returnFrom</code> is <code>TRUE</code></td></tr></table><p>The attribute saved with the name "spreadState" (e.g., <code>attr(output, "spreadState")</code>)
 includes a <code>data.table</code> with columns:</p><table class="table table"><tr><td><code>id</code></td><td>An arbitrary code, from 1 to <code>length(start)</code> for each "event".</td></tr><tr><td><code>initialPixels</code></td><td>the initial cell number of that particular
-spread2 event.</td></tr><tr><td><code>numRetries</code></td><td>The number of re-starts the event did because it got
+<code>spread2</code> event.</td></tr><tr><td><code>numRetries</code></td><td>The number of re-starts the event did because it got
 stuck (normally only because <code>exactSize</code> was used
 and was not achieved.</td></tr><tr><td><code>maxSize</code></td><td>The number of pixels that were provided as inputs via
 <code>maxSize</code> or <code>exactSize</code>.</td></tr><tr><td><code>size</code></td><td>The current size, in pixels, of each event.</td></tr></table><p>and several other objects that provide significant speed ups in iterative calls to
-spread2. If the user runs <code>spread2</code> iteratively, there will likely be significant
+<code>spread2</code>. If the user runs <code>spread2</code> iteratively, there will likely be significant
 speed gains if the <code>data.table</code> passed in to <code>start</code> should have the attribute
 attached, or re-attached if it was lost, e.g., via
 <code>setattr(outInput, "spreadState", attr(out, "spreadState"))</code>, where <code>out</code> is the
@@ -320,15 +319,15 @@ nearby cells (adjacent cells): <code>spreadProb</code> and <code>neighProb</code
 Using <code>spreadProb</code>, every "active" pixel will assess all
 neighbours (either 4 or 8, depending on  <code>directions</code>), and will "activate"
 whichever neighbours successfully pass independent calls to
-<code>runif(1,0,1)&lt;spreadProb</code>.
+<code>runif(1,0,1) &lt; spreadProb</code>.
 The algorithm will iterate again and again, each time starting from the newly
-"activated" cells. Several built-in decisions are as follows.</p><ol><li><p>no active cell can active a cell that was already activated by
+"activated" cells. Several built-in decisions are as follows.</p><ol><li><p>no active cell can activate a cell that was already activated by
 the same event (i.e., "it won't go backwards"). 2. If <code>allowOverlap</code> is
 <code>FALSE</code>, then the previous rule will also apply, regardless of which
 "event" caused the pixels to be previously active.</p></li>
 </ol><p>This function can be interrupted before all active cells are exhausted if
 the <code>iterations</code> value is reached before there are no more active
-cells to <code>spread2</code> into. The interrupted output (a data.table) can be passed
+cells to <code>spread2</code> into. The interrupted output (a <code>data.table</code>) can be passed
 subsequently as an input to this same function (as <code>start</code>).
 This is intended to be used for situations where external events happen during
 a spread2 event, or where one or more arguments to the spread2 function
@@ -348,27 +347,27 @@ exactly one of the 8 angles of the 8 neighbours. This means that
 $$max(spreadProb)/min(spreadProb)$$ will generally be less than
 <code>asymmetry</code>, for the 8 neighbours. The exact adjustment to the spreadProb
 is calculated with:
-$$angleQuality &lt;- (cos(angles - rad(asymmetryAngle))+1)/2$$
+$$angleQuality &lt;- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2$$
 which is multiplied to get an angle-adjusted spreadProb:
 $$spreadProbAdj &lt;- actualSpreadProb * angleQuality$$
 which is then rescaled:
 $$adjustedSpreadProb = (spreadProbAdj - min(spreadProbAdj)) * par2 + par1$$,
 where par1 and par2 are parameters calculated internally to make the 2 conditions above true.</p>
-<p>If <code>exactSize</code> or <code>maxSize</code> are used, then spreading will continue and stop
-before or at <code>maxSize</code> or at <code>exactSize</code>. If <code>iterations</code> is specified,
-then the function will end, and the returned <code>data.table</code> will still
+<p>If <code>maxSize</code> or <code>exactSize</code> are used, then spreading will continue and stop
+before or at <code>maxSize</code> or at <code>exactSize</code>, respectively.
+If <code>iterations</code> is specified, then the function will end, and the returned <code>data.table</code>
 may (if <code>maxSize</code>) or will (if <code>exactSize</code>) have at least one active
-cell per event that did not already achieve <code>maxSize</code> or <code>exactSize</code>. This
-will be very useful to build new, customized higher-level wrapper functions that iteratively
-call <code>spread2</code>.</p>
+cell per event that did not already achieve <code>maxSize</code> or <code>exactSize</code>.
+This will be very useful to build new, customized higher-level wrapper functions that
+iteratively call <code>spread2</code>.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
     <p><code>exactSize</code> may not be achieved if there aren't enough cells in the map.
 Also, <code>exactSize</code> may not be achieved because the active cells are "stuck",
-i.e., they have no unactivated cells to move to; or the <code>spreadProb</code> is low.
+i.e., they have no inactivated cells to move to; or the <code>spreadProb</code> is low.
 In the latter two cases, the algorithm will retry again, but it will only
-re-try from the last iterations active cells.
+retry from the last iteration's active cells.
 The algorithm will only retry 10 times before quitting.
 Currently, there will also be an attempt to "jump" up to four cells away from
 the active cells to try to continue spreading.</p>
@@ -376,21 +375,21 @@ the active cells to try to continue spreading.</p>
 by iterative calls in a <code>while</code> loop. See example.</p>
     </div>
     <div id="breaking-out-of-spread-events">
-    <h2>Breaking out of spread2 events</h2>
+    <h2>Breaking out of <code>spread2</code> events</h2>
     
 
 
-<p>There are 3 ways for the spread2 to "stop" spreading.
+<p>There are 3 ways for the <code>spread2</code> to "stop" spreading.
 Here, each "event" is defined as all cells that are spawned from each unique
 <code>start</code> location.
 The ways outlined below are all acting at all times, i.e., they are not
 mutually exclusive.
 Therefore, it is the user's responsibility to make sure the different rules
 are interacting with each other correctly.</p>
-<table class="table table"><tr><td><code>spreadProb</code></td><td>Probabilistically, if spreadProb is low enough,
-active spreading events will stop. In practice,
-this number generally should be below 0.3 to actually
-see an event stop</td></tr><tr><td><code>maxSize</code></td><td>This is the number of cells that are "successfully" turned
+<table class="table table"><tr><td><code>spreadProb</code></td><td>Probabilistically, if <code>spreadProb</code> is low enough,
+active spreading events will stop.
+In practice, this number generally should be below 0.3
+to actually see an event stop.</td></tr><tr><td><code>maxSize</code></td><td>This is the number of cells that are "successfully" turned
 on during a spreading event. <code>spreadProb</code> will still
 be active, so, it is possible that the end size of each event
 is smaller than <code>maxSize</code>, but they will not be greater
@@ -410,7 +409,7 @@ as a <code>data.table</code>.</td></tr></table></div>
 
 <p>This function can be used iteratively, with relatively little overhead compared to using
 it non-iteratively. In general, this function can be called with arguments set as user
-needs, and with specifying iterations = 1 (say). This means that the function will spread
+needs, and with specifying e.g., <code>iterations = 1</code>. This means that the function will spread
 outwards 1 iteration, then stop. The returned object will be a <code>data.table</code> or
 <code>RasterLayer</code> that can be passed immediately back as the start argument into a subsequent
 call to <code>spread2</code>. This means that every argument can be updated at each iteration.</p>
@@ -422,7 +421,7 @@ function call, <code>maxSize</code> or <code>exactSize</code> may not be in the 
 To get the same order, the easiest thing to do is sort the initial <code>start</code>
 objects by their pixel location, increasing.
 Then, of course, sorting any vectorized arguments (e.g., <code>maxSize</code>) accordingly.</p>
-<p><strong>NOTE</strong>: the <code>data.table</code> or <code>RasterLayer</code> should not use be altered
+<p><strong>NOTE</strong>: the <code>data.table</code> or <code>RasterLayer</code> should not be altered
 when passed back into <code>spread2</code>.</p>
     </div>
     <div id="allowoverlap">
@@ -458,24 +457,19 @@ say, insect swarms.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quickplot.predictiveecology.org" class="external-link">quickPlot</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sams</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sams</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Simple use -- similar to spread(...)</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">a</span>, start <span class="op">=</span> <span class="va">sams</span>, <span class="fl">0.225</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/clearPlot.html" class="external-link">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://quickplot.predictiveecology.org/reference/Plot.html" class="external-link">Plot</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use maxSize -- this gives an upper limit</span></span></span>
-<span class="r-in"><span><span class="va">maxSizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">sams</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">maxSizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">sams</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">a</span>, start <span class="op">=</span> <span class="va">sams</span>, <span class="fl">0.225</span>, maxSize <span class="op">=</span> <span class="va">maxSizes</span>, asRaster <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># check TRUE using data.table .N</span></span></span>
 <span class="r-in"><span><span class="va">out</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"initialPixels"</span><span class="op">]</span><span class="op">$</span><span class="va">N</span> <span class="op">&lt;=</span> <span class="va">maxSizes</span></span></span>
@@ -489,7 +483,7 @@ say, insect swarms.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use exactSize -- but where it can't be achieved</span></span></span>
-<span class="r-in"><span><span class="va">exactSizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">100</span><span class="op">:</span><span class="fl">110</span>, size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">sams</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">exactSizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">100</span><span class="op">:</span><span class="fl">110</span>, size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">sams</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">a</span>, start <span class="op">=</span> <span class="va">sams</span>, <span class="fl">1</span>, exactSize <span class="op">=</span> <span class="va">exactSizes</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Iterative calling -- create a function with a high escape probability</span></span></span>
@@ -508,7 +502,7 @@ say, insect swarms.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">421</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">a</span>, <span class="va">sams</span>, <span class="fl">0.225</span>, asRaster <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># The one with high escape probability is larger (most of the time)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span> <span class="co">## TODO: not true</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Use neighProbs, with a spreadProb that is a RasterLayer</span></span></span>
@@ -518,7 +512,7 @@ say, insect swarms.</p>
 <span class="r-in"><span><span class="co">#   30% of the time 2 neighbours.</span></span></span>
 <span class="r-in"><span><span class="co">#   The cells with spreadProb of 5 are 5 times more likely than cells with 1 to be chosen,</span></span></span>
 <span class="r-in"><span><span class="co">#   when they are both within the 8 neighbours</span></span></span>
-<span class="r-in"><span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span>, vals <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span> <span class="co">#small raster, simple values</span></span></span>
+<span class="r-in"><span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span>, vals <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span> <span class="co">#small raster, simple values</span></span></span>
 <span class="r-in"><span><span class="co"># Check neighProbs worked</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -530,7 +524,7 @@ say, insect swarms.</p>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">[</span><span class="va">pixels</span> <span class="op">!=</span> <span class="fl">5</span><span class="op">]</span> <span class="co"># remove starting cell</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">sp</span><span class="op">[</span><span class="va">out</span><span class="op">$</span><span class="va">pixels</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lyr.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1  2  3  4  6  7  8  9 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3  4  5 10 18 11 22 27 </span>
 <span class="r-in"><span><span class="co"># should be non-significant -- note no 5 because that was the starting cell</span></span></span>
@@ -539,70 +533,85 @@ say, insect swarms.</p>
 <span class="r-in"><span><span class="co">#  spread to it as cell 1. This comes from sp object above which is providing</span></span></span>
 <span class="r-in"><span><span class="co">#  the relative spread probabilities</span></span></span>
 <span class="r-in"><span><span class="va">keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/chisq.test.html" class="external-link">chisq.test</a></span><span class="op">(</span><span class="va">keep</span>, <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tabulate.html" class="external-link">tabulate</a></span><span class="op">(</span><span class="va">sp</span><span class="op">[</span><span class="va">out</span><span class="op">$</span><span class="va">pixels</span><span class="op">]</span>, <span class="fl">9</span><span class="op">)</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span><span class="op">)</span>, simulate.p.value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/chisq.test.html" class="external-link">chisq.test</a></span><span class="op">(</span><span class="va">keep</span>, <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tabulate.html" class="external-link">tabulate</a></span><span class="op">(</span><span class="va">sp</span><span class="op">[</span><span class="va">out</span><span class="op">$</span><span class="va">pixels</span><span class="op">]</span><span class="op">$</span><span class="va">lyr.1</span>, <span class="fl">9</span><span class="op">)</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>           simulate.p.value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Pearson's Chi-squared test with simulated p-value (based on 2000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	replicates)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> data:  keep and unname(tabulate(sp[out$pixels], 9)[keep])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> data:  keep and unname(tabulate(sp[out$pixels]$lyr.1, 9)[keep])</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X-squared = 56, df = NA, p-value = 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Example showing asymmetry</span></span></span>
-<span class="r-in"><span><span class="va">sams</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="va">circs</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">a</span>, spreadProb <span class="op">=</span> <span class="fl">0.213</span>, start <span class="op">=</span> <span class="va">sams</span>,</span></span>
-<span class="r-in"><span>                 asymmetry <span class="op">=</span> <span class="fl">2</span>, asymmetryAngle <span class="op">=</span> <span class="fl">135</span>,</span></span>
-<span class="r-in"><span>                 asRaster <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"CircStats"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">sams</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span>  <span class="va">circs</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">a</span>, spreadProb <span class="op">=</span> <span class="fl">0.213</span>, start <span class="op">=</span> <span class="va">sams</span>,</span></span>
+<span class="r-in"><span>                   asymmetry <span class="op">=</span> <span class="fl">2</span>, asymmetryAngle <span class="op">=</span> <span class="fl">135</span>,</span></span>
+<span class="r-in"><span>                   asRaster <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="co">## ADVANCED: Estimate spreadProb when using asymmetry, such that the expected</span></span></span>
 <span class="r-in"><span><span class="co">##   event size is the same as without using asymmetry</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">ras</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>    <span class="co"># Still using `raster` as it works more easily with parallelism due to not using pointers</span></span></span>
+<span class="r-in"><span>    <span class="co">#   This will updated at a later release</span></span></span>
+<span class="r-in"><span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"raster"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>      <span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">ras</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
-<span class="r-in"><span>    <span class="va">sizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>      <span class="va">circs</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">ras</span>, spreadProb <span class="op">=</span> <span class="fl">0.225</span>,</span></span>
-<span class="r-in"><span>                       start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">3</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                       asRaster <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span>      <span class="va">sizes</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">circs</span><span class="op">[</span>, <span class="va">.N</span><span class="op">]</span></span></span>
-<span class="r-in"><span>    <span class="op">}</span></span></span>
-<span class="r-in"><span>    <span class="va">goalSize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">sizes</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ArdiaD/DEoptim" class="external-link">DEoptim</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="co"># need 10 cores for 10 populations in DEoptim</span></span></span>
-<span class="r-in"><span>    <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">clusterEvalQ</a></span><span class="op">(</span><span class="va">cl</span>, <span class="op">{</span></span></span>
-<span class="r-in"><span>      <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://spades-tools.predictiveecology.org">SpaDES.tools</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>      <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>      <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PredictiveEcology/fpCompare" class="external-link">fpCompare</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>    <span class="va">objFn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">sp</span>, <span class="va">n</span> <span class="op">=</span> <span class="fl">20</span>, <span class="va">ras</span>, <span class="va">goalSize</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>      <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
 <span class="r-in"><span>      <span class="va">sizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
 <span class="r-in"><span>      <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>        <span class="va">circs</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">ras</span>, spreadProb <span class="op">=</span> <span class="va">sp</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>                         asymmetry <span class="op">=</span> <span class="fl">2</span>, asymmetryAngle <span class="op">=</span> <span class="fl">135</span>,</span></span>
+<span class="r-in"><span>        <span class="va">circs</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">ras</span>, spreadProb <span class="op">=</span> <span class="fl">0.225</span>,</span></span>
+<span class="r-in"><span>                         start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                         asRaster <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>        <span class="va">sizes</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">circs</span><span class="op">[</span>, <span class="va">.N</span><span class="op">]</span></span></span>
 <span class="r-in"><span>      <span class="op">}</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">sizes</span><span class="op">)</span> <span class="op">-</span> <span class="va">goalSize</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">goalSize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">sizes</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"DEoptim"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>        <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ArdiaD/DEoptim" class="external-link">DEoptim</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>        <span class="co"># need 10 cores for 10 populations in DEoptim</span></span></span>
+<span class="r-in"><span>        <span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">clusterEvalQ</a></span><span class="op">(</span><span class="va">cl</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>          <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://spades-tools.predictiveecology.org">SpaDES.tools</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>          <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>          <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>          <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PredictiveEcology/fpCompare" class="external-link">fpCompare</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>        <span class="va">objFn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">sp</span>, <span class="va">n</span> <span class="op">=</span> <span class="fl">20</span>, <span class="va">ras</span>, <span class="va">goalSize</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>          <span class="va">sizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
+<span class="r-in"><span>          <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>            <span class="va">circs</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">ras</span>, spreadProb <span class="op">=</span> <span class="va">sp</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                             asymmetry <span class="op">=</span> <span class="fl">2</span>, asymmetryAngle <span class="op">=</span> <span class="fl">135</span>,</span></span>
+<span class="r-in"><span>                             asRaster <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            <span class="va">sizes</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">circs</span><span class="op">[</span>, <span class="va">.N</span><span class="op">]</span></span></span>
+<span class="r-in"><span>          <span class="op">}</span></span></span>
+<span class="r-in"><span>          <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">sizes</span><span class="op">)</span> <span class="op">-</span> <span class="va">goalSize</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="op">}</span></span></span>
+<span class="r-in"><span>        <span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.html" class="external-link">DEoptim</a></span><span class="op">(</span><span class="va">objFn</span>, lower <span class="op">=</span> <span class="fl">0.2</span>, upper <span class="op">=</span> <span class="fl">0.23</span>,</span></span>
+<span class="r-in"><span>                      control <span class="op">=</span></span></span>
+<span class="r-in"><span>                        <span class="fu"><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.control.html" class="external-link">DEoptim.control</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>                          cluster <span class="op">=</span> <span class="va">cl</span>, NP <span class="op">=</span> <span class="fl">10</span>, VTR <span class="op">=</span> <span class="fl">0.02</span>,</span></span>
+<span class="r-in"><span>                          itermax <span class="op">=</span> <span class="fl">20</span>, <span class="co"># imposing this simply for example</span></span></span>
+<span class="r-in"><span>                          initialpop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/coerce.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0.213</span>, <span class="fl">0.001</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      ras <span class="op">=</span> <span class="va">ras</span>, goalSize <span class="op">=</span> <span class="va">goalSize</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>        <span class="co"># The value of spreadProb that will give the</span></span></span>
+<span class="r-in"><span>        <span class="co">#    same expected event sizes to spreadProb = 0.225 is:</span></span></span>
+<span class="r-in"><span>        <span class="va">sp</span> <span class="op">&lt;-</span> <span class="va">aa</span><span class="op">$</span><span class="va">optim</span><span class="op">$</span><span class="va">bestmem</span></span></span>
+<span class="r-in"><span>        <span class="va">circs</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">ras</span>, spreadProb <span class="op">=</span> <span class="va">sp</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                         asymmetry <span class="op">=</span> <span class="fl">2</span>, asymmetryAngle <span class="op">=</span> <span class="fl">135</span>, asRaster <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">stopCluster</a></span><span class="op">(</span><span class="va">cl</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="op">}</span></span></span>
 <span class="r-in"><span>    <span class="op">}</span></span></span>
-<span class="r-in"><span>    <span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.html" class="external-link">DEoptim</a></span><span class="op">(</span><span class="va">objFn</span>, lower <span class="op">=</span> <span class="fl">0.2</span>, upper <span class="op">=</span> <span class="fl">0.23</span>,</span></span>
-<span class="r-in"><span>                  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.control.html" class="external-link">DEoptim.control</a></span><span class="op">(</span>cluster <span class="op">=</span> <span class="va">cl</span>, NP <span class="op">=</span> <span class="fl">10</span>, VTR <span class="op">=</span> <span class="fl">0.02</span>,</span></span>
-<span class="r-in"><span>                                            initialpop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0.213</span>, <span class="fl">0.001</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                  ras <span class="op">=</span> <span class="va">a</span>, goalSize <span class="op">=</span> <span class="va">goalSize</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>    <span class="co"># The value of spreadProb that will give the same expected event sizes to spreadProb = 0.225 is:</span></span></span>
-<span class="r-in"><span>    <span class="va">sp</span> <span class="op">&lt;-</span> <span class="va">aa</span><span class="op">$</span><span class="va">optim</span><span class="op">$</span><span class="va">bestmem</span></span></span>
-<span class="r-in"><span>    <span class="va">circs</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">ras</span>, spreadProb <span class="op">=</span> <span class="va">sp</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>                      asymmetry <span class="op">=</span> <span class="fl">2</span>, asymmetryAngle <span class="op">=</span> <span class="fl">135</span>, asRaster <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">stopCluster</a></span><span class="op">(</span><span class="va">cl</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -613,7 +622,7 @@ say, insect swarms.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Alex M Chubaty, Eliot J B McIntire.</p>
+  <p></p><p>Developed by Eliot J B McIntire, Alex M Chubaty.</p>
 </div>
 
 <div class="pkgdown">
