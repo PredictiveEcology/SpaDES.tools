@@ -1,7 +1,10 @@
 # SpaDES.tools (development version)
 
+# SpaDES.tools 2.0.1
+
 ## Enhancements
 * improved documentation
+* minor modifications to `crw` to allow downstream packages that use `matrix` classes instead of `sf` or `SpatVector` classes for "agents"
 
 ## Dependency changes
 * none
