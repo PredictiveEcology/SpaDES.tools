@@ -1,7 +1,7 @@
 #' @keywords internal
 .requireNamespace <- function(pkg) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
-    stop(paste("Need to install.packages('", pkg, "')"))
+    stop(paste0("Need to install.packages('", pkg, "')"))
   }
 }
 
