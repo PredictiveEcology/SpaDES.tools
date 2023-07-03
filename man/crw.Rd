@@ -71,13 +71,13 @@ N <- 10
 xrange <- yrange <- c(-50, 50)
 starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
                 y = stats::runif(N, yrange[1], yrange[2]))
-moved <- crw(starts, stepLength = 5, stddev = 10)
-plot(starts, col = rainbow(10), pch = 19)
-points(moved, col = rainbow(10))
-
-# as SpatVector
-agent <- terra::vect(starts)
 if (requireNamespace("CircStats")) {
+  moved <- crw(starts, stepLength = 5, stddev = 10)
+  plot(starts, col = rainbow(10), pch = 19)
+  points(moved, col = rainbow(10))
+
+  # as SpatVector
+  agent <- terra::vect(starts)
   moved <- crw(agent, stepLength = 5, stddev = 10)
   movedAgain <- crw(moved, stepLength = 5, stddev = 10)
   terra::plot(agent)
