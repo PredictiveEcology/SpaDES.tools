@@ -67,6 +67,7 @@ in McIntire, Schultz, Crone 2007.
 }
 \examples{
 # using just matrix
+N <- 10
 xrange <- yrange <- c(-50, 50)
 starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
                 y = stats::runif(N, yrange[1], yrange[2]))
@@ -82,7 +83,7 @@ terra::plot(agent)
 terra::plot(moved, add = TRUE, col = "red")
 terra::plot(movedAgain, add = TRUE, col = "green")
 
-# 1000x faster -- returnMatrix = TRUE
+# 1000x faster!! -- returnMatrix = TRUE
 agentOrig <- agent
 reps <- 1e3
 system.time({
