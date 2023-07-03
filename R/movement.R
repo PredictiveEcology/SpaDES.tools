@@ -75,6 +75,7 @@ move <- function(hypothesis = "crw", ...) {
 #' @seealso [wrap()]
 #' @examples
 #' # using just matrix
+#' N <- 10
 #' xrange <- yrange <- c(-50, 50)
 #' starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
 #'                 y = stats::runif(N, yrange[1], yrange[2]))
@@ -90,7 +91,7 @@ move <- function(hypothesis = "crw", ...) {
 #' terra::plot(moved, add = TRUE, col = "red")
 #' terra::plot(movedAgain, add = TRUE, col = "green")
 #'
-#' # 1000x faster -- returnMatrix = TRUE
+#' # 1000x faster!! -- returnMatrix = TRUE
 #' agentOrig <- agent
 #' reps <- 1e3
 #' system.time({
@@ -137,7 +138,6 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
     y1 <- runif(n, -180, 180)
     prevCoords <- cbind(x1 = x1, y1 = y1)
   } else {
-    browser()
     prevCoords <- if (is.matrix(agent)) {
       cbind(x1 = agent[, "x1", drop = TRUE], y1 = agent[,"y1", drop = TRUE])
     } else {
