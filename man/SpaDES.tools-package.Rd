@@ -20,7 +20,7 @@ Several functions assist with these:
 \code{\link[=adj]{adj()}} \tab An optimized (i.e., faster) version of
 \code{\link[terra:adjacent]{terra::adjacent()}}\cr
 \code{\link[=cir]{cir()}} \tab Identify pixels in a circle around a
-\code{\link[sp:SpatialPoints-class]{SpatialPoints*()}} object\cr
+\verb{SpatialPoints*} object\cr
 \code{\link[=directionFromEachPoint]{directionFromEachPoint()}} \tab Fast calculation of direction and
 distance surfaces\cr
 \code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}} \tab Fast calculation of distance surfaces\cr
