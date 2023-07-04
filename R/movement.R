@@ -187,7 +187,13 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   rndDir[rndDir > 180] <- rndDir[rndDir > 180] - 360
   rndDir[rndDir <= 180 & rndDir < (-180)] <- 360 + rndDir[rndDir <= 180 & rndDir < (-180)]
 
-  crds <- coords(agent)
+  if (inherits(agent, c("SpatialPoints", "SpatVector"))) {
+    crds <- coords(agent)
+  } else {
+    crds <- coordinates(agent)
+    colnames(crds) <- xycolNames
+  }
+
   # move current coordinates to previous coordinates
   oldCrds <- crds[, xycolNames, drop = FALSE]
   if (needRandomX1Y1) {
