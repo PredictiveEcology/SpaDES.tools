@@ -122,12 +122,9 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
         stop("crs can only take SpatialPoints* or SpatVector points geometry")
   }
 
-  if (inherits(agent, c("SpatialPoints", "SpatVector"))) {
-    crds <- coords(agent)
-  } else {
-    crds <- quickPlot::coordinates(agent)
-  #   colnames(crds) <- xycolNames
-  }
+  if (is(agent, "SpatVector"))
+    if (length(names(agent)) > 2) browser()
+  crds <- coords(agent)
   xycolNames <- colnames(crds)
 
   # move current coordinates to previous coordinates
@@ -219,6 +216,7 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
 
   if (returnMatrix %in% FALSE)
     if ("SpatVector" %in% origClass) {
+
       if (!inherits(agent, "SpatVector"))
         agent <- terra::vect(agent[, xycolNames], atts = agent[, x1y1colNames])
     }

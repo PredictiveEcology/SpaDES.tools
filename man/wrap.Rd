@@ -28,7 +28,7 @@ that contains two columns, \code{x1} and \code{y1}, with the immediately
 previous agent locations.
 }
 \examples{
-if (require("sf")) {
+library("terra")
 xrange <- yrange <- c(-50, 50)
 hab <- terra::rast(terra::ext(c(xrange, yrange)))
 hab[] <- 0
@@ -70,8 +70,7 @@ system.time({
 for (i in 1:10) {
   agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
                stddev = sd, lonlat = FALSE, torus = TRUE)
-if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
-}
+  if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 }
 
 }

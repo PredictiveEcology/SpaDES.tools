@@ -777,7 +777,7 @@ cir <- function(landscape, coords, loci,
 #'         reflect the wrapping.
 #'
 #' @examples
-#' if (require("sf")) {
+#' library("terra")
 #' xrange <- yrange <- c(-50, 50)
 #' hab <- terra::rast(terra::ext(c(xrange, yrange)))
 #' hab[] <- 0
@@ -819,8 +819,7 @@ cir <- function(landscape, coords, loci,
 #' for (i in 1:10) {
 #'   agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
 #'                stddev = sd, lonlat = FALSE, torus = TRUE)
-#' if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
-#' }
+#'   if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 #' }
 #'
 #' @author Eliot McIntire
