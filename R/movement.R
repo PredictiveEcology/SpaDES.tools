@@ -127,6 +127,13 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   else
     names(agent) %in% x1y1colNames
 
+  otherCols <- if (is.matrix(agent))
+    setdiff(colnames(agent), xycolNames)
+  else
+    setdiff(names(agent), xycolNames)
+  # otherCols <- setdiff(otherCols, x1y1colNames)
+  otherColVals <- agent[, otherCols]
+
   needRandomX1Y1 <- if (sum(hasNames) < 2 ) TRUE else FALSE
   # otherCols <- setdiff(colnames(agent), xycolNames)
 
