@@ -114,9 +114,9 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
     forms <- names(formals(distFn))
     # browser()
     fromC <- "fromCell" %in% forms
-    if (fromC) fromCell <- cellFromXY(landscape, from[, c("x", "y")])
+    if (fromC) fromCell <- cellFromXY(landscape, from[, xycolNames])
     toC <- "toCells" %in% forms
-    if (toC) toCells <- cellFromXY(landscape, to[, c("x", "y")])
+    if (toC) toCells <- cellFromXY(landscape, to[, xycolNames])
     land <- "landscape" %in% forms
     distFnArgs <- if (land) list(landscape = landscape[]) else list()
     if (length(list(...)) > 0) distFnArgs <- append(distFnArgs, list(...))
@@ -167,7 +167,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
         #                           angles = angles, maxDistance = maxDistance,
         #                           otherFromCols = otherFromCols)
         #     if (toC)
-        #       toCells <- cellFromXY(landscape, out[, c("x", "y")])
+        #       toCells <- cellFromXY(landscape, out[, xycolNames])
         #     if (k == 1) {
         #       if (fromC) distFnArgs <- append(distFnArgs, list(fromCell = fromCell[k]))
         #       if (toC) distFnArgs <- append(distFnArgs, list(toCells = toCells))
@@ -335,8 +335,8 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   orig <- order(to[, "id", drop = FALSE], to[, "to", drop = FALSE])
   to <- to[orig, , drop = FALSE]
   angls <- lapply(ids, function(i) {
-    m1 <- to[to[, "id"] == i, c("x", "y"), drop = FALSE]
-    m2 <- from[from[, "id"] == i, c("x", "y"), drop = FALSE]
+    m1 <- to[to[, "id"] == i, xycolNames, drop = FALSE]
+    m2 <- from[from[, "id"] == i, xycolNames, drop = FALSE]
     .pointDirection(m2, m1)
   })
   do.call(rbind, angls)
@@ -395,12 +395,12 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
 #' if (require("CircStats")) {
 #'   dirs1[, "angles"] <- CircStats::deg(dirs1[,"angles"] %% (2*pi))
-#'   indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
+#'   indices <- cellFromXY(dirRas,dirs1[, xycolNames])
 #'   minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
 #'   dirRas[] <- as.vector(minDir)
 #'   if (interactive()) {
 #'     terra::plot(dirRas)
-#'     start <- terra::vect(coords[, c("x", "y"), drop = FALSE])
+#'     start <- terra::vect(coords[, xycolNames, drop = FALSE])
 #'     terra::plot(start, add = TRUE)
 #'   }
 #' }
@@ -508,7 +508,7 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
                           otherFromCols = otherFromCols)
     if (NROW(out) > 0) {
       if (toC)
-        toCells <- cellFromXY(landscape, out[, c("x", "y")])
+        toCells <- cellFromXY(landscape, out[, xycolNames])
       if (k == 1) {
         if (fromC) distFnArgs <- append(distFnArgs, list(fromCell = fromCell[k]))
         if (toC) distFnArgs <- append(distFnArgs, list(toCells = toCells))

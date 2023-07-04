@@ -492,7 +492,7 @@ cir <- function(landscape, coords, loci,
 
   ### adapted from createCircle of the package PlotRegionHighlighter
 
-  if (!all(c("x", "y") %in% colnames(coords))) {
+  if (!all(xycolNames %in% colnames(coords))) {
     stop("coords must have columns named x and y")
   }
   suppliedAngles <- if (all(!is.na(angles))) TRUE else FALSE
@@ -678,7 +678,7 @@ cir <- function(landscape, coords, loci,
 
     b <- cbind(coords, id = seq_len(NROW(coords)))
 
-    colnames(b)[1:2] <- c("x", "y")
+    colnames(b)[1:2] <- xycolNames
     d <- distanceFromEachPoint(b, a)
 
     if (closest) {
@@ -792,7 +792,7 @@ cir <- function(landscape, coords, loci,
 #'                 y = stats::runif(N, yrange[1], yrange[2]))
 #'
 #' # create the agent object # the x1 and y1 are needed for "previous location"
-#' agent <- terra::vect(data.frame(x1, y1, starts), geom = c("x", "y"))
+#' agent <- terra::vect(data.frame(x1, y1, starts), geom = xycolNames)
 #'
 #' ln <- rlnorm(N, 1, 0.02) # log normal step length
 #' sd <- 30 # could be specified globally in params
@@ -830,7 +830,7 @@ wrap <- function(X, bounds, withHeading = FALSE) {
   classX <- is(X)
 
   if (is(X, "matrix")) {
-    X <- terra::vect(data.frame(x1 = X[, 1], y1 = X[, 2], X), geom = c("x", "y"))
+    X <- terra::vect(data.frame(x1 = X[, 1], y1 = X[, 2], X), geom = xycolNames)
   } else if (is(X, "sf")) {
     X <- terra::vect(X)
   }
@@ -867,7 +867,7 @@ wrap <- function(X, bounds, withHeading = FALSE) {
   }
   # signature(X = "matrix", bounds = "Extent", withHeading = "missing"),
   # definition = function(X, bounds) {
-  if (identical(tolower(colnames(crdsStart)), c("x", "y"))) {
+  if (identical(tolower(colnames(crdsStart)), xycolNames)) {
     # terra::vect uses capitals X Y
     crds <- cbind(
       x = (crdsStart[, 1] - terra::xmin(bounds)) %% (terra::xmax(bounds) - terra::xmin(bounds)) +
@@ -1036,7 +1036,7 @@ spokes <- function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
     fromC <- "fromCell" %in% forms
     if (fromC) fromCell <- cellFromXY(landscape, terra::crds(coords))
     toC <- "toCell" %in% forms
-    if (toC) toCell <- cellFromXY(landscape, to[, c("x", "y")])
+    if (toC) toCell <- cellFromXY(landscape, to[, xycolNames])
     land <- "landscape" %in% forms
     listArgs <- if (land) list(landscape = landscape[aCir[, "indices"]][[1]]) else NULL
     if (length(list(...)) > 0) listArgs <- append(listArgs, list(...))
@@ -1099,7 +1099,7 @@ spokes <- function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
     matrix(rep(t(cc), NROW(bb)), ncol = 2, byrow = TRUE)
   lociAll <- rep(loci, each = NROW(pureCircle2))
   distsAll <- rep(pureCircle2[, "dists"], nrow(bb))
-  dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, c("x", "y")]),
+  dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, xycolNames]),
               dists = distsAll)
 
   dd[!as.logical(dd[, "x"] > terra::xmax(landscape) | dd[, "x"] < terra::xmin(landscape) |

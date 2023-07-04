@@ -109,9 +109,9 @@ move <- function(hypothesis = "crw", ...) {
 #'     spdf <- crw(agent, stepLength = 5, stddev = 10)
 #'     spdfNew <- crw(spdf, stepLength = 5, stddev = 10)
 #'     terra::plot(spdf, pch = 19)
-#'       terra::points(spdfNew, col = "blue", pch = 19)
-#'     }
+#'     terra::points(spdfNew, col = "blue", pch = 19)
 #'   }
+#' }
 #'
 #'
 crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE,
@@ -123,12 +123,16 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   }
 
   hasNames <- if (is.matrix(agent))
-    colnames(agent) %in% c("x1", "y1")
+    colnames(agent) %in% x1y1colNames
   else
-    names(agent) %in% c("x1", "y1")
+    names(agent) %in% x1y1colNames
+
+  otherCols <- if (is.matrix(agent))
+    setdiff(colnames(agent), xycolNames)
+  else
+    setdiff(names(agent), xycolNames)
 
   needRandomX1Y1 <- if (sum(hasNames) < 2 ) TRUE else FALSE
-  otherCols <- setdiff(colnames(agent), c("x", "y"))
 
   origClass <- class(agent)
   if (needRandomX1Y1) {
@@ -150,7 +154,7 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   if (inherits(agent, "SpatialPoints"))  {
     message("agent does not have columns named x1 and y1, which represent the 'previous' ",
             "locations. Assigning random values to those columns.")
-    # names(agent) <- c("x1", "y1")
+    # names(agent) <- x1y1colNames
     agent1 <- cbind(coords(agent), prevCoords)
     agent1 <- crw(agent1, extent = extent, stepLength = stepLength,
                  stddev = stddev, lonlat = lonlat, torus = torus)
@@ -160,9 +164,9 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
         if (grepl(pattern = "SpatialPoints", origClass)) {
           if ("SpatialPoints" %in% origClass) {
             df <- as.data.frame(agent1[, otherCols])
-            agent1 <- sp::SpatialPointsDataFrame(agent1[, c("x", "y")], data = df)
+            agent1 <- sp::SpatialPointsDataFrame(agent1[, xycolNames], data = df)
           } else {
-            coords(agent) <- agent1[, c("x", "y")]
+            coords(agent) <- agent1[, xycolNames]
             agent@data[, otherCols] <- agent1[, otherCols]
           }
         }
@@ -185,12 +189,12 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
 
   crds <- coords(agent)
   # move current coordinates to previous coordinates
-  oldCrds <- crds[, c("x", "y"), drop = FALSE]
+  oldCrds <- crds[, xycolNames, drop = FALSE]
   if (needRandomX1Y1) {
-    agent <- cbind(crds[, c("x", "y"), drop = FALSE],
+    agent <- cbind(crds[, xycolNames, drop = FALSE],
                    x1 = oldCrds[, "x", drop = TRUE], y1 = oldCrds[, "y", drop = TRUE])
   } else {
-    agent[, c("x1", "y1")] <- oldCrds
+    agent[, x1y1colNames] <- oldCrds
   }
   # update current coordinates to be those after the move
   newCoords <- cbind(
@@ -201,14 +205,13 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   if (inherits(agent, "SpatVector")) {
     coords(agent) <- newCoords
   }  else {
-    agent[, c("x", "y")] <- newCoords
+    agent[, xycolNames] <- newCoords
   }
-  # agent$geometry <- newCoords
 
   if (returnMatrix %in% FALSE)
     if ("SpatVector" %in% origClass) {
       if (!inherits(agent, "SpatVector"))
-        agent <- terra::vect(agent[, c("x", "y")], atts = agent[, c("x1", "y1")])
+        agent <- terra::vect(agent[, xycolNames], atts = agent[, x1y1colNames])
     }
   if (torus) {
     return(wrap(X = agent, bounds = extent, withHeading = TRUE))
@@ -216,3 +219,4 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
     return(agent)
   }
 }
+

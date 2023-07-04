@@ -486,7 +486,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #         if (is(agentlocation,"Raster")) {
 #           xy = matrix(runif(numagents*2, c(xmin(ext), ymin(ext)),
 #                             c(xmax(ext), ymax(ext))), ncol = 2, byrow = TRUE)
-#           colnames(xy) = c("x", "y")
+#           colnames(xy) = xycolNames
 #           position <- SpatialPoints(xy)
 #           position <- SpatialPoints(sampleRandom(agentlocation, numagents, xy = TRUE, sp = TRUE))
 #         } else if (is(agentlocation,"SpatialPoints")) {

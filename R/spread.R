@@ -849,7 +849,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
                 }
               }
             }
-            potentials <- d[, !(colnames(d) %in% c("x", "y")), drop = FALSE]
+            potentials <- d[, !(colnames(d) %in% xycolNames), drop = FALSE]
             potentials <- potentials[(d[, "dists"] %<=% cMR), , drop = FALSE]
           }
         }

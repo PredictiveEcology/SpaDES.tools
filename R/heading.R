@@ -74,12 +74,14 @@ coords <- function(crds) {
 `coords<-` <- function(obj, value) {
   if (inherits(obj, "SpatVector")) {
     .requireNamespace("terra")
-    crdsdf <- data.frame(value, as.data.frame(coords(obj)))
-    colnames(crdsdf) <- c("x", "y", "x1", "y1")
-    obj <- terra::vect(crdsdf, geom = c("x", "y"))
+    crdsdf <- data.frame(value, as.data.frame(obj))
+    if (!identical(colnames(crdsdf)[1:2], xycolNames)) {
+      colnames(crdsdf)[1:2] <- xycolNames
+    }
+    obj <- terra::vect(crdsdf, geom = xycolNames)
   } else if (inherits(obj, "sf")) {
     .requireNamespace("sf")
-    obj2 <- sf::st_as_sfc(sf::st_as_sf(as.data.frame(value), coords = c("x", "y")))
+    obj2 <- sf::st_as_sfc(sf::st_as_sf(as.data.frame(value), coords = xycolNames))
     obj <- sf::st_set_geometry(obj, value = obj2)
     obj
   } else if (inherits(obj, "Spatial")) {
@@ -89,3 +91,6 @@ coords <- function(crds) {
 
   obj
 }
+
+x1y1colNames <- c("x1", "y1")
+xycolNames <- c("x", "y")
