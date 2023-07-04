@@ -207,12 +207,9 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
     x = crds[, 1] + sin(CircStats::rad(rndDir)) * stepLength,
     y = crds[, 2] + cos(CircStats::rad(rndDir)) * stepLength
   )
+
   # for Spatial -- this was used: agent@coords <-
-  if (inherits(agent, "SpatVector")) {
-    coords(agent) <- newCoords
-  }  else {
-    agent[, xycolNames] <- newCoords
-  }
+  coords(agent) <- newCoords
 
   if (returnMatrix %in% FALSE)
     if ("SpatVector" %in% origClass) {

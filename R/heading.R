@@ -81,7 +81,13 @@ coords <- function(crds) {
 }
 
 `coords<-` <- function(obj, value) {
-  if (inherits(obj, "SpatVector")) {
+  if (is.matrix(obj)) {
+    if (isS4(obj)) {
+      obj@.Data[, 1:2] <- value
+    } else {
+      obj[, 1:2] <- value
+    }
+  } else if (inherits(obj, "SpatVector")) {
     .requireNamespace("terra")
     crdsdf <- data.frame(value, as.data.frame(obj))
     if (!identical(colnames(crdsdf)[1:2], xycolNames)) {
@@ -96,12 +102,6 @@ coords <- function(crds) {
   } else if (inherits(obj, "Spatial")) {
     .requireNamespace("sp")
     obj@coords <- value
-  } else if (is.matrix(obj)) {
-    if (isS4(obj)) {
-      obj@.Data[, 1:2] <- value
-    } else {
-      obj[, 1:2] <- value
-    }
   }
 
   obj
