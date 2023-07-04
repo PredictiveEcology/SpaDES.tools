@@ -122,8 +122,6 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
         stop("crs can only take SpatialPoints* or SpatVector points geometry")
   }
 
-  if (is(agent, "SpatVector"))
-    if (length(names(agent)) > 2) browser()
   crds <- coords(agent)
   xycolNames <- colnames(crds)
 
