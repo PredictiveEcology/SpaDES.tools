@@ -123,7 +123,7 @@ if (interactive()) {
 }
 
 if (NROW(d2) > 0) {
-  sp1 <- terra::vect(d2[, c("x", "y")])
+  sp1 <- terra::vect(d2[, xycolNames])
   if (interactive())
     terra::plot(sp1, add = TRUE, pch = 19)
 }

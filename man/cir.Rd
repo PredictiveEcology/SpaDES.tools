@@ -109,7 +109,7 @@ set.seed(1462)
 ras <- rast(ext(0, 15, 0, 15), res = 1, val = 0)
 middleCircle <- cir(ras)
 ras[middleCircle[ , "indices"]] <- 1
-circlePoints <- vect(middleCircle[, c("x", "y")])
+circlePoints <- vect(middleCircle[, xycolNames])
 if (interactive()) {
   # clearPlot()
   terra::plot(ras)
@@ -123,7 +123,7 @@ agent <- vect(cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
                     y = stats::runif(n, xmin(ras), xmax(ras))))
 
 cirs <- cir(ras, agent, maxRadius = 15, simplify = TRUE) ## TODO: empty with some seeds! e.g. 1642
-cirsSP <- vect(cirs[, c("x", "y")]) ## TODO: error with some seeds! e.g. 1642
+cirsSP <- vect(cirs[, xycolNames]) ## TODO: error with some seeds! e.g. 1642
 cirsRas <- rast(ras)
 cirsRas[] <- 0
 cirsRas[cirs[, "indices"]] <- 1
