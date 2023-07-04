@@ -829,9 +829,10 @@ cir <- function(landscape, coords, loci,
 wrap <- function(X, bounds, withHeading = FALSE) {
   classX <- is(X)
 
-  if (is(X, "matrix")) {
-    X <- terra::vect(data.frame(x1 = X[, 1], y1 = X[, 2], X), geom = xycolNames)
-  } else if (is(X, "sf")) {
+  # if (is(X, "matrix")) {
+  #   X <- terra::vect(data.frame(x1 = X[, 1], y1 = X[, 2], X), geom = xycolNames)
+  # } else
+  if (is(X, "sf")) {
     X <- terra::vect(X)
   }
 
@@ -850,8 +851,13 @@ wrap <- function(X, bounds, withHeading = FALSE) {
     ymaxs <- crdsStart[, 2] > Ymax
 
     # SpatVector returns data.frame; sf returns vector
-    x1 <- if (is.data.frame(X[["x1"]])) X[["x1"]][, 1] else X[["x1"]]
-    y1 <- if (is.data.frame(X[["y1"]])) X[["y1"]][, 1] else X[["y1"]]
+    if (is.matrix(X)) {
+      x1 <- X[, "x1"]
+      y1 <- X[, "y1"]
+    } else {
+      x1 <- if (is.data.frame(X[["x1"]])) X[["x1"]][, 1] else X[["x1"]]
+      y1 <- if (is.data.frame(X[["y1"]])) X[["y1"]][, 1] else X[["y1"]]
+    }
 
      # if (any(c(xmins, ymins, xmaxs, ymaxs)))
      #   browser()
@@ -885,7 +891,7 @@ wrap <- function(X, bounds, withHeading = FALSE) {
   }
 
   if ("matrix" %in% classX) {
-    return(coords(X))
+    return(X)
   } else if ("sf" %in% classX) {
     .requireNamespace("sf")
     return(sf::st_as_sf(X))

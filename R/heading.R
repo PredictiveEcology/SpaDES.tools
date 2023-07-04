@@ -66,6 +66,15 @@ coords <- function(crds) {
   } else if (inherits(crds, "Spatial")) {
     .requireNamespace("sp")
     crds <- sp::coordinates(crds)
+  } else if (inherits(crds, "matrix")) {
+    if (isS4(crds)) {
+      crds <- crds@.Data[, 1:2, drop = FALSE]
+      if (!identical(colnames(crds), xycolNames))
+        colnames(crds) <- xycolNames
+    } else {
+      crds <- crds[, 1:2, drop = FALSE]
+    }
+
   }
 
  crds
@@ -87,6 +96,12 @@ coords <- function(crds) {
   } else if (inherits(obj, "Spatial")) {
     .requireNamespace("sp")
     obj@coords <- value
+  } else if (is.matrix(obj)) {
+    if (isS4(obj)) {
+      obj@.Data[, 1:2] <- value
+    } else {
+      obj[, 1:2] <- value
+    }
   }
 
   obj

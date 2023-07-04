@@ -122,6 +122,17 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
         stop("crs can only take SpatialPoints* or SpatVector points geometry")
   }
 
+  if (inherits(agent, c("SpatialPoints", "SpatVector"))) {
+    crds <- coords(agent)
+  } else {
+    crds <- quickPlot::coordinates(agent)
+  #   colnames(crds) <- xycolNames
+  }
+  xycolNames <- colnames(crds)
+
+  # move current coordinates to previous coordinates
+  oldCrds <- crds[, xycolNames, drop = FALSE]
+
   hasNames <- if (is.matrix(agent))
     colnames(agent) %in% x1y1colNames
   else
@@ -181,21 +192,13 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
 
   .requireNamespace("CircStats")
 
-  agentHeading <- heading(cbind(x = prevCoords[, "x1", drop = FALSE], y = prevCoords[, "y1", drop = FALSE]),
-                          agent)
+  agentHeading <- heading(cbind(x = prevCoords[, "x1", drop = FALSE],
+                                y = prevCoords[, "y1", drop = FALSE]),
+                          crds)
   rndDir <- rnorm(n, agentHeading, stddev)
   rndDir[rndDir > 180] <- rndDir[rndDir > 180] - 360
   rndDir[rndDir <= 180 & rndDir < (-180)] <- 360 + rndDir[rndDir <= 180 & rndDir < (-180)]
 
-  if (inherits(agent, c("SpatialPoints", "SpatVector"))) {
-    crds <- coords(agent)
-  } else {
-    crds <- coordinates(agent)
-    colnames(crds) <- xycolNames
-  }
-
-  # move current coordinates to previous coordinates
-  oldCrds <- crds[, xycolNames, drop = FALSE]
   if (needRandomX1Y1) {
     agent <- cbind(crds[, xycolNames, drop = FALSE],
                    x1 = oldCrds[, "x", drop = TRUE], y1 = oldCrds[, "y", drop = TRUE])
