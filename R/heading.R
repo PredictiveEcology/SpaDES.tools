@@ -79,7 +79,7 @@ coords <- function(crds) {
     obj <- terra::vect(crdsdf, geom = c("x", "y"))
   } else if (inherits(obj, "sf")) {
     .requireNamespace("sf")
-    obj2 <- sf::st_as_sfc(sf::st_as_sf(as.data.frame(value), coords = c("x", "y")))
+    obj2 <- sf::st_as_sfc(sf::st_as_sf(as.data.frame(value), coords = xycolNames))
     obj <- sf::st_set_geometry(obj, value = obj2)
     obj
   } else if (inherits(obj, "Spatial")) {
@@ -89,3 +89,6 @@ coords <- function(crds) {
 
   obj
 }
+
+x1y1colNames <- c("x1", "y1")
+xycolNames <- c("x", "y")
