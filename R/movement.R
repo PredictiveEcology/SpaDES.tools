@@ -109,9 +109,9 @@ move <- function(hypothesis = "crw", ...) {
 #'     spdf <- crw(agent, stepLength = 5, stddev = 10)
 #'     spdfNew <- crw(spdf, stepLength = 5, stddev = 10)
 #'     terra::plot(spdf, pch = 19)
-#'       terra::points(spdfNew, col = "blue", pch = 19)
-#'     }
+#'     terra::points(spdfNew, col = "blue", pch = 19)
 #'   }
+#' }
 #'
 #'
 crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE,
