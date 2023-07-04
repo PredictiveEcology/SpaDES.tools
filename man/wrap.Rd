@@ -52,6 +52,21 @@ if (interactive()) {
   # clearPlot()
   terra::plot(hab, col = "white")
 }
+
+# 1000x faster!! -- returnMatrix = TRUE
+agentOrig <- agent
+reps <- 1e3
+system.time({
+  for (i in 1:reps) agent <- crw(agent, stepLength = ln, stddev = sd,
+  returnMatrix = TRUE, lonlat = FALSE)#, torus = TRUE, extent = terra::ext(hab))
+})
+agent <- agentOrig
+system.time({
+  for (i in 1:reps) agent <- crw(agent, stepLength = ln, stddev = sd)
+})
+
+
+
 for (i in 1:10) {
   agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
                stddev = sd, lonlat = FALSE, torus = TRUE)

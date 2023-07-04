@@ -7,7 +7,15 @@
 \usage{
 move(hypothesis = "crw", ...)
 
-crw(agent, extent, stepLength, stddev, lonlat, torus = FALSE)
+crw(
+  agent,
+  extent,
+  stepLength,
+  stddev,
+  lonlat = FALSE,
+  torus = FALSE,
+  returnMatrix = FALSE
+)
 }
 \arguments{
 \item{hypothesis}{Character vector, length one, indicating which movement
@@ -38,6 +46,10 @@ space (e.g. units of meters)}
 \item{torus}{Logical. Should the movement be wrapped to the opposite
 side of the map, as determined by the \code{extent} argument.
 Default \code{FALSE}.}
+
+\item{returnMatrix}{If \code{TRUE} then the return object will be a \code{matrix}. This will
+be MUCH faster than retaining the \code{sp} or \code{SpatVector} class,
+and thus will be much more effective for iterative \code{crw} calls}
 }
 \value{
 A \code{SpatVector} points object with updated spatial position defined
@@ -53,6 +65,48 @@ This simple version of a correlated random walk is largely the version that
 was presented in Turchin 1998, but it was also used with bias modifications
 in McIntire, Schultz, Crone 2007.
 }
+\examples{
+# using just matrix
+N <- 10
+xrange <- yrange <- c(-50, 50)
+starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
+                y = stats::runif(N, yrange[1], yrange[2]))
+if (requireNamespace("CircStats")) {
+  moved <- crw(starts, stepLength = 5, stddev = 10)
+  plot(starts, col = rainbow(10), pch = 19)
+  points(moved, col = rainbow(10))
+
+  # as SpatVector
+  agent <- terra::vect(starts)
+  moved <- crw(agent, stepLength = 5, stddev = 10)
+  movedAgain <- crw(moved, stepLength = 5, stddev = 10)
+  terra::plot(agent)
+  terra::plot(moved, add = TRUE, col = "red")
+  terra::plot(movedAgain, add = TRUE, col = "green")
+
+  # 1000x faster!! -- returnMatrix = TRUE
+  agentOrig <- agent
+  reps <- 1e3
+  system.time({
+    for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10, returnMatrix = TRUE)
+  })
+  agent <- agentOrig
+  system.time({
+    for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10)
+  })
+
+  # as sp
+  if (requireNamespace("sp")) {
+    agent <- sp::SpatialPoints(starts)
+    spdf <- crw(agent, stepLength = 5, stddev = 10)
+    spdfNew <- crw(spdf, stepLength = 5, stddev = 10)
+    terra::plot(spdf, pch = 19)
+      terra::points(spdfNew, col = "blue", pch = 19)
+    }
+  }
+
+
+}
 \references{
 Turchin, P. 1998. Quantitative analysis of movement: measuring and
 modeling population redistribution in animals and plants.
@@ -65,6 +119,8 @@ Journal of Applied Ecology 44:725-736.
 }
 \seealso{
 \code{\link[terra:distance]{terra::distance()}}
+
+\code{\link[=wrap]{wrap()}}
 }
 \author{
 Eliot McIntire
