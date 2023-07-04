@@ -35,7 +35,8 @@ in extent with the input raster \code{x}, since \code{nlm_mpd} can output a smal
 }
 \examples{
 \donttest{
-  if (requireNamespace("NLMR", quietly = TRUE)) {
+  if (requireNamespace("NLMR", quietly = TRUE) &&
+      requireNamespace("raster", quietly = TRUE)) {
     library(terra)
     nx <- ny <- 100L
     r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)
