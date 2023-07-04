@@ -48,7 +48,6 @@ Suggests:
     DEoptim (>= 2.2-4),
     dplyr,
     dqrng,
-    fasterize,
     fastmatch,
     googledrive,
     knitr,
