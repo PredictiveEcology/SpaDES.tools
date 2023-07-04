@@ -123,7 +123,7 @@ agent <- vect(cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
                     y = stats::runif(n, xmin(ras), xmax(ras))))
 
 cirs <- cir(ras, agent, maxRadius = 15, simplify = TRUE) ## TODO: empty with some seeds! e.g. 1642
-cirsSP <- vect(cirs[, xycolNames]) ## TODO: error with some seeds! e.g. 1642
+cirsSP <- vect(cirs[, c("x", "y")]) ## TODO: error with some seeds! e.g. 1642
 cirsRas <- rast(ras)
 cirsRas[] <- 0
 cirsRas[cirs[, "indices"]] <- 1

@@ -43,7 +43,7 @@ starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
                 y = stats::runif(N, yrange[1], yrange[2]))
 
 # create the agent object # the x1 and y1 are needed for "previous location"
-agent <- terra::vect(data.frame(x1, y1, starts), geom = xycolNames)
+agent <- terra::vect(data.frame(x1, y1, starts), geom = c("x", "y"))
 
 ln <- rlnorm(N, 1, 0.02) # log normal step length
 sd <- 30 # could be specified globally in params

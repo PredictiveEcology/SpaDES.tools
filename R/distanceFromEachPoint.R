@@ -395,12 +395,12 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' dirs1 <- directionFromEachPoint(from = coords, landscape = dirRas)
 #' if (require("CircStats")) {
 #'   dirs1[, "angles"] <- CircStats::deg(dirs1[,"angles"] %% (2*pi))
-#'   indices <- cellFromXY(dirRas,dirs1[, xycolNames])
+#'   indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
 #'   minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
 #'   dirRas[] <- as.vector(minDir)
 #'   if (interactive()) {
 #'     terra::plot(dirRas)
-#'     start <- terra::vect(coords[, xycolNames, drop = FALSE])
+#'     start <- terra::vect(coords[, c("x", "y"), drop = FALSE])
 #'     terra::plot(start, add = TRUE)
 #'   }
 #' }
