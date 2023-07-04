@@ -12,7 +12,7 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2023-07-03
+Date: 2023-07-04
 Version: 2.0.1
 Authors@R: c(
     person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = c("aut", "cre"),
