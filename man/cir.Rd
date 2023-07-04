@@ -109,7 +109,7 @@ set.seed(1462)
 ras <- rast(ext(0, 15, 0, 15), res = 1, val = 0)
 middleCircle <- cir(ras)
 ras[middleCircle[ , "indices"]] <- 1
-circlePoints <- vect(middleCircle[, xycolNames])
+circlePoints <- vect(middleCircle[, c("x", "y")])
 if (interactive()) {
   # clearPlot()
   terra::plot(ras)
