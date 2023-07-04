@@ -7,7 +7,6 @@
 * address new features of `quickPlot`
 * minor modifications to `crw` to allow downstream packages that use `matrix` classes instead of `sf` or `SpatVector` classes for "agents"
 
-
 ## Dependency changes
 * none
 
