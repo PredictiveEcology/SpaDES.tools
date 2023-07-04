@@ -131,7 +131,8 @@ They are "rounded" to pixel centres.
       #########################################################
       rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif",
                                             package = "SpaDES.tools"))
-      terra::crs(rasQuality) <- readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools"))@projargs
+      terra::crs(rasQuality) <-
+        readRDS(system.file("extdata", "targetCRS.rds", package = "SpaDES.tools"))@projargs
       mask <- rasQuality < 5
       rasQuality[mask[] \%in\% TRUE] <- 0
       # rescale so min is 0.75 and max is 1

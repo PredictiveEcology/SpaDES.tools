@@ -20,7 +20,7 @@
 #'   [adj()] \tab An optimized (i.e., faster) version of
 #'                          [terra::adjacent()]\cr
 #'   [cir()] \tab Identify pixels in a circle around a
-#'                          [`SpatialPoints*()`][sp::SpatialPoints-class] object\cr
+#'                          `SpatialPoints*` object\cr
 #'   [directionFromEachPoint()] \tab Fast calculation of direction and
 #'                                             distance surfaces\cr
 #'   [distanceFromEachPoint()] \tab Fast calculation of distance surfaces\cr
