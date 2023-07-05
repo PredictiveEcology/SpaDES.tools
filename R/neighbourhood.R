@@ -759,7 +759,8 @@ cir <- function(landscape, coords, loci,
 ################################################################################
 #' Wrap coordinates or pixels in a torus-like fashion
 #'
-#' Generally useful for model development purposes.
+#' Generally useful for model development purposes. Primarily used internally
+#' in e.g., `crw` if `torus = TRUE`.
 #'
 #' If `withHeading` used, then `X` must be an `sf` or `SpatVector` object
 #' that contains two columns, `x1` and `y1`, with the immediately
@@ -777,7 +778,6 @@ cir <- function(landscape, coords, loci,
 #'         reflect the wrapping.
 #'
 #' @examples
-#' library("terra")
 #' xrange <- yrange <- c(-50, 50)
 #' hab <- terra::rast(terra::ext(c(xrange, yrange)))
 #' hab[] <- 0
@@ -802,24 +802,15 @@ cir <- function(landscape, coords, loci,
 #'   terra::plot(hab, col = "white")
 #' }
 #'
-#' # 1000x faster!! -- returnMatrix = TRUE
-#' agentOrig <- agent
-#' reps <- 1e2
 #' if (requireNamespace("CircStats", quietly = TRUE)) {
-#'   system.time({
-#'     for (i in 1:reps) agent <- crw(agent, stepLength = ln, stddev = sd,
-#'     returnMatrix = TRUE, lonlat = FALSE)#, torus = TRUE, extent = terra::ext(hab))
-#'   })
-#'   agent <- agentOrig
-#'   system.time({
-#'     for (i in 1:reps) agent <- crw(agent, stepLength = ln, stddev = sd)
-#'   })
-#'
 #'   for (i in 1:10) {
 #'     agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
-#'                  stddev = sd, lonlat = FALSE, torus = TRUE)
+#'                  stddev = sd, lonlat = FALSE, torus = FALSE) # don't wrap
 #'     if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 #'   }
+#'   terra::crds(agent) # many are "off" the map, i.e., beyond the extent of hab
+#'   agent <- SpaDES.tools::wrap(agent, bounds = terra::ext(hab))
+#'   terra::plot(agent, add = TRUE, col = 1:10) # now inside the extent of hab
 #' }
 #'
 #' @author Eliot McIntire

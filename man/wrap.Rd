@@ -20,7 +20,8 @@ Object of the same class as \code{X}, but with coordinates updated to
 reflect the wrapping.
 }
 \description{
-Generally useful for model development purposes.
+Generally useful for model development purposes. Primarily used internally
+in e.g., \code{crw} if \code{torus = TRUE}.
 }
 \details{
 If \code{withHeading} used, then \code{X} must be an \code{sf} or \code{SpatVector} object
@@ -28,7 +29,6 @@ that contains two columns, \code{x1} and \code{y1}, with the immediately
 previous agent locations.
 }
 \examples{
-library("terra")
 xrange <- yrange <- c(-50, 50)
 hab <- terra::rast(terra::ext(c(xrange, yrange)))
 hab[] <- 0
@@ -53,24 +53,15 @@ if (interactive()) {
   terra::plot(hab, col = "white")
 }
 
-# 1000x faster!! -- returnMatrix = TRUE
-agentOrig <- agent
-reps <- 1e2
 if (requireNamespace("CircStats", quietly = TRUE)) {
-  system.time({
-    for (i in 1:reps) agent <- crw(agent, stepLength = ln, stddev = sd,
-    returnMatrix = TRUE, lonlat = FALSE)#, torus = TRUE, extent = terra::ext(hab))
-  })
-  agent <- agentOrig
-  system.time({
-    for (i in 1:reps) agent <- crw(agent, stepLength = ln, stddev = sd)
-  })
-
   for (i in 1:10) {
     agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
-                 stddev = sd, lonlat = FALSE, torus = TRUE)
+                 stddev = sd, lonlat = FALSE, torus = FALSE) # don't wrap
     if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
   }
+  terra::crds(agent) # many are "off" the map, i.e., beyond the extent of hab
+  agent <- SpaDES.tools::wrap(agent, bounds = terra::ext(hab))
+  terra::plot(agent, add = TRUE, col = 1:10) # now inside the extent of hab
 }
 
 }
