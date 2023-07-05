@@ -1,4 +1,5 @@
 library(terra)
+origThreads <- data.table::setDTthreads(1) #
 
 # Make random forest cover map
 set.seed(123)
@@ -66,7 +67,7 @@ terra::plot(burnedMap, type = "classes")
 #  passed in to the landscape argument. It won't be exact because the pixel values
 #  will likely not allow it
 stopRule22 <- function(landscape) sum(landscape) > 100
-if (require("CircStats")) {
+if (requireNamespace("CircStats", quietly = TRUE)) {
 
   set.seed(1234)
   stopRule1 <- function(landscape) sum(landscape) > 50
@@ -110,7 +111,7 @@ stopRule2 <- function(landscape) sum(landscape) > 200
 seed <- sample(1e4, 1)
 set.seed(seed)
 
-if (require("CircStats")) {
+if (requireNamespace("CircStats", quietly = TRUE)) {
   circlish <- spread(hab > 0, spreadProb = 1, iterations = 10,
                      loci = (ncell(hab) - ncol(hab)) / 2 + c(4, -4),
                      directions = 8, id = TRUE, circle = TRUE)#, stopRule = stopRule2)
@@ -136,7 +137,7 @@ endSizes <- seq_along(initialLoci) * 200
 #   variable passed into spread
 stopRule3 <- function(landscape, id, endSizes) sum(landscape) > endSizes[id]
 
-if (require("CircStats")) {
+if (requireNamespace("CircStats", quietly = TRUE)) {
   set.seed(1)
   twoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci,
                                circle = TRUE, directions = 8, id = TRUE,
@@ -219,3 +220,5 @@ hist(events1[], breaks = 30, main = "Event size distribution") ## TODO: fix this
 #  (randomness may prevent this in all cases)
 sum(hab3[events1[] > 0]) >= sum(hab3[events2[] > 0]) ## should be usually TRUE
 
+# clean up
+data.table::setDTthreads(origThreads)
