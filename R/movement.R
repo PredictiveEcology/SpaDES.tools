@@ -50,8 +50,11 @@ move <- function(hypothesis = "crw", ...) {
 #' @param lonlat      Logical. If `TRUE`, coordinates should be in degrees.
 #'                    If `FALSE` coordinates represent planar ('Euclidean')
 #'                    space (e.g. units of meters)
+#' @param returnMatrix If `TRUE` then the return object will be a `matrix`. This will
+#'                     be MUCH faster than retaining the `sp` or `SpatVector` class,
+#'                     and thus will be much more effective for iterative `crw` calls
 #'
-#' @return A SpatVector points object with updated spatial position defined
+#' @return A `SpatVector` points object with updated spatial position defined
 #'         by a single occurrence of step length(s) and turn angle(s).
 #'
 #' @seealso [terra::distance()]
@@ -69,54 +72,162 @@ move <- function(hypothesis = "crw", ...) {
 #' @export
 #' @importFrom stats rnorm
 #' @rdname crw
-crw <- function(agent, extent, stepLength, stddev, lonlat, torus = FALSE) {
-  if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent, FUN.VALUE = logical(1)))) {
-    if (is(agent, "SpatVector"))
-      if (!identical("points", geomtype(agent)))
-        stop("crs can only take SpatialPoints* or SpatVector points geometry")
+#' @seealso [wrap()]
+#' @examples
+#' # using just matrix
+#' N <- 10
+#' xrange <- yrange <- c(-50, 50)
+#' starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
+#'                 y = stats::runif(N, yrange[1], yrange[2]))
+#' if (requireNamespace("CircStats")) {
+#'   moved <- crw(starts, stepLength = 5, stddev = 10)
+#'   plot(starts, col = rainbow(10), pch = 19)
+#'   points(moved, col = rainbow(10))
+#'
+#'   # as SpatVector
+#'   agent <- terra::vect(starts)
+#'   moved <- crw(agent, stepLength = 5, stddev = 10)
+#'   movedAgain <- crw(moved, stepLength = 5, stddev = 10)
+#'   terra::plot(agent)
+#'   terra::plot(moved, add = TRUE, col = "red")
+#'   terra::plot(movedAgain, add = TRUE, col = "green")
+#'
+#'   # 1000x faster!! -- returnMatrix = TRUE
+#'   agentOrig <- agent
+#'   reps <- 1e2
+#'   system.time({
+#'     for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10, returnMatrix = TRUE)
+#'   })
+#'   agent <- agentOrig
+#'   system.time({
+#'     for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10)
+#'   })
+#'
+#'   # as sp
+#'   if (requireNamespace("sp")) {
+#'     agent <- sp::SpatialPoints(starts)
+#'     spdf <- crw(agent, stepLength = 5, stddev = 10)
+#'     spdfNew <- crw(spdf, stepLength = 5, stddev = 10)
+#'     terra::plot(spdf, pch = 19)
+#'     terra::points(spdfNew, col = "blue", pch = 19)
+#'   }
+#' }
+#'
+#'
+crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE,
+                returnMatrix = FALSE) {
+  crds <- coords(agent)
+  xycolNames <- colnames(crds)
+
+  if (!is.matrix(agent)) {
+    if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent, FUN.VALUE = logical(1)))) {
+      if (is(agent, "SpatVector"))
+        if (!identical("points", geomtype(agent)))
+          stop("crs can only take SpatialPoints* or SpatVector points geometry")
+    }
+
+    if (isTRUE(returnMatrix) ) {
+      agent <- if (NCOL(agent)) {
+        cbind(crds, as.data.frame(agent))
+      } else {
+        crds
+      }
+      agent <- as.matrix(agent)
+    }
   }
 
-  if (inherits(agent, "SpatialPoints") || (inherits(agent, "SpatVect"))) {
-    .requireNamespace("CircStats")
-    n <- length(agent)
-    agent <- sp::SpatialPointsDataFrame(agent, data = data.frame(
-      x1 = runif(n, -180, 180), y1 = runif(n, -180, 180)
-    ))
-    names(agent) <- c("x1", "y1")
-    agent <- crw(agent, extent = extent, stepLength = stepLength,
+  # move current coordinates to previous coordinates
+  oldCrds <- crds[, xycolNames, drop = FALSE]
+
+  if (is.matrix(agent)) {
+    hasNames <- colnames(agent) %in% x1y1colNames
+    otherCols <- setdiff(colnames(agent), xycolNames)
+  } else {
+    hasNames <- names(agent) %in% x1y1colNames
+    otherCols <- setdiff(names(agent), xycolNames)
+  }
+
+  needRandomX1Y1 <- if (sum(hasNames) < 2 ) TRUE else FALSE
+
+  origClass <- class(agent)
+  if (needRandomX1Y1) {
+    n <- NROW(agent)
+    # agent <- sp::SpatialPointsDataFrame(agent, data = data.frame(
+    #   x1 = runif(n, -180, 180), y1 = runif(n, -180, 180)
+    # ))
+    x1 <- runif(n, -180, 180)
+    y1 <- runif(n, -180, 180)
+    prevCoords <- cbind(x1 = x1, y1 = y1)
+  } else {
+    prevCoords <- if (is.matrix(agent)) {
+      cbind(x1 = agent[, "x1", drop = TRUE], y1 = agent[,"y1", drop = TRUE])
+    } else {
+      cbind(x1 = agent$x1, y1 = agent$y1)
+    }
+
+  }
+  if (inherits(agent, "SpatialPoints"))  {
+    message("agent does not have columns named x1 and y1, which represent the 'previous' ",
+            "locations. Assigning random values to those columns.")
+    # names(agent) <- x1y1colNames
+    agent1 <- cbind(coords(agent), prevCoords)
+    agent1 <- crw(agent1, extent = extent, stepLength = stepLength,
                  stddev = stddev, lonlat = lonlat, torus = torus)
 
+    if (returnMatrix %in% FALSE)
+      if (!inherits(agent1, origClass)) {
+        if (grepl(pattern = "SpatialPoints", origClass)) {
+          if ("SpatialPoints" %in% origClass) {
+            df <- as.data.frame(agent1[, otherCols])
+            agent1 <- sp::SpatialPointsDataFrame(agent1[, xycolNames], data = df)
+          } else {
+            coords(agent) <- agent1[, xycolNames]
+            agent@data[, otherCols] <- agent1[, otherCols]
+          }
+        }
+      }
+    return(agent1)
   }
   if (is.null(lonlat) || !is.logical(lonlat)) {
     stop("you must provide a 'lonlat' argument (TRUE/FALSE)")
   }
-  hasNames <- names(agent) %in% c("x1", "y1")
+
   n <- NROW(agent)
 
-  if (sum(hasNames) < 2) {
-    stop("SpatialPointsDataFrame/SpatVector needs x1 and y1 columns with previous location")
-  }
+  .requireNamespace("CircStats")
 
-  agentHeading <- heading(cbind(x = agent$x1, y = agent$y1), agent)
+  agentHeading <- heading(cbind(x = prevCoords[, "x1", drop = FALSE],
+                                y = prevCoords[, "y1", drop = FALSE]),
+                          crds)
   rndDir <- rnorm(n, agentHeading, stddev)
   rndDir[rndDir > 180] <- rndDir[rndDir > 180] - 360
   rndDir[rndDir <= 180 & rndDir < (-180)] <- 360 + rndDir[rndDir <= 180 & rndDir < (-180)]
 
-  crds <- coords(agent)
-  # move current coordinates to previous coordinates
-  agent[, c("x1", "y1")] <- crds
+  if (needRandomX1Y1) {
+    agent <- cbind(crds[, xycolNames, drop = FALSE],
+                   x1 = oldCrds[, "x", drop = TRUE], y1 = oldCrds[, "y", drop = TRUE])
+  } else {
+    agent[, x1y1colNames] <- oldCrds
+  }
   # update current coordinates to be those after the move
   newCoords <- cbind(
     x = crds[, 1] + sin(CircStats::rad(rndDir)) * stepLength,
     y = crds[, 2] + cos(CircStats::rad(rndDir)) * stepLength
   )
+
   # for Spatial -- this was used: agent@coords <-
   coords(agent) <- newCoords
-  # agent$geometry <- newCoords
 
+  if (returnMatrix %in% FALSE)
+    if ("SpatVector" %in% origClass) {
+
+      if (!inherits(agent, "SpatVector"))
+        agent <- terra::vect(agent[, xycolNames], atts = agent[, x1y1colNames])
+    }
   if (torus) {
     return(wrap(X = agent, bounds = extent, withHeading = TRUE))
   } else {
     return(agent)
   }
 }
+

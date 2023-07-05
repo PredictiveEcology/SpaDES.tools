@@ -7,9 +7,9 @@
 heading(from, to)
 }
 \arguments{
-\item{from}{The starting position; an object of class SpatVector}
+\item{from}{The starting position; an object of class \code{SpatVector}.}
 
-\item{to}{The ending position;  an object of class SpatVector}
+\item{to}{The ending position; an object of class \code{SpatVector}.}
 }
 \value{
 The heading between the points, in degrees.

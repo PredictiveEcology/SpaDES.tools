@@ -20,7 +20,7 @@ Several functions assist with these:
 \code{\link[=adj]{adj()}} \tab An optimized (i.e., faster) version of
 \code{\link[terra:adjacent]{terra::adjacent()}}\cr
 \code{\link[=cir]{cir()}} \tab Identify pixels in a circle around a
-\code{\link[sp:SpatialPoints-class]{SpatialPoints*()}} object\cr
+\verb{SpatialPoints*} object\cr
 \code{\link[=directionFromEachPoint]{directionFromEachPoint()}} \tab Fast calculation of direction and
 distance surfaces\cr
 \code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}} \tab Fast calculation of distance surfaces\cr
@@ -39,7 +39,7 @@ Agents have several methods and functions specific to them:
 \tabular{ll}{
 \code{\link[=crw]{crw()}} \tab Simple correlated random walk function\cr
 \code{\link[=heading]{heading()}} \tab Determines the heading between \verb{SpatialPoints*}\cr
-quickPlot::makeLines() \tab Makes \code{SpatialLines} object for, e.g., drawing arrows\cr
+\code{quickPlot::makeLines()} \tab Makes \code{SpatialLines} object for, e.g., drawing arrows\cr
 \code{\link[=move]{move()}} \tab A meta function that can currently only take "crw"\cr
 \code{\link[=specificNumPerPatch]{specificNumPerPatch()}} \tab Initiate a specific number of agents per patch\cr
 }
@@ -52,7 +52,7 @@ In addition to the vast amount of GIS operations available in R (mostly from
 contributed packages such as \code{sp}, \code{raster}, \code{maps}, \code{maptools}
 and many others), we provide the following GIS-related functions:
 \tabular{ll}{
-quickPlot::equalExtent() \tab Assess whether a list of extents are all equal\cr
+\code{quickPlot::equalExtent()} \tab Assess whether a list of extents are all equal\cr
 }
 }
 
@@ -117,11 +117,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Alex M Chubaty \email{achubaty@for-cast.ca} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
+\strong{Maintainer}: Eliot J B McIntire \email{eliot.mcintire@nrcan-rncan.gc.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
 
 Authors:
 \itemize{
-  \item Eliot J B McIntire \email{eliot.mcintire@nrcan-rncan.gc.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
+  \item Alex M Chubaty \email{achubaty@for-cast.ca} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
 }
 
 Other contributors:
@@ -129,7 +129,7 @@ Other contributors:
   \item Yong Luo \email{Yong.Luo@gov.bc.ca} [contributor]
   \item Steve Cumming \email{Steve.Cumming@sbf.ulaval.ca} [contributor]
   \item Jean Marchal \email{jean.d.marchal@gmail.com} [contributor]
-  \item Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada [copyright holder]
+  \item His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada [copyright holder]
 }
 
 }

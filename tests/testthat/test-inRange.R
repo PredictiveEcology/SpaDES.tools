@@ -11,7 +11,7 @@ test_that("numerical-comparisons: inRange handles various inputs", {
   f <- system.file("ex/test.grd", package = "terra")
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 
   for (ii in seq(NROW(rastDF))) {

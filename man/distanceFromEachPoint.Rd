@@ -27,7 +27,7 @@ will be returned),
 x and y, representing x and y coordinates of "to" cells, and
 optional "id" which will be matched with "id" from \code{from}. Default is all cells.}
 
-\item{landscape}{RasterLayer. optional. This is only used if \code{to} is NULL, in which case
+\item{landscape}{\code{RasterLayer}. optional. This is only used if \code{to} is NULL, in which case
 all cells are considered \code{to}.}
 
 \item{angles}{Logical. If \code{TRUE}, then the function will return angles in radians,
@@ -51,7 +51,7 @@ the distances to some other set of units that will be accumulated
 by the \code{cumulativeFn}. See Details and examples.}
 
 \item{cl}{A cluster object. Optional. This would generally be created using
-parallel::makeCluster or equivalent. This is an alternative way, instead
+\code{\link[parallel:makeCluster]{parallel::makeCluster()}} or equivalent. This is an alternative way, instead
 of \code{beginCluster()}, to use parallelism for this function, allowing for
 more control over cluster use.}
 
@@ -64,7 +64,7 @@ between \code{from} and \code{to}.
 }
 \description{
 This is a modification of \code{\link[terra:distance]{terra::distance()}} for the case of many points.
-This version can often be faster for a single point because it does not return a RasterLayer.
+This version can often be faster for a single point because it does not return a \code{RasterLayer}.
 This is different than \code{\link[terra:distance]{terra::distance()}} because it does not take the
 minimum distance from the set of points to all cells.
 Rather this returns the every pair-wise point distance.
@@ -90,8 +90,8 @@ Otherwise, the function will only return the coordinates and distances.
 directly by the user.
 
 This function has the potential to return a very large object, as it is doing pairwise
-distances (and optionally directions) between from and to. If there are memory
-limitations because there are many
+distances (and optionally directions) between from and to.
+If there are memory limitations because there are many
 \code{from} and many \code{to} points, then \code{cumulativeFn} and \code{distFn} can be used.
 These two functions together will be used iteratively through the \code{from} points. The
 \code{distFn} should be a transformation of distances to be used by the

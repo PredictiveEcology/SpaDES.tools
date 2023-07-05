@@ -24,7 +24,7 @@ utils::globalVariables("num.in.pop")
 #'                 Should be in the interval `[0,2]` to provide a valid covariance function.
 #'                 Default is 1.
 #'
-#' @param inMemory Should the RasterLayer be forced to be in memory?
+#' @param inMemory Should the `RasterLayer` be forced to be in memory?
 #'                 Default `FALSE`.
 #'
 #' @param ... Additional arguments to `raster`.
@@ -138,8 +138,7 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 #'
 #' @examples
 #' library(terra)
-#' b <- terra::vect(cbind(-110, 59))
-#' crs(b) <- terra::crs("epsg:4326")
+#' b <- terra::vect(cbind(-110, 59), crs = "epsg:4326")
 #' a <- randomPolygon(b, area = 1e6)
 #' if (interactive()) {
 #'   plot(a)
@@ -264,9 +263,8 @@ rndmPolygonMatrix <- function(x, hectares, area) {
   randomPolygon(x, area = area)
 }
 
-#' @importFrom reproducible .requireNamespace
 rndmPolygonSpatialPolygons <- function(x, hectares, area) {
-  .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
+  .Deprecated("User should convert to using SpatVector rather than SpatialPoints")
   .requireNamespace("sf")
   .requireNamespace("sp")
 
@@ -334,6 +332,7 @@ rndmPolygonSpatialPolygons <- function(x, hectares, area) {
   }
   outPolygon
 }
+
 ################################################################################
 #' Initiate a specific number of agents in a map of patches
 #'
@@ -487,7 +486,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 #         if (is(agentlocation,"Raster")) {
 #           xy = matrix(runif(numagents*2, c(xmin(ext), ymin(ext)),
 #                             c(xmax(ext), ymax(ext))), ncol = 2, byrow = TRUE)
-#           colnames(xy) = c("x", "y")
+#           colnames(xy) = xycolNames
 #           position <- SpatialPoints(xy)
 #           position <- SpatialPoints(sampleRandom(agentlocation, numagents, xy = TRUE, sp = TRUE))
 #         } else if (is(agentlocation,"SpatialPoints")) {
@@ -554,7 +553,7 @@ long2UTM <- function(long) {
 #' @param type     One of the supported `NLMR` functions.
 #'
 #' @param ...      Further arguments passed to `NLMR` function specified in `type`
-#'  (except ncol, nrow and resolution, which are extracted from `x`)
+#'  (except `ncol`, `nrow` and `resolution`, which are extracted from `x`).
 #'
 #' @importFrom terra res ncol nrow ext extend focal
 #' @export
@@ -566,7 +565,8 @@ long2UTM <- function(long) {
 #'
 #' @examples
 #' \donttest{
-#'   if (requireNamespace("NLMR", quietly = TRUE)) {
+#'   if (requireNamespace("NLMR", quietly = TRUE) &&
+#'       requireNamespace("raster", quietly = TRUE)) {
 #'     library(terra)
 #'     nx <- ny <- 100L
 #'     r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)

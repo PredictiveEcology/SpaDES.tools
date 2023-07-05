@@ -111,7 +111,7 @@ The steps used in the algorithm are:
 \item Calculate indices of neighbouring cells
 \item Remove "to" cells that are
 \itemize{
-\item <1 or >numCells (i.e., they are above or below raster), using a single modulo
+\item \verb{< 1} or \verb{> numCells} (i.e., they are above or below raster), using a single modulo
 calculation
 \item where the modulo of "to" cells is equal to 1 if "from" cells are 0 (wrapped right
 to left)

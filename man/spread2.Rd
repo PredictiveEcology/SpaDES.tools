@@ -31,7 +31,7 @@ spread2(
 }
 \arguments{
 \item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
-locations for spreading events to start and spread2 into. Required.}
+locations for spreading events to start and \code{spread2} into. Required.}
 
 \item{start}{Required. Either a vector of pixel numbers to initiate spreading, or a
 \code{data.table} that is the output of a previous \code{spread2}.
@@ -72,7 +72,7 @@ See section on 'Breaking out of \code{spread2} events'.}
 
 \item{exactSize}{Numeric vector, length 1 or \code{length(start)}.
 Similar to \code{maxSize}, but these will be the exact
-final sizes of the events.  i.e., the spread2 events
+final sizes of the events.  i.e., the \code{spread2} events
 will continue until they are \code{floor(exactSize)}.
 This will override \code{maxSize} if both provided.
 See Details.}
@@ -81,7 +81,7 @@ See Details.}
 default is 8 (Queen case). Can only be 4 or 8.}
 
 \item{iterations}{Number of iterations to \code{spread2}.
-Leaving this \code{NULL} allows the spread2 to continue
+Leaving this \code{NULL} allows the \code{spread2} to continue
 until stops spreading itself (i.e., exhausts itself).}
 
 \item{returnDistances}{Logical. Should the function include a column with the
@@ -114,10 +114,10 @@ If absolute \code{spreadProb} is not desired,
 \emph{be sure to set} \code{spreadProb = 1}.
 Ignored if \code{neighProbs} is not provided.}
 
-\item{plot.it}{If TRUE, then plot the raster at every iteration,
-so one can watch the spread2 event grow.}
+\item{plot.it}{If \code{TRUE}, then plot the raster at every iteration,
+so one can watch the \code{spread2} event grow.}
 
-\item{circle}{Logical. If TRUE, then outward spread2 will be by equidistant rings,
+\item{circle}{Logical. If TRUE, then outward \code{spread2} will be by equidistant rings,
 rather than solely by adjacent cells (via \code{directions} arg.).
 Default is \code{FALSE}.
 Using \code{circle = TRUE} can be dramatically slower for large problems.
@@ -186,7 +186,7 @@ spreading will occur from these cells).\cr
 Only returned if \code{returnFrom} is \code{TRUE} \cr
 }
 
-The attribute saved with the name "spreadState" (e.g., \code{attr(output, "spreadState")})
+The attribute saved with the name \code{"spreadState"} (e.g., \code{attr(output, "spreadState")})
 includes a \code{data.table} with columns:
 \tabular{ll}{
 \code{id} \tab An arbitrary code, from 1 to \code{length(start)} for each "event".\cr
@@ -238,10 +238,10 @@ the \code{iterations} value is reached before there are no more active
 cells to \code{spread2} into. The interrupted output (a \code{data.table}) can be passed
 subsequently as an input to this same function (as \code{start}).
 This is intended to be used for situations where external events happen during
-a spread2 event, or where one or more arguments to the spread2 function
+a \code{spread2} event, or where one or more arguments to the \code{spread2} function
 change before a \code{spread2} event is completed.
 For example, if it is desired that the \code{spreadProb} change before a
-spread2 event is completed because, for example, a fire is spreading, and a
+\code{spread2} event is completed because, for example, a fire is spreading, and a
 new set of conditions arise due to a change in weather.
 
 \code{asymmetry} here is slightly different than in the \code{spread} function,
@@ -261,7 +261,7 @@ which is multiplied to get an angle-adjusted spreadProb:
 \deqn{spreadProbAdj <- actualSpreadProb * angleQuality}
 which is then rescaled:
 \deqn{adjustedSpreadProb = (spreadProbAdj - min(spreadProbAdj)) * par2 + par1},
-where par1 and par2 are parameters calculated internally to make the 2 conditions above true.
+where \code{par1} and \code{par2} are parameters calculated internally to make the 2 conditions above true.
 
 If \code{maxSize} or \code{exactSize} are used, then spreading will continue and stop
 before or at \code{maxSize} or at \code{exactSize}, respectively.
@@ -356,7 +356,7 @@ return onto these pixels. If \code{0} (or \code{FALSE}), then once a
 pixel is activated, it cannot be re-activated, within or between event.
 This allows events to not interfere with one another i.e.,
 they do not interact (this is slower than if
-allowOverlap = FALSE). Default is 0. In the case of 2 or 3,
+\code{allowOverlap = FALSE}). Default is 0. In the case of 2 or 3,
 this would be, perhaps, useful for dispersal of,
 say, insect swarms.
 }

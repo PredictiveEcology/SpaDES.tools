@@ -20,7 +20,7 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #' The steps used in the algorithm are:
 #' 1. Calculate indices of neighbouring cells
 #' 2. Remove "to" cells that are
-#'    - <1 or >numCells (i.e., they are above or below raster), using a single modulo
+#'    - `< 1` or `> numCells` (i.e., they are above or below raster), using a single modulo
 #'      calculation
 #'    - where the modulo of "to" cells is equal to 1 if "from" cells are 0 (wrapped right
 #'      to left)
@@ -274,12 +274,12 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     ## use data.table
     # Remove all cells that are not target cells, if target is a vector of cells
     if (!is.null(target)) {
-      set(adj, , "ord", seq_len(NROW(adj)))
+      set(adj, NULL, "ord", seq_len(NROW(adj)))
       setkeyv(adj, "to")
       adj <- adj[J(target)]
       adj <- na.omit(adj)
       setkeyv(adj, "ord")
-      set(adj, , "ord", NULL)
+      set(adj, NULL, "ord", NULL)
     }
 
     if (sort) {
@@ -297,7 +297,7 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     # Remove the "from" column if pairs is FALSE
     if (!pairs) {
       from <- as.integer(adj$from)
-      set(adj, , "from", NULL)
+      set(adj, NULL, "from", NULL)
     }
 
     if (!torus) {
@@ -492,7 +492,7 @@ cir <- function(landscape, coords, loci,
 
   ### adapted from createCircle of the package PlotRegionHighlighter
 
-  if (!all(c("x", "y") %in% colnames(coords))) {
+  if (!all(xycolNames %in% colnames(coords))) {
     stop("coords must have columns named x and y")
   }
   suppliedAngles <- if (all(!is.na(angles))) TRUE else FALSE
@@ -678,7 +678,7 @@ cir <- function(landscape, coords, loci,
 
     b <- cbind(coords, id = seq_len(NROW(coords)))
 
-    colnames(b)[1:2] <- c("x", "y")
+    colnames(b)[1:2] <- xycolNames
     d <- distanceFromEachPoint(b, a)
 
     if (closest) {
@@ -759,7 +759,8 @@ cir <- function(landscape, coords, loci,
 ################################################################################
 #' Wrap coordinates or pixels in a torus-like fashion
 #'
-#' Generally useful for model development purposes.
+#' Generally useful for model development purposes. Primarily used internally
+#' in e.g., `crw` if `torus = TRUE`.
 #'
 #' If `withHeading` used, then `X` must be an `sf` or `SpatVector` object
 #' that contains two columns, `x1` and `y1`, with the immediately
@@ -777,7 +778,6 @@ cir <- function(landscape, coords, loci,
 #'         reflect the wrapping.
 #'
 #' @examples
-#' if (require("sf")) {
 #' xrange <- yrange <- c(-50, 50)
 #' hab <- terra::rast(terra::ext(c(xrange, yrange)))
 #' hab[] <- 0
@@ -801,11 +801,16 @@ cir <- function(landscape, coords, loci,
 #'   # clearPlot()
 #'   terra::plot(hab, col = "white")
 #' }
-#' for (i in 1:10) {
-#'   agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
-#'                stddev = sd, lonlat = FALSE, torus = TRUE)
-#' if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
-#' }
+#'
+#' if (requireNamespace("CircStats", quietly = TRUE)) {
+#'   for (i in 1:10) {
+#'     agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
+#'                  stddev = sd, lonlat = FALSE, torus = FALSE) # don't wrap
+#'     if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
+#'   }
+#'   terra::crds(agent) # many are "off" the map, i.e., beyond the extent of hab
+#'   agent <- SpaDES.tools::wrap(agent, bounds = terra::ext(hab))
+#'   terra::plot(agent, add = TRUE, col = 1:10) # now inside the extent of hab
 #' }
 #'
 #' @author Eliot McIntire
@@ -814,9 +819,10 @@ cir <- function(landscape, coords, loci,
 wrap <- function(X, bounds, withHeading = FALSE) {
   classX <- is(X)
 
-  if (is(X, "matrix")) {
-    X <- terra::vect(data.frame(x1 = X[, 1], y1 = X[, 2], X), geom = c("x", "y"))
-  } else if (is(X, "sf")) {
+  # if (is(X, "matrix")) {
+  #   X <- terra::vect(data.frame(x1 = X[, 1], y1 = X[, 2], X), geom = xycolNames)
+  # } else
+  if (is(X, "sf")) {
     X <- terra::vect(X)
   }
 
@@ -835,8 +841,13 @@ wrap <- function(X, bounds, withHeading = FALSE) {
     ymaxs <- crdsStart[, 2] > Ymax
 
     # SpatVector returns data.frame; sf returns vector
-    x1 <- if (is.data.frame(X[["x1"]])) X[["x1"]][, 1] else X[["x1"]]
-    y1 <- if (is.data.frame(X[["y1"]])) X[["y1"]][, 1] else X[["y1"]]
+    if (is.matrix(X)) {
+      x1 <- X[, "x1"]
+      y1 <- X[, "y1"]
+    } else {
+      x1 <- if (is.data.frame(X[["x1"]])) X[["x1"]][, 1] else X[["x1"]]
+      y1 <- if (is.data.frame(X[["y1"]])) X[["y1"]][, 1] else X[["y1"]]
+    }
 
      # if (any(c(xmins, ymins, xmaxs, ymaxs)))
      #   browser()
@@ -852,7 +863,7 @@ wrap <- function(X, bounds, withHeading = FALSE) {
   }
   # signature(X = "matrix", bounds = "Extent", withHeading = "missing"),
   # definition = function(X, bounds) {
-  if (identical(tolower(colnames(crdsStart)), c("x", "y"))) {
+  if (identical(tolower(colnames(crdsStart)), xycolNames)) {
     # terra::vect uses capitals X Y
     crds <- cbind(
       x = (crdsStart[, 1] - terra::xmin(bounds)) %% (terra::xmax(bounds) - terra::xmin(bounds)) +
@@ -870,7 +881,7 @@ wrap <- function(X, bounds, withHeading = FALSE) {
   }
 
   if ("matrix" %in% classX) {
-    return(coords(X))
+    return(X)
   } else if ("sf" %in% classX) {
     .requireNamespace("sf")
     return(sf::st_as_sf(X))
@@ -1021,7 +1032,7 @@ spokes <- function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
     fromC <- "fromCell" %in% forms
     if (fromC) fromCell <- cellFromXY(landscape, terra::crds(coords))
     toC <- "toCell" %in% forms
-    if (toC) toCell <- cellFromXY(landscape, to[, c("x", "y")])
+    if (toC) toCell <- cellFromXY(landscape, to[, xycolNames])
     land <- "landscape" %in% forms
     listArgs <- if (land) list(landscape = landscape[aCir[, "indices"]][[1]]) else NULL
     if (length(list(...)) > 0) listArgs <- append(listArgs, list(...))
@@ -1084,7 +1095,7 @@ spokes <- function(landscape, coords, loci, maxRadius = ncol(landscape) / 4,
     matrix(rep(t(cc), NROW(bb)), ncol = 2, byrow = TRUE)
   lociAll <- rep(loci, each = NROW(pureCircle2))
   distsAll <- rep(pureCircle2[, "dists"], nrow(bb))
-  dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, c("x", "y")]),
+  dd <- cbind(id = lociAll, dd, indices = cellFromXY(landscape, dd[, xycolNames]),
               dists = distsAll)
 
   dd[!as.logical(dd[, "x"] > terra::xmax(landscape) | dd[, "x"] < terra::xmin(landscape) |

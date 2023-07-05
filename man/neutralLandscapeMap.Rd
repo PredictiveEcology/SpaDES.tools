@@ -23,7 +23,7 @@ neutralLandscapeMap(
 \item{type}{One of the supported \code{NLMR} functions.}
 
 \item{...}{Further arguments passed to \code{NLMR} function specified in \code{type}
-(except ncol, nrow and resolution, which are extracted from \code{x})}
+(except \code{ncol}, \code{nrow} and \code{resolution}, which are extracted from \code{x}).}
 }
 \value{
 A \code{RasterLayer}/\code{SpatRaster} with same extent as \code{x}, with randomly generated values.
@@ -35,7 +35,8 @@ in extent with the input raster \code{x}, since \code{nlm_mpd} can output a smal
 }
 \examples{
 \donttest{
-  if (requireNamespace("NLMR", quietly = TRUE)) {
+  if (requireNamespace("NLMR", quietly = TRUE) &&
+      requireNamespace("raster", quietly = TRUE)) {
     library(terra)
     nx <- ny <- 100L
     r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)

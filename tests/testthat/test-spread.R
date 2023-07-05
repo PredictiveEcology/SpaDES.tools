@@ -2,7 +2,7 @@ test_that("spread produces legal RasterLayer", {
   skip_if_not_installed("dqrng")
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   withr::local_package("dqrng")
 
   set.seed(123)
@@ -16,7 +16,7 @@ test_that("spread produces legal RasterLayer", {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     pkg <- rastDF$read[ii]
-    rastDF <- needTerraAndRaster() #
+    rastDF <- needTerraAndRaster()
     read <- eval(parse(text = rastDF$read[ii]))
 
     a <- read(a)
@@ -114,7 +114,7 @@ test_that("allowOverlap -- produces exact result", {
   skip_if_not_installed("dqrng")
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   N <- 10
   smallExt <- terra::ext(1, N - 1, 1, N - 1)
   smallExtRas <- terra::rast(smallExt)
@@ -202,7 +202,7 @@ test_that("allowOverlap -- produces exact result", {
 test_that("spread stopRule does not work correctly", {
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   for (ii in seq(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
@@ -485,7 +485,7 @@ test_that("asymmetry doesn't work properly", {
 
   withr::local_package("terra")
   # withr::local_package("CircStats")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
@@ -561,7 +561,7 @@ test_that("asymmetry doesn't work properly", {
 test_that("rings and cir", {
   # Only terra -- # TODO can be changed when somebody has time -- need to do polygons/vect
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   for (ii in seq(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
@@ -729,11 +729,11 @@ test_that("distanceFromPoints does not work correctly", {
   hab <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
   coords <- cbind(x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
                   y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5)
-  dfep20 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE], landscape = hab)
-  idw <- tapply(dfep20[, c("dists")], cellFromXY(hab, dfep20[, c("x", "y")]), function(x) {
+  dfep20 <- distanceFromEachPoint(coords[, xycolNames, drop = FALSE], landscape = hab)
+  idw <- tapply(dfep20[, c("dists")], cellFromXY(hab, dfep20[, xycolNames]), function(x) {
     sum(1 / (1 + x))
   })
-  dfep <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
+  dfep <- distanceFromEachPoint(coords[, xycolNames, drop = FALSE],
                                 landscape = hab, cumulativeFn = `+`)
   expect_true(sum(idw - dfep[, "dists"]) %==% 0)
 })
@@ -742,7 +742,7 @@ test_that("simple cir does not work correctly", {
   set.seed(1234)
   # dqrng::dqset.seed(1234)
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
 
   hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1)
 
@@ -837,7 +837,7 @@ test_that("wrap does not work correctly", {
 
   # using sf
   if (requireNamespace("sf", quietly = TRUE)) {
-    sf <- sf::st_as_sf(data.frame(starts, x1, y1), coords = c("x", "y"))
+    sf <- sf::st_as_sf(data.frame(starts, x1, y1), coords = xycolNames)
     expect_true(all(coords(SpaDES.tools::wrap(sf, bounds = hab)) == SpaDES.tools::wrap(starts, hab)))
     expect_true(all(coords(SpaDES.tools::wrap(sf, bounds = hab, withHeading = FALSE)) ==
                       SpaDES.tools::wrap(starts, hab)))
@@ -849,7 +849,7 @@ test_that("wrap does not work correctly", {
   # errors
   starts <- cbind(x = stats::runif(n, xrange[1] - 10, xrange[1]),
                   y = stats::runif(n, yrange[1] - 10, yrange[1]))
-  spdf <- terra::vect(data.frame(starts, x1, y1), geom = c("x", "y"))#
+  spdf <- terra::vect(data.frame(starts, x1, y1), geom = xycolNames)#
   expect_false(all(abs(terra::ext(spdf)[]) <= 50))
   out <- SpaDES.tools::wrap(spdf, bounds = terra::ext(hab))
   expect_true(all(abs(terra::ext(out)[]) <= 50))
@@ -897,7 +897,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
     n <- 50
     coords <- cbind(x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
                     y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5)
-    dfep <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
+    dfep <- distanceFromEachPoint(coords[, xycolNames, drop = FALSE],
                                   landscape = hab, cumulativeFn = `+`)
 
     ## using parallel package cluster
@@ -907,7 +907,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
         library(SpaDES.tools)})
     })
     system.time({
-      dfepCluster <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
+      dfepCluster <- distanceFromEachPoint(coords[, xycolNames, drop = FALSE],
                                            landscape = hab, cumulativeFn = `+`,
                                            cl = cl1)
     })
@@ -919,7 +919,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
       beginCluster(1)
     })
     system.time({
-      dfepCluster2 <- distanceFromEachPoint(coords[, c("x", "y"), drop = FALSE],
+      dfepCluster2 <- distanceFromEachPoint(coords[, xycolNames, drop = FALSE],
                                             landscape = hab, cumulativeFn = `+`)
     })
     endCluster()
@@ -928,10 +928,10 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
 })
 
 test_that("spreadProb with relative values does not work correctly", {
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
 
   withr::local_package("terra")
-  rastDF <- needTerraAndRaster() #
+  rastDF <- needTerraAndRaster()
   ext1 <- terra::ext(0, 1e2, 0, 1e2)
   extRas <- terra::rast(ext1, res = 1)
   for (ii in seq(NROW(rastDF))) {

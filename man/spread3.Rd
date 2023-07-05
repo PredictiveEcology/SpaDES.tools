@@ -129,32 +129,30 @@ They are "rounded" to pixel centres.
       #########################################################
       ### The case of variable quality raster
       #########################################################
-      if (require("sf")) {
-        rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif",
-                                              package = "SpaDES.tools"))
-        theCRS <- sf::st_crs(readRDS(system.file("extdata", "targetCRS.rds",
-                                                 package = "SpaDES.tools")))
-        terra::crs(rasQuality) <- theCRS$wkt
-        mask <- rasQuality < 5
-        rasQuality[mask[] \%in\% TRUE] <- 0
-        # rescale so min is 0.75 and max is 1
-        rasQuality[] <- rasQuality[] / (reproducible::maxFn(rasQuality) * 4) + 1 / 4
-        rasAbundance <- terra::rast(rasQuality)
-        rasAbundance[] <- 0
-        startPixel <- sample(seq(ncell(rasAbundance)), 300)
-        rasAbundance[startPixel] <- 1000
-        advectionDir <- 75
-        advectionMag <- 4 * res(rasAbundance)[1]
-        meanDist <- 2600
-        out <- spread3(rasAbundance = rasAbundance,
-                       rasQuality = rasQuality,
-                       advectionDir = advectionDir,
-                       advectionMag = advectionMag,
-                       meanDist = meanDist, verbose = 2,
-                       plot.it = interactive())
-        if (interactive()) {
-          plotDispersalKernel(out, advectionMag)
-        }
+      rasQuality <- terra::rast(system.file("extdata", "rasQuality.tif",
+                                            package = "SpaDES.tools"))
+      terra::crs(rasQuality) <- system.file("extdata", "targetCRS.rds", package = "SpaDES.tools") |>
+        readRDS() |>
+        slot("projargs")
+      mask <- rasQuality < 5
+      rasQuality[mask[] \%in\% TRUE] <- 0
+      # rescale so min is 0.75 and max is 1
+      rasQuality[] <- rasQuality[] / (reproducible::maxFn(rasQuality) * 4) + 1 / 4
+      rasAbundance <- terra::rast(rasQuality)
+      rasAbundance[] <- 0
+      startPixel <- sample(seq(ncell(rasAbundance)), 300)
+      rasAbundance[startPixel] <- 1000
+      advectionDir <- 75
+      advectionMag <- 4 * res(rasAbundance)[1]
+      meanDist <- 2600
+      out <- spread3(rasAbundance = rasAbundance,
+                     rasQuality = rasQuality,
+                     advectionDir = advectionDir,
+                     advectionMag = advectionMag,
+                     meanDist = meanDist, verbose = 2,
+                     plot.it = interactive())
+      if (interactive()) {
+        plotDispersalKernel(out, advectionMag)
       }
 
       ###############################################################################
