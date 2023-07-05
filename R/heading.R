@@ -57,16 +57,7 @@ heading <- function(from, to) {
 }
 
 coords <- function(crds) {
-  if (inherits(crds, "SpatVector")) {
-    .requireNamespace("terra")
-    crds <- terra::crds(crds)
-  } else if (inherits(crds, "sf")) {
-    .requireNamespace("sf")
-    crds <- sf::st_coordinates(crds)
-  } else if (inherits(crds, "Spatial")) {
-    .requireNamespace("sp")
-    crds <- sp::coordinates(crds)
-  } else if (inherits(crds, "matrix")) {
+  if (is.matrix(crds)) {
     if (isS4(crds)) {
       crds <- crds@.Data[, 1:2, drop = FALSE]
       if (!identical(colnames(crds), xycolNames))
@@ -75,6 +66,15 @@ coords <- function(crds) {
       crds <- crds[, 1:2, drop = FALSE]
     }
 
+  } else if (inherits(crds, "SpatVector")) {
+    .requireNamespace("terra")
+    crds <- terra::crds(crds)
+  } else if (inherits(crds, "sf")) {
+    .requireNamespace("sf")
+    crds <- sf::st_coordinates(crds)
+  } else if (inherits(crds, "Spatial")) {
+    .requireNamespace("sp")
+    crds <- sp::coordinates(crds)
   }
 
  crds

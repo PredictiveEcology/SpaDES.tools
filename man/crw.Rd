@@ -86,7 +86,7 @@ if (requireNamespace("CircStats")) {
 
   # 1000x faster!! -- returnMatrix = TRUE
   agentOrig <- agent
-  reps <- 1e3
+  reps <- 1e2
   system.time({
     for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10, returnMatrix = TRUE)
   })

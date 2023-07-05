@@ -94,7 +94,7 @@ move <- function(hypothesis = "crw", ...) {
 #'
 #'   # 1000x faster!! -- returnMatrix = TRUE
 #'   agentOrig <- agent
-#'   reps <- 1e3
+#'   reps <- 1e2
 #'   system.time({
 #'     for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10, returnMatrix = TRUE)
 #'   })
@@ -116,27 +116,36 @@ move <- function(hypothesis = "crw", ...) {
 #'
 crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE,
                 returnMatrix = FALSE) {
-  if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent, FUN.VALUE = logical(1)))) {
-    if (is(agent, "SpatVector"))
-      if (!identical("points", geomtype(agent)))
-        stop("crs can only take SpatialPoints* or SpatVector points geometry")
-  }
-
   crds <- coords(agent)
   xycolNames <- colnames(crds)
+
+  if (!is.matrix(agent)) {
+    if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent, FUN.VALUE = logical(1)))) {
+      if (is(agent, "SpatVector"))
+        if (!identical("points", geomtype(agent)))
+          stop("crs can only take SpatialPoints* or SpatVector points geometry")
+    }
+
+    if (isTRUE(returnMatrix) ) {
+      agent <- if (NCOL(agent)) {
+        cbind(crds, as.data.frame(agent))
+      } else {
+        crds
+      }
+      agent <- as.matrix(agent)
+    }
+  }
 
   # move current coordinates to previous coordinates
   oldCrds <- crds[, xycolNames, drop = FALSE]
 
-  hasNames <- if (is.matrix(agent))
-    colnames(agent) %in% x1y1colNames
-  else
-    names(agent) %in% x1y1colNames
-
-  otherCols <- if (is.matrix(agent))
-    setdiff(colnames(agent), xycolNames)
-  else
-    setdiff(names(agent), xycolNames)
+  if (is.matrix(agent)) {
+    hasNames <- colnames(agent) %in% x1y1colNames
+    otherCols <- setdiff(colnames(agent), xycolNames)
+  } else {
+    hasNames <- names(agent) %in% x1y1colNames
+    otherCols <- setdiff(names(agent), xycolNames)
+  }
 
   needRandomX1Y1 <- if (sum(hasNames) < 2 ) TRUE else FALSE
 
