@@ -804,7 +804,7 @@ cir <- function(landscape, coords, loci,
 #'
 #' # 1000x faster!! -- returnMatrix = TRUE
 #' agentOrig <- agent
-#' reps <- 1e3
+#' reps <- 1e2
 #' if (requireNamespace("CircStats", quietly = TRUE)) {
 #'   system.time({
 #'     for (i in 1:reps) agent <- crw(agent, stepLength = ln, stddev = sd,
@@ -814,8 +814,6 @@ cir <- function(landscape, coords, loci,
 #'   system.time({
 #'     for (i in 1:reps) agent <- crw(agent, stepLength = ln, stddev = sd)
 #'   })
-#'
-#'
 #'
 #'   for (i in 1:10) {
 #'     agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
