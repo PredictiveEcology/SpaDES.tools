@@ -27,7 +27,7 @@ from and to points."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
@@ -60,7 +60,7 @@ from and to points."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
 
     <div class="ref-description">
     <p>This is a modification of <code><a href="https://rdrr.io/pkg/terra/man/distance.html" class="external-link">terra::distance()</a></code> for the case of many points.
-This version can often be faster for a single point because it does not return a RasterLayer.
+This version can often be faster for a single point because it does not return a <code>RasterLayer</code>.
 This is different than <code><a href="https://rdrr.io/pkg/terra/man/distance.html" class="external-link">terra::distance()</a></code> because it does not take the
 minimum distance from the set of points to all cells.
 Rather this returns the every pair-wise point distance.
@@ -103,7 +103,7 @@ optional "id" which will be matched with "id" from <code>from</code>. Default is
 
 
 <dt>landscape</dt>
-<dd><p>RasterLayer. optional. This is only used if <code>to</code> is NULL, in which case
+<dd><p><code>RasterLayer</code>. optional. This is only used if <code>to</code> is NULL, in which case
 all cells are considered <code>to</code>.</p></dd>
 
 
@@ -137,7 +137,7 @@ by the <code>cumulativeFn</code>. See Details and examples.</p></dd>
 
 <dt>cl</dt>
 <dd><p>A cluster object. Optional. This would generally be created using
-parallel::makeCluster or equivalent. This is an alternative way, instead
+<code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">parallel::makeCluster()</a></code> or equivalent. This is an alternative way, instead
 of <code>beginCluster()</code>, to use parallelism for this function, allowing for
 more control over cluster use.</p></dd>
 
@@ -167,8 +167,8 @@ Otherwise, the function will only return the coordinates and distances.</p>
 <p><code>distanceFromEachPoint</code> calls <code>.pointDistance</code>, which is not intended to be called
 directly by the user.</p>
 <p>This function has the potential to return a very large object, as it is doing pairwise
-distances (and optionally directions) between from and to. If there are memory
-limitations because there are many
+distances (and optionally directions) between from and to.
+If there are memory limitations because there are many
 <code>from</code> and many <code>to</code> points, then <code>cumulativeFn</code> and <code>distFn</code> can be used.
 These two functions together will be used iteratively through the <code>from</code> points. The
 <code>distFn</code> should be a transformation of distances to be used by the

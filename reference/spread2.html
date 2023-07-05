@@ -23,7 +23,7 @@ robust, and more difficult to use iteratively.'><!-- mathjax --><script src="htt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@ robust, and more difficult to use iteratively.</p>
     <h2>Arguments</h2>
     <dl><dt>landscape</dt>
 <dd><p>Required. A <code>RasterLayer</code> object. This defines the possible
-locations for spreading events to start and spread2 into. Required.</p></dd>
+locations for spreading events to start and <code>spread2</code> into. Required.</p></dd>
 
 
 <dt>start</dt>
@@ -148,7 +148,7 @@ See section on 'Breaking out of <code>spread2</code> events'.</p></dd>
 <dt>exactSize</dt>
 <dd><p>Numeric vector, length 1 or <code>length(start)</code>.
 Similar to <code>maxSize</code>, but these will be the exact
-final sizes of the events.  i.e., the spread2 events
+final sizes of the events.  i.e., the <code>spread2</code> events
 will continue until they are <code>floor(exactSize)</code>.
 This will override <code>maxSize</code> if both provided.
 See Details.</p></dd>
@@ -161,7 +161,7 @@ default is 8 (Queen case). Can only be 4 or 8.</p></dd>
 
 <dt>iterations</dt>
 <dd><p>Number of iterations to <code>spread2</code>.
-Leaving this <code>NULL</code> allows the spread2 to continue
+Leaving this <code>NULL</code> allows the <code>spread2</code> to continue
 until stops spreading itself (i.e., exhausts itself).</p></dd>
 
 
@@ -206,12 +206,12 @@ Ignored if <code>neighProbs</code> is not provided.</p></dd>
 
 
 <dt>plot.it</dt>
-<dd><p>If TRUE, then plot the raster at every iteration,
-so one can watch the spread2 event grow.</p></dd>
+<dd><p>If <code>TRUE</code>, then plot the raster at every iteration,
+so one can watch the <code>spread2</code> event grow.</p></dd>
 
 
 <dt>circle</dt>
-<dd><p>Logical. If TRUE, then outward spread2 will be by equidistant rings,
+<dd><p>Logical. If TRUE, then outward <code>spread2</code> will be by equidistant rings,
 rather than solely by adjacent cells (via <code>directions</code> arg.).
 Default is <code>FALSE</code>.
 Using <code>circle = TRUE</code> can be dramatically slower for large problems.
@@ -296,7 +296,7 @@ been touched by the <code>spread2</code> algorithm.</td></tr><tr><td><code>state
 could still be a source for spreading) or not (no
 spreading will occur from these cells).</td></tr><tr><td><code>from</code></td><td>The pixel indices that were the immediately preceding
 "source" for each <code>pixels</code>, i.e., the lag 1 pixels.
-Only returned if <code>returnFrom</code> is <code>TRUE</code></td></tr></table><p>The attribute saved with the name "spreadState" (e.g., <code>attr(output, "spreadState")</code>)
+Only returned if <code>returnFrom</code> is <code>TRUE</code></td></tr></table><p>The attribute saved with the name <code>"spreadState"</code> (e.g., <code>attr(output, "spreadState")</code>)
 includes a <code>data.table</code> with columns:</p><table class="table table"><tr><td><code>id</code></td><td>An arbitrary code, from 1 to <code>length(start)</code> for each "event".</td></tr><tr><td><code>initialPixels</code></td><td>the initial cell number of that particular
 <code>spread2</code> event.</td></tr><tr><td><code>numRetries</code></td><td>The number of re-starts the event did because it got
 stuck (normally only because <code>exactSize</code> was used
@@ -330,10 +330,10 @@ the <code>iterations</code> value is reached before there are no more active
 cells to <code>spread2</code> into. The interrupted output (a <code>data.table</code>) can be passed
 subsequently as an input to this same function (as <code>start</code>).
 This is intended to be used for situations where external events happen during
-a spread2 event, or where one or more arguments to the spread2 function
+a <code>spread2</code> event, or where one or more arguments to the <code>spread2</code> function
 change before a <code>spread2</code> event is completed.
 For example, if it is desired that the <code>spreadProb</code> change before a
-spread2 event is completed because, for example, a fire is spreading, and a
+<code>spread2</code> event is completed because, for example, a fire is spreading, and a
 new set of conditions arise due to a change in weather.</p>
 <p><code>asymmetry</code> here is slightly different than in the <code>spread</code> function,
 so that it can deal with a <code>RasterLayer</code> of <code>asymmetryAngle</code>.
@@ -352,7 +352,7 @@ which is multiplied to get an angle-adjusted spreadProb:
 $$spreadProbAdj &lt;- actualSpreadProb * angleQuality$$
 which is then rescaled:
 $$adjustedSpreadProb = (spreadProbAdj - min(spreadProbAdj)) * par2 + par1$$,
-where par1 and par2 are parameters calculated internally to make the 2 conditions above true.</p>
+where <code>par1</code> and <code>par2</code> are parameters calculated internally to make the 2 conditions above true.</p>
 <p>If <code>maxSize</code> or <code>exactSize</code> are used, then spreading will continue and stop
 before or at <code>maxSize</code> or at <code>exactSize</code>, respectively.
 If <code>iterations</code> is specified, then the function will end, and the returned <code>data.table</code>
@@ -441,7 +441,7 @@ return onto these pixels. If <code>0</code> (or <code>FALSE</code>), then once a
 pixel is activated, it cannot be re-activated, within or between event.
 This allows events to not interfere with one another i.e.,
 they do not interact (this is slower than if
-allowOverlap = FALSE). Default is 0. In the case of 2 or 3,
+<code>allowOverlap = FALSE</code>). Default is 0. In the case of 2 or 3,
 this would be, perhaps, useful for dispersal of,
 say, insect swarms.</p>
     </div>

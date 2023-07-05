@@ -19,7 +19,7 @@ matrix for small numbers of loci (&amp;lt;1e4) and data.table for larger numbers
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
@@ -191,7 +191,7 @@ just removed directly with data.table</p></li>
 </ul></li>
 <li><p>don't make intermediate objects; just put calculation into return statement</p></li>
 </ol><p>The steps used in the algorithm are:</p><ol><li><p>Calculate indices of neighbouring cells</p></li>
-<li><p>Remove "to" cells that are</p><ul><li><p>&lt;1 or &gt;numCells (i.e., they are above or below raster), using a single modulo
+<li><p>Remove "to" cells that are</p><ul><li><p><code>&lt; 1</code> or <code>&gt; numCells</code> (i.e., they are above or below raster), using a single modulo
 calculation</p></li>
 <li><p>where the modulo of "to" cells is equal to 1 if "from" cells are 0 (wrapped right
 to left)</p></li>
@@ -211,7 +211,7 @@ left to right)</p></li>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> terra 1.7.29</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> terra 1.7.39</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘terra’</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:SpaDES.tools’:</span>

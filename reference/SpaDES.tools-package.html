@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
@@ -63,7 +63,7 @@ Contagion can be modelled using discrete approaches or continuous approaches.
 Several functions assist with these:</p>
 <table class="table table"><tr><td><code><a href="adj.html">adj()</a></code></td><td>An optimized (i.e., faster) version of
 <code><a href="https://rdrr.io/pkg/terra/man/adjacent.html" class="external-link">terra::adjacent()</a></code></td></tr><tr><td><code><a href="cir.html">cir()</a></code></td><td>Identify pixels in a circle around a
-<code><a href="https://rdrr.io/pkg/sp/man/SpatialPoints-class.html" class="external-link">SpatialPoints*()</a></code> object</td></tr><tr><td><code><a href="directions.html">directionFromEachPoint()</a></code></td><td>Fast calculation of direction and
+<code>SpatialPoints*</code> object</td></tr><tr><td><code><a href="directions.html">directionFromEachPoint()</a></code></td><td>Fast calculation of direction and
 distance surfaces</td></tr><tr><td><code><a href="distanceFromEachPoint.html">distanceFromEachPoint()</a></code></td><td>Fast calculation of distance surfaces</td></tr><tr><td><code><a href="rings.html">rings()</a></code></td><td>Identify rings around focal cells (e.g., buffers and donuts)</td></tr><tr><td><code><a href="spokes.html">spokes()</a></code></td><td>TO DO: need description</td></tr><tr><td><code><a href="spread.html">spread()</a></code></td><td>Contagious cellular automata</td></tr><tr><td><code><a href="wrap.html">wrap()</a></code></td><td>Create a torus from a grid</td></tr></table></div>
     <div id="-spatial-agent-methods">
     <h2>2 Spatial agent methods</h2>
@@ -71,7 +71,7 @@ distance surfaces</td></tr><tr><td><code><a href="distanceFromEachPoint.html">di
 
 
 <p>Agents have several methods and functions specific to them:</p>
-<table class="table table"><tr><td><code><a href="crw.html">crw()</a></code></td><td>Simple correlated random walk function</td></tr><tr><td><code><a href="heading.html">heading()</a></code></td><td>Determines the heading between <code>SpatialPoints*</code></td></tr><tr><td>quickPlot::makeLines()</td><td>Makes <code>SpatialLines</code> object for, e.g., drawing arrows</td></tr><tr><td><code><a href="crw.html">move()</a></code></td><td>A meta function that can currently only take "crw"</td></tr><tr><td><code><a href="specnumperpatch-probs.html">specificNumPerPatch()</a></code></td><td>Initiate a specific number of agents per patch</td></tr></table></div>
+<table class="table table"><tr><td><code><a href="crw.html">crw()</a></code></td><td>Simple correlated random walk function</td></tr><tr><td><code><a href="heading.html">heading()</a></code></td><td>Determines the heading between <code>SpatialPoints*</code></td></tr><tr><td><code><a href="https://quickplot.predictiveecology.org/reference/makeLines.html" class="external-link">quickPlot::makeLines()</a></code></td><td>Makes <code>SpatialLines</code> object for, e.g., drawing arrows</td></tr><tr><td><code><a href="crw.html">move()</a></code></td><td>A meta function that can currently only take "crw"</td></tr><tr><td><code><a href="specnumperpatch-probs.html">specificNumPerPatch()</a></code></td><td>Initiate a specific number of agents per patch</td></tr></table></div>
     <div id="-gis-operations">
     <h2>3 GIS operations</h2>
     
@@ -79,7 +79,7 @@ distance surfaces</td></tr><tr><td><code><a href="distanceFromEachPoint.html">di
 
 <p>In addition to the vast amount of GIS operations available in R (mostly from
 contributed packages such as <code>sp</code>, <code>raster</code>, <code>maps</code>, <code>maptools</code>
-and many others), we provide the following GIS-related functions:</p><table class="table table"><tr><td>quickPlot::equalExtent()</td><td>Assess whether a list of extents are all equal</td></tr></table></div>
+and many others), we provide the following GIS-related functions:</p><table class="table table"><tr><td><code><a href="https://quickplot.predictiveecology.org/reference/equalExtent.html" class="external-link">quickPlot::equalExtent()</a></code></td><td>Assess whether a list of extents are all equal</td></tr></table></div>
     <div id="-map-reduce-type-operations">
     <h2>4 Map-reduce - type operations</h2>
     
@@ -124,12 +124,12 @@ efficient (but slower) algorithms. Default <code>FALSE</code>.</p></li>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p><strong>Maintainer</strong>: Alex M Chubaty <a href="mailto:achubaty@for-cast.ca">achubaty@for-cast.ca</a> (<a href="https://orcid.org/0000-0001-7146-8135" class="external-link">ORCID</a>)</p>
-<p>Authors:</p><ul><li><p>Eliot J B McIntire <a href="mailto:eliot.mcintire@nrcan-rncan.gc.ca">eliot.mcintire@nrcan-rncan.gc.ca</a> (<a href="https://orcid.org/0000-0002-6914-8316" class="external-link">ORCID</a>)</p></li>
+    <p><strong>Maintainer</strong>: Eliot J B McIntire <a href="mailto:eliot.mcintire@nrcan-rncan.gc.ca">eliot.mcintire@nrcan-rncan.gc.ca</a> (<a href="https://orcid.org/0000-0002-6914-8316" class="external-link">ORCID</a>)</p>
+<p>Authors:</p><ul><li><p>Alex M Chubaty <a href="mailto:achubaty@for-cast.ca">achubaty@for-cast.ca</a> (<a href="https://orcid.org/0000-0001-7146-8135" class="external-link">ORCID</a>)</p></li>
 </ul><p>Other contributors:</p><ul><li><p>Yong Luo <a href="mailto:Yong.Luo@gov.bc.ca">Yong.Luo@gov.bc.ca</a> [contributor]</p></li>
 <li><p>Steve Cumming <a href="mailto:Steve.Cumming@sbf.ulaval.ca">Steve.Cumming@sbf.ulaval.ca</a> [contributor]</p></li>
 <li><p>Jean Marchal <a href="mailto:jean.d.marchal@gmail.com">jean.d.marchal@gmail.com</a> [contributor]</p></li>
-<li><p>Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada [copyright holder]</p></li>
+<li><p>His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada [copyright holder]</p></li>
 </ul></div>
 
   </div>

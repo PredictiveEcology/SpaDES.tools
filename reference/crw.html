@@ -18,7 +18,7 @@ This version uses just turn angles and step lengths to define the correlated ran
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
@@ -57,7 +57,15 @@ This version uses just turn angles and step lengths to define the correlated ran
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">move</span><span class="op">(</span>hypothesis <span class="op">=</span> <span class="st">"crw"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, <span class="va">extent</span>, <span class="va">stepLength</span>, <span class="va">stddev</span>, <span class="va">lonlat</span>, torus <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">crw</span><span class="op">(</span></span>
+<span>  <span class="va">agent</span>,</span>
+<span>  <span class="va">extent</span>,</span>
+<span>  <span class="va">stepLength</span>,</span>
+<span>  <span class="va">stddev</span>,</span>
+<span>  lonlat <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  torus <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  returnMatrix <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -106,12 +114,18 @@ space (e.g. units of meters)</p></dd>
 side of the map, as determined by the <code>extent</code> argument.
 Default <code>FALSE</code>.</p></dd>
 
+
+<dt>returnMatrix</dt>
+<dd><p>If <code>TRUE</code> then the return object will be a <code>matrix</code>. This will
+be MUCH faster than retaining the <code>sp</code> or <code>SpatVector</code> class,
+and thus will be much more effective for iterative <code>crw</code> calls</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>A SpatVector points object with updated spatial position defined
+<p>A <code>SpatVector</code> points object with updated spatial position defined
 by a single occurrence of step length(s) and turn angle(s).</p>
     </div>
     <div id="details">
@@ -132,13 +146,63 @@ Journal of Applied Ecology 44:725-736.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/terra/man/distance.html" class="external-link">terra::distance()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/terra/man/distance.html" class="external-link">terra::distance()</a></code></p>
+<p><code><a href="wrap.html">wrap()</a></code></p></div>
     </div>
     <div id="author">
     <h2>Author</h2>
     <p>Eliot McIntire</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># using just matrix</span></span></span>
+<span class="r-in"><span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></span>
+<span class="r-in"><span><span class="va">xrange</span> <span class="op">&lt;-</span> <span class="va">yrange</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">50</span>, <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">starts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">xrange</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">xrange</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                y <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">yrange</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">yrange</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"CircStats"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">moved</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">starts</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">starts</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/terra/man/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">moved</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># as SpatVector</span></span></span>
+<span class="r-in"><span>  <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">starts</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">moved</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">movedAgain</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">moved</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">agent</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">moved</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">movedAgain</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"green"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># 1000x faster!! -- returnMatrix = TRUE</span></span></span>
+<span class="r-in"><span>  <span class="va">agentOrig</span> <span class="op">&lt;-</span> <span class="va">agent</span></span></span>
+<span class="r-in"><span>  <span class="va">reps</span> <span class="op">&lt;-</span> <span class="fl">1e2</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">reps</span><span class="op">)</span> <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span>, returnMatrix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">agent</span> <span class="op">&lt;-</span> <span class="va">agentOrig</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">reps</span><span class="op">)</span> <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># as sp</span></span></span>
+<span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sp"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">sp</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sp/man/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="va">starts</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">spdf</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">spdfNew</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">spdf</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">spdf</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">spdfNew</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-plt img"><img src="crw-1.png" alt="" width="700" height="433"></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> agent does not have columns named x1 and y1, which represent the 'previous' locations. Assigning random values to those columns.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> agent does not have columns named x1 and y1, which represent the 'previous' locations. Assigning random values to those columns.</span>
+<span class="r-plt img"><img src="crw-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="crw-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

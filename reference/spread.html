@@ -29,7 +29,7 @@ The two functions can accomplish many of the same things, and key differences ar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
@@ -205,7 +205,7 @@ so one can watch the spread event grow.</p></dd>
 
 <dt>spreadProbLater</dt>
 <dd><p>Numeric, or <code>RasterLayer</code>. If provided, then this
-will become the spreadProb after the first iteration.
+will become the <code>spreadProb</code> after the first iteration.
 See Details.</p></dd>
 
 
@@ -374,12 +374,12 @@ to
 <code>asymmetryAngle</code>
 using:
 <code>angleQuality &lt;- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2</code></p>
-<p>These are then converted to multiple spreadProbs by
-<code>spreadProbs &lt;- lowSpreadProb+(angleQuality * diff(spreadProbsLH))</code>
+<p>These are then converted to multiple <code>spreadProbs</code> by
+<code>spreadProbs &lt;- lowSpreadProb + (angleQuality * diff(spreadProbsLH))</code>
 To maintain an expected <code>spreadProb</code> that is the same as the asymmetric
 <code>spreadProbs</code>, these are then rescaled so that the mean of the
 asymmetric spreadProbs is always equal to spreadProb at every iteration:
-<code>spreadProbs &lt;- spreadProbs - diff(c(spreadProb,mean(spreadProbs)))</code></p>
+<code>spreadProbs &lt;- spreadProbs - diff(c(spreadProb, mean(spreadProbs)))</code></p>
     </div>
     <div id="breaking-out-of-spread-events">
     <h2>Breaking out of spread events</h2>
