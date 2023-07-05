@@ -1,6 +1,6 @@
 ## Release information
 
-This is an minor update to complete the final edge cases for the  transition from `raster`, `sp`, `rgeos` and `rgdal` to `terra` and `sf`. We also address reverse depends packages that will be submitted to CRAN.   
+This is an minor update to complete the final edge cases for the  transition from `raster`, `sp`, `rgeos` and `rgdal` to `terra` and `sf`. We also address reverse depends packages that will be submitted to CRAN. Also, there are minor changes to address CRAN submission issues.
 
 See `NEWS.md` for a full list of changes.
 

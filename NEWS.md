@@ -1,6 +1,6 @@
 # SpaDES.tools (development version)
 
-# SpaDES.tools 2.0.1
+# SpaDES.tools 2.0.2
 
 ## Enhancements
 * improved documentation
