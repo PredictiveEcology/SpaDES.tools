@@ -102,7 +102,6 @@ If this is \code{excludePixels}, and if a \code{minRadius} and
 }
 \examples{
 library(terra)
-origThreads <- data.table::setDTthreads(1) # for CRAN automated testing
 
 set.seed(1462)
 
@@ -155,7 +154,7 @@ if (interactive()) {
 }
 
 # rings
-if (requireNamespace("CircStats", quietly = TRUE)) {
+if (require("CircStats")) {
   loci <- cellFromXY(hab, crds(coords))
   cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
 
@@ -187,8 +186,6 @@ circ <- cir(ras, coords, angles = seq(0, 2 * pi, length.out = 21),
             maxRadius = 200, minRadius = 0, returnIndices = FALSE,
             allowOverlap = TRUE, returnAngles = TRUE)
 
-# clean up
-data.table::setDTthreads(origThreads)
 }
 \seealso{
 \code{\link[=rings]{rings()}} which uses \code{spread} internally.
