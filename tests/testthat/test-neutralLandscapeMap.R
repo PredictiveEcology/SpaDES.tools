@@ -1,6 +1,6 @@
 test_that("neutralLandscapeMap produces consistent rasters", {
+  testInit(c("NLMR", "raster", "terra"))
   skip_if_not_installed("NLMR", "1.1.1")
-  skip_if_not_installed("raster") # NLMR needs raster, apparently
   rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 

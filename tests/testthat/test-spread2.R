@@ -1,6 +1,6 @@
 test_that("spread2 tests", {
 
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 
@@ -383,9 +383,7 @@ test_that("spread2 tests", {
 })
 
 test_that("spread2 tests -- asymmetry", {
-  skip_if_not_installed("CircStats")
-
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -611,7 +609,7 @@ test_that("spread2 tests -- asymmetry", {
 })
 
 test_that("spread2 returnFrom", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -640,8 +638,6 @@ test_that("spread2 returnFrom", {
 
 test_that("spread2 tests", {
   testInit("terra")
-
-  withr::local_package("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -671,7 +667,7 @@ test_that("spread2 tests", {
 })
 
 test_that("spread2 works with terra", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -698,7 +694,7 @@ test_that("spread2 works with terra", {
 })
 
 test_that("spread2 tests -- persistence", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
@@ -740,7 +736,7 @@ test_that("spread2 tests -- persistence", {
 })
 
 test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)

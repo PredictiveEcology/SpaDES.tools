@@ -1,6 +1,6 @@
 test_that("randomPolygon: does not work properly", {
   # no need for `raster` testing as this is using randomPolygon
-  withr::local_package("terra")
+  testInit("terra")
 
   set.seed(1234) ## TODO: some seeds produce failing area test below!!
   latLong <- crs("epsg:4326")
