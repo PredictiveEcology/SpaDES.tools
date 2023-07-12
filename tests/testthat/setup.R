@@ -9,10 +9,13 @@ library(data.table)
 origDTthreads <- getDTthreads()
 setDTthreads(2)
 
+opts <- options("sp_evolution_status" = 2)
+
 if (interactive() && Sys.info()["user"] %in% c("emcintir", "achubaty"))
   if (requireNamespace("quickPlot", quietly = TRUE))
     quickPlot::dev()
 
 withr::defer({
   data.table::setDTthreads(origDTthreads)
+  options(opts)
 }, teardown_env())

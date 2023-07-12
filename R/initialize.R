@@ -299,9 +299,6 @@ rndmPolygonSpatialPolygons <- function(x, hectares, area) {
     message("The CRS provided is not in meters; ",
             "converting internally to UTM so area will be approximately correct.")
   }
-  # areaCRS <- CRS(paste0("+proj=lcc +lat_1=", ymin(x), " +lat_2=", ymax(x),
-  #                       " +lat_0=0 +lon_0=", xmin(x), " +x_0=0 +y_0=0 +ellps=GRS80",
-  #                       " +units=m +no_defs"))
 
   #y <- spTransform(x, areaCRS)
 
