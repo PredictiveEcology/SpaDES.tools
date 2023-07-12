@@ -52,9 +52,8 @@ if (interactive()) {
 }
 
 # rings
-if (requireNamespace("CircStats", quietly = TRUE)) {
-  loci <- cellFromXY(hab, crds(coords))
-  cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
+loci <- cellFromXY(hab, crds(coords))
+cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
 
   ras2 <- rast(hab)
   ras2[] <- 0

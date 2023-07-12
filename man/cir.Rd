@@ -102,8 +102,6 @@ If this is \code{excludePixels}, and if a \code{minRadius} and
 }
 \examples{
 library(terra)
-origThreads <- data.table::setDTthreads(1) # for CRAN automated testing
-
 set.seed(1462)
 
 # circle centred
@@ -130,7 +128,6 @@ cirsRas[] <- 0
 cirsRas[cirs[, "indices"]] <- 1
 
 if (interactive()) {
-  # clearPlot()
   terra::plot(ras)
   terra::plot(cirsRas, add = TRUE, col = c("transparent", "#00000055"))
   terra::plot(agent, add = TRUE)
@@ -155,16 +152,14 @@ if (interactive()) {
 }
 
 # rings
-if (requireNamespace("CircStats", quietly = TRUE)) {
-  loci <- cellFromXY(hab, crds(coords))
-  cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
+loci <- cellFromXY(hab, crds(coords))
+cirs2 <- rings(hab, loci, maxRadius = radius, minRadius = radius - 1, returnIndices = TRUE)
 
-  ras2 <- rast(hab)
-  ras2[] <- 0
-  ras2[cirs2$indices] <- cirs2$id
-  if (interactive()) {
-    terra::plot(c(ras1, ras2))
-  }
+ras2 <- rast(hab)
+ras2[] <- 0
+ras2[cirs2$indices] <- cirs2$id
+if (interactive()) {
+  terra::plot(c(ras1, ras2))
 }
 
 hab <- rast(system.file("extdata", "hab2.tif", package = "SpaDES.tools"))
@@ -186,9 +181,6 @@ coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
 circ <- cir(ras, coords, angles = seq(0, 2 * pi, length.out = 21),
             maxRadius = 200, minRadius = 0, returnIndices = FALSE,
             allowOverlap = TRUE, returnAngles = TRUE)
-
-# clean up
-data.table::setDTthreads(origThreads)
 }
 \seealso{
 \code{\link[=rings]{rings()}} which uses \code{spread} internally.

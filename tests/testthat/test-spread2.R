@@ -386,7 +386,6 @@ test_that("spread2 tests -- asymmetry", {
   skip_if_not_installed("CircStats")
 
   withr::local_package("terra")
-  withr::local_package("CircStats")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -426,10 +425,8 @@ test_that("spread2 tests -- asymmetry", {
     lenAngles <- numeric(n)
 
     # function to calculate mean angle -- returns in degrees
-    if (requireNamespace("CircStats", quietly = TRUE)) {
-      meanAngle <- function(angles) {
-        CircStats::deg(atan2(mean(sin(CircStats::rad(angles))), mean(cos(CircStats::rad(angles)))))
-      }
+    meanAngle <- function(angles) {
+      deg2(atan2(mean(sin(rad2(angles))), mean(cos(rad2(angles)))))
     }
 
     # if (interactive()) {
@@ -465,7 +462,7 @@ test_that("spread2 tests -- asymmetry", {
       initialLociXY <- cbind(id = unique(circs$initialPixels),
                              xyFromCell(hab, unique(circs$initialPixels)))
       dirs <- directionFromEachPoint(from = initialLociXY, to = a)
-      dirs[, "angles"] <- CircStats::deg(dirs[, "angles"])
+      dirs[, "angles"] <- deg2(dirs[, "angles"])
       avgAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], meanAngle) %% 360
       lenAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], length)
     }
@@ -482,7 +479,7 @@ test_that("spread2 tests -- asymmetry", {
     ciCentre[seq_len(ncell(ciCentre))[-(ncell(ciCentre) / 2 - ncol(ciCentre) / 2)]] <- NA_integer_
     # create a direction raster with all points leading to that point
     directionRas <- direction(ciCentre)
-    directionRas[] <- CircStats::deg(directionRas[])
+    directionRas[] <- deg2(directionRas[])
 
     seed <- 4406
     set.seed(seed)
@@ -642,7 +639,7 @@ test_that("spread2 returnFrom", {
 })
 
 test_that("spread2 tests", {
-  skip_if_not_installed("CircStats")
+  testInit("terra")
 
   withr::local_package("terra")
   rastDF <- needTerraAndRaster()

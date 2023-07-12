@@ -212,10 +212,9 @@ test_that("spread stopRule does not work correctly", {
     set.seed(1234)
     startCells <- as.integer(sample(1:ncell(hab), 10))
     stopRule1 <- function(landscape) sum(landscape) > maxVal
-    if (requireNamespace("CircStats", quietly = TRUE)) {
-      stopRuleA <- spread(hab, loci = startCells, spreadProb = 1, persistence = 0,
-                          mask = NULL, maxSize = 1e6, directions = 8,
-                          iterations = 1e6, id = TRUE,
+    stopRuleA <- spread(hab, loci = startCells, spreadProb = 1, persistence = 0,
+                        mask = NULL, maxSize = 1e6, directions = 8,
+                        iterations = 1e6, id = TRUE,
                           circle = TRUE, stopRule = stopRule1)
       foo <- cbind(vals = as.numeric(hab[stopRuleA > 0]), id = as.numeric(stopRuleA[stopRuleA > 0]))
       expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) > maxVal))
@@ -454,10 +453,10 @@ test_that("spread stopRule does not work correctly", {
         expect_true(all(a3[-wh] >= meanHabitatRule))
         expect_true(all(a3[wh] < meanHabitatRule))
         if (interactive()) {
-          terra::plot(ras)
-        }
+        terra::plot(ras)
       }
     }
+
   }
 
 })
@@ -487,12 +486,11 @@ test_that("asymmetry doesn't work properly", {
     lenAngles <- numeric(n)
 
     # function to calculate mean angle -- returns in degrees
-    if (requireNamespace("CircStats", quietly = TRUE)) {
-      meanAngle <- function(angles) {
-        CircStats::deg(atan2(mean(sin(CircStats::rad(angles))), mean(cos(CircStats::rad(angles)))))
-      }
+    meanAngle <- function(angles) {
+      deg2(atan2(mean(sin(rad2(angles))), mean(cos(rad2(angles)))))
+    }
 
-      # if (interactive()) clearPlot()
+    # if (interactive()) clearPlot()
       seed <- sample(1e6, 1)
       set.seed(seed)
 
@@ -520,18 +518,18 @@ test_that("asymmetry doesn't work properly", {
           ciCentre[ciCentre == 0] <- NA
           terra::plot(ciCentre, add = TRUE, col = "black", legend = FALSE)
         }
-        a <- cbind(id = circs$id, to = circs$indices, xyFromCell(hab, circs$indices))
-        initialLociXY <- cbind(id = unique(circs$id), xyFromCell(hab, unique(circs$initialLocus)))
-        dirs <- directionFromEachPoint(from = initialLociXY, to = a)
-        dirs[, "angles"] <- CircStats::deg(dirs[, "angles"])
-        avgAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], meanAngle) %% 360
-        lenAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], length)
-      }
-
-      whBig <- which(lenAngles > 50)
-      pred <- (1:n)[whBig] * 20
-      expect_true(abs(coef(lm(avgAngles[whBig] ~ pred))[[2]] - 1) < 0.1)
+      a <- cbind(id = circs$id, to = circs$indices, xyFromCell(hab, circs$indices))
+      initialLociXY <- cbind(id = unique(circs$id), xyFromCell(hab, unique(circs$initialLocus)))
+      dirs <- directionFromEachPoint(from = initialLociXY, to = a)
+      dirs[, "angles"] <- deg2(dirs[, "angles"])
+      avgAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], meanAngle) %% 360
+      lenAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], length)
     }
+
+    whBig <- which(lenAngles > 50)
+    pred <- (1:n)[whBig] * 20
+    expect_true(abs(coef(lm(avgAngles[whBig] ~ pred))[[2]] - 1) < 0.1)
+
 
   }
 })
@@ -615,10 +613,8 @@ test_that("rings and cir", {
                            simplify = TRUE, allowOverlap = TRUE,
                            includeBehavior = "excludePixels", returnDistances = TRUE))
     #expect_error({
-    if (requireNamespace("CircStats", quietly = TRUE)) {
-      cirs2 <- rings(hab, loci, minRadius = radius, maxRadius = radius * 1.5001,
-                     allowOverlap = TRUE, returnIndices = TRUE, includeBehavior = "includeRing")
-    }
+    cirs2 <- rings(hab, loci, minRadius = radius, maxRadius = radius * 1.5001,
+                   allowOverlap = TRUE, returnIndices = TRUE, includeBehavior = "includeRing")
     setkey(cirs,  dists, indices)
     ras1 <- read(hab)
     ras1[] <- 0
@@ -636,28 +632,23 @@ test_that("rings and cir", {
 
     loci <- cellFromXY(hab, terra::crds(caribou))
 
-    if (requireNamespace("CircStats", quietly = TRUE)) {
-      dists1 <- rings(hab, loci, minRadius = 0, maxRadius = ncol(hab), returnDistances = TRUE,
-                      includeBehavior = "includeRing")
-    }
+    dists1 <- rings(hab, loci, minRadius = 0, maxRadius = ncol(hab), returnDistances = TRUE,
+                    includeBehavior = "includeRing")
     # dists2 <- distanceFromPoints(hab, terra::crds(caribou))
     dists2 <- distance(hab, caribou)
     dists3 <- cir(landscape = hab, loci = loci, minRadius = 0, maxRadius = ncol(hab),
                   includeBehavior = "includePixels", allowOverlap = FALSE,
                   returnIndices = FALSE, closest = TRUE, returnDistances = TRUE)
     if (interactive()) {
-      if (requireNamespace("CircStats", quietly = TRUE))
-        terra::plot(dists1)
+      terra::plot(dists1)
       terra::plot(dists2)
       terra::plot(dists3)
     }
-    if (requireNamespace("CircStats", quietly = TRUE)) {
-      diffDists12 <- abs(dists1 - dists2) ## TODO: Error in `dists1 - dists2`: non-numeric argument to binary operator
-      tabs12 <- table(round(as.numeric(terra::values(diffDists12))))
-      expect_true(tabs12[names(tabs12) == 0] / ncell(diffDists12) > 0.99)
-      if (interactive())
-        terra::plot(diffDists12)
-      }
+    diffDists12 <- abs(dists1 - dists2) ## TODO: Error in `dists1 - dists2`: non-numeric argument to binary operator
+    tabs12 <- table(round(as.numeric(terra::values(diffDists12))))
+    expect_true(tabs12[names(tabs12) == 0] / ncell(diffDists12) > 0.99)
+    if (interactive())
+      terra::plot(diffDists12)
     diffDists23 <- abs(dists2 - dists3)
     tabs23 <- table(round(as.numeric(terra::values(diffDists23))))
 
