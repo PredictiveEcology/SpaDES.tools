@@ -653,7 +653,7 @@ test_that("spread2 tests", {
     sams <- sample(innerCells, 9)
 
     # dev()
-    expect_silent({
+    expect_no_error({
       out <- spread2(a, start = sams, 1, circle = TRUE, asymmetry = 4,
                      asymmetryAngle = 120, iterations = 10, asRaster = FALSE,
                      returnDistances = TRUE, allowOverlap = TRUE)

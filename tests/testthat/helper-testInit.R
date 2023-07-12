@@ -28,7 +28,7 @@ testInit <- function(libraries = character(), ask = FALSE, verbose,
   pf <- parent.frame()
 
   if (isTRUE(needGoogleDriveAuth))
-    libraries <- c(libraries, "googledrive")
+    libraries <- c(libraries)
   if (length(libraries)) {
     libraries <- unique(libraries)
     loadedAlready <- vapply(libraries, function(pkg)
