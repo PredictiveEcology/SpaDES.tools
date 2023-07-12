@@ -1,13 +1,8 @@
 test_that("spread produces legal RasterLayer", {
-  skip_if_not_installed("dqrng")
-
-  withr::local_package("terra")
+  testInit(c("dqrng", "terra"))
   rastDF <- needTerraAndRaster()
-  withr::local_package("dqrng")
 
   set.seed(123)
-  dqrng::dqset.seed(123)
-
   # inputs for x
   a <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
   b <- terra::rast(terra::ext(a), res = 1, vals = stats::runif(ncell(a), 0, 1))
@@ -60,7 +55,6 @@ test_that("spread produces legal RasterLayer", {
     spreadProb <- 0.27
     seed <- 9149
     set.seed(seed)
-    # dqrng::dqset.seed(seed)
     maxSize1 <- 1e2
     spreadState <- SpaDES.tools::spread(
       landscape = b,
@@ -82,7 +76,7 @@ test_that("spread produces legal RasterLayer", {
     for (wwn in 2:4) {
       j <- sample(1:1000, 1)
       set.seed(j)
-      dqrng::dqset.seed(j)
+      # dqrng::dqset.seed(j)
       fires[[wwn]] <- spread(a, loci = as.integer(sample(1:ncell(a), 10)), returnIndices = TRUE,
                            spreadProb = 0.235, 0, NULL, 1e8, 8, iterations = 2, id = TRUE,
                            spreadState = fires[[wwn - 1]])
@@ -94,7 +88,7 @@ test_that("spread produces legal RasterLayer", {
 
     # Test that passing NA to loci returns a correct data.table
     set.seed(123)
-    dqrng::dqset.seed(123)
+    # dqrng::dqset.seed(123)
 
     fires <- spread(a, loci = as.integer(sample(1:ncell(a), 10)), returnIndices = TRUE,
                     0.235, 0, NULL, 1e8, 8, iterations = 2, id = TRUE)
@@ -111,9 +105,7 @@ test_that("spread produces legal RasterLayer", {
 })
 
 test_that("allowOverlap -- produces exact result", {
-  skip_if_not_installed("dqrng")
-
-  withr::local_package("terra")
+  testInit(c("dqrng", "terra"))
   rastDF <- needTerraAndRaster()
   N <- 10
   smallExt <- terra::ext(1, N - 1, 1, N - 1)
@@ -141,7 +133,7 @@ test_that("allowOverlap -- produces exact result", {
     # ._spread_3 <- ._spread_19 <-._spread_14 <- 1;
     b <- list()
     set.seed(123445)
-    dqrng::dqset.seed(123445)
+    # dqrng::dqset.seed(123445)
     Nreps <- 100
     sams <- sample(1e7, Nreps)
     for (jjj in seq_along(ao)) {
@@ -171,7 +163,6 @@ test_that("allowOverlap -- produces exact result", {
       b[[wte]] <- list()
       for (j in seq_len(Nreps)) {
         set.seed(sams[j])
-        # dqrng::dqset.seed(sams[j])
         b[[wte]][[j]] <- spread(a, loci = mps, spreadProb = 0.22, id = TRUE,
                               allowOverlap = ao[wte], returnIndices = TRUE)
       }
@@ -201,7 +192,7 @@ test_that("allowOverlap -- produces exact result", {
 
 test_that("spread stopRule does not work correctly", {
 
-  withr::local_package("terra")
+  testInit(c("terra"))
   rastDF <- needTerraAndRaster()
   for (ii in seq(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
@@ -219,7 +210,6 @@ test_that("spread stopRule does not work correctly", {
     #  examples with stopRule, which means that the eventual size is driven by the
     #  values on the raster passed in to the landscape argument
     set.seed(1234)
-    # dqrng::dqset.seed(1234)
     startCells <- as.integer(sample(1:ncell(hab), 10))
     stopRule1 <- function(landscape) sum(landscape) > maxVal
     if (requireNamespace("CircStats", quietly = TRUE)) {
@@ -232,7 +222,6 @@ test_that("spread stopRule does not work correctly", {
 
       # using stopRuleBehavior = "excludePixel"
       set.seed(1234)
-      # dqrng::dqset.seed(1234)
       stopRuleB <- spread(hab, loci = startCells, 1, 0, NULL, maxSize = 1e6, 8, 1e6,
                           id = TRUE, circle = TRUE, stopRule = stopRule1,
                           stopRuleBehavior = "excludePixel")
@@ -268,12 +257,10 @@ test_that("spread stopRule does not work correctly", {
       # Test for stopRuleBehavior
       ####################################
       set.seed(53432)
-      # dqrng::dqset.seed(53432)
 
       stopRule2 <- function(landscape) sum(landscape) > maxVal
       startCells <- as.integer(sample(1:ncell(hab), 2))
       set.seed(53432)
-      # dqrng::dqset.seed(53432)
 
       circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
                       id = TRUE, stopRule = stopRule2, stopRuleBehavior = "includeRing")
@@ -282,7 +269,6 @@ test_that("spread stopRule does not work correctly", {
       expect_true(all(vals >= maxVal))
 
       set.seed(53432)
-      # dqrng::dqset.seed(53432)
 
       circs2 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
                        id = TRUE, stopRule = stopRule2, stopRuleBehavior = "excludeRing")
@@ -291,7 +277,6 @@ test_that("spread stopRule does not work correctly", {
       expect_true(all(vals <= maxVal))
 
       set.seed(53432)
-      # dqrng::dqset.seed(53432)
 
       circs3 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
                        id = TRUE, stopRule = stopRule2, stopRuleBehavior = "includePixel")
@@ -300,7 +285,6 @@ test_that("spread stopRule does not work correctly", {
       expect_true(all(vals <= (maxVal + reproducible::maxFn(hab))))
 
       set.seed(53432)
-      # dqrng::dqset.seed(53432)
 
       circs4 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
                        id = TRUE, stopRule = stopRule2, stopRuleBehavior = "excludePixel")
@@ -320,7 +304,6 @@ test_that("spread stopRule does not work correctly", {
       ####################################
 
       set.seed(53432)
-      # dqrng::dqset.seed(53432)
 
       stopRule2 <- function(landscape) sum(landscape) > maxVal
       startCells <- as.integer(sample(1:ncell(hab), 1))
@@ -335,11 +318,9 @@ test_that("spread stopRule does not work correctly", {
 
       # Test for circles using maxDist
       set.seed(543345)
-      # dqrng::dqset.seed(53432)
 
       numCircs <- 4
       set.seed(53432)
-      # dqrng::dqset.seed(53432)
 
       stopRule2 <- function(landscape) sum(landscape) > maxVal
       startCells <- as.integer(sample(1:ncell(hab), numCircs))
@@ -483,8 +464,7 @@ test_that("spread stopRule does not work correctly", {
 
 test_that("asymmetry doesn't work properly", {
 
-  withr::local_package("terra")
-  # withr::local_package("CircStats")
+  testInit(c("terra"))
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -498,7 +478,6 @@ test_that("asymmetry doesn't work properly", {
     maxRadius <- 25
     maxVal <- 50
     set.seed(53432)
-    # dqrng::dqset.seed(53432)
 
     stopRule2 <- function(landscape) sum(landscape) > maxVal
     startCells <- as.integer(sample(1:ncell(hab), 1))
@@ -516,7 +495,6 @@ test_that("asymmetry doesn't work properly", {
       # if (interactive()) clearPlot()
       seed <- sample(1e6, 1)
       set.seed(seed)
-      # dqrng::dqset.seed(seed)
 
       for (asymAng in (2:n)) {
         circs <- spread(hab, spreadProb = 0.25, loci = ncell(hab) / 2 - ncol(hab) / 2,
@@ -560,7 +538,7 @@ test_that("asymmetry doesn't work properly", {
 
 test_that("rings and cir", {
   # Only terra -- # TODO can be changed when somebody has time -- need to do polygons/vect
-  withr::local_package("terra")
+  testInit(c("terra"))
   rastDF <- needTerraAndRaster()
   for (ii in seq(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
@@ -568,7 +546,6 @@ test_that("rings and cir", {
     pkg <- rastDF$read[ii]
     read <- eval(parse(text = rastDF$read[ii]))
 
-  # withr::local_package("terra")
 
     hab <- rast(system.file("extdata", "hab.tif", package = "SpaDES.tools"))#
     terra::crs(hab) <- "epsg:23028"
@@ -695,7 +672,7 @@ test_that("rings and cir", {
 
 test_that("distanceFromPoints does not work correctly", {
   # Only terra -- # TODO can be changed when somebody has time -- need to do polygons/vect
-  withr::local_package("terra")
+  testInit(c("terra"))
 
   hab <- terra::rast(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
   names(hab) <- "hab"
@@ -740,8 +717,7 @@ test_that("distanceFromPoints does not work correctly", {
 
 test_that("simple cir does not work correctly", {
   set.seed(1234)
-  # dqrng::dqset.seed(1234)
-  withr::local_package("terra")
+  testInit(c("terra"))
   rastDF <- needTerraAndRaster()
 
   hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1)
@@ -814,7 +790,7 @@ test_that("simple cir does not work correctly", {
 })
 
 test_that("wrap does not work correctly", {
-  withr::local_package("terra")
+  testInit(c("terra"))
 
   xrange <- yrange <- c(-50, 50)
   hab <- rast(ext(c(xrange, yrange)))
@@ -856,13 +832,7 @@ test_that("wrap does not work correctly", {
 })
 
 test_that("cir angles arg doesn't work", {
-  library(fpCompare)
-  library(terra)
-
-  on.exit({
-    detach("package:terra")
-    detach("package:fpCompare")
-  }, add = TRUE)
+  testInit(c("terra", "fpCompare"))
 
   ras <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
   ras[] <- 0
@@ -881,15 +851,9 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
   # Only raster -- beginCluster is a mechanism only in raster AFAIK (Eliot)
   skip_on_cran()
   skip_on_ci()
-  skip_if_not_installed("snow")
-  skip_if_not_installed("raster")
 
   if (interactive()) {
-
-    withr::local_package("DEoptim")
-    withr::local_package("raster")
-    library(parallel)
-    # withr::local_package("parallel")
+    testInit(c("raster", "snow", "parallel", "DEoptim"))
 
     hab <- randomPolygons(terra::rast(terra::ext(0, 1e2, 0, 1e2)), res = 1)
 
@@ -928,9 +892,9 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
 })
 
 test_that("spreadProb with relative values does not work correctly", {
+  testInit(c("terra"))
   rastDF <- needTerraAndRaster()
 
-  withr::local_package("terra")
   rastDF <- needTerraAndRaster()
   ext1 <- terra::ext(0, 1e2, 0, 1e2)
   extRas <- terra::rast(ext1, res = 1)
@@ -940,13 +904,9 @@ test_that("spreadProb with relative values does not work correctly", {
     pkg <- rastDF$read[ii]
     read <- eval(parse(text = rastDF$read[ii]))
 
-  # for (ii in seq(NROW(rastDF))) {
-  #   type <- rastDF$pkg[ii]
-  #   read <- rastDF$read[ii]
 
     seed <- 64350
     set.seed(seed)
-    # dqrng::dqset.seed(seed)
     emptyRas <- read(extRas)
     hab <- randomPolygons(emptyRas, numTypes = 40)
     names(hab) <- "hab"
@@ -954,14 +914,12 @@ test_that("spreadProb with relative values does not work correctly", {
     hab3 <- (hab > 20) * 200 + 1
     sam <- sample(which(hab3[] == 1), 1)
     set.seed(seed)
-    # dqrng::dqset.seed(seed)
 
     events1 <- spread(hab3, spreadProb = hab3, loci = sam, directions = 8,
                       neighProbs = c(0, 1), maxSize = c(100), exactSizes = TRUE)
 
     # Compare to absolute probability version
     set.seed(seed)
-    # dqrng::dqset.seed(seed)
 
     events2 <- spread(hab3, id = TRUE, loci = sam, directions = 8,
                       neighProbs = c(0, 1), maxSize = c(100), exactSizes = TRUE)
@@ -980,12 +938,10 @@ test_that("spreadProb with relative values does not work correctly", {
     ras <- read(hab3)
     ras[] <- sps
     set.seed(seed)
-    # dqrng::dqset.seed(seed)
 
     out1 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = ras)
     expect_s4_class(out1, rastDF$class[ii])
     set.seed(seed)
-    # dqrng::dqset.seed(seed)
 
     out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps)
     expect_s4_class(out2, rastDF$class[ii])
