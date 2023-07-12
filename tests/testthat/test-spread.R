@@ -215,244 +215,244 @@ test_that("spread stopRule does not work correctly", {
     stopRuleA <- spread(hab, loci = startCells, spreadProb = 1, persistence = 0,
                         mask = NULL, maxSize = 1e6, directions = 8,
                         iterations = 1e6, id = TRUE,
-                          circle = TRUE, stopRule = stopRule1)
-      foo <- cbind(vals = as.numeric(hab[stopRuleA > 0]), id = as.numeric(stopRuleA[stopRuleA > 0]))
-      expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) > maxVal))
+                        circle = TRUE, stopRule = stopRule1)
+    foo <- cbind(vals = as.numeric(hab[stopRuleA > 0]), id = as.numeric(stopRuleA[stopRuleA > 0]))
+    expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) > maxVal))
 
-      # using stopRuleBehavior = "excludePixel"
-      set.seed(1234)
-      stopRuleB <- spread(hab, loci = startCells, 1, 0, NULL, maxSize = 1e6, 8, 1e6,
-                          id = TRUE, circle = TRUE, stopRule = stopRule1,
-                          stopRuleBehavior = "excludePixel")
-      foo <- cbind(vals = as.numeric(hab[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
-      expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) <= maxVal))
+    # using stopRuleBehavior = "excludePixel"
+    set.seed(1234)
+    stopRuleB <- spread(hab, loci = startCells, 1, 0, NULL, maxSize = 1e6, 8, 1e6,
+                        id = TRUE, circle = TRUE, stopRule = stopRule1,
+                        stopRuleBehavior = "excludePixel")
+    foo <- cbind(vals = as.numeric(hab[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
+    expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) <= maxVal))
 
-      # If boolean, then it is exact
-      stopRuleB <- spread(hab2, loci = startCells, 1, 0, NULL, maxSize = 1e6, 8, 1e6,
-                          id = TRUE, circle = TRUE, stopRule = stopRule1,
-                          stopRuleBehavior = "excludePixel")
-      foo <- cbind(vals = as.numeric(hab2[stopRuleB]), id = as.numeric(stopRuleB[stopRuleB > 0]))
-      expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == maxVal))
+    # If boolean, then it is exact
+    stopRuleB <- spread(hab2, loci = startCells, 1, 0, NULL, maxSize = 1e6, 8, 1e6,
+                        id = TRUE, circle = TRUE, stopRule = stopRule1,
+                        stopRuleBehavior = "excludePixel")
+    foo <- cbind(vals = as.numeric(hab2[stopRuleB]), id = as.numeric(stopRuleB[stopRuleB > 0]))
+    expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == maxVal))
 
-      # Test vector maxSize and stopRule when they interfere
-      maxSizes <- sample(maxVal * 2, length(startCells))
-      stopRuleB <- spread(hab2, loci = startCells, 1, 0, NULL, maxSize = maxSizes,
-                          8, 1e6, id = TRUE, circle = TRUE, stopRule = stopRule1,
-                          stopRuleBehavior = "excludePixel")
-      if (interactive()) terra::plot(stopRuleB, new = TRUE)
-      foo <- cbind(vals = as.numeric(hab2[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
-      expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == pmin(maxSizes, maxVal)))
+    # Test vector maxSize and stopRule when they interfere
+    maxSizes <- sample(maxVal * 2, length(startCells))
+    stopRuleB <- spread(hab2, loci = startCells, 1, 0, NULL, maxSize = maxSizes,
+                        8, 1e6, id = TRUE, circle = TRUE, stopRule = stopRule1,
+                        stopRuleBehavior = "excludePixel")
+    if (interactive()) terra::plot(stopRuleB, new = TRUE)
+    foo <- cbind(vals = as.numeric(hab2[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
+    expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == pmin(maxSizes, maxVal)))
 
-      # Test non integer maxSize and stopRule when they interfere
-      maxSizes <- runif(length(startCells), 1, maxVal * 2)
-      stopRuleB <- spread(hab2, loci = startCells, 1, 0, NULL, maxSize = maxSizes, 8,
-                          1e6, id = TRUE, circle = TRUE, stopRule = stopRule1,
-                          stopRuleBehavior = "excludePixel")
-      if (interactive()) terra::plot(stopRuleB, new = TRUE)
-      foo <- cbind(vals = as.numeric(hab2[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
-      expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == pmin(floor(maxSizes), maxVal)))
+    # Test non integer maxSize and stopRule when they interfere
+    maxSizes <- runif(length(startCells), 1, maxVal * 2)
+    stopRuleB <- spread(hab2, loci = startCells, 1, 0, NULL, maxSize = maxSizes, 8,
+                        1e6, id = TRUE, circle = TRUE, stopRule = stopRule1,
+                        stopRuleBehavior = "excludePixel")
+    if (interactive()) terra::plot(stopRuleB, new = TRUE)
+    foo <- cbind(vals = as.numeric(hab2[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
+    expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == pmin(floor(maxSizes), maxVal)))
 
-      ####################################
-      # Test for stopRuleBehavior
-      ####################################
-      set.seed(53432)
+    ####################################
+    # Test for stopRuleBehavior
+    ####################################
+    set.seed(53432)
 
-      stopRule2 <- function(landscape) sum(landscape) > maxVal
-      startCells <- as.integer(sample(1:ncell(hab), 2))
-      set.seed(53432)
+    stopRule2 <- function(landscape) sum(landscape) > maxVal
+    startCells <- as.integer(sample(1:ncell(hab), 2))
+    set.seed(53432)
 
-      circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
-                      id = TRUE, stopRule = stopRule2, stopRuleBehavior = "includeRing")
-      cirs <- as.numeric(terra::values(circs))
-      vals <- tapply(hab[circs > 0], cirs[cirs > 0], sum)
-      expect_true(all(vals >= maxVal))
+    circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
+                    id = TRUE, stopRule = stopRule2, stopRuleBehavior = "includeRing")
+    cirs <- as.numeric(terra::values(circs))
+    vals <- tapply(hab[circs > 0], cirs[cirs > 0], sum)
+    expect_true(all(vals >= maxVal))
 
-      set.seed(53432)
+    set.seed(53432)
 
-      circs2 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
-                       id = TRUE, stopRule = stopRule2, stopRuleBehavior = "excludeRing")
-      cirs <- as.numeric(terra::values(circs2))
-      vals <- tapply(hab[circs2 > 0], cirs[cirs > 0], sum)
-      expect_true(all(vals <= maxVal))
+    circs2 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
+                     id = TRUE, stopRule = stopRule2, stopRuleBehavior = "excludeRing")
+    cirs <- as.numeric(terra::values(circs2))
+    vals <- tapply(hab[circs2 > 0], cirs[cirs > 0], sum)
+    expect_true(all(vals <= maxVal))
 
-      set.seed(53432)
+    set.seed(53432)
 
-      circs3 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
-                       id = TRUE, stopRule = stopRule2, stopRuleBehavior = "includePixel")
-      cirs <- as.numeric(terra::values(circs3))
-      vals <- tapply(hab[circs3 > 0], cirs[cirs > 0], sum)
-      expect_true(all(vals <= (maxVal + reproducible::maxFn(hab))))
+    circs3 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
+                     id = TRUE, stopRule = stopRule2, stopRuleBehavior = "includePixel")
+    cirs <- as.numeric(terra::values(circs3))
+    vals <- tapply(hab[circs3 > 0], cirs[cirs > 0], sum)
+    expect_true(all(vals <= (maxVal + reproducible::maxFn(hab))))
 
-      set.seed(53432)
+    set.seed(53432)
 
-      circs4 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
-                       id = TRUE, stopRule = stopRule2, stopRuleBehavior = "excludePixel")
-      cirs <- as.numeric(terra::values(circs4))
-      vals <- tapply(hab[circs4 > 0], cirs[cirs > 0], sum)
-      expect_true(all(vals >= (maxVal - reproducible::maxFn(hab))))
+    circs4 <- spread(hab, spreadProb = 1, circle = TRUE, loci = startCells,
+                     id = TRUE, stopRule = stopRule2, stopRuleBehavior = "excludePixel")
+    cirs <- as.numeric(terra::values(circs4))
+    vals <- tapply(hab[circs4 > 0], cirs[cirs > 0], sum)
+    expect_true(all(vals >= (maxVal - reproducible::maxFn(hab))))
 
-      # There should be 1 extra cell
-      expect_true(sum(as.numeric(terra::values(circs4)) > 0) + length(startCells) == sum(as.numeric(terra::values(circs3)) > 0))
-      # Order should be includeRing, includePixel, excludePixel, excludeRing
-      expect_true(sum(as.numeric(terra::values(circs)) > 0) > sum(as.numeric(terra::values(circs3)) > 0))
-      expect_true(sum(as.numeric(terra::values(circs3)) > 0) > sum(as.numeric(terra::values(circs4)) > 0))
-      expect_true(sum(as.numeric(terra::values(circs4)) > 0) > sum(as.numeric(terra::values(circs2)) > 0))
+    # There should be 1 extra cell
+    expect_true(sum(as.numeric(terra::values(circs4)) > 0) + length(startCells) == sum(as.numeric(terra::values(circs3)) > 0))
+    # Order should be includeRing, includePixel, excludePixel, excludeRing
+    expect_true(sum(as.numeric(terra::values(circs)) > 0) > sum(as.numeric(terra::values(circs3)) > 0))
+    expect_true(sum(as.numeric(terra::values(circs3)) > 0) > sum(as.numeric(terra::values(circs4)) > 0))
+    expect_true(sum(as.numeric(terra::values(circs4)) > 0) > sum(as.numeric(terra::values(circs2)) > 0))
 
-      ####################################
-      # Test for circles using maxDist
-      ####################################
+    ####################################
+    # Test for circles using maxDist
+    ####################################
 
-      set.seed(53432)
+    set.seed(53432)
 
-      stopRule2 <- function(landscape) sum(landscape) > maxVal
-      startCells <- as.integer(sample(1:ncell(hab), 1))
+    stopRule2 <- function(landscape) sum(landscape) > maxVal
+    startCells <- as.integer(sample(1:ncell(hab), 1))
 
-      circs <- spread(hab2, spreadProb = 1, circle = TRUE, loci = startCells,
-                      id = TRUE, circleMaxRadius = maxRadius)
-      cells <- which(as.numeric(terra::values(circs)) == 1)
-      centre <- terra::xyFromCell(hab2, startCells)
-      allCells <- terra::xyFromCell(hab2, cells)
-      pd <- as.numeric(terra::distance(centre, allCells, lonlat = FALSE))
-      expect_true(maxRadius == max(pd))
+    circs <- spread(hab2, spreadProb = 1, circle = TRUE, loci = startCells,
+                    id = TRUE, circleMaxRadius = maxRadius)
+    cells <- which(as.numeric(terra::values(circs)) == 1)
+    centre <- terra::xyFromCell(hab2, startCells)
+    allCells <- terra::xyFromCell(hab2, cells)
+    pd <- as.numeric(terra::distance(centre, allCells, lonlat = FALSE))
+    expect_true(maxRadius == max(pd))
 
-      # Test for circles using maxDist
-      set.seed(543345)
+    # Test for circles using maxDist
+    set.seed(543345)
 
-      numCircs <- 4
-      set.seed(53432)
+    numCircs <- 4
+    set.seed(53432)
 
-      stopRule2 <- function(landscape) sum(landscape) > maxVal
-      startCells <- as.integer(sample(1:ncell(hab), numCircs))
+    stopRule2 <- function(landscape) sum(landscape) > maxVal
+    startCells <- as.integer(sample(1:ncell(hab), numCircs))
 
-      circs <- spread(hab2, spreadProb = 1, circle = TRUE,
-                      loci = startCells,
-                      id = TRUE, circleMaxRadius = maxRadius)
-      if (interactive()) terra::plot(circs, new = TRUE)
+    circs <- spread(hab2, spreadProb = 1, circle = TRUE,
+                    loci = startCells,
+                    id = TRUE, circleMaxRadius = maxRadius)
+    if (interactive()) terra::plot(circs, new = TRUE)
 
-      for (whCirc in 1:numCircs) {
-        cells <- which(as.numeric(terra::values(circs)) == whCirc)
-        centre <- xyFromCell(hab2, startCells)
-        allCells <- xyFromCell(hab2, cells)
-        pd <- as.numeric(terra::distance(centre[whCirc, , drop = FALSE], allCells, lonlat = FALSE))
-        circEdge <- circs
-        circEdge[] <- 0
-        circEdge[cells[pd == maxRadius]] <- 1
-        expect_true(all(circs[cells[pd == maxRadius]] == whCirc))
-        if (!is.null(circs[as.vector(adj(hab2, cells[pd == maxRadius], pairs = FALSE))])) {
-          # Test that there are both 0 and whCirc values, i.e,. it is on an edge
-          expect_true(all(c(0, whCirc) %in%
-                            as.numeric(terra::values(circs)[as.vector(adj(hab2, cells[pd == maxRadius], pairs = FALSE))])))
-        }
-        if (interactive()) {
-          circEdge[circEdge == 0] <- NA
-          terra::plot(circEdge, add = TRUE, col = rainbow(numCircs)[whCirc])
-          # Plot(circEdge, add = TRUE) # addTo = "circs",
-          # cols = c("transparent", rainbow(numCircs)[whCirc]))
-        }
+    for (whCirc in 1:numCircs) {
+      cells <- which(as.numeric(terra::values(circs)) == whCirc)
+      centre <- xyFromCell(hab2, startCells)
+      allCells <- xyFromCell(hab2, cells)
+      pd <- as.numeric(terra::distance(centre[whCirc, , drop = FALSE], allCells, lonlat = FALSE))
+      circEdge <- circs
+      circEdge[] <- 0
+      circEdge[cells[pd == maxRadius]] <- 1
+      expect_true(all(circs[cells[pd == maxRadius]] == whCirc))
+      if (!is.null(circs[as.vector(adj(hab2, cells[pd == maxRadius], pairs = FALSE))])) {
+        # Test that there are both 0 and whCirc values, i.e,. it is on an edge
+        expect_true(all(c(0, whCirc) %in%
+                          as.numeric(terra::values(circs)[as.vector(adj(hab2, cells[pd == maxRadius], pairs = FALSE))])))
       }
-
-      # Test complex functions
-      initialLoci <- (ncell(hab) - ncol(hab)) / 2 + c(4, -4)
-      endSizes <- seq_along(initialLoci) * 200
-      stopRule3 <- function(landscape, id, endSizes) sum(landscape) > endSizes[id]
-
-      twoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
-                                   directions = 8, id = TRUE, stopRule = stopRule3,
-                                   endSizes = endSizes, stopRuleBehavior = "excludePixel")
-      if (interactive()) terra::plot(twoCirclesDiffSize, new = TRUE)
-      cirs <- as.numeric(terra::values(twoCirclesDiffSize))
-      vals <- tapply(hab[twoCirclesDiffSize > 0], cirs[cirs > 0], sum)
-      expect_true(all(vals < endSizes))
-
-      # Test allowOverlap
-      initialLoci <- as.integer(sample(1:ncell(hab), 10))
-
-      #expect_error({
-      circs <- spread(hab2, spreadProb = 1, circle = TRUE, loci = initialLoci,
-                      id = TRUE, circleMaxRadius = maxRadius, allowOverlap = TRUE)
-      #}) ## TODO: fix error when allowOverlap = TRUE
-
-      #expect_error({
-      circs <- spread(hab2, spreadProb = 1, loci = initialLoci,
-                      maxSize = 10, allowOverlap = TRUE)
-      #}) ## TODO: fix error when allowOverlap = TRUE
-
-      #expect_error({
-      circs <- spread(hab2, spreadProb = 1, loci = initialLoci,
-                      maxSize = seq_along(initialLoci) * 3, allowOverlap = TRUE)
-      #}) ## TODO: fix error when allowOverlap = TRUE
-
-      # Test allowOverlap and stopRule
-      for (iti in 1:6) {
-        maxVal <- sample(10:300, 1)
-        stopRule2 <- function(landscape, maxVal) sum(landscape) > maxVal
-
-        #expect_error({
-        circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
-                        stopRule = stopRule2, maxVal = maxVal, returnIndices = TRUE,
-                        id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "includeRing")
-        # }) ## TODO: fix error when allowOverlap = TRUE
-
-        #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOverlap error
-        #expect_true(all(vals > maxVal)) ## TODO: fix allowOverlap error
+      if (interactive()) {
+        circEdge[circEdge == 0] <- NA
+        terra::plot(circEdge, add = TRUE, col = rainbow(numCircs)[whCirc])
+        # Plot(circEdge, add = TRUE) # addTo = "circs",
+        # cols = c("transparent", rainbow(numCircs)[whCirc]))
       }
+    }
 
-      #stopRuleBehavior the allowOverlap
-      maxVal <- 20
+    # Test complex functions
+    initialLoci <- (ncell(hab) - ncol(hab)) / 2 + c(4, -4)
+    endSizes <- seq_along(initialLoci) * 200
+    stopRule3 <- function(landscape, id, endSizes) sum(landscape) > endSizes[id]
+
+    twoCirclesDiffSize <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
+                                 directions = 8, id = TRUE, stopRule = stopRule3,
+                                 endSizes = endSizes, stopRuleBehavior = "excludePixel")
+    if (interactive()) terra::plot(twoCirclesDiffSize, new = TRUE)
+    cirs <- as.numeric(terra::values(twoCirclesDiffSize))
+    vals <- tapply(hab[twoCirclesDiffSize > 0], cirs[cirs > 0], sum)
+    expect_true(all(vals < endSizes))
+
+    # Test allowOverlap
+    initialLoci <- as.integer(sample(1:ncell(hab), 10))
+
+    #expect_error({
+    circs <- spread(hab2, spreadProb = 1, circle = TRUE, loci = initialLoci,
+                    id = TRUE, circleMaxRadius = maxRadius, allowOverlap = TRUE)
+    #}) ## TODO: fix error when allowOverlap = TRUE
+
+    #expect_error({
+    circs <- spread(hab2, spreadProb = 1, loci = initialLoci,
+                    maxSize = 10, allowOverlap = TRUE)
+    #}) ## TODO: fix error when allowOverlap = TRUE
+
+    #expect_error({
+    circs <- spread(hab2, spreadProb = 1, loci = initialLoci,
+                    maxSize = seq_along(initialLoci) * 3, allowOverlap = TRUE)
+    #}) ## TODO: fix error when allowOverlap = TRUE
+
+    # Test allowOverlap and stopRule
+    for (iti in 1:6) {
+      maxVal <- sample(10:300, 1)
       stopRule2 <- function(landscape, maxVal) sum(landscape) > maxVal
+
       #expect_error({
       circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
                       stopRule = stopRule2, maxVal = maxVal, returnIndices = TRUE,
-                      id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "excludePixel")
-      #}) ## TODO: fix error when allowOverlap = TRUE
-      #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOwerlap error
-      #expect_true(all(vals <= maxVal)) ## TODO: fix allowOverlap error
+                      id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "includeRing")
+      # }) ## TODO: fix error when allowOverlap = TRUE
 
-      maxVal <- sample(10:100, 10)
-      stopRule2 <- function(landscape, id, maxVal) sum(landscape) > maxVal[id]
-      #expect_error({
-      circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
-                      stopRule = stopRule2, id = TRUE, allowOverlap = TRUE,
-                      stopRuleBehavior = "excludePixel", maxVal = maxVal,
-                      returnIndices = TRUE)
-      #}) ## TODO: fix error when allowOverlap = TRUE
       #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOverlap error
-      #expect_true(all(vals <= maxVal)) ## TODO: fix allowOverlap error
-      # Test that maxSize can be a non integer value (i.e, Real)
+      #expect_true(all(vals > maxVal)) ## TODO: fix allowOverlap error
+    }
 
-      # Test arbitrary raster as part of stopRule
-      # Stop if sum of landscape is big or mean of quality is too small
-      for (itj in 1:6) {
-        initialLoci <- as.integer(sample(1:ncell(hab), 10))
-        quality <- read(hab)
-        quality[] <- runif(ncell(quality), 0, 1)
-        sumLandscapeRule <- 100
-        meanHabitatRule <- 0.4
-        stopRule4 <- function(landscape, quality, cells, sumLandscapeRule, meanHabitatRule) {
-          (sum(landscape) > sumLandscapeRule) | (mean(terra::values(quality)[cells]) < meanHabitatRule)
-        }
+    #stopRuleBehavior the allowOverlap
+    maxVal <- 20
+    stopRule2 <- function(landscape, maxVal) sum(landscape) > maxVal
+    #expect_error({
+    circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
+                    stopRule = stopRule2, maxVal = maxVal, returnIndices = TRUE,
+                    id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "excludePixel")
+    #}) ## TODO: fix error when allowOverlap = TRUE
+    #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOwerlap error
+    #expect_true(all(vals <= maxVal)) ## TODO: fix allowOverlap error
 
-        circs <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
-                        directions = 8, id = TRUE, stopRule = stopRule4, quality = quality,
-                        sumLandscapeRule = sumLandscapeRule, meanHabitatRule = meanHabitatRule,
-                        stopRuleBehavior = "includePixel", returnIndices = TRUE)
+    maxVal <- sample(10:100, 10)
+    stopRule2 <- function(landscape, id, maxVal) sum(landscape) > maxVal[id]
+    #expect_error({
+    circs <- spread(hab, spreadProb = 1, circle = TRUE, loci = initialLoci,
+                    stopRule = stopRule2, id = TRUE, allowOverlap = TRUE,
+                    stopRuleBehavior = "excludePixel", maxVal = maxVal,
+                    returnIndices = TRUE)
+    #}) ## TODO: fix error when allowOverlap = TRUE
+    #vals <- tapply(hab[circs$indices], circs$id, sum) ## TODO: fix allowOverlap error
+    #expect_true(all(vals <= maxVal)) ## TODO: fix allowOverlap error
+    # Test that maxSize can be a non integer value (i.e, Real)
 
-        ras <- read(quality)
-        ras[] <- 0
-        circsVals <- circs[, numEvents := sum(unique(id)), by = indices]
-        ras[circsVals$indices] <- circsVals$numEvents
-        a1 <- cbind(quality = as.numeric(quality[ras > 0]),
-                    hab = as.numeric(hab[ras > 0]),
-                    id = as.numeric(ras[ras > 0]))
-        a2 <- tapply(a1[, "hab"], a1[, "id"], sum)
-        a3 <- tapply(a1[, "quality"], a1[, "id"], mean)
-        wh <- which(a3 < meanHabitatRule)
-        a4 <- tapply(a1[, "quality"], a1[, "id"], length)
-        expect_true(all(a2[wh] < sumLandscapeRule))
-        expect_true(all(a2[-wh] >= sumLandscapeRule))
-        expect_true(all(a3[-wh] >= meanHabitatRule))
-        expect_true(all(a3[wh] < meanHabitatRule))
-        if (interactive()) {
+    # Test arbitrary raster as part of stopRule
+    # Stop if sum of landscape is big or mean of quality is too small
+    for (itj in 1:6) {
+      initialLoci <- as.integer(sample(1:ncell(hab), 10))
+      quality <- read(hab)
+      quality[] <- runif(ncell(quality), 0, 1)
+      sumLandscapeRule <- 100
+      meanHabitatRule <- 0.4
+      stopRule4 <- function(landscape, quality, cells, sumLandscapeRule, meanHabitatRule) {
+        (sum(landscape) > sumLandscapeRule) | (mean(terra::values(quality)[cells]) < meanHabitatRule)
+      }
+
+      circs <- spread(hab, spreadProb = 1, loci = initialLoci, circle = TRUE,
+                      directions = 8, id = TRUE, stopRule = stopRule4, quality = quality,
+                      sumLandscapeRule = sumLandscapeRule, meanHabitatRule = meanHabitatRule,
+                      stopRuleBehavior = "includePixel", returnIndices = TRUE)
+
+      ras <- read(quality)
+      ras[] <- 0
+      circsVals <- circs[, numEvents := sum(unique(id)), by = indices]
+      ras[circsVals$indices] <- circsVals$numEvents
+      a1 <- cbind(quality = as.numeric(quality[ras > 0]),
+                  hab = as.numeric(hab[ras > 0]),
+                  id = as.numeric(ras[ras > 0]))
+      a2 <- tapply(a1[, "hab"], a1[, "id"], sum)
+      a3 <- tapply(a1[, "quality"], a1[, "id"], mean)
+      wh <- which(a3 < meanHabitatRule)
+      a4 <- tapply(a1[, "quality"], a1[, "id"], length)
+      expect_true(all(a2[wh] < sumLandscapeRule))
+      expect_true(all(a2[-wh] >= sumLandscapeRule))
+      expect_true(all(a3[-wh] >= meanHabitatRule))
+      expect_true(all(a3[wh] < meanHabitatRule))
+      if (interactive()) {
         terra::plot(ras)
       }
     }
@@ -491,33 +491,33 @@ test_that("asymmetry doesn't work properly", {
     }
 
     # if (interactive()) clearPlot()
-      seed <- sample(1e6, 1)
-      set.seed(seed)
+    seed <- sample(1e6, 1)
+    set.seed(seed)
 
-      for (asymAng in (2:n)) {
-        circs <- spread(hab, spreadProb = 0.25, loci = ncell(hab) / 2 - ncol(hab) / 2,
-                        id = TRUE, returnIndices = TRUE,
-                        asymmetry = 40, asymmetryAngle = asymAng * 20)
-        ci <- read(hab)
-        ci[] <- 0
-        ci[circs$indices] <- circs$id
-        ciCentre <- read(ci)
-        ciCentre[] <- 0
-        ciCentre[unique(circs$initialLocus)] <- 1
-        newName <- paste0("ci", asymAng * 20)
-        assign(newName, ci)
+    for (asymAng in (2:n)) {
+      circs <- spread(hab, spreadProb = 0.25, loci = ncell(hab) / 2 - ncol(hab) / 2,
+                      id = TRUE, returnIndices = TRUE,
+                      asymmetry = 40, asymmetryAngle = asymAng * 20)
+      ci <- read(hab)
+      ci[] <- 0
+      ci[circs$indices] <- circs$id
+      ciCentre <- read(ci)
+      ciCentre[] <- 0
+      ciCentre[unique(circs$initialLocus)] <- 1
+      newName <- paste0("ci", asymAng * 20)
+      assign(newName, ci)
 
-        where2 <- function(name, env = parent.frame()) {
-          # simplified from pryr::where
-          if (exists(name, env, inherits = FALSE)) env else where2(name, parent.env(env))
-        }
-        env <- where2(newName)
-        if (interactive()) {
-          obj <- get(newName, envir = env)
-          terra::plot(obj)
-          ciCentre[ciCentre == 0] <- NA
-          terra::plot(ciCentre, add = TRUE, col = "black", legend = FALSE)
-        }
+      where2 <- function(name, env = parent.frame()) {
+        # simplified from pryr::where
+        if (exists(name, env, inherits = FALSE)) env else where2(name, parent.env(env))
+      }
+      env <- where2(newName)
+      if (interactive()) {
+        obj <- get(newName, envir = env)
+        terra::plot(obj)
+        ciCentre[ciCentre == 0] <- NA
+        terra::plot(ciCentre, add = TRUE, col = "black", legend = FALSE)
+      }
       a <- cbind(id = circs$id, to = circs$indices, xyFromCell(hab, circs$indices))
       initialLociXY <- cbind(id = unique(circs$id), xyFromCell(hab, unique(circs$initialLocus)))
       dirs <- directionFromEachPoint(from = initialLociXY, to = a)
@@ -828,6 +828,7 @@ test_that("cir angles arg doesn't work", {
   ras <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
   ras[] <- 0
   n <- 2
+  set.seed(321)
   coords <- cbind(x = stats::runif(n, terra::xmin(ras), terra::xmax(ras)),
                   y = stats::runif(n, terra::xmin(ras), terra::xmax(ras)))
   angles <- seq(0, 2 * pi, length.out = 21)[-21]

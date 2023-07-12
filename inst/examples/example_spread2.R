@@ -123,7 +123,8 @@ circs <- spread2(a, spreadProb = 0.213, start = sams,
                       control =
                         DEoptim.control(
                           cluster = cl, NP = 10, VTR = 0.02,
-                          itermax = 20, # imposing this simply for example
+                          # imposing itermax simply for example; should let go to completion
+                          itermax = 5,
                           initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
                       ras = ras, goalSize = goalSize)
 
