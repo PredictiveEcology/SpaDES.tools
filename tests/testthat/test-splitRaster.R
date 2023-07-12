@@ -12,6 +12,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
     extFun <- eval(parse(text = rastDF$ext[ii]))
+    readStk <- eval(parse(text = rastDF$stack[ii]))
 
     testFile <- system.file(rastDF$testFile[ii], package = pkg)
 
@@ -59,21 +60,16 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     expect_equal(min(values(m0)), min(values(r)))
 
     # as a stack/brick
-    if (requireNamespace("purrr", quietly = TRUE)) {
-      if (pkg == "raster") {
-        ## ensure the raster method for as.list used (instead of base version)
-        asRasterList <- selectMethod("as.list", "Raster")
-        ys0 <- lapply(purrr::transpose(lapply(X = asRasterList(b),
-                                              FUN = splitRaster, nx = nx, ny = ny)),
-                      raster::stack)
-      } else if (pkg == "terra") {
-        ys0 <- lapply(purrr::transpose(lapply(X = as.list(b),
-                                              FUN = splitRaster, nx = nx, ny = ny)),
-                      terra::rast)
-      }
-      ms0 <- mergeRaster(ys0)
-      expect_identical(names(ms0), names(ys0[[1]]))
-    }
+    sr <- splitRaster(b, nx = nx, ny = ny)
+    # if (pkg == "raster") {
+    ## ensure the raster method for as.list used (instead of base version)
+    ys0 <- lapply(sr, readStk)
+    # } else if (pkg == "terra") {
+    #   ys0 <- lapply(sr, terra::rast)
+    # }
+    ms0 <- mergeRaster(ys0)
+    expect_identical(names(ms0), names(ys0[[1]]))
+    #}
 
     # with buffer (integer pixels) and with specified path
     y1 <- splitRaster(r, nx, ny, c(3L, 4L), path = file.path(tmpdir2, "red1"))

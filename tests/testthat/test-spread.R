@@ -147,11 +147,6 @@ test_that("allowOverlap -- produces exact result", {
     }
     bs <- lapply(b, function(x) rbindlist(x, idcol = "rep"))
     expect_true(all.equal(bs[[1]], bs[[2]])) ## TODO: failing
-    # aBigger <- sum(unlist(lapply(purrr::transpose(b), function(x) NROW(x[[1]]) < NROW(x[[2]]))))
-    # bBigger <- sum(unlist(lapply(purrr::transpose(b), function(x) NROW(x[[1]]) > NROW(x[[2]]))))
-    # (comp <- aBigger - bBigger)
-    # out <- abs(comp) < Nreps/20
-    # expect_true(out)
 
     ##################################################
     b <- list()

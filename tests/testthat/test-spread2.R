@@ -574,37 +574,37 @@ test_that("spread2 tests -- asymmetry", {
 
     ####### Calibration curve
     skip("Calibration curves")
-    n <- 500
-    ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
-    sp <- runif(n, 0.15, 0.25)
-    sizes <- integer()
-    for (qwe in 1:n) {
-      circs <- spread2(ras, spreadProb = sp[qwe], start = ncell(ras) / 2 - ncol(ras) / 2,
-                       asRaster = FALSE)
-      sizes[qwe] <- NROW(circs)
-      message(qwe)
-    }
-    dt1 <- data.table(sp, sizes)
-    library(mgcv)
-    aa <- gam(log10(dt1$sizes) ~ s(dt1$sp))
-    aap <- predict(aa, se.fit = FALSE)
-    plot(dt1$sp, log10(dt1$sizes), axes = FALSE, ylab = "Fire Size, ha", xlab = "Spread Probability")
-    axis(2, 0:5, labels = 10 ^ (0:5))
-    axis(1)
-    aapOrd <- order(dt1$sp)
-    lines(dt1$sp[aapOrd], aap[aapOrd], lwd = 2, col = "red")
-    mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
-                          "Red line shows expected size", sep = "\n"))
-
-    aa1 <- gam(dt1$sp ~ s(log10(dt1$sizes)))
-    aap1 <- predict(aa1, se.fit = FALSE, type = "response")
-    plot(log10(dt1$sizes), dt1$sp, axes = FALSE, xlab = "Fire Size, ha", ylab = "Spread Probability")
-    axis(2)
-    axis(1, 0:5, labels = 10 ^ (0:5))
-    aap1Ord <- order(log10(dt1$sizes))
-    lines(log10(dt1$sizes)[aap1Ord], aap1[aap1Ord], lwd = 2, col = "red")
-    mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
-                          "Red line shows expected size", sep = "\n"))
+    # n <- 500
+    # ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
+    # sp <- runif(n, 0.15, 0.25)
+    # sizes <- integer()
+    # for (qwe in 1:n) {
+    #   circs <- spread2(ras, spreadProb = sp[qwe], start = ncell(ras) / 2 - ncol(ras) / 2,
+    #                    asRaster = FALSE)
+    #   sizes[qwe] <- NROW(circs)
+    #   message(qwe)
+    # }
+    # dt1 <- data.table(sp, sizes)
+    # library(mgcv)
+    # aa <- gam(log10(dt1$sizes) ~ s(dt1$sp))
+    # aap <- predict(aa, se.fit = FALSE)
+    # plot(dt1$sp, log10(dt1$sizes), axes = FALSE, ylab = "Fire Size, ha", xlab = "Spread Probability")
+    # axis(2, 0:5, labels = 10 ^ (0:5))
+    # axis(1)
+    # aapOrd <- order(dt1$sp)
+    # lines(dt1$sp[aapOrd], aap[aapOrd], lwd = 2, col = "red")
+    # mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
+    #                       "Red line shows expected size", sep = "\n"))
+    #
+    # aa1 <- gam(dt1$sp ~ s(log10(dt1$sizes)))
+    # aap1 <- predict(aa1, se.fit = FALSE, type = "response")
+    # plot(log10(dt1$sizes), dt1$sp, axes = FALSE, xlab = "Fire Size, ha", ylab = "Spread Probability")
+    # axis(2)
+    # axis(1, 0:5, labels = 10 ^ (0:5))
+    # aap1Ord <- order(log10(dt1$sizes))
+    # lines(log10(dt1$sizes)[aap1Ord], aap1[aap1Ord], lwd = 2, col = "red")
+    # mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
+    #                       "Red line shows expected size", sep = "\n"))
   }
 })
 
