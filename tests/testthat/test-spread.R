@@ -627,6 +627,7 @@ test_that("rings and cir", {
 
     loci <- cellFromXY(hab, terra::crds(caribou))
 
+    set.seed(123) # sometimes seems to be different; set seed to avoid stochastic differences
     dists1 <- rings(hab, loci, minRadius = 0, maxRadius = ncol(hab), returnDistances = TRUE,
                     includeBehavior = "includeRing")
     # dists2 <- distanceFromPoints(hab, terra::crds(caribou))
