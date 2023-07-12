@@ -1,0 +1,13 @@
+requireNamespace("CircStats", quietly = TRUE)
+requireNamespace("NLMR", quietly = TRUE)
+requireNamespace("raster", quietly = TRUE)
+requireNamespace("DEoptim", quietly = TRUE)
+requireNamespace("sf", quietly = TRUE)
+requireNamespace("sp", quietly = TRUE)
+requireNamespace("terra", quietly = TRUE)
+library(data.table)
+origDTthreads <- getDTthreads()
+setDTthreads(2)
+withr::defer({
+  data.table::setDTthreads(origDTthreads)
+}, teardown_env())
