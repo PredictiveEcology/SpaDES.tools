@@ -1,4 +1,6 @@
 library(terra)
+# for this dummy example, use only 1 CPU thread
+origDTThreads <- data.table::setDTthreads(1)
 set.seed(1462)
 
 # circle centred
@@ -78,3 +80,6 @@ coords <- cbind(x = stats::runif(n, xmin(ras), xmax(ras)),
 circ <- cir(ras, coords, angles = seq(0, 2 * pi, length.out = 21),
             maxRadius = 200, minRadius = 0, returnIndices = FALSE,
             allowOverlap = TRUE, returnAngles = TRUE)
+
+# clean up
+data.table::setDTthreads(origDTThreads)
