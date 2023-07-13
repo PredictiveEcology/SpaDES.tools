@@ -6,10 +6,10 @@
 * improved documentation
 * address new features of `quickPlot`
 * minor modifications to `crw` to allow downstream packages that use `matrix` classes instead of `sf` or `SpatVector` classes for "agents"
-* address timing issue
+* address timing issue on CRAN machines
 
 ## Dependency changes
-* removed Suggests dependencies `CircStats`, `dplyr`, `purrr`, `DBI`, `RColorBrewer`, `googledrive`
+* removed Suggests dependencies `CircStats`, `dplyr`, `purrr`, `DBI`, `RColorBrewer`, `googledrive`, `snow`
 
 ## Bug fixes
 * none
