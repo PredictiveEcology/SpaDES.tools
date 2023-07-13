@@ -928,31 +928,28 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
         if (!is.na(allowOverlap) && (any(allowOverlap %in% c(1, 3) ) || isTRUE(allowOverlap))) {
           if (identical(allowOverlap, 1) || isTRUE(allowOverlap)) {
             dt[, `:=`(dups = duplicatedInt(pixels)), by = "initialPixels"]
-          } else {
-            # dt[, dups := {
-            #   successes <- state == "successful"
-            #   c(rep(FALSE, length.out = sum(!successes)),
-            #     pixels[successes] %in% pixels[!successes])
-            # },
-            # by = "initialPixels"]
-
-            # dt5 <- data.table::copy(dt)
-            set(dt, NULL, "successes", dt$state == "successful")
-            dt[, dups := {
-              c(rep(FALSE, length.out = sum(!successes)),
-                pixels[successes] %in% pixels[!successes])
-            },
-            by = "initialPixels"]
-            set(dt, NULL, "successes", NULL)
-            # if (!identical(dt, dt5))
-            #   browser()
-
-
-            #dt[!successes, dups := FALSE]
+            # } else {
+            #   # dt[, dups := {
+            #   #   successes <- state == "successful"
+            #   #   c(rep(FALSE, length.out = sum(!successes)),
+            #   #     pixels[successes] %in% pixels[!successes])
+            #   # },
+            #   # by = "initialPixels"]
+            #
+            #   set(dt, NULL, "successes", dt$state == "successful")
+            #   dt[, dups := {
+            #     c(rep(FALSE, length.out = sum(!successes)),
+            #       pixels[successes] %in% pixels[!successes])
+            #   },
+            #   by = "initialPixels"]
+            #   if (any(dt$dups)) browser()
+            #
+            #   set(dt, NULL, "successes", NULL)
+            # }
+            dupes <- dt$dups
+            set(dt, NULL, "dups", NULL)
+            dt <- dt[!dupes]
           }
-          dupes <- dt$dups
-          set(dt, NULL, "dups", NULL)
-          dt <- dt[!dupes]
         }
 
         ## remove all the duplicated ones from dtPotential
