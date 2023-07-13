@@ -875,7 +875,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
       dfepCluster2 <- distanceFromEachPoint(coords[, xycolNames, drop = FALSE],
                                             landscape = hab, cumulativeFn = `+`)
     })
-    endCluster()
+    raster::endCluster()
     expect_true(all.equal(dfep, dfepCluster2))
   }
 })
