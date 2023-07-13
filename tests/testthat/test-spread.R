@@ -842,7 +842,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
   skip_on_ci()
 
   if (interactive()) {
-    testInit(c("raster", "snow", "parallel", "DEoptim"))
+    testInit(c("raster", "parallel", "DEoptim"))
 
     hab <- randomPolygons(terra::rast(terra::ext(0, 1e2, 0, 1e2)), res = 1)
 
@@ -869,7 +869,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
 
     ## using raster package cluster
     system.time({
-      beginCluster(1)
+      raster::beginCluster(1, type = "PSOCK")
     })
     system.time({
       dfepCluster2 <- distanceFromEachPoint(coords[, xycolNames, drop = FALSE],

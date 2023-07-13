@@ -220,7 +220,7 @@ test_that("splitRaster works in parallel", {
 
   # test parallel cropping
   n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
-  raster::beginCluster(n)
+  raster::beginCluster(n, type = "PSOCK")
   on.exit(raster::endCluster(), add = TRUE)
 
   cl <- raster::getCluster()
