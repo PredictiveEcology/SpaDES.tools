@@ -41,11 +41,6 @@ We provide instructions for installing suggested package `NLMR` from another rep
     The Description field contains
         "https://PredictiveEcology.r-universe.dev"
 
-2. We provide instructions for installing suggested package `NLMR` from another repository:
-
-    The Description field contains
-        "https://PredictiveEcology.r-universe.dev")'.
-    Please enclose URLs in angle brackets (<...>).
 
 ## Downstream dependencies
 
