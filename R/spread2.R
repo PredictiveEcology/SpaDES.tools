@@ -929,12 +929,25 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           if (identical(allowOverlap, 1) || isTRUE(allowOverlap)) {
             dt[, `:=`(dups = duplicatedInt(pixels)), by = "initialPixels"]
           } else {
+            # dt[, dups := {
+            #   successes <- state == "successful"
+            #   c(rep(FALSE, length.out = sum(!successes)),
+            #     pixels[successes] %in% pixels[!successes])
+            # },
+            # by = "initialPixels"]
+
+            # dt5 <- data.table::copy(dt)
+            set(dt, NULL, "successes", dt$state == "successful")
             dt[, dups := {
-              successes <- state == "successful"
               c(rep(FALSE, length.out = sum(!successes)),
                 pixels[successes] %in% pixels[!successes])
             },
             by = "initialPixels"]
+            set(dt, NULL, "successes", NULL)
+            # if (!identical(dt, dt5))
+            #   browser()
+
+
             #dt[!successes, dups := FALSE]
           }
           dupes <- dt$dups
