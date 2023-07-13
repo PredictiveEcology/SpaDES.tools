@@ -621,13 +621,14 @@ test_that("rings and cir", {
     ras2[] <- 0
 
     n <- 2
+    set.seed(1234) # sometimes seems to be different; set seed to avoid stochastic differences
+
     caribou <- terra::vect(cbind(x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
                                  y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5))
     terra::crs(caribou) <- "epsg:23028"
 
     loci <- cellFromXY(hab, terra::crds(caribou))
 
-    set.seed(1234) # sometimes seems to be different; set seed to avoid stochastic differences
     dists1 <- rings(hab, loci, minRadius = 0, maxRadius = ncol(hab), returnDistances = TRUE,
                     includeBehavior = "includeRing")
     # dists2 <- distanceFromPoints(hab, terra::crds(caribou))
