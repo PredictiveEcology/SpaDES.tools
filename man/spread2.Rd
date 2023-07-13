@@ -256,7 +256,7 @@ exactly one of the 8 angles of the 8 neighbours. This means that
 \deqn{max(spreadProb)/min(spreadProb)} will generally be less than
 \code{asymmetry}, for the 8 neighbours. The exact adjustment to the spreadProb
 is calculated with:
-\deqn{angleQuality <- (cos(angles - CircStats::rad(asymmetryAngle))+1)/2}
+\deqn{angleQuality <- (cos(angles - rad2(asymmetryAngle))+1)/2}
 which is multiplied to get an angle-adjusted spreadProb:
 \deqn{spreadProbAdj <- actualSpreadProb * angleQuality}
 which is then rescaled:
@@ -436,12 +436,10 @@ chisq.test(keep, unname(tabulate(sp[out$pixels]$lyr.1, 9)[keep]),
            simulate.p.value = TRUE)
 
 ## Example showing asymmetry
-if (require("CircStats")) {
-  sams <- ncell(a) / 4 - ncol(a) / 4 * 3
-  circs <- spread2(a, spreadProb = 0.213, start = sams,
-                   asymmetry = 2, asymmetryAngle = 135,
-                   asRaster = TRUE)
-}
+sams <- ncell(a) / 4 - ncol(a) / 4 * 3
+circs <- spread2(a, spreadProb = 0.213, start = sams,
+                 asymmetry = 2, asymmetryAngle = 135,
+                 asRaster = TRUE)
 ## ADVANCED: Estimate spreadProb when using asymmetry, such that the expected
 ##   event size is the same as without using asymmetry
 \donttest{
@@ -489,7 +487,8 @@ if (require("CircStats")) {
                       control =
                         DEoptim.control(
                           cluster = cl, NP = 10, VTR = 0.02,
-                          itermax = 20, # imposing this simply for example
+                          # imposing itermax simply for example; should let go to completion
+                          itermax = 5,
                           initialpop = as.matrix(rnorm(10, 0.213, 0.001))),
                       ras = ras, goalSize = goalSize)
 

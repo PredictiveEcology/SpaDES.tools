@@ -22,7 +22,7 @@ until successive estimates are within acc of each other.}
 \item{tol}{same as \code{acc}.}
 }
 \description{
-This is a modified version of \code{CircStats::dwrpnorm()}.
+This is a modified version of \code{dwrpnorm} in the \code{CircStats} package
 to allow for multiple angles at once (i.e., vectorized on \code{theta} and \code{mu}).
 }
 \examples{

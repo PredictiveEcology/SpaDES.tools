@@ -31,10 +31,11 @@ if (interactive()) {
 }
 
 # parallel splitting
-if (require("raster") && require("snow")) {
+if (requireNamespace("raster", quietly = TRUE) &&
+    requireNamespace("parallel")) {
   if (interactive()) {
     n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
-    raster::beginCluster(n)
+    raster::beginCluster(n, type = "PSOCK")
     y3 <- splitRaster(r, nx, ny, c(0.7, 0.7), path = file.path(tmpdir, "y3"))
     raster::endCluster()
     if (interactive()) {

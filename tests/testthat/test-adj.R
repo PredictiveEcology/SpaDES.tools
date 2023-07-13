@@ -1,5 +1,5 @@
 test_that("adj.R results not identical to adjacent", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 
@@ -119,7 +119,7 @@ test_that("adj.R results not identical to adjacent", {
 })
 
 test_that("errors in adj are not correct", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 
@@ -138,7 +138,7 @@ test_that("errors in adj are not correct", {
 
 test_that("adj.R: torus does not work as expected", {
 
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 

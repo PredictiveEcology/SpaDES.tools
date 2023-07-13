@@ -13,7 +13,6 @@ See `NEWS.md` for a full list of changes.
 * Ubuntu 20.04                 (GitHub), R 4.2.3
 * Windows                      (GitHub), R 4.1.3
 * Windows                      (GitHub), R 4.2.3
-* Windows                 (win-builder), R 4.2.3
 
 ### Current R versions
 * macOS 12.6.3 Monterey        (GitHub), R 4.3.1
@@ -23,26 +22,24 @@ See `NEWS.md` for a full list of changes.
 * Ubuntu 20.04                  (local), R 4.3.1
 * Windows                      (GitHub), R 4.3.1
 * Windows                       (local), R 4.3.1
-* Windows                 (win-builder), R 4.3.1
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2023-07-03 r84633)
-* Windows                      (GitHub), R-devel (2023-07-03 r84633 ucrt)
-* Windows                 (win-builder), R-devel (2023-07-03 r84633 ucrt)
-* Windows                       (local), R-devel (2023-07-03 r84633 ucrt)
+* Ubuntu 20.04                 (GitHub), R-devel (2023-07-12 r84683)
+* Windows                      (GitHub), R-devel (2023-07-12 r84683 ucrt)
+* Windows                 (win-builder), R-devel (2023-07-12 r84683 ucrt)
+* Windows                       (local), R-devel (2023-07-12 r84683 ucrt)
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
 
-There were 0 NOTEs:
+There were 0 NOTEs
 
 Related to the Suggested package that is available in a additional repository.
 We provide instructions for installing suggested package `NLMR` from another repository:
 
     The Description field contains
-        "https://PredictiveEcology.r-universe.dev")'.
-    Please enclose URLs in angle brackets (<...>).
+        "https://PredictiveEcology.r-universe.dev"
 
 2. We provide instructions for installing suggested package `NLMR` from another repository:
 
@@ -52,4 +49,4 @@ We provide instructions for installing suggested package `NLMR` from another rep
 
 ## Downstream dependencies
 
-Currently none, but we are working to resubmit our other packages that depend on this one, and they are passing.
+All pass the revdeps checks.

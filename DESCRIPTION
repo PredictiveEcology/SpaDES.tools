@@ -7,13 +7,13 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
     Included are various methods for spatial spreading, spatial agents, GIS operations,
     random map generation, and others.
     See '?SpaDES.tools' for an categorized overview of these additional tools.
-    The suggested package 'NLMR' can be installed with 
-    'install.packages("NLMR", repos = "https://PredictiveEcology.r-universe.dev")'.
+    The suggested package 'NLMR' can be installed from the CRAN-like repository:
+    (<"https://PredictiveEcology.r-universe.dev">).
 URL:
     https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2023-07-05
-Version: 2.0.2
+Date: 2023-07-12
+Version: 2.0.3
 Authors@R: c(
     person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6914-8316")),
@@ -42,24 +42,16 @@ Imports:
 Suggests:
     animation,
     bit (>= 1.1-12),
-    CircStats (>= 0.2-4),
     covr,
-    DBI,
     DEoptim (>= 2.2-4),
-    dplyr,
     dqrng,
     fastmatch,
-    googledrive,
     knitr,
-    mgcv,
     NLMR (>= 1.1.1),
-    purrr,
     quickPlot (>= 1.0.2),
     raster (>= 2.5-8),
-    RColorBrewer (>= 1.1-2),
     rmarkdown,
     sf,
-    snow,
     sp (>= 1.2-4),
     testthat (>= 1.0.2),
     tools,

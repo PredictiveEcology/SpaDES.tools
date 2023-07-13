@@ -59,3 +59,7 @@ extnt <- function(x, ...) {
 
   return(x)
 }
+
+
+deg2 <- function(radian) (radian * 180)/pi
+rad2 <- function (degree) (degree * pi)/180

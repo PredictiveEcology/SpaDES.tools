@@ -79,38 +79,36 @@ move <- function(hypothesis = "crw", ...) {
 #' xrange <- yrange <- c(-50, 50)
 #' starts <- cbind(x = stats::runif(N, xrange[1], xrange[2]),
 #'                 y = stats::runif(N, yrange[1], yrange[2]))
-#' if (requireNamespace("CircStats")) {
-#'   moved <- crw(starts, stepLength = 5, stddev = 10)
-#'   plot(starts, col = rainbow(10), pch = 19)
-#'   points(moved, col = rainbow(10))
+#' moved <- crw(starts, stepLength = 5, stddev = 10)
+#' plot(starts, col = rainbow(10), pch = 19)
+#' points(moved, col = rainbow(10))
 #'
-#'   # as SpatVector
-#'   agent <- terra::vect(starts)
-#'   moved <- crw(agent, stepLength = 5, stddev = 10)
-#'   movedAgain <- crw(moved, stepLength = 5, stddev = 10)
-#'   terra::plot(agent)
-#'   terra::plot(moved, add = TRUE, col = "red")
-#'   terra::plot(movedAgain, add = TRUE, col = "green")
+#' # as SpatVector
+#' agent <- terra::vect(starts)
+#' moved <- crw(agent, stepLength = 5, stddev = 10)
+#' movedAgain <- crw(moved, stepLength = 5, stddev = 10)
+#' terra::plot(agent)
+#' terra::plot(moved, add = TRUE, col = "red")
+#' terra::plot(movedAgain, add = TRUE, col = "green")
 #'
-#'   # 1000x faster!! -- returnMatrix = TRUE
-#'   agentOrig <- agent
-#'   reps <- 1e2
-#'   system.time({
-#'     for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10, returnMatrix = TRUE)
-#'   })
-#'   agent <- agentOrig
-#'   system.time({
-#'     for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10)
-#'   })
+#' # 1000x faster!! -- returnMatrix = TRUE
+#' agentOrig <- agent
+#' reps <- 1e2
+#' system.time({
+#'   for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10, returnMatrix = TRUE)
+#' })
+#' agent <- agentOrig
+#' system.time({
+#'   for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10)
+#' })
 #'
-#'   # as sp
-#'   if (requireNamespace("sp")) {
-#'     agent <- sp::SpatialPoints(starts)
-#'     spdf <- crw(agent, stepLength = 5, stddev = 10)
-#'     spdfNew <- crw(spdf, stepLength = 5, stddev = 10)
-#'     terra::plot(spdf, pch = 19)
-#'     terra::points(spdfNew, col = "blue", pch = 19)
-#'   }
+#' # as sp
+#' if (requireNamespace("sp")) {
+#'   agent <- sp::SpatialPoints(starts)
+#'   spdf <- crw(agent, stepLength = 5, stddev = 10)
+#'   spdfNew <- crw(spdf, stepLength = 5, stddev = 10)
+#'   terra::plot(spdf, pch = 19)
+#'   terra::points(spdfNew, col = "blue", pch = 19)
 #' }
 #'
 #'
@@ -194,8 +192,6 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
 
   n <- NROW(agent)
 
-  .requireNamespace("CircStats")
-
   agentHeading <- heading(cbind(x = prevCoords[, "x1", drop = FALSE],
                                 y = prevCoords[, "y1", drop = FALSE]),
                           crds)
@@ -211,8 +207,8 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   }
   # update current coordinates to be those after the move
   newCoords <- cbind(
-    x = crds[, 1] + sin(CircStats::rad(rndDir)) * stepLength,
-    y = crds[, 2] + cos(CircStats::rad(rndDir)) * stepLength
+    x = crds[, 1] + sin(rad2(rndDir)) * stepLength,
+    y = crds[, 2] + cos(rad2(rndDir)) * stepLength
   )
 
   # for Spatial -- this was used: agent@coords <-

@@ -1,6 +1,5 @@
 test_that("splitRaster and mergeRaster work on small in-memory rasters", {
-  # withr::local_package("reproducible")
-  withr::local_package("tools")
+  testInit("tools")
   rastDF <- needTerraAndRaster()
   testFiles = data.frame(pkg = c("raster", "terra"),
                          testFile = c("external/rlogo.grd", "ex/logo.tif"))
@@ -13,19 +12,13 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
     extFun <- eval(parse(text = rastDF$ext[ii]))
+    readStk <- eval(parse(text = rastDF$stack[ii]))
 
     testFile <- system.file(rastDF$testFile[ii], package = pkg)
 
     withr::local_package(pkg)
-    # withr::local_options(reproducible.rasterRead = read)
-
-    owd <- getwd()
-    on.exit({
-      setwd(owd)
-    }, add = TRUE)
-
-    tmpdir <- file.path(tempdir(), "splitRaster-test", pkg) |> checkPath(create = TRUE)
-    setwd(tmpdir)
+    tmpdir2 <- file.path(tmpdir, "splitRaster-test", pkg) |> checkPath(create = TRUE)
+    setwd(tmpdir2)
 
     b <- read(testFile)
     r <- b[[1]] # use first layer only
@@ -38,12 +31,12 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     extnt(r) <- extnt(xmin(r) - 30, xmax(r) - 30, ymin(r) - 20, ymax(r) - 20)
 
     # no buffer
-    y0 <- splitRaster(r, nx, ny, path = file.path(tmpdir, "red"))
+    y0 <- splitRaster(r, nx, ny, path = file.path(tmpdir2, "red"))
     expect_equal(class(y0), "list")
     expect_false(unique(unlist(lapply(y0, inMemory))))
 
     for (i in 1:12) {
-      expect_true(file.exists(file.path(tmpdir, "red", paste0("red_tile", i, ".tif"))))
+      expect_true(file.exists(file.path(tmpdir2, "red", paste0("red_tile", i, ".tif"))))
     }
 
     xextents <- c()
@@ -67,28 +60,23 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     expect_equal(min(values(m0)), min(values(r)))
 
     # as a stack/brick
-    if (requireNamespace("purrr", quietly = TRUE)) {
-      if (pkg == "raster") {
-        ## ensure the raster method for as.list used (instead of base version)
-        asRasterList <- selectMethod("as.list", "Raster")
-        ys0 <- lapply(purrr::transpose(lapply(X = asRasterList(b),
-                                              FUN = splitRaster, nx = nx, ny = ny)),
-                      raster::stack)
-      } else if (pkg == "terra") {
-        ys0 <- lapply(purrr::transpose(lapply(X = as.list(b),
-                                              FUN = splitRaster, nx = nx, ny = ny)),
-                      terra::rast)
-      }
-      ms0 <- mergeRaster(ys0)
-      expect_identical(names(ms0), names(ys0[[1]]))
-    }
+    sr <- splitRaster(b, nx = nx, ny = ny)
+    # if (pkg == "raster") {
+    ## ensure the raster method for as.list used (instead of base version)
+    ys0 <- lapply(sr, readStk)
+    # } else if (pkg == "terra") {
+    #   ys0 <- lapply(sr, terra::rast)
+    # }
+    ms0 <- mergeRaster(ys0)
+    expect_identical(names(ms0), names(ys0[[1]]))
+    #}
 
     # with buffer (integer pixels) and with specified path
-    y1 <- splitRaster(r, nx, ny, c(3L, 4L), path = file.path(tmpdir, "red1"))
+    y1 <- splitRaster(r, nx, ny, c(3L, 4L), path = file.path(tmpdir2, "red1"))
     expect_false(unique(unlist(lapply(y1, inMemory))))
 
     for (i in 1:12) {
-      expect_true(file.exists(file.path(tmpdir, "red1", paste0("red_tile", i, ".tif"))))
+      expect_true(file.exists(file.path(tmpdir2, "red1", paste0("red_tile", i, ".tif"))))
     }
 
     xextents <- c()
@@ -119,7 +107,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     }
 
     # with buffer (proportion of cells)
-    y2 <- splitRaster(r, nx, ny, c(0.5, 0.3), path = file.path(tmpdir, "red2"))
+    y2 <- splitRaster(r, nx, ny, c(0.5, 0.3), path = file.path(tmpdir2, "red2"))
     xextents <- c()
     yextents <- c()
     for (i in seq_along(y2)) {
@@ -202,30 +190,22 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     }
 
     ## use different file extensions
-    y7 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".grd")
-    y8 <- splitRaster(r, nx, ny, path = tmpdir, fExt = ".tif")
+    y7 <- splitRaster(r, nx, ny, path = tmpdir2, fExt = ".grd")
+    y8 <- splitRaster(r, nx, ny, path = tmpdir2, fExt = ".tif")
     if (requireNamespace("tools", quietly = TRUE)) {
       expect_true(all(tools::file_ext(reproducible::Filenames(y7[[1]])) %in% c("grd", "gri")))
       expect_true(tools::file_ext(reproducible::Filenames(y8[[1]])) == "tif")
     }
 
-    setwd(owd)
   }
 
-  unlink(dirname(tmpdir), recursive = TRUE)
 })
 
 test_that("splitRaster works in parallel", {
   skip_on_cran()
   skip_on_ci()
-  skip_if_not_installed("snow") # needed for beginCluster
-  skip_if_not_installed("raster")
+  testInit(c("raster", "snow"))
   skip_if_not(interactive())
-
-  tmpdir <- file.path(tempdir(), "splitRaster-test-parallel", basename(tempfile())) |>
-    checkPath(create = TRUE)
-
-  on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
 
   # b <- raster::brick(system.file("external/rlogo.grd", package = "raster"))
   b <- raster::raster(system.file("ex/logo.tif", package = "terra"))
@@ -240,7 +220,7 @@ test_that("splitRaster works in parallel", {
 
   # test parallel cropping
   n <- pmin(parallel::detectCores(), 4) # use up to 4 cores
-  raster::beginCluster(n)
+  raster::beginCluster(n, type = "PSOCK")
   on.exit(raster::endCluster(), add = TRUE)
 
   cl <- raster::getCluster()
@@ -278,17 +258,8 @@ test_that("splitRaster works in parallel", {
 test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   skip_on_cran()
   skip_on_ci()
-  #skip_if_not(interactive() && Sys.info()[["user"]] %in% c("achubaty", "emcintir"))
   skip("this is a BIG test!")
-
-  library(reproducible)
-  library(terra)
-
-  tmpdir <- file.path(tempdir(), "splitRaster-test-large") |> checkPath(create = TRUE)
-
-  on.exit({
-    unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  testInit(c("terra"))
 
   ## use a large raster (1.3 GB)
   url <- paste0("https://ftp.maps.canada.ca/pub/nrcan_rncan/Land-cover_Couverture-du-sol/",

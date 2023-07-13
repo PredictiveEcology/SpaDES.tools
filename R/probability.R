@@ -1,6 +1,6 @@
 #' Vectorized wrapped normal density function
 #'
-#'  This is a modified version of `CircStats::dwrpnorm()`.
+#'  This is a modified version of `dwrpnorm` in the `CircStats` package
 #'  to allow for multiple angles at once (i.e., vectorized on `theta` and `mu`).
 #'
 #' @param theta	value at which to evaluate the density function, measured in radians.
