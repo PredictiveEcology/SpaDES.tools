@@ -53,16 +53,14 @@ if (interactive()) {
   terra::plot(hab, col = "white")
 }
 
-if (requireNamespace("CircStats", quietly = TRUE)) {
-  for (i in 1:10) {
-    agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
-                 stddev = sd, lonlat = FALSE, torus = FALSE) # don't wrap
-    if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
-  }
-  terra::crds(agent) # many are "off" the map, i.e., beyond the extent of hab
-  agent <- SpaDES.tools::wrap(agent, bounds = terra::ext(hab))
-  terra::plot(agent, add = TRUE, col = 1:10) # now inside the extent of hab
+for (i in 1:10) {
+  agent <- crw(agent = agent, extent = terra::ext(hab), stepLength = ln,
+               stddev = sd, lonlat = FALSE, torus = FALSE) # don't wrap
+  if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 }
+terra::crds(agent) # many are "off" the map, i.e., beyond the extent of hab
+agent <- SpaDES.tools::wrap(agent, bounds = terra::ext(hab))
+terra::plot(agent, add = TRUE, col = 1:10) # now inside the extent of hab
 
 }
 \author{

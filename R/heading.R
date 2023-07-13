@@ -15,7 +15,6 @@
 #'
 #' @examples
 #' library(terra)
-#' if (require("CircStats")) {
 #' N <- 10L                # number of agents
 #' x1 <- stats::runif(N, -50, 50) # previous X location
 #' y1 <- stats::runif(N, -50, 50) # previous Y location
@@ -40,15 +39,13 @@
 #' prev <- matrix(c(x1, y1), ncol = 2, dimnames = list(NULL, c("x","y")))
 #' curr <- terra::vect(cbind(x = x0, y = y0))
 #' heading(prev, curr)
-#' }
 #'
 heading <- function(from, to) {
-  .requireNamespace("CircStats")
   from <- coords(from)
   to <- coords(to)
   ys <- to[, 2] - from[, 2]
   xs <- to[, 1] - from[, 1]
-  heading <- CircStats::deg(atan(xs / ys)) ## 0/0 produces NaN; correct this below
+  heading <- deg2(atan(xs / ys)) ## 0/0 produces NaN; correct this below
   heading[xs == 0 & ys == 0] <- 0
   ys <- (ys < 0)
   heading[(ys) & (xs) < 0] <- heading[(ys) & (xs) < 0] - 180

@@ -1,14 +1,15 @@
 # SpaDES.tools (development version)
 
-# SpaDES.tools 2.0.2
+# SpaDES.tools 2.0.3
 
 ## Enhancements
 * improved documentation
 * address new features of `quickPlot`
 * minor modifications to `crw` to allow downstream packages that use `matrix` classes instead of `sf` or `SpatVector` classes for "agents"
+* address timing issue
 
 ## Dependency changes
-* none
+* removed Suggests dependencies `CircStats`, `dplyr`, `purrr`, `DBI`, `RColorBrewer`, `googledrive`
 
 ## Bug fixes
 * none

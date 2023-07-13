@@ -109,7 +109,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
 
   #if (any(abs(advectionDir) > 2 * pi)) {
     messAngles <- "degrees"
-    advectionDir <- CircStats::rad(advectionDir)
+    advectionDir <- rad2(advectionDir)
   # } else {
   #   messAngles <- "radians"
   # }

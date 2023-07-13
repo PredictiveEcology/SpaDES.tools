@@ -12,138 +12,94 @@ needTerraAndRaster <- function(envir = parent.frame()) {
   return(rastDF)
 }
 
+# puts tmpdir, tmpCache, opts, optsDebug in this environment,
+# loads and libraries indicated plus testthat,
 # puts tmpdir, tmpCache, tmpfile (can be vectorized with length >1 tmpFileExt),
 #   optsAsk in this environment,
 # loads and libraries indicated plus testthat,
 # sets options("reproducible.ask" = FALSE) if ask = FALSE
-testInit <- function(libraries, ask = FALSE, verbose = FALSE, tmpFileExt = "",
-                     opts = NULL, needGoogle = FALSE) {
-  optsAsk <- if (!ask)
-    options("reproducible.ask" = ask)
-  else
-    list()
+testInit <- function(libraries = character(), ask = FALSE, verbose,
+                     tmpFileExt = "",
+                     opts = NULL, needGoogleDriveAuth = FALSE
+                     ) {
 
-  optsVerbose <- if (verbose)
-    options(reproducible.verbose = verbose)
-  else
-    list()
+  reproducible::set.randomseed()
 
-  if (missing(libraries)) libraries <- list()
-  unlist(lapply(libraries, require, character.only = TRUE))
-  require("testthat")
-  subDir <- paste(sample(LETTERS, 8), collapse = "")
-  tmpdir <- reproducible::tempdir2(subDir)
+  pf <- parent.frame()
 
-  if (isTRUE(needGoogle)) {
-    if (requireNamespace("googledrive", quietly = TRUE)) {
-      if (utils::packageVersion("googledrive") >= "1.0.0")
-        googledrive::drive_deauth()
-      else
-        googledrive::drive_auth_config(active = TRUE)
-    }
+  if (isTRUE(needGoogleDriveAuth))
+    libraries <- c(libraries)
+  if (length(libraries)) {
+    libraries <- unique(libraries)
+    loadedAlready <- vapply(libraries, function(pkg)
+      any(grepl(paste0("package:", pkg), search())), FUN.VALUE = logical(1))
+    libraries <- libraries[!loadedAlready]
 
-    if (requireNamespace("quickPlot", quietly = TRUE)) {
-      if (quickPlot::isRstudioServer()) {
-        options(httr_oob_default = TRUE)
+    if (length(libraries)) {
+      pkgsLoaded <- unlist(lapply(libraries, requireNamespace, quietly = TRUE))
+      if (!all(pkgsLoaded)) {
+        lapply(libraries[!pkgsLoaded], skip_if_not_installed)
       }
-    }
-
-    ## #119 changed use of .httr-oauth (i.e., no longer used)
-    ## instead, uses ~/.R/gargle/gargle-oauth/long_random_token_name_with_email
-    if (interactive()) {
-      if (utils::packageVersion("googledrive") >= "1.0.0") {
-        googledrive::drive_deauth()
-      } else {
-        if (file.exists("~/.httr-oauth")) {
-          linkOrCopy("~/.httr-oauth", to = file.path(tmpdir, ".httr-oauth"))
-        } else {
-          googledrive::drive_auth()
-          print("copying .httr-oauth to ~/.httr-oauth")
-          file.copy(".httr-oauth", "~/.httr-oauth", overwrite = TRUE)
-        }
-
-        if (!file.exists("~/.httr-oauth"))
-          message("Please put an .httr-oauth file in your ~ directory")
-      }
-
+      suppressWarnings(lapply(libraries, withr::local_package, .local_envir = pf))
     }
   }
-  checkPath(tmpdir, create = TRUE)
-  origDir <- setwd(tmpdir)
-  tmpCache <- reproducible::normPath(file.path(tmpdir, "testCache"))
-  checkPath(tmpCache, create = TRUE)
 
-  defaultOpts <- list(reproducible.showSimilar = FALSE,
-                      reproducible.overwrite = TRUE,
-                      reproducible.useNewDigestAlgorithm = TRUE,
-                      reproducible.cachePath = tmpCache,
-                      reproducible.tempPath = tmpdir)
-  if (length(opts) > 0)
-    defaultOpts[names(opts)] <- opts
-  opts <- defaultOpts
 
-  if (!is.null(opts)) {
-    if (needGoogle) {
-      optsGoogle <- list(
-        # httr_oob_default = quickPlot::isRstudioServer(),
-        # httr_oauth_cache = "~/.httr-oauth"
-      )
-      opts <- append(opts, optsGoogle)
-    }
-    opts <- options(opts)
+  # skip_gauth <- identical(Sys.getenv("SKIP_GAUTH"), "true") # only set in setup.R for covr
+  # if (isTRUE(needGoogleDriveAuth) ) {
+  #   if (!skip_gauth) {
+  #     if (interactive()) {
+  #       if (!googledrive::drive_has_token()) {
+  #         getAuth <- FALSE
+  #         if (is.null(getOption("gargle_oauth_email"))) {
+  #           possLocalCache <- "c:/Eliot/.secret"
+  #           cache <- if (file.exists(possLocalCache))
+  #             possLocalCache else TRUE
+  #           switch(Sys.info()["user"],
+  #                  emcintir = {options(gargle_oauth_email = "eliotmcintire@gmail.com",
+  #                                      gargle_oauth_cache = cache)},
+  #                  NULL)
+  #         }
+  #         if (is.null(getOption("gargle_oauth_email"))) {
+  #           if (.isRstudioServer()) {
+  #             .requireNamespace("httr", stopOnFALSE = TRUE)
+  #             options(httr_oob_default = TRUE)
+  #           }
+  #         }
+  #         getAuth <- TRUE
+  #         if (isTRUE(getAuth))
+  #           googledrive::drive_auth()
+  #       }
+  #     }
+  #   }
+  #   skip_if_no_token()
+  # }
+
+  out <- list()
+  withr::local_options("reproducible.ask" = ask, .local_envir = pf)
+  # withr::local_options("spades.debug" = debug, .local_envir = pf)
+  # withr::local_options("spades.moduleCodeChecks" = smcc, .local_envir = pf)
+  withr::local_options("spades.recoveryMode" = FALSE, .local_envir = pf)
+  withr::local_options("reproducible.verbose" = FALSE, .local_envir = pf)
+  withr::local_options("spades.useRequire" = FALSE, .local_envir = pf)
+  withr::local_options("spades.sessionInfo" = FALSE, .local_envir = pf)
+
+  if (!missing(verbose))
+    withr::local_options("reproducible.verbose" = verbose, .local_envir = pf)
+  if (!is.null(opts))
+    withr::local_options(opts, .local_envir = pf)
+  tmpdir <- reproducible::normPath(withr::local_tempdir(tmpdir = reproducible::tempdir2(), .local_envir = pf))
+  tmpCache <- reproducible::normPath(withr::local_tempdir(tmpdir = tmpdir, .local_envir = pf))
+  if (isTRUE(any(nzchar(tmpFileExt)))) {
+    dotStart <- startsWith(tmpFileExt, ".")
+    if (any(!dotStart))
+      tmpFileExt[!dotStart] <- paste0(".", tmpFileExt)
+    out$tmpfile <- reproducible::normPath(withr::local_tempfile(tmpdir = tmpdir, fileext = tmpFileExt))
   }
+  withr::local_dir(tmpdir, .local_envir = pf)
 
-  if (!is.null(tmpFileExt)) {
-    rndstr <- subDir <- paste(sample(LETTERS, 8), collapse = "")
-    ranfiles <- unlist(lapply(tmpFileExt, function(x) paste0(rndstr, ".", x)))
-    tmpfile <- file.path(tmpdir, ranfiles)
-    tmpfile <- gsub(pattern = "\\.\\.", tmpfile, replacement = "\\.")
-    file.create(tmpfile)
-    tmpfile <- reproducible::normPath(tmpfile)
-  }
-
-  try(clearCache(tmpdir, ask = FALSE), silent = TRUE)
-  try(clearCache(tmpCache, ask = FALSE), silent = TRUE)
-
-  outList <- list(tmpdir = tmpdir, origDir = origDir, libs = libraries,
-                  tmpCache = tmpCache, optsAsk = optsAsk,
-                  optsVerbose = optsVerbose, tmpfile = tmpfile,
-                  opts = opts, needGoogle = needGoogle)
-  list2env(outList, envir = parent.frame())
-  return(outList)
+  out <- append(out, list(tmpdir = tmpdir, tmpCache = tmpCache))
+  list2env(out, envir = pf)
+  return(invisible(out))
 }
 
-testOnExit <- function(testInitOut) {
-  if (length(testInitOut$optsVerbose))
-    options("reproducible.verbose" = testInitOut$optsVerbose[[1]])
-  if (length(testInitOut$optsAsk))
-    options("reproducible.ask" = testInitOut$optsAsk[[1]])
-  if (length(testInitOut$opts))
-    options(testInitOut$opts)
-  setwd(testInitOut$origDir)
-  unlink(testInitOut$tmpdir, recursive = TRUE)
-  if (isTRUE(testInitOut$needGoogle)) {
-    if (utils::packageVersion("googledrive") < "1.0.0")
-      googledrive::drive_auth_config(active = FALSE)
-  }
-  unlink(testInitOut$tmpCache, recursive = TRUE, force = TRUE)
-  unlink(testInitOut$tmpdir, recursive = TRUE, force = TRUE)
-
-  if (grepl("Pq", class(getOption("reproducible.conn", NULL)))) {
-    tabs <- DBI::dbListTables(conn = getOption("reproducible.conn", NULL))
-    tab1 <- grep(value = TRUE, tabs, pattern =
-                   paste(collapse = "_", c(basename2(dirname(testInitOut$tmpCache)),
-                                           basename2(testInitOut$tmpCache))))
-    tab2 <- grep(value = TRUE, tabs, pattern =
-                   paste(collapse = "_", c(basename2(dirname(testInitOut$tmpdir)),
-                                           basename2(testInitOut$tmpdir))))
-    if (length(tab1))
-      try(DBI::dbRemoveTable(conn = getOption("reproducible.conn", NULL), tab1))
-    if (length(tab2))
-      try(DBI::dbRemoveTable(conn = getOption("reproducible.conn", NULL), tab2))
-  }
-
-  lapply(testInitOut$libs, function(lib) {
-    try(detach(paste0("package:", lib), character.only = TRUE), silent = TRUE)
-  })
-}

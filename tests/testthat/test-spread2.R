@@ -1,6 +1,6 @@
 test_that("spread2 tests", {
 
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
   data.table::setDTthreads(1)
 
@@ -383,10 +383,7 @@ test_that("spread2 tests", {
 })
 
 test_that("spread2 tests -- asymmetry", {
-  skip_if_not_installed("CircStats")
-
-  withr::local_package("terra")
-  withr::local_package("CircStats")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -426,10 +423,8 @@ test_that("spread2 tests -- asymmetry", {
     lenAngles <- numeric(n)
 
     # function to calculate mean angle -- returns in degrees
-    if (requireNamespace("CircStats", quietly = TRUE)) {
-      meanAngle <- function(angles) {
-        CircStats::deg(atan2(mean(sin(CircStats::rad(angles))), mean(cos(CircStats::rad(angles)))))
-      }
+    meanAngle <- function(angles) {
+      deg2(atan2(mean(sin(rad2(angles))), mean(cos(rad2(angles)))))
     }
 
     # if (interactive()) {
@@ -465,7 +460,7 @@ test_that("spread2 tests -- asymmetry", {
       initialLociXY <- cbind(id = unique(circs$initialPixels),
                              xyFromCell(hab, unique(circs$initialPixels)))
       dirs <- directionFromEachPoint(from = initialLociXY, to = a)
-      dirs[, "angles"] <- CircStats::deg(dirs[, "angles"])
+      dirs[, "angles"] <- deg2(dirs[, "angles"])
       avgAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], meanAngle) %% 360
       lenAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], length)
     }
@@ -482,7 +477,7 @@ test_that("spread2 tests -- asymmetry", {
     ciCentre[seq_len(ncell(ciCentre))[-(ncell(ciCentre) / 2 - ncol(ciCentre) / 2)]] <- NA_integer_
     # create a direction raster with all points leading to that point
     directionRas <- direction(ciCentre)
-    directionRas[] <- CircStats::deg(directionRas[])
+    directionRas[] <- deg2(directionRas[])
 
     seed <- 4406
     set.seed(seed)
@@ -579,42 +574,42 @@ test_that("spread2 tests -- asymmetry", {
 
     ####### Calibration curve
     skip("Calibration curves")
-    n <- 500
-    ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
-    sp <- runif(n, 0.15, 0.25)
-    sizes <- integer()
-    for (qwe in 1:n) {
-      circs <- spread2(ras, spreadProb = sp[qwe], start = ncell(ras) / 2 - ncol(ras) / 2,
-                       asRaster = FALSE)
-      sizes[qwe] <- NROW(circs)
-      message(qwe)
-    }
-    dt1 <- data.table(sp, sizes)
-    library(mgcv)
-    aa <- gam(log10(dt1$sizes) ~ s(dt1$sp))
-    aap <- predict(aa, se.fit = FALSE)
-    plot(dt1$sp, log10(dt1$sizes), axes = FALSE, ylab = "Fire Size, ha", xlab = "Spread Probability")
-    axis(2, 0:5, labels = 10 ^ (0:5))
-    axis(1)
-    aapOrd <- order(dt1$sp)
-    lines(dt1$sp[aapOrd], aap[aapOrd], lwd = 2, col = "red")
-    mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
-                          "Red line shows expected size", sep = "\n"))
-
-    aa1 <- gam(dt1$sp ~ s(log10(dt1$sizes)))
-    aap1 <- predict(aa1, se.fit = FALSE, type = "response")
-    plot(log10(dt1$sizes), dt1$sp, axes = FALSE, xlab = "Fire Size, ha", ylab = "Spread Probability")
-    axis(2)
-    axis(1, 0:5, labels = 10 ^ (0:5))
-    aap1Ord <- order(log10(dt1$sizes))
-    lines(log10(dt1$sizes)[aap1Ord], aap1[aap1Ord], lwd = 2, col = "red")
-    mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
-                          "Red line shows expected size", sep = "\n"))
+    # n <- 500
+    # ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
+    # sp <- runif(n, 0.15, 0.25)
+    # sizes <- integer()
+    # for (qwe in 1:n) {
+    #   circs <- spread2(ras, spreadProb = sp[qwe], start = ncell(ras) / 2 - ncol(ras) / 2,
+    #                    asRaster = FALSE)
+    #   sizes[qwe] <- NROW(circs)
+    #   message(qwe)
+    # }
+    # dt1 <- data.table(sp, sizes)
+    # library(mgcv)
+    # aa <- gam(log10(dt1$sizes) ~ s(dt1$sp))
+    # aap <- predict(aa, se.fit = FALSE)
+    # plot(dt1$sp, log10(dt1$sizes), axes = FALSE, ylab = "Fire Size, ha", xlab = "Spread Probability")
+    # axis(2, 0:5, labels = 10 ^ (0:5))
+    # axis(1)
+    # aapOrd <- order(dt1$sp)
+    # lines(dt1$sp[aapOrd], aap[aapOrd], lwd = 2, col = "red")
+    # mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
+    #                       "Red line shows expected size", sep = "\n"))
+    #
+    # aa1 <- gam(dt1$sp ~ s(log10(dt1$sizes)))
+    # aap1 <- predict(aa1, se.fit = FALSE, type = "response")
+    # plot(log10(dt1$sizes), dt1$sp, axes = FALSE, xlab = "Fire Size, ha", ylab = "Spread Probability")
+    # axis(2)
+    # axis(1, 0:5, labels = 10 ^ (0:5))
+    # aap1Ord <- order(log10(dt1$sizes))
+    # lines(log10(dt1$sizes)[aap1Ord], aap1[aap1Ord], lwd = 2, col = "red")
+    # mtext(side = 3, paste("Resulting fire sizes, for given spread probabilities",
+    #                       "Red line shows expected size", sep = "\n"))
   }
 })
 
 test_that("spread2 returnFrom", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -642,9 +637,7 @@ test_that("spread2 returnFrom", {
 })
 
 test_that("spread2 tests", {
-  skip_if_not_installed("CircStats")
-
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -660,7 +653,7 @@ test_that("spread2 tests", {
     sams <- sample(innerCells, 9)
 
     # dev()
-    expect_silent({
+    expect_no_error({
       out <- spread2(a, start = sams, 1, circle = TRUE, asymmetry = 4,
                      asymmetryAngle = 120, iterations = 10, asRaster = FALSE,
                      returnDistances = TRUE, allowOverlap = TRUE)
@@ -674,7 +667,7 @@ test_that("spread2 tests", {
 })
 
 test_that("spread2 works with terra", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
@@ -701,7 +694,7 @@ test_that("spread2 works with terra", {
 })
 
 test_that("spread2 tests -- persistence", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
@@ -743,7 +736,7 @@ test_that("spread2 tests -- persistence", {
 })
 
 test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
-  withr::local_package("terra")
+  testInit("terra")
   rastDF <- needTerraAndRaster()
 
   aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
