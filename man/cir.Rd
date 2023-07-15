@@ -103,7 +103,8 @@ If this is \code{excludePixels}, and if a \code{minRadius} and
 \examples{
 library(terra)
 # for this dummy example, use only 1 CPU thread
-origDTThreads <- data.table::setDTthreads(1)
+origDTThreads <- data.table::setDTthreads(1L)
+origNcpus <- options(Ncpus = 2L)
 set.seed(1462)
 
 # circle centred
@@ -186,6 +187,7 @@ circ <- cir(ras, coords, angles = seq(0, 2 * pi, length.out = 21),
 
 # clean up
 data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)
 }
 \seealso{
 \code{\link[=rings]{rings()}} which uses \code{spread} internally.
