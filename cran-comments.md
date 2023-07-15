@@ -24,9 +24,10 @@ See `NEWS.md` for a full list of changes.
 * Windows                       (local), R 4.3.1
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2023-07-12 r84683)
-* Windows                      (GitHub), R-devel (2023-07-12 r84683 ucrt)
-* Windows                 (win-builder), R-devel (2023-07-12 r84683 ucrt)
+* Ubuntu 20.04                 (GitHub), R-devel (2023-07-13 r84688)
+* Ubuntu 20.04                  (local), R-devel (2023-07-13 r84688)
+* Windows                      (GitHub), R-devel (2023-07-13 r84688 ucrt)
+* Windows                 (win-builder), R-devel (2023-07-14 r84692 ucrt)
 * Windows                       (local), R-devel (2023-07-12 r84683 ucrt)
 
 ## R CMD check results
