@@ -1,6 +1,6 @@
 library(data.table)
 library(terra)
-# for this dummy example, use only 1 CPU thread
+
 origDTThreads <- data.table::setDTthreads(1L)
 origNcpus <- options(Ncpus = 1L)
 set.seed(1462)
