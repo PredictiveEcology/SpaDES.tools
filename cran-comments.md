@@ -26,20 +26,21 @@ See `NEWS.md` for a full list of changes.
 * Ubuntu 20.04                 (GitHub), R-devel (2023-07-13 r84688)
 * Ubuntu 20.04                  (local), R-devel (2023-07-13 r84688)
 * Windows                      (GitHub), R-devel (2023-07-13 r84688 ucrt)
-* Windows                 (win-builder), R-devel (2023-07-14 r84692 ucrt)
+* Windows                 (win-builder), R-devel (2023-07-17 r84702 ucrt)
 * Windows                       (local), R-devel (2023-07-12 r84683 ucrt)
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
 
-There were 0 NOTEs
+There were 2 NOTEs
 
-Related to the Suggested package that is available in a additional repository.
-We provide instructions for installing suggested package `NLMR` from another repository:
+1. Alex Chubaty took over the maintainer role for this submission;
+
+2. The suggested package `NLMR` is available in a additional repository, for which we provide instructions for installation:
 
     The Description field contains
-        "https://PredictiveEcology.r-universe.dev"
+        "https://PredictiveEcology.r-universe.dev" 
 
 ## Downstream dependencies
 
