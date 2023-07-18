@@ -402,23 +402,23 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'
 #' @param returnDistances Logical. If `TRUE`, then a column will be added to the returned
 #'                        data.table that reports the distance from `coords` to every
-#'                        point that was in the circle/donut surrounding `coords`. Default
-#'                        `FALSE`, which is faster.
+#'                        point that was in the circle/doughnut surrounding `coords`.
+#'                        Default `FALSE`, which is faster.
 #'
 #' @param angles Numeric. Optional vector of angles, in radians, to use. This will create
-#'               "spokes" outward from coords. Default is `NA`, meaning, use internally
+#'               "spokes" outward from `coords.` Default is `NA`, meaning, use internally
 #'               derived angles that will "fill" the circle.
 #'
 #' @param returnAngles Logical. If `TRUE`, then a column will be added to the returned
 #'                     data.table that reports the angle from `coords` to every
-#'                     point that was in the circle/donut surrounding `coords`. Default `FALSE.`
+#'                     point that was in the circle/doughnut surrounding `coords`. Default `FALSE.`
 #'
 #' @param closest Logical. When determining non-overlapping circles, should the function
 #'                give preference to the closest `loci` or the first one (much faster).
 #'                Default is `FALSE`, meaning the faster, though maybe not desired behaviour.
 #'
 #' @param simplify logical. If `TRUE`, then all duplicate pixels are removed.
-#' This means that some x, y combinations will disappear.
+#'                 This means that some `x`, `y` combinations will disappear.
 #'
 #' @inheritParams spread
 #'

@@ -53,16 +53,16 @@ and \code{"excludePixels"}. See details.}
 
 \item{returnDistances}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the distance from \code{coords} to every
-point that was in the circle/donut surrounding \code{coords}. Default
-\code{FALSE}, which is faster.}
+point that was in the circle/doughnut surrounding \code{coords}.
+Default \code{FALSE}, which is faster.}
 
 \item{angles}{Numeric. Optional vector of angles, in radians, to use. This will create
-"spokes" outward from coords. Default is \code{NA}, meaning, use internally
+"spokes" outward from \code{coords.} Default is \code{NA}, meaning, use internally
 derived angles that will "fill" the circle.}
 
 \item{returnAngles}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the angle from \code{coords} to every
-point that was in the circle/donut surrounding \code{coords}. Default \code{FALSE.}}
+point that was in the circle/doughnut surrounding \code{coords}. Default \code{FALSE.}}
 
 \item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will return a \code{data.table}
 with indices and values of successful spread events.
@@ -76,7 +76,7 @@ give preference to the closest \code{loci} or the first one (much faster).
 Default is \code{FALSE}, meaning the faster, though maybe not desired behaviour.}
 
 \item{simplify}{logical. If \code{TRUE}, then all duplicate pixels are removed.
-This means that some x, y combinations will disappear.}
+This means that some \code{x}, \code{y} combinations will disappear.}
 }
 \value{
 A \code{matrix} with 4 columns, \code{id}, \code{indices},
