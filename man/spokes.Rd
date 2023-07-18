@@ -24,22 +24,22 @@ spokes(
 \arguments{
 \item{landscape}{Raster on which the circles are built.}
 
-\item{coords}{Either a matrix with 2 (or 3) columns, x and y (and id), representing the
+\item{coords}{Either a matrix with 2 (or 3) columns, \code{x} and \code{y} (and \code{id}), representing the
 coordinates (and an associated id, like cell index),
 or a \verb{SpatialPoints*} object around which to make circles. Must be same
 coordinate system as the \code{landscape} argument. Default is missing,
-meaning it uses the default to \code{loci}}
+meaning it uses the default to \code{loci}.}
 
-\item{loci}{Numeric. An alternative to \code{coords}. These are the indices on
-\code{landscape} to initiate this function. See \code{coords}. Default is one
-point in centre of \code{landscape}..}
+\item{loci}{Numeric. An alternative to \code{coords}.
+These are the indices on \code{landscape} to initiate this function (see \code{coords}).
+Default is one point in centre of \code{landscape}.}
 
-\item{maxRadius}{Numeric vector of length 1 or same length as coords}
+\item{maxRadius}{Numeric vector of length 1 or same length as \code{coords}}
 
 \item{minRadius}{Numeric vector of length 1 or same length as \code{coords}. Default is
 \code{maxRadius}, meaning return all cells that are touched
 by the narrow ring at that exact radius. If smaller than \code{maxRadius},
-then this will create a buffer or donut or ring.}
+then this will create a buffer or doughnut or ring.}
 
 \item{allowOverlap}{Logical. Should duplicates across id be removed or kept. Default TRUE.}
 

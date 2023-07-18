@@ -363,7 +363,7 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 }
 
 ##############################################################
-#' Identify pixels in a circle or ring (donut) around an object.
+#' Identify pixels in a circle or ring (doughnut) around an object.
 #'
 #' Identify the pixels and coordinates that are at a (set of) buffer distance(s)
 #' of the objects passed into `coords`.
@@ -373,22 +373,22 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'
 #' @param landscape Raster on which the circles are built.
 #'
-#' @param coords Either a matrix with 2 (or 3) columns, x and y (and id), representing the
+#' @param coords Either a matrix with 2 (or 3) columns, `x` and `y` (and `id`), representing the
 #'               coordinates (and an associated id, like cell index),
 #'               or a `SpatialPoints*` object around which to make circles. Must be same
 #'               coordinate system as the `landscape` argument. Default is missing,
-#'               meaning it uses the default to `loci`
+#'               meaning it uses the default to `loci`.
 #'
-#' @param loci   Numeric. An alternative to `coords`. These are the indices on
-#'               `landscape` to initiate this function. See `coords`. Default is one
-#'               point in centre of `landscape`..
+#' @param loci   Numeric. An alternative to `coords`.
+#'               These are the indices on `landscape` to initiate this function (see `coords`).
+#'               Default is one point in centre of `landscape`.
 #'
-#' @param maxRadius  Numeric vector of length 1 or same length as coords
+#' @param maxRadius  Numeric vector of length 1 or same length as `coords`
 #'
 #' @param minRadius  Numeric vector of length 1 or same length as `coords`. Default is
 #'                   `maxRadius`, meaning return all cells that are touched
 #'                   by the narrow ring at that exact radius. If smaller than `maxRadius`,
-#'                   then this will create a buffer or donut or ring.
+#'                   then this will create a buffer or doughnut or ring.
 #'
 #' @param allowOverlap Logical. Should duplicates across id be removed or kept. Default TRUE.
 #'
