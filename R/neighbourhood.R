@@ -367,7 +367,7 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'
 #' Identify the pixels and coordinates that are at a (set of) buffer distance(s)
 #' of the objects passed into `coords`.
-#' This is similar to `sf::st_buffer` but much faster and without the geo referencing information.
+#' This is similar to `sf::st_buffer` but much faster and without the georeferencing information.
 #' In other words, it can be used for similar problems, but where speed is important.
 #' This code is substantially adapted from `PlotRegionHighlighter::createCircle`.
 #'
@@ -436,12 +436,6 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' the `indices` (i.e., cell number) of the `landscape`
 #' associated with the ring or circle being identified by this function.
 #'
-#' @importFrom data.table data.table set setkeyv
-#' @importFrom fpCompare %==%
-#' @importFrom terra cellFromXY extract res xyFromCell ncell ncol
-#' @export
-#' @rdname cir
-#'
 #' @seealso [rings()] which uses `spread` internally.
 #' `cir` tends to be faster when there are few starting points, `rings` tends to be faster
 #' when there are many starting points. `cir` scales with `maxRadius^2` and `coords`.
@@ -453,10 +447,11 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'
 #' @example inst/examples/example_cir.R
 #'
-# setMethod(
-#   "cir",
-#   signature(landscape = "RasterLayer", coords = "matrix", loci = "missing"),
-#   definition =
+#' @export
+#' @importFrom data.table data.table set setkeyv
+#' @importFrom fpCompare %==%
+#' @importFrom terra cellFromXY extract res xyFromCell ncell ncol
+#' @rdname cir
 cir <- function(landscape, coords, loci,
                 maxRadius = ncol(landscape) / 4, minRadius = maxRadius,
                 allowOverlap = TRUE, allowDuplicates = FALSE,

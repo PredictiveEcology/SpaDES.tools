@@ -87,7 +87,7 @@ associated with the ring or circle being identified by this function.
 \description{
 Identify the pixels and coordinates that are at a (set of) buffer distance(s)
 of the objects passed into \code{coords}.
-This is similar to \code{sf::st_buffer} but much faster and without the geo referencing information.
+This is similar to \code{sf::st_buffer} but much faster and without the georeferencing information.
 In other words, it can be used for similar problems, but where speed is important.
 This code is substantially adapted from \code{PlotRegionHighlighter::createCircle}.
 }
@@ -104,7 +104,7 @@ If this is \code{excludePixels}, and if a \code{minRadius} and
 library(terra)
 # for this dummy example, use only 1 CPU thread
 origDTThreads <- data.table::setDTthreads(1L)
-origNcpus <- options(Ncpus = 2L)
+origNcpus <- options(Ncpus = 1L)
 set.seed(1462)
 
 # circle centred
