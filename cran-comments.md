@@ -1,7 +1,6 @@
 ## Release information
 
-This is an minor update to complete the final edge cases for the  transition from `raster`, `sp`, `rgeos` and `rgdal` to `terra` and `sf`. We also address reverse depends packages that will be submitted to CRAN. Also, there are minor changes to address CRAN submission issues.
-
+This is an minor update to complete the final edge cases for the  transition from `raster`, `sp`, `rgeos` and `rgdal` to `terra` and `sf`.
 See `NEWS.md` for a full list of changes.
 
 ## Test environments
@@ -44,4 +43,7 @@ We provide instructions for installing suggested package `NLMR` from another rep
 
 ## Downstream dependencies
 
-All pass the revdeps checks.
+We checked 1 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
