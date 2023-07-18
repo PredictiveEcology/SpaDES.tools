@@ -1,7 +1,10 @@
 #devtools::install_github("r-lib/revdepcheck")
 library("revdepcheck")
 
-options(repos = "https://cloud.r-project.org")
+options(
+  Ncpus = getOption("Ncpus", 4L),
+  repos = "https://cloud.r-project.org"
+)
 
 revdepcheck::revdep_reset()
 revdepcheck::revdep_check(num_workers = getOption("Ncpus", 4), timeout = 30*60) ## 30 mins
