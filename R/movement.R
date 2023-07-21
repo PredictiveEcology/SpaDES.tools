@@ -111,7 +111,6 @@ move <- function(hypothesis = "crw", ...) {
 #'   terra::points(spdfNew, col = "blue", pch = 19)
 #' }
 #'
-#'
 crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE,
                 returnMatrix = FALSE) {
   crds <- coords(agent)

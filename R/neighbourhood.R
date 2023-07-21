@@ -363,32 +363,32 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 }
 
 ##############################################################
-#' Identify pixels in a circle or ring (donut) around an object.
+#' Identify pixels in a circle or ring (doughnut) around an object.
 #'
 #' Identify the pixels and coordinates that are at a (set of) buffer distance(s)
 #' of the objects passed into `coords`.
-#' This is similar to `sf::st_buffer` but much faster and without the geo referencing information.
+#' This is similar to `sf::st_buffer` but much faster and without the georeferencing information.
 #' In other words, it can be used for similar problems, but where speed is important.
 #' This code is substantially adapted from `PlotRegionHighlighter::createCircle`.
 #'
 #' @param landscape Raster on which the circles are built.
 #'
-#' @param coords Either a matrix with 2 (or 3) columns, x and y (and id), representing the
+#' @param coords Either a matrix with 2 (or 3) columns, `x` and `y` (and `id`), representing the
 #'               coordinates (and an associated id, like cell index),
 #'               or a `SpatialPoints*` object around which to make circles. Must be same
 #'               coordinate system as the `landscape` argument. Default is missing,
-#'               meaning it uses the default to `loci`
+#'               meaning it uses the default to `loci`.
 #'
-#' @param loci   Numeric. An alternative to `coords`. These are the indices on
-#'               `landscape` to initiate this function. See `coords`. Default is one
-#'               point in centre of `landscape`..
+#' @param loci   Numeric. An alternative to `coords`.
+#'               These are the indices on `landscape` to initiate this function (see `coords`).
+#'               Default is one point in centre of `landscape`.
 #'
-#' @param maxRadius  Numeric vector of length 1 or same length as coords
+#' @param maxRadius  Numeric vector of length 1 or same length as `coords`
 #'
 #' @param minRadius  Numeric vector of length 1 or same length as `coords`. Default is
 #'                   `maxRadius`, meaning return all cells that are touched
 #'                   by the narrow ring at that exact radius. If smaller than `maxRadius`,
-#'                   then this will create a buffer or donut or ring.
+#'                   then this will create a buffer or doughnut or ring.
 #'
 #' @param allowOverlap Logical. Should duplicates across id be removed or kept. Default TRUE.
 #'
@@ -402,23 +402,23 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'
 #' @param returnDistances Logical. If `TRUE`, then a column will be added to the returned
 #'                        data.table that reports the distance from `coords` to every
-#'                        point that was in the circle/donut surrounding `coords`. Default
-#'                        `FALSE`, which is faster.
+#'                        point that was in the circle/doughnut surrounding `coords`.
+#'                        Default `FALSE`, which is faster.
 #'
 #' @param angles Numeric. Optional vector of angles, in radians, to use. This will create
-#'               "spokes" outward from coords. Default is `NA`, meaning, use internally
+#'               "spokes" outward from `coords.` Default is `NA`, meaning, use internally
 #'               derived angles that will "fill" the circle.
 #'
 #' @param returnAngles Logical. If `TRUE`, then a column will be added to the returned
 #'                     data.table that reports the angle from `coords` to every
-#'                     point that was in the circle/donut surrounding `coords`. Default `FALSE.`
+#'                     point that was in the circle/doughnut surrounding `coords`. Default `FALSE.`
 #'
 #' @param closest Logical. When determining non-overlapping circles, should the function
 #'                give preference to the closest `loci` or the first one (much faster).
 #'                Default is `FALSE`, meaning the faster, though maybe not desired behaviour.
 #'
 #' @param simplify logical. If `TRUE`, then all duplicate pixels are removed.
-#' This means that some x, y combinations will disappear.
+#'                 This means that some `x`, `y` combinations will disappear.
 #'
 #' @inheritParams spread
 #'
@@ -436,12 +436,6 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #' the `indices` (i.e., cell number) of the `landscape`
 #' associated with the ring or circle being identified by this function.
 #'
-#' @importFrom data.table data.table set setkeyv
-#' @importFrom fpCompare %==%
-#' @importFrom terra cellFromXY extract res xyFromCell ncell ncol
-#' @export
-#' @rdname cir
-#'
 #' @seealso [rings()] which uses `spread` internally.
 #' `cir` tends to be faster when there are few starting points, `rings` tends to be faster
 #' when there are many starting points. `cir` scales with `maxRadius^2` and `coords`.
@@ -453,10 +447,11 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 #'
 #' @example inst/examples/example_cir.R
 #'
-# setMethod(
-#   "cir",
-#   signature(landscape = "RasterLayer", coords = "matrix", loci = "missing"),
-#   definition =
+#' @export
+#' @importFrom data.table data.table set setkeyv
+#' @importFrom fpCompare %==%
+#' @importFrom terra cellFromXY extract res xyFromCell ncell ncol
+#' @rdname cir
 cir <- function(landscape, coords, loci,
                 maxRadius = ncol(landscape) / 4, minRadius = maxRadius,
                 allowOverlap = TRUE, allowDuplicates = FALSE,

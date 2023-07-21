@@ -13,7 +13,6 @@ Indices
 Micheletti
 NLMR
 ORCID
-PredictiveEcology
 Probabilistically
 Rcpp
 Rtools
@@ -35,13 +34,11 @@ benchmarking
 bugfixes
 coords
 crw
-dev
 dists
 doesn
 donut
 epsg
-geo
-https
+georeferencing
 indices
 iteratively
 modeling
@@ -51,7 +48,6 @@ preceeding
 probabilistically
 radians
 rasters
-repos
 rescaled
 runif
 spreadProb
