@@ -1,6 +1,9 @@
 library(data.table)
 library(terra)
 
+origDTThreads <- data.table::setDTthreads(1L)
+origNcpus <- options(Ncpus = 2L)
+
 ras <- rast(ext(0, 15, 0, 15), res = 1)
 fullRas <- randomPolygons(ras, numTypes = 2)
 names(fullRas) <- "mapcodeAll"
@@ -32,5 +35,6 @@ reducedDT[, mapcodeAll := Bclass]
 
 biomass2 <- rasterizeReduced(reducedDT, fullRas, "biomass")
 
-
-
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)

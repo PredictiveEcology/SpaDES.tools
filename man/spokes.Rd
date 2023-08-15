@@ -24,22 +24,22 @@ spokes(
 \arguments{
 \item{landscape}{Raster on which the circles are built.}
 
-\item{coords}{Either a matrix with 2 (or 3) columns, x and y (and id), representing the
+\item{coords}{Either a matrix with 2 (or 3) columns, \code{x} and \code{y} (and \code{id}), representing the
 coordinates (and an associated id, like cell index),
 or a \verb{SpatialPoints*} object around which to make circles. Must be same
 coordinate system as the \code{landscape} argument. Default is missing,
-meaning it uses the default to \code{loci}}
+meaning it uses the default to \code{loci}.}
 
-\item{loci}{Numeric. An alternative to \code{coords}. These are the indices on
-\code{landscape} to initiate this function. See \code{coords}. Default is one
-point in centre of \code{landscape}..}
+\item{loci}{Numeric. An alternative to \code{coords}.
+These are the indices on \code{landscape} to initiate this function (see \code{coords}).
+Default is one point in centre of \code{landscape}.}
 
-\item{maxRadius}{Numeric vector of length 1 or same length as coords}
+\item{maxRadius}{Numeric vector of length 1 or same length as \code{coords}}
 
 \item{minRadius}{Numeric vector of length 1 or same length as \code{coords}. Default is
 \code{maxRadius}, meaning return all cells that are touched
 by the narrow ring at that exact radius. If smaller than \code{maxRadius},
-then this will create a buffer or donut or ring.}
+then this will create a buffer or doughnut or ring.}
 
 \item{allowOverlap}{Logical. Should duplicates across id be removed or kept. Default TRUE.}
 
@@ -53,11 +53,11 @@ and \code{"excludePixels"}. See details.}
 
 \item{returnDistances}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the distance from \code{coords} to every
-point that was in the circle/donut surrounding \code{coords}. Default
-\code{FALSE}, which is faster.}
+point that was in the circle/doughnut surrounding \code{coords}.
+Default \code{FALSE}, which is faster.}
 
 \item{angles}{Numeric. Optional vector of angles, in radians, to use. This will create
-"spokes" outward from coords. Default is \code{NA}, meaning, use internally
+"spokes" outward from \code{coords.} Default is \code{NA}, meaning, use internally
 derived angles that will "fill" the circle.}
 
 \item{nAngles}{Numeric, length one. Alternative to angles. If provided, the function
@@ -68,7 +68,7 @@ warning of both are given.}
 
 \item{returnAngles}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the angle from \code{coords} to every
-point that was in the circle/donut surrounding \code{coords}. Default \code{FALSE.}}
+point that was in the circle/doughnut surrounding \code{coords}. Default \code{FALSE.}}
 
 \item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will return a \code{data.table}
 with indices and values of successful spread events.
@@ -92,7 +92,12 @@ This is a generalized version of a notion of a viewshed.
 The main difference is that there can be many "viewpoints".
 }
 \examples{
+library(data.table)
 library(terra)
+
+origDTThreads <- data.table::setDTthreads(1L)
+origNcpus <- options(Ncpus = 2L)
+
 set.seed(1234)
 
 ras <- terra::rast(terra::ext(0, 10, 0, 10), res = 1, val = 0)
@@ -129,6 +134,10 @@ if (NROW(d2) > 0) {
 }
 if (interactive())
   terra::plot(coords, add = TRUE, pch = 19, col = "blue")
+
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)
 }
 \author{
 Eliot McIntire

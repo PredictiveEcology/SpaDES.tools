@@ -351,7 +351,8 @@ that caused the \code{stopRule} to be \code{TRUE}\cr
 
 \examples{
 library(terra)
-origThreads <- data.table::setDTthreads(1) #
+origDTThreads <- data.table::setDTthreads(1L)
+origNcpus <- options(Ncpus = 2L)
 
 # Make random forest cover map
 set.seed(123)
@@ -569,7 +570,8 @@ hist(events1[], breaks = 30, main = "Event size distribution") ## TODO: fix this
 sum(hab3[events1[] > 0]) >= sum(hab3[events2[] > 0]) ## should be usually TRUE
 
 # clean up
-data.table::setDTthreads(origThreads)
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)
 }
 \seealso{
 \code{\link[=spread2]{spread2()}} for a different implementation of the same algorithm.

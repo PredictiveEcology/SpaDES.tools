@@ -103,7 +103,6 @@ if (requireNamespace("sp")) {
   terra::points(spdfNew, col = "blue", pch = 19)
 }
 
-
 }
 \references{
 Turchin, P. 1998. Quantitative analysis of movement: measuring and

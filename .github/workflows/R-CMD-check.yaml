@@ -24,7 +24,7 @@ jobs:
           - {os: macOS-latest,   nosuggests: false, r: 'release'}
           - {os: windows-latest, nosuggests: false, r: 'devel'}
           - {os: windows-latest, nosuggests: false, r: 'release'}
-          - {os: windows-latest, nosuggests: false, r: '4.1'}
+          - {os: windows-latest, nosuggests: false, r: 'oldrel'}
           - {os: ubuntu-20.04,   nosuggests: false, r: 'devel'}
           - {os: ubuntu-20.04,   nosuggests: false, r: 'release'}
           - {os: ubuntu-20.04,   nosuggests: true,  r: 'release'}
@@ -34,6 +34,7 @@ jobs:
       _R_CHECK_DEPENDS_ONLY_: ${{ matrix.config.nosuggests }}
       _SP_EVOLUTION_STATUS_: 2
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OMP_THREAD_LIMIT: 2
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
 
     steps:

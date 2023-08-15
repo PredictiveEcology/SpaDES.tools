@@ -2,7 +2,7 @@
 % Please edit documentation in R/neighbourhood.R
 \name{cir}
 \alias{cir}
-\title{Identify pixels in a circle or ring (donut) around an object.}
+\title{Identify pixels in a circle or ring (doughnut) around an object.}
 \usage{
 cir(
   landscape,
@@ -24,22 +24,22 @@ cir(
 \arguments{
 \item{landscape}{Raster on which the circles are built.}
 
-\item{coords}{Either a matrix with 2 (or 3) columns, x and y (and id), representing the
+\item{coords}{Either a matrix with 2 (or 3) columns, \code{x} and \code{y} (and \code{id}), representing the
 coordinates (and an associated id, like cell index),
 or a \verb{SpatialPoints*} object around which to make circles. Must be same
 coordinate system as the \code{landscape} argument. Default is missing,
-meaning it uses the default to \code{loci}}
+meaning it uses the default to \code{loci}.}
 
-\item{loci}{Numeric. An alternative to \code{coords}. These are the indices on
-\code{landscape} to initiate this function. See \code{coords}. Default is one
-point in centre of \code{landscape}..}
+\item{loci}{Numeric. An alternative to \code{coords}.
+These are the indices on \code{landscape} to initiate this function (see \code{coords}).
+Default is one point in centre of \code{landscape}.}
 
-\item{maxRadius}{Numeric vector of length 1 or same length as coords}
+\item{maxRadius}{Numeric vector of length 1 or same length as \code{coords}}
 
 \item{minRadius}{Numeric vector of length 1 or same length as \code{coords}. Default is
 \code{maxRadius}, meaning return all cells that are touched
 by the narrow ring at that exact radius. If smaller than \code{maxRadius},
-then this will create a buffer or donut or ring.}
+then this will create a buffer or doughnut or ring.}
 
 \item{allowOverlap}{Logical. Should duplicates across id be removed or kept. Default TRUE.}
 
@@ -53,16 +53,16 @@ and \code{"excludePixels"}. See details.}
 
 \item{returnDistances}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the distance from \code{coords} to every
-point that was in the circle/donut surrounding \code{coords}. Default
-\code{FALSE}, which is faster.}
+point that was in the circle/doughnut surrounding \code{coords}.
+Default \code{FALSE}, which is faster.}
 
 \item{angles}{Numeric. Optional vector of angles, in radians, to use. This will create
-"spokes" outward from coords. Default is \code{NA}, meaning, use internally
+"spokes" outward from \code{coords.} Default is \code{NA}, meaning, use internally
 derived angles that will "fill" the circle.}
 
 \item{returnAngles}{Logical. If \code{TRUE}, then a column will be added to the returned
 data.table that reports the angle from \code{coords} to every
-point that was in the circle/donut surrounding \code{coords}. Default \code{FALSE.}}
+point that was in the circle/doughnut surrounding \code{coords}. Default \code{FALSE.}}
 
 \item{returnIndices}{Logical or numeric. If \code{1} or \code{TRUE}, will return a \code{data.table}
 with indices and values of successful spread events.
@@ -76,7 +76,7 @@ give preference to the closest \code{loci} or the first one (much faster).
 Default is \code{FALSE}, meaning the faster, though maybe not desired behaviour.}
 
 \item{simplify}{logical. If \code{TRUE}, then all duplicate pixels are removed.
-This means that some x, y combinations will disappear.}
+This means that some \code{x}, \code{y} combinations will disappear.}
 }
 \value{
 A \code{matrix} with 4 columns, \code{id}, \code{indices},
@@ -87,7 +87,7 @@ associated with the ring or circle being identified by this function.
 \description{
 Identify the pixels and coordinates that are at a (set of) buffer distance(s)
 of the objects passed into \code{coords}.
-This is similar to \code{sf::st_buffer} but much faster and without the geo referencing information.
+This is similar to \code{sf::st_buffer} but much faster and without the georeferencing information.
 In other words, it can be used for similar problems, but where speed is important.
 This code is substantially adapted from \code{PlotRegionHighlighter::createCircle}.
 }
@@ -101,10 +101,11 @@ If this is \code{excludePixels}, and if a \code{minRadius} and
 \code{maxRadius} are equal, this will return no pixels.
 }
 \examples{
+library(data.table)
 library(terra)
-# for this dummy example, use only 1 CPU thread
+
 origDTThreads <- data.table::setDTthreads(1L)
-origNcpus <- options(Ncpus = 2L)
+origNcpus <- options(Ncpus = 1L)
 set.seed(1462)
 
 # circle centred
