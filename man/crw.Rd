@@ -66,6 +66,9 @@ was presented in Turchin 1998, but it was also used with bias modifications
 in McIntire, Schultz, Crone 2007.
 }
 \examples{
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
+
 # using just matrix
 N <- 10
 xrange <- yrange <- c(-50, 50)
@@ -102,6 +105,10 @@ if (requireNamespace("sp")) {
   terra::plot(spdf, pch = 19)
   terra::points(spdfNew, col = "blue", pch = 19)
 }
+
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)
 
 }
 \references{

@@ -122,6 +122,10 @@ left to right)
 }
 \examples{
 library(terra)
+
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
+
 a <- rast(ext(0, 1000, 0, 1000), res = 1)
 sam <- sample(1:ncell(a), 1e4)
 numCol <- ncol(a)
@@ -129,6 +133,10 @@ numCell <- ncell(a)
 adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8)
 adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8,
                include = TRUE)
+
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)
 
 }
 \seealso{

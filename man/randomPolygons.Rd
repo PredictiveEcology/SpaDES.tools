@@ -46,6 +46,9 @@ Produces a \code{SpatVector} polygons object with 1 feature that will have appro
 equal to \code{area} (expecting area in hectares), #' and a centre at approximately \code{x}.
 }
 \examples{
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
+
 set.seed(1234)
 Ras <- randomPolygons(numTypes = 5)
 if (interactive() ) {
@@ -61,6 +64,11 @@ clumped <- terra::patches(a)
 if (interactive()) {
   terra::plot(a)
 }
+
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)
+
 library(terra)
 b <- terra::vect(cbind(-110, 59), crs = "epsg:4326")
 a <- randomPolygon(b, area = 1e6)

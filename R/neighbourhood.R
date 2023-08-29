@@ -99,6 +99,10 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #'
 #' @examples
 #' library(terra)
+#'
+#' origDTThreads <- data.table::setDTthreads(2L)
+#' origNcpus <- options(Ncpus = 2L)
+#'
 #' a <- rast(ext(0, 1000, 0, 1000), res = 1)
 #' sam <- sample(1:ncell(a), 1e4)
 #' numCol <- ncol(a)
@@ -106,6 +110,10 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #' adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8)
 #' adj.new <- adj(numCol = numCol, numCell = numCell, cells = sam, directions = 8,
 #'                include = TRUE)
+#'
+#' # clean up
+#' data.table::setDTthreads(origDTThreads)
+#' options(Ncpus = origNcpus)
 #'
 adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
                     include = FALSE, target = NULL, numCol = NULL, numCell = NULL,
@@ -769,10 +777,15 @@ cir <- function(landscape, coords, loci,
 #'                    also so that the subsequent heading calculation will work.
 #'                    Default `FALSE`. See details.
 #'
-#' @return Object of the same class as `X`, but with coordinates updated to
-#'         reflect the wrapping.
+#' @return Object of the same class as `X`, but with coordinates updated to reflect the wrapping.
+#'
+#' @author Eliot McIntire
+#' @export
 #'
 #' @examples
+#' origDTThreads <- data.table::setDTthreads(2L)
+#' origNcpus <- options(Ncpus = 2L)
+#'
 #' xrange <- yrange <- c(-50, 50)
 #' hab <- terra::rast(terra::ext(c(xrange, yrange)))
 #' hab[] <- 0
@@ -806,9 +819,10 @@ cir <- function(landscape, coords, loci,
 #' agent <- SpaDES.tools::wrap(agent, bounds = terra::ext(hab))
 #' terra::plot(agent, add = TRUE, col = 1:10) # now inside the extent of hab
 #'
-#' @author Eliot McIntire
-#' @export
-#' @rdname wrap
+#' # clean up
+#' data.table::setDTthreads(origDTThreads)
+#' options(Ncpus = origNcpus)
+#'
 wrap <- function(X, bounds, withHeading = FALSE) {
   classX <- is(X)
 

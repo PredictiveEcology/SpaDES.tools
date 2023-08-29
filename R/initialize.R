@@ -82,6 +82,9 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' @rdname randomPolygons
 #'
 #' @examples
+#' origDTThreads <- data.table::setDTthreads(2L)
+#' origNcpus <- options(Ncpus = 2L)
+#'
 #' set.seed(1234)
 #' Ras <- randomPolygons(numTypes = 5)
 #' if (interactive() ) {
@@ -97,6 +100,11 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' if (interactive()) {
 #'   terra::plot(a)
 #' }
+#'
+#' # clean up
+#' data.table::setDTthreads(origDTThreads)
+#' options(Ncpus = origNcpus)
+#'
 randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
                            numTypes = 2, ...) {
   args <- list(...)

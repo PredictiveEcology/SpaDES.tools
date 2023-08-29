@@ -19,7 +19,11 @@ Determines the heading between spatial points.
 }
 \examples{
 library(terra)
-N <- 10L                # number of agents
+
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
+
+N <- 10L                       # number of agents
 x1 <- stats::runif(N, -50, 50) # previous X location
 y1 <- stats::runif(N, -50, 50) # previous Y location
 x0 <- stats::rnorm(N, x1, 5)   # current X location
@@ -43,6 +47,10 @@ heading(prev, curr)
 prev <- matrix(c(x1, y1), ncol = 2, dimnames = list(NULL, c("x","y")))
 curr <- terra::vect(cbind(x = x0, y = y0))
 heading(prev, curr)
+
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)
 
 }
 \author{

@@ -386,6 +386,9 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' @examples
 #' library(terra)
 #'
+#' origDTThreads <- data.table::setDTthreads(2L)
+#' origNcpus <- options(Ncpus = 2L)
+#'
 #' N <- 2
 #' dirRas <- terra::rast(terra::ext(0,40,0,40), res = 1)
 #' coords <- cbind(x = round(runif(N, xmin(dirRas), xmax(dirRas))) + 0.5,
@@ -406,6 +409,10 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'   start <- terra::vect(coords[, c("x", "y"), drop = FALSE])
 #'   terra::plot(start, add = TRUE)
 #' }
+#'
+#' # clean up
+#' data.table::setDTthreads(origDTThreads)
+#' options(Ncpus = origNcpus)
 #'
 #' @export
 #' @importFrom terra ncell xyFromCell
