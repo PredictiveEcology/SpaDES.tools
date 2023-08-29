@@ -364,6 +364,9 @@ say, insect swarms.
 \examples{
 library(terra)
 
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
+
 a <- rast(ext(0, 10, 0, 10), res = 1)
 sams <- sort(sample(ncell(a), 3))
 
@@ -502,6 +505,10 @@ circs <- spread2(a, spreadProb = 0.213, start = sams,
       }
     }
   }
+
+  # clean up
+  data.table::setDTthreads(origDTThreads)
+  options(Ncpus = origNcpus)
 }
 }
 \seealso{

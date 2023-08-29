@@ -353,6 +353,9 @@ rndmPolygonSpatialPolygons <- function(x, hectares, area) {
 #' @examples
 #' library(data.table)
 #'
+#' origDTThreads <- data.table::setDTthreads(2L)
+#' origNcpus <- options(Ncpus = 2L)
+#'
 #' set.seed(1234)
 #' Ntypes <- 4
 #' ras <- randomPolygons(numTypes = Ntypes)
@@ -381,6 +384,10 @@ rndmPolygonSpatialPolygons <- function(x, hectares, area) {
 #' if (interactive()) {
 #'   terra::plot(rasAgents)
 #' }
+#'
+#' # clean up
+#' data.table::setDTthreads(origDTThreads)
+#' options(Ncpus = origNcpus)
 #'
 #' @export
 #' @importFrom data.table data.table setkey

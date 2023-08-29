@@ -28,6 +28,9 @@ linked by a column in that table called \code{pops}.
 \examples{
 library(data.table)
 
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
+
 set.seed(1234)
 Ntypes <- 4
 ras <- randomPolygons(numTypes = Ntypes)
@@ -56,5 +59,9 @@ rasAgents[is.na(rasAgents)] <- 0
 if (interactive()) {
   terra::plot(rasAgents)
 }
+
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)
 
 }

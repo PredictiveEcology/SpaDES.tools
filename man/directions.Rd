@@ -71,6 +71,7 @@ dirs1[, "angles"] <- deg2(dirs1[,"angles"] \%\% (2*pi))
 indices <- cellFromXY(dirRas,dirs1[, c("x", "y")])
 minDir <- tapply(dirs1[, "angles"], indices, function(x) min(x)) # minimum angle
 dirRas[] <- as.vector(minDir)
+
 if (interactive()) {
   terra::plot(dirRas)
   start <- terra::vect(coords[, c("x", "y"), drop = FALSE])
