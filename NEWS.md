@@ -1,5 +1,3 @@
-# SpaDES.tools (development version)
-
 # SpaDES.tools 2.0.4
 
 ## Enhancements
