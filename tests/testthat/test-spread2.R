@@ -1,8 +1,6 @@
 test_that("spread2 tests", {
-
   testInit("terra")
   rastDF <- needTerraAndRaster()
-  data.table::setDTthreads(1)
 
   # inputs for x
   aOrig <- terra::rast(system.file("extdata", "a.tif", package = "SpaDES.tools"))
@@ -11,7 +9,6 @@ test_that("spread2 tests", {
   bSimple <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
 
   spRas <- terra::rast(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
-
 
   for (ii in seq(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
@@ -268,7 +265,7 @@ test_that("spread2 tests", {
     rasts <- list()
     for (ccc in 1:20) {
       rasts[[ccc]] <- spread2(a, spreadProb = stats::runif(1, 0, 1))
-      expect_that(rasts[[ccc]], is_a(cls))
+      expect_s4_class(rasts[[ccc]], cls)
     }
     if (interactive()) {
       names(rasts) <- paste0("ras", 1:20)
@@ -290,7 +287,7 @@ test_that("spread2 tests", {
     set.seed(299)
     out2 <- spread2(a, start = sams, asRaster = FALSE)
     keyedCols <- c("initialPixels", "pixels")
-    expect_equivalent(out2, out)
+    expect_equal(out2, out, ignore_attr = TRUE)
 
     if (interactive())
       message("testing iterative calling of spread2, but asRaster = TRUE")

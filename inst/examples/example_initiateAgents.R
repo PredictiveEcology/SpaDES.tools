@@ -2,7 +2,7 @@ if (require("sf", quietly = TRUE)) {
   library(data.table)
   library(terra)
 
-  origDTThreads <- data.table::setDTthreads(1L)
+  origDTThreads <- data.table::setDTthreads(2L)
   origNcpus <- options(Ncpus = 2L)
 
   map <- rast(system.file("extdata", "map.tif", package = "SpaDES.tools"))

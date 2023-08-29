@@ -351,7 +351,7 @@ that caused the \code{stopRule} to be \code{TRUE}\cr
 
 \examples{
 library(terra)
-origDTThreads <- data.table::setDTthreads(1L)
+origDTThreads <- data.table::setDTthreads(2L)
 origNcpus <- options(Ncpus = 2L)
 
 # Make random forest cover map

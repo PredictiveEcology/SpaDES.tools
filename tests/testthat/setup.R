@@ -1,4 +1,4 @@
-# Preload all Suggests so that examples don't take tons of time
+## Preload all Suggests so that examples don't take tons of time
 requireNamespace("NLMR", quietly = TRUE)
 requireNamespace("raster", quietly = TRUE)
 requireNamespace("DEoptim", quietly = TRUE)

@@ -95,9 +95,8 @@ The main difference is that there can be many "viewpoints".
 library(data.table)
 library(terra)
 
-origDTThreads <- data.table::setDTthreads(1L)
+origDTThreads <- data.table::setDTthreads(2L)
 origNcpus <- options(Ncpus = 2L)
-
 set.seed(1234)
 
 ras <- terra::rast(terra::ext(0, 10, 0, 10), res = 1, val = 0)

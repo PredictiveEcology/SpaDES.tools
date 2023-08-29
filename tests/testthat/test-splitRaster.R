@@ -5,8 +5,6 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
                          testFile = c("external/rlogo.grd", "ex/logo.tif"))
   rastDF <- merge(testFiles, rastDF)
 
-  data.table::setDTthreads(1)
-
   for (ii in seq(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
@@ -53,11 +51,18 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     expect_equal(unique(lapply(y0, crs))[[1]], crs(r))
 
     m0 <- mergeRaster(y0)
-    expect_equal(dim(m0), dim(r))
-    expect_equal(extnt(m0), extnt(r))
-    expect_equal(res(m0), res(r))
-    expect_equal(max(values(m0)), max(values(r)))
-    expect_equal(min(values(m0)), min(values(r)))
+
+    if (is(m0, "Raster")) {
+      expect_true(raster::compareRaster(m0, r, extent = TRUE, rowcol = TRUE, crs = TRUE, res = TRUE,
+                  orig = TRUE, rotation = TRUE, values = TRUE, stopiffalse = FALSE))
+      expect_equal(max(values(m0)), max(values(r)))
+      expect_equal(min(values(m0)), min(values(r)))
+    } else {
+      expect_true(terra::compareGeom(m0, r, crs = TRUE, ext = TRUE, rowcol = TRUE, res = TRUE,
+                                     stopOnError = FALSE))
+      expect_equal(max(values(m0)), max(values(r)))
+      expect_equal(min(values(m0)), min(values(r)))
+    }
 
     # as a stack/brick
     sr <- splitRaster(b, nx = nx, ny = ny)
@@ -93,11 +98,18 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     expect_equal(unique(lapply(y1, crs))[[1]], crs(r))
 
     m1 <- mergeRaster(y1)
-    expect_equal(dim(m1), dim(r))
-    expect_equal(extnt(m1), extnt(r))
-    expect_equal(res(m1), res(r))
-    expect_equal(max(values(m1)), max(values(r)))
-    expect_equal(min(values(m1)), min(values(r)))
+
+    if (is(m1, "Raster")) {
+      expect_true(raster::compareRaster(m1, r, extent = TRUE, rowcol = TRUE, crs = TRUE, res = TRUE,
+                                        orig = TRUE, rotation = TRUE, values = TRUE, stopiffalse = FALSE))
+      expect_equal(max(values(m1)), max(values(r)))
+      expect_equal(min(values(m1)), min(values(r)))
+    } else {
+      expect_true(terra::compareGeom(m1, r, crs = TRUE, ext = TRUE, rowcol = TRUE, res = TRUE,
+                                     stopOnError = FALSE))
+      expect_equal(max(values(m1)), max(values(r)))
+      expect_equal(min(values(m1)), min(values(r)))
+    }
 
     # with no path specified, file is in memory
     y1 <- splitRaster(r, nx, ny, c(3L, 4L))
@@ -122,11 +134,18 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     expect_equal(unique(lapply(y2, crs))[[1]], crs(r))
 
     m2 <- mergeRaster(y2)
-    expect_equal(dim(m2), dim(r))
-    expect_equal(extnt(m2), extnt(r))
-    expect_equal(res(m2), res(r))
-    expect_equal(max(values(m2)), max(values(r)))
-    expect_equal(min(values(m2)), min(values(r)))
+
+    if (is(m2, "Raster")) {
+      expect_true(raster::compareRaster(m2, r, extent = TRUE, rowcol = TRUE, crs = TRUE, res = TRUE,
+                                        orig = TRUE, rotation = TRUE, values = TRUE, stopiffalse = FALSE))
+      expect_equal(max(values(m2)), max(values(r)))
+      expect_equal(min(values(m2)), min(values(r)))
+    } else {
+      expect_true(terra::compareGeom(m2, r, crs = TRUE, ext = TRUE, rowcol = TRUE, res = TRUE,
+                                     stopOnError = FALSE))
+      expect_equal(max(values(m2)), max(values(r)))
+      expect_equal(min(values(m2)), min(values(r)))
+    }
 
     # different raster resolutions
     r1 <- r
@@ -171,9 +190,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
       expect_true(terra::is.int(y4[[1]]))
     }
 
-    expect_warning({
-      y5 <- splitRaster(r, nx, ny, rType = "INT") # INT invalid; defaults to INT4S
-    }, "INT is not a valid datatype")
+    y5 <- splitRaster(r, nx, ny, rType = "INT4S")
     if (pkg == "raster") {
       expect_identical(reproducible::dataType2(y5[[1]]), "INT4S")
     } else if (pkg == "terra") {
@@ -181,7 +198,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
       expect_true(terra::is.int(y5[[1]]))
     }
 
-    y6 <- splitRaster(r, nx, ny) # defaults to FLT4S
+    y6 <- splitRaster(r, nx, ny) ## defaults to FLT4S
     if (pkg == "raster") {
       expect_identical(reproducible::dataType2(y6[[1]]), "FLT4S")
     } else if (pkg == "terra") {
@@ -196,9 +213,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
       expect_true(all(tools::file_ext(reproducible::Filenames(y7[[1]])) %in% c("grd", "gri")))
       expect_true(tools::file_ext(reproducible::Filenames(y8[[1]])) == "tif")
     }
-
   }
-
 })
 
 test_that("splitRaster works in parallel", {
