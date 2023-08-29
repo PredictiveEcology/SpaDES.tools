@@ -166,10 +166,11 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># an example with dimensions:</span></span></span>
-<span class="r-in"><span><span class="co"># nrow: 77</span></span></span>
-<span class="r-in"><span><span class="co"># ncol: 101</span></span></span>
-<span class="r-in"><span><span class="co"># nlayers: 3</span></span></span>
+<span class="r-in"><span><span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">origNcpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1462</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## an example with dimensions: nrow = 77,  ncol = 101, nlayers = 3</span></span></span>
 <span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"ex/logo.tif"</span>, package <span class="op">=</span> <span class="st">"terra"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="va">b</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co"># use first layer only</span></span></span>
 <span class="r-in"><span><span class="va">nx</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></span>
@@ -179,16 +180,16 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">y0</span> <span class="op">&lt;-</span> <span class="fu">splitRaster</span><span class="op">(</span><span class="va">r</span>, <span class="va">nx</span>, <span class="va">ny</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>, <span class="st">"y0"</span><span class="op">)</span><span class="op">)</span> <span class="co"># no buffer</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># buffer: 10 pixels along both axes</span></span></span>
+<span class="r-in"><span><span class="co">## buffer: 10 pixels along both axes</span></span></span>
 <span class="r-in"><span><span class="va">y1</span> <span class="op">&lt;-</span> <span class="fu">splitRaster</span><span class="op">(</span><span class="va">r</span>, <span class="va">nx</span>, <span class="va">ny</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>, <span class="st">"y1"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># buffer: half the width and length of each tile</span></span></span>
+<span class="r-in"><span><span class="co">## buffer: half the width and length of each tile</span></span></span>
 <span class="r-in"><span><span class="va">y2</span> <span class="op">&lt;-</span> <span class="fu">splitRaster</span><span class="op">(</span><span class="va">r</span>, <span class="va">nx</span>, <span class="va">ny</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>, <span class="st">"y2"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># the original raster:</span></span></span>
+<span class="r-in"><span><span class="co">## the original raster:</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="co"># may require a call to `dev()` if using RStudio</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># the split raster:</span></span></span>
+<span class="r-in"><span><span class="co">## the split raster:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span>mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nx</span> <span class="op">*</span> <span class="va">ny</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">nx</span>, nrow <span class="op">=</span> <span class="va">ny</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">plotOrder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/split.html" class="external-link">split</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">nx</span>, each <span class="op">=</span> <span class="va">ny</span><span class="op">)</span><span class="op">)</span>, <span class="va">rev</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -196,7 +197,7 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">y0</span><span class="op">[</span><span class="va">plotOrder</span><span class="op">]</span>, <span class="fu">terra</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># parallel splitting</span></span></span>
+<span class="r-in"><span><span class="co">## parallel splitting</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"raster"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;&amp;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"parallel"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -210,8 +211,7 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 <span class="r-in"><span>  <span class="op">}</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># can be recombined using `terra::merge`</span></span></span>
+<span class="r-in"><span><span class="co">## can be recombined using `terra::merge`</span></span></span>
 <span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">merge</span>, <span class="va">y0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -224,7 +224,7 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">m2</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># or recombine using mergeRaster</span></span></span>
+<span class="r-in"><span><span class="co">## or recombine using mergeRaster</span></span></span>
 <span class="r-in"><span><span class="va">n0</span> <span class="op">&lt;-</span> <span class="fu">mergeRaster</span><span class="op">(</span><span class="va">y0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">n0</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -237,6 +237,9 @@ It is always a good idea to stop the cluster when finished, using <code><a href=
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">n2</span>, <span class="va">r</span><span class="op">)</span> <span class="co">## TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># clean up</span></span></span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="va">origNcpus</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">tmpdir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
