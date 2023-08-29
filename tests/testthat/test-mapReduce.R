@@ -2,7 +2,6 @@ test_that("mapReduce: file does not work correctly 1", {
 
   testInit("terra")
   rastDF <- needTerraAndRaster()
-  data.table::setDTthreads(1)
 
   for (ii in seq(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
@@ -49,14 +48,20 @@ test_that("mapReduce: file does not work correctly 1", {
     reducedDT[, mapcodeAll := Bclass]
 
     biomass2 <- rasterizeReduced(reducedDT, fullRas, "biomass")
-    expect_equal(biomass, biomass2)
+    if (is(biomass, "Raster")) {
+      raster::compareRaster(biomass, biomass2, extent = TRUE, rowcol = TRUE, crs = TRUE, res = TRUE,
+                            orig = TRUE, rotation = TRUE, values = TRUE, stopiffalse = FALSE)
+    } else {
+      terra::compareGeom(biomass, biomass2, crs = TRUE, ext = TRUE, rowcol = TRUE, res = TRUE,
+                         stopOnError = FALSE)
+    }
   }
 })
 
 test_that("mapReduce: file does not work correctly 2", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
-  rasOrig <- terra::rast(terra::ext(0,15,0,15), res=1)
+  rasOrig <- terra::rast(terra::ext(0, 15, 0, 15), res = 1)
   set.seed(321) # random fails here ... trying set.seed as a solution
 
   for (ii in seq(NROW(rastDF))) {

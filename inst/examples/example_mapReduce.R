@@ -1,7 +1,7 @@
 library(data.table)
 library(terra)
 
-origDTThreads <- data.table::setDTthreads(1L)
+origDTThreads <- data.table::setDTthreads(2L)
 origNcpus <- options(Ncpus = 2L)
 
 ras <- rast(ext(0, 15, 0, 15), res = 1)

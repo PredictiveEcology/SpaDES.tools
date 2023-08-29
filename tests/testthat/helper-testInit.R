@@ -22,7 +22,7 @@ testInit <- function(libraries = character(), ask = FALSE, verbose,
                      tmpFileExt = "",
                      opts = NULL, needGoogleDriveAuth = FALSE
                      ) {
-
+  data.table::setDTthreads(2)
   reproducible::set.randomseed()
 
   pf <- parent.frame()
@@ -43,7 +43,6 @@ testInit <- function(libraries = character(), ask = FALSE, verbose,
       suppressWarnings(lapply(libraries, withr::local_package, .local_envir = pf))
     }
   }
-
 
   # skip_gauth <- identical(Sys.getenv("SKIP_GAUTH"), "true") # only set in setup.R for covr
   # if (isTRUE(needGoogleDriveAuth) ) {
@@ -102,4 +101,3 @@ testInit <- function(libraries = character(), ask = FALSE, verbose,
   list2env(out, envir = pf)
   return(invisible(out))
 }
-

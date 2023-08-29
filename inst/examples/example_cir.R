@@ -1,8 +1,8 @@
 library(data.table)
 library(terra)
 
-origDTThreads <- data.table::setDTthreads(1L)
-origNcpus <- options(Ncpus = 1L)
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
 set.seed(1462)
 
 # circle centred

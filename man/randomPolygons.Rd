@@ -53,7 +53,8 @@ if (interactive() ) {
 }
 
 # more complex patterning, with a range of patch sizes
-a <- randomPolygons(numTypes = 400, terra::rast(terra::ext(0, 50, 0, 50), res = 1, vals = 0))
+r <- terra::rast(terra::ext(0, 50, 0, 50), resolution = 1, vals = 0)
+a <- randomPolygons(numTypes = 400, r)
 a[a < 320] <- 0
 a[a >= 320] <- 1
 clumped <- terra::patches(a)

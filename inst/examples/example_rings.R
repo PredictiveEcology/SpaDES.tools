@@ -1,4 +1,9 @@
 library(terra)
+
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
+set.seed(1462)
+
 # Make random forest cover map
 emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
 
@@ -21,3 +26,7 @@ emptyRas[rngs$indices] <- rngs$id
 if (interactive()) {
   terra::plot(emptyRas)
 }
+
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)

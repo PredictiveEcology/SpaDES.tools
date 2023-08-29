@@ -750,20 +750,20 @@ test_that("simple cir does not work correctly", {
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = FALSE, returnDistances = FALSE)
-    expect_is(cirs2, rastDF$class[ii])
+    expect_s4_class(cirs2, rastDF$class[ii])
     expect_true(max(as.numeric(terra::values(cirs2))) == 2)
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = TRUE, returnDistances = FALSE)
-    expect_is(cirs2, rastDF$class[ii])
+    expect_s4_class(cirs2, rastDF$class[ii])
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     cirs2 <- cir(hab, coords = coords, maxRadius = 2, minRadius = 0,
                  includeBehavior = "includePixels", closest = FALSE,
                  returnIndices = FALSE, allowOverlap = TRUE, returnDistances = TRUE)
-    expect_is(cirs2, rastDF$class[ii])
+    expect_s4_class(cirs2, rastDF$class[ii])
     expect_true(min(as.numeric(terra::values(cirs2))) == 0)
 
     hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), res = c(1, 2))
@@ -934,6 +934,12 @@ test_that("spreadProb with relative values does not work correctly", {
 
     out2 <- spread(hab3, loci = ncell(hab3) / 2, spreadProb = sps)
     expect_s4_class(out2, rastDF$class[ii])
-    expect_equal(out1, out2)
+    if (is(out1, "Raster")) {
+      raster::compareRaster(out1, out2, extent = TRUE, rowcol = TRUE, crs = TRUE, res = TRUE,
+                            orig = TRUE, rotation = TRUE, values = TRUE, stopiffalse = FALSE)
+    } else {
+      terra::compareGeom(out1, out2, crs = TRUE, ext = TRUE, rowcol = TRUE, res = TRUE,
+                         stopOnError = FALSE)
+    }
   }
 })

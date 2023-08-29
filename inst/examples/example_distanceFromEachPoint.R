@@ -1,5 +1,8 @@
 library(terra)
 
+origDTThreads <- data.table::setDTthreads(2L)
+origNcpus <- options(Ncpus = 2L)
+
 n <- 2
 distRas <- rast(ext(0, 40, 0, 40), res = 1)
 coords <- cbind(x = round(runif(n, xmin(distRas), xmax(distRas))) + 0.5,
@@ -55,3 +58,7 @@ if (identical(Sys.info()["sysname"], "Linux")) {
                                   landscape = rp, distFn = distFn,
                                   cumulativeFn = `+`, cl = 2)
 }
+
+# clean up
+data.table::setDTthreads(origDTThreads)
+options(Ncpus = origNcpus)

@@ -147,7 +147,6 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     active <- spreadState$whActive
     inactive <- spreadState$whInactive
 
-
     iteration <- spreadState$totalIterations
     if (verbose > 1) message("Iteration ", iteration)
     if (isTRUE(plot.it > 1)) {
