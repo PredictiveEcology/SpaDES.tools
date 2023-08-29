@@ -74,6 +74,9 @@ move <- function(hypothesis = "crw", ...) {
 #' @rdname crw
 #' @seealso [wrap()]
 #' @examples
+#' origDTThreads <- data.table::setDTthreads(2L)
+#' origNcpus <- options(Ncpus = 2L)
+#'
 #' # using just matrix
 #' N <- 10
 #' xrange <- yrange <- c(-50, 50)
@@ -110,6 +113,10 @@ move <- function(hypothesis = "crw", ...) {
 #'   terra::plot(spdf, pch = 19)
 #'   terra::points(spdfNew, col = "blue", pch = 19)
 #' }
+#'
+#' # clean up
+#' data.table::setDTthreads(origDTThreads)
+#' options(Ncpus = origNcpus)
 #'
 crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE,
                 returnMatrix = FALSE) {
