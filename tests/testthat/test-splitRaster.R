@@ -261,12 +261,19 @@ test_that("splitRaster works in parallel", {
   expect_equal(unique(lapply(y11, crs))[[1]], crs(r))
 
   m11 <- mergeRaster(y11)
-  expect_equal(dim(m11), dim(r))
-  expect_equal(raster::extent(m11), raster::extent(r))
-  expect_equal(names(m11), names(r))
-  expect_equal(res(m11), res(r))
-  expect_equal(max(values(m11)), max(values(r)))
-  expect_equal(min(values(m11)), min(values(r)))
+
+  if (is(m11, "Raster")) {
+    expect_true(raster::compareRaster(m11, r, extent = TRUE, rowcol = TRUE, crs = TRUE, res = TRUE,
+                                      orig = TRUE, rotation = TRUE, values = TRUE, stopiffalse = FALSE))
+    expect_equal(max(values(m11)), max(values(r)))
+    expect_equal(min(values(m11)), min(values(r)))
+  } else {
+    expect_true(terra::compareGeom(m11, r, crs = TRUE, ext = TRUE, rowcol = TRUE, res = TRUE,
+                                   stopOnError = FALSE))
+    expect_equal(max(values(m11)), max(values(r)))
+    expect_equal(min(values(m11)), min(values(r)))
+  }
+
   raster::endCluster()
 })
 
@@ -328,10 +335,15 @@ test_that("splitRaster and mergeRaster work on large on-disk rasters", {
   expect_equal(ext(r), u1)
 
   m1 <- mergeRaster(s1) # takes a while to run...
-  expect_equal(dim(m1), dim(r))
-  expect_equal(ext(m1), ext(r))
-  expect_equal(names(m1), names(r))
-  expect_equal(res(m1), res(r))
-  # expect_equal(max(values(m1)), max(values(r)))
-  # expect_equal(min(values(m1)), min(values(r)))
+  if (is(m1, "Raster")) {
+    expect_true(raster::compareRaster(m1, r, extent = TRUE, rowcol = TRUE, crs = TRUE, res = TRUE,
+                                      orig = TRUE, rotation = TRUE, values = TRUE, stopiffalse = FALSE))
+    expect_equal(max(values(m1)), max(values(r)))
+    expect_equal(min(values(m1)), min(values(r)))
+  } else {
+    expect_true(terra::compareGeom(m1, r, crs = TRUE, ext = TRUE, rowcol = TRUE, res = TRUE,
+                                   stopOnError = FALSE))
+    expect_equal(max(values(m1)), max(values(r)))
+    expect_equal(min(values(m1)), min(values(r)))
+  }
 })
