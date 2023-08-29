@@ -217,6 +217,10 @@ left to right)</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:SpaDES.tools’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     wrap</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">origNcpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span>, <span class="fl">0</span>, <span class="fl">1000</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span>, <span class="fl">1e4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">numCol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
@@ -224,6 +228,10 @@ left to right)</p></li>
 <span class="r-in"><span><span class="va">adj.new</span> <span class="op">&lt;-</span> <span class="fu">adj</span><span class="op">(</span>numCol <span class="op">=</span> <span class="va">numCol</span>, numCell <span class="op">=</span> <span class="va">numCell</span>, cells <span class="op">=</span> <span class="va">sam</span>, directions <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">adj.new</span> <span class="op">&lt;-</span> <span class="fu">adj</span><span class="op">(</span>numCol <span class="op">=</span> <span class="va">numCol</span>, numCell <span class="op">=</span> <span class="va">numCell</span>, cells <span class="op">=</span> <span class="va">sam</span>, directions <span class="op">=</span> <span class="fl">8</span>,</span></span>
 <span class="r-in"><span>               include <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># clean up</span></span></span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="va">origNcpus</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
