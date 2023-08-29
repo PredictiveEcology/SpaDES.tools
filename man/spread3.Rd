@@ -83,6 +83,10 @@ They are "rounded" to pixel centres.
 #########################################################
 \donttest{
   library(terra)
+
+  origDTThreads <- data.table::setDTthreads(2L)
+  origNcpus <- options(Ncpus = 2L)
+
   maxDim <- 10000
   ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = 100, vals = 0)
   rasQuality <- terra::rast(ras)
@@ -221,5 +225,9 @@ They are "rounded" to pixel centres.
         })
     }
   }
+
+  # clean up
+  data.table::setDTthreads(origDTThreads)
+  options(Ncpus = origNcpus)
 }
 }

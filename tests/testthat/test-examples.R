@@ -1,5 +1,4 @@
 test_that("all exported functions have examples", {
-
   exFiles <- normalizePath(dir("../../man", full.names = TRUE))
   testInit()
   exFiles <- exFiles[!dir.exists(exFiles)]
