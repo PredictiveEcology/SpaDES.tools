@@ -146,12 +146,24 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 #' @rdname randomPolygons
 #'
 #' @examples
-#' library(terra)
-#' b <- terra::vect(cbind(-110, 59), crs = "epsg:4326")
-#' a <- randomPolygon(b, area = 1e6)
+#' a1 <- terra::vect(cbind(-110, 59), crs = "epsg:4326")
+#' a2 <- randomPolygon(a1, area = 1e7)
+#'
+#' b1 <- list(cbind(
+#'   x = c(-122.98, -116.1, -99.2, -106, -122.98),
+#'   y = c(59.9, 65.73, 63.58, 54.79, 59.9)
+#' )) |>
+#'   sf::st_polygon() |>
+#'   sf::st_sfc() |>
+#'   sf::st_sf(geometry = _, ID = 1L, shinyLabel = "zone2", crs = "epsg:4326")
+#' b2 <- randomPolygon(b1, area = 1e10)
+#'
 #' if (interactive()) {
-#'   plot(a)
-#'   points(b, pch = 19)
+#'   terra::plot(a1)
+#'   terra::points(a2, pch = 19)
+#'
+#'   plot(sf::st_geometry(b1))
+#'   plot(sf::st_geometry(b2), add = TRUE)
 #' }
 #'
 randomPolygon <- function(x, hectares, area) {
@@ -169,6 +181,8 @@ randomPolygon.default <- function(x, hectares, area) {
     rndmPolygonMatrix(x, hectares, area)
   } else if (inherits(x, "SpatialPolygons")) {
     rndmPolygonSpatialPolygons(x, hectares, area)
+  } else if (inherits(x, "sf")) {
+    rndmPolygonSf(x, hectares, area)
   }
 }
 
@@ -259,7 +273,6 @@ rndmPolygonSpatVector <- function(x, hectares, area) {
 
 #' @importFrom terra vect crs
 rndmPolygonMatrix <- function(x, hectares, area) {
-
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
@@ -291,6 +304,14 @@ rndmPolygonSpatialPolygons <- function(x, hectares, area) {
       need <- FALSE
   }
   sp2
+}
+
+rndmPolygonSf <- function(x, hectares, area) {
+  .requireNamespace("sf")
+
+  terra::vect(x) |>
+    rndmPolygonSpatVector(hectares, area) |>
+    sf::st_as_sf()
 }
 
 #' @importFrom terra project crs crds vect
