@@ -58,7 +58,8 @@ Suggests:
     tools,
     withr
 Remotes:
-    ropensci/NLMR
+    ropensci/NLMR,
+    PredictiveEcology/reproducible@development
 Encoding: UTF-8
 Language: en-CA
 LinkingTo: Rcpp
