@@ -589,7 +589,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
   # Main loop -- continue if active and still below iterations & none is too
   # small (and doesn't have any active cells)
-  while (length(whTooSmall) | (length(whActive) &  its < iterations)) {
+  while (length(whTooSmall) || (length(whActive) && its < iterations)) {
     # Step 1
     # Get neighbours, either via adj (default) or cir (jumping if stuck)
     if (length(whTooSmall) > 0) {
@@ -842,11 +842,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
           if (FALSE) { # old algorithm, replaced by 3 lines above May 30 2019, Eliot -- appears to be a bug below
             #   the by = "from" should be c("id", "from") -- should sample 1 or more from each fire event, from each front line
-            numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
-            if (any(numNeighsByPixel$numNeighs > numNeighsByPixel$N))
-              set(numNeighsByPixel, NULL, "numNeighs",
-                  pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
-            dtPotential <- dtPotential[numNeighsByPixel[dtPotential][
+              numNeighsByPixel <- numNeighsByPixel[dtPotential[, .N, by = c("id", "from")]]
+              if (any(numNeighsByPixel$numNeighs > numNeighsByPixel$N))
+                set(numNeighsByPixel, NULL, "numNeighs",
+                    pmin(numNeighsByPixel$N, numNeighsByPixel$numNeighs, na.rm = TRUE))
+              dtPotential <- dtPotential[numNeighsByPixel[dtPotential][
               , .I[sample.int(length(numNeighs), size = numNeighs, prob = spreadProbRel)],
               by = "from"]$V1]
           }
