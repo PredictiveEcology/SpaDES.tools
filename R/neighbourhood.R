@@ -849,8 +849,8 @@ wrap <- function(X, bounds, withHeading = FALSE) {
 
     # SpatVector returns data.frame; sf returns vector
     if (is.matrix(X)) {
-      x1 <- X[, "x1"]
-      y1 <- X[, "y1"]
+      x1 <- X@.Data[, "x1"] # using @.Data accommodates NetLogoR's agentMatrix as well as normal matrix
+      y1 <- X@.Data[, "y1"] # using @.Data accommodates NetLogoR's agentMatrix as well as normal matrix
     } else {
       x1 <- if (is.data.frame(X[["x1"]])) X[["x1"]][, 1] else X[["x1"]]
       y1 <- if (is.data.frame(X[["y1"]])) X[["y1"]][, 1] else X[["y1"]]
