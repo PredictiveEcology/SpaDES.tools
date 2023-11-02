@@ -1,7 +1,7 @@
 # SpaDES.tools (development version)
 
 ## Enhanceents
-* none
+* minor -- forcing of numeric vector in `crw` to accommodate downstream dependency changes.
 
 ## Dependency changes
 * none

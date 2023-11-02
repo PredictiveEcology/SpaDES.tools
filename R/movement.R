@@ -164,7 +164,7 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
     prevCoords <- cbind(x1 = x1, y1 = y1)
   } else {
     prevCoords <- if (is.matrix(agent)) {
-      cbind(x1 = agent[, "x1", drop = TRUE], y1 = agent[,"y1", drop = TRUE])
+      cbind(x1 = as.vector(agent[, "x1", drop = TRUE]), y1 = as.vector(agent[,"y1", drop = TRUE]))
     } else {
       cbind(x1 = agent$x1, y1 = agent$y1)
     }
@@ -207,7 +207,7 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
 
   if (needRandomX1Y1) {
     agent <- cbind(crds[, xycolNames, drop = FALSE],
-                   x1 = oldCrds[, "x", drop = TRUE], y1 = oldCrds[, "y", drop = TRUE])
+                   x1 = as.vector(oldCrds[, "x", drop = TRUE]), y1 = as.vector(oldCrds[, "y", drop = TRUE]))
   } else {
     agent[, x1y1colNames] <- oldCrds
   }
