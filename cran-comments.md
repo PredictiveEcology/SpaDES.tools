@@ -1,6 +1,6 @@
 ## Release information
 
-This is an minor update to complete the final edge cases for the  transition from `raster`, `sp`, `rgeos` and `rgdal` to `terra` and `sf`.
+This update deals with recent upstream changes made in dependency package `reproducible`.
 See `NEWS.md` for a full list of changes.
 
 ## Test environments
@@ -14,20 +14,20 @@ See `NEWS.md` for a full list of changes.
 * Windows                      (GitHub), R 4.2.3
 
 ### Current R versions
-* macOS 12.6.3 Monterey        (GitHub), R 4.3.1
-* macOS (M2) 13.4.1 Ventura     (local), R 4.3.1
-* macOS (M1) Big Sur             (rhub), R 4.3.1
-* Ubuntu 20.04                 (GitHub), R 4.3.1
-* Ubuntu 20.04                  (local), R 4.3.1
-* Windows                      (GitHub), R 4.3.1
-* Windows                       (local), R 4.3.1
+* macOS 12.6.9 Monterey        (GitHub), R 4.3.2
+* macOS (M2) 14.1.1 Sonoma      (local), R 4.3.2
+* macOS (M1) Big Sur             (rhub), R 4.3.2
+* Ubuntu 20.04                 (GitHub), R 4.3.2
+* Ubuntu 20.04                  (local), R 4.3.2
+* Windows                      (GitHub), R 4.3.2
+* Windows                       (local), R 4.3.2
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2023-08-28 r85029)
-* Ubuntu 20.04                  (local), R-devel (2023-08-28 r85029)
-* Windows                      (GitHub), R-devel (2023-08-28 r85029 ucrt)
-* Windows                 (win-builder), R-devel (2023-08-28 r85029 ucrt)
-* Windows                       (local), R-devel (2023-08-28 r85029 ucrt)
+* Ubuntu 20.04                 (GitHub), R-devel (2023-11-08 r85496)
+* Ubuntu 20.04                  (local), R-devel (2023-11-08 r85496)
+* Windows                      (GitHub), R-devel (2023-11-09 r85497 ucrt)
+* Windows                 (win-builder), R-devel (2023-11-09 r85497 ucrt)
+* Windows                       (local), R-devel (2023-11-09 r85497 ucrt)
 
 ## R CMD check results
 
@@ -35,9 +35,7 @@ There were no ERRORs or WARNINGs.
 
 There were 2 NOTEs
 
-1. Alex Chubaty took over the maintainer role for this submission;
-
-2. The suggested package `NLMR` is available in a additional repository, for which we provide instructions for installation:
+1. The suggested package `NLMR` is available in a additional repository, for which we provide instructions for installation:
 
     The Description field contains
         "https://PredictiveEcology.r-universe.dev" 
