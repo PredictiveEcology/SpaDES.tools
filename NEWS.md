@@ -1,3 +1,15 @@
+# SpaDES.tools 2.0.5
+
+## Enhancements
+* `randomPolygons()` works with `sf` objects;
+* use numeric vector in `crw` to accommodate downstream dependency changes;
+
+## Dependency changes
+* requires `reproducible (>= 2.0.9)`
+
+## Bug fixes
+* fixed `splitRaster()` tests that broke due to changes in `reproducible::Filenames()` (#91)
+
 # SpaDES.tools 2.0.4
 
 ## Enhancements
@@ -26,7 +38,8 @@
 * removed dependencies `magrittr`, `rgeos`, `rlang`, `Require`, `graphics`
 * added to `Suggests`: `withr`
 * moved to Suggests: `quickPlot`, `fastmatch`, `raster`, `sp`, `sf`, `CircStats`
-* added `snow` to Suggests as it's used for parallel `raster` operations; `tools` for `file.ext`
+* added `snow` to Suggests as it's used for parallel `raster` operations;
+* added `tools` to Suggests for `file.ext()`
 
 ## Bugfixes
 * all open issues dealt with

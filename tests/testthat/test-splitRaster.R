@@ -115,7 +115,14 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     y1 <- splitRaster(r, nx, ny, c(3L, 4L))
 
     for (i in 1:12) {
-      expect_false(file.exists(reproducible::Filenames(y1[[i]])))
+      ## 2023-09: Filenames() now returns length 0; see reproducible#354
+      fname <- reproducible::Filenames(y1[[i]])
+      result <- if (length(fname) != 0) {
+        file.exists(fname)
+      } else {
+        FALSE
+      }
+      expect_false(result)
     }
 
     # with buffer (proportion of cells)
