@@ -26,7 +26,6 @@ See `NEWS.md` for a full list of changes.
 * Ubuntu 20.04                 (GitHub), R-devel (2023-11-08 r85496)
 * Ubuntu 20.04                  (local), R-devel (2023-11-08 r85496)
 * Windows                      (GitHub), R-devel (2023-11-09 r85497 ucrt)
-* Windows                 (win-builder), R-devel (2023-11-09 r85497 ucrt)
 * Windows                       (local), R-devel (2023-11-09 r85497 ucrt)
 
 ## R CMD check results
