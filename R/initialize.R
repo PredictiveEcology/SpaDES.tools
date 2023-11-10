@@ -164,7 +164,7 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 #'     sf::st_sf(geometry = _, ID = 1L, shinyLabel = "zone2", crs = "epsg:4326")
 #'   b2 <- randomPolygon(b1, area = 1e10)
 #'
-#'   if (interactive())
+#'   if (interactive()) {
 #'     plot(sf::st_geometry(b1))
 #'     plot(sf::st_geometry(b2), add = TRUE)
 #'   }

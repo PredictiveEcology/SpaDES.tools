@@ -69,6 +69,29 @@ if (interactive()) {
 data.table::setDTthreads(origDTThreads)
 options(Ncpus = origNcpus)
 
+a1 <- terra::vect(cbind(-110, 59), crs = "epsg:4326")
+a2 <- randomPolygon(a1, area = 1e7)
+
+if (interactive()) {
+  terra::plot(a1)
+  terra::points(a2, pch = 19)
+}
+
+if (require("sf", quietly = TRUE)) {
+  b1 <- list(cbind(
+    x = c(-122.98, -116.1, -99.2, -106, -122.98),
+    y = c(59.9, 65.73, 63.58, 54.79, 59.9)
+  )) |>
+    sf::st_polygon() |>
+    sf::st_sfc() |>
+    sf::st_sf(geometry = _, ID = 1L, shinyLabel = "zone2", crs = "epsg:4326")
+  b2 <- randomPolygon(b1, area = 1e10)
+
+  if (interactive()) {
+    plot(sf::st_geometry(b1))
+    plot(sf::st_geometry(b2), add = TRUE)
+  }
+}
 }
 \seealso{
 \code{\link[=spread]{spread()}}, \code{\link[=randomPolygons]{randomPolygons()}}
