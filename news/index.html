@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.5</span>
       </span>
     </div>
 
@@ -47,6 +47,24 @@
       <small>Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.5" id="spadestools-205">SpaDES.tools 2.0.5<small>2023-11-10</small><a class="anchor" aria-label="anchor" href="#spadestools-205"></a></h2>
+<div class="section level3">
+<h3 id="enhancements-2-0-5">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-2-0-5"></a></h3>
+<ul><li>
+<code><a href="../reference/randomPolygons.html">randomPolygons()</a></code> works with <code>sf</code> objects;</li>
+<li>use numeric vector in <code>crw</code> to accommodate downstream dependency changes;</li>
+</ul></div>
+<div class="section level3">
+<h3 id="dependency-changes-2-0-5">Dependency changes<a class="anchor" aria-label="anchor" href="#dependency-changes-2-0-5"></a></h3>
+<ul><li>requires <code>reproducible (&gt;= 2.0.9)</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-2-0-5">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-0-5"></a></h3>
+<ul><li>fixed <code><a href="../reference/splitRaster.html">splitRaster()</a></code> tests that broke due to changes in <code><a href="https://reproducible.predictiveecology.org/reference/Filenames.html" class="external-link">reproducible::Filenames()</a></code> (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/91" class="external-link">#91</a>)</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.4" id="spadestools-204">SpaDES.tools 2.0.4<small>2023-09-01</small><a class="anchor" aria-label="anchor" href="#spadestools-204"></a></h2>
 <div class="section level3">
@@ -87,7 +105,8 @@
 </li>
 <li>moved to Suggests: <code>quickPlot</code>, <code>fastmatch</code>, <code>raster</code>, <code>sp</code>, <code>sf</code>, <code>CircStats</code>
 </li>
-<li>added <code>snow</code> to Suggests as it’s used for parallel <code>raster</code> operations; <code>tools</code> for <code>file.ext</code>
+<li>added <code>snow</code> to Suggests as it’s used for parallel <code>raster</code> operations;</li>
+<li>added <code>tools</code> to Suggests for <code>file.ext()</code>
 </li>
 </ul></div>
 <div class="section level3">
