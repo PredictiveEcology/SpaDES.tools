@@ -371,7 +371,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     spreadStateExists <- is(spreadState, "data.table")
     spreadProbLaterExists <- TRUE
 
-    if (!is(spreadProbLater, "Raster")) {
+    if (!isGridded(spreadProbLater)) {
       if (anyNA(spreadProbLater)) {
         spreadProbLaterExists <- FALSE
         spreadProbLater <- spreadProb
@@ -563,7 +563,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
 
     # Convert mask and NAs to 0 on the spreadProb Raster
-    if (is(spreadProb, "Raster")) {
+    if (isGridded(spreadProb)) {
       # convert NA to 0s
       #isNASpreadProb <- is.na(spreadProb[])
       # if (anyNA(spreadProb[])) {
@@ -578,7 +578,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
 
     # Convert mask and NAs to 0 on the spreadProbLater Raster
-    if (is(spreadProbLater, "Raster")) {
+    if (isGridded(spreadProbLater)) {
     } else if (is.numeric(spreadProbLater)) {
       # Translate numeric spreadProbLater into a Raster, if there is a mask
       if (is(mask, "Raster")) {
@@ -588,7 +588,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
 
     # Mask spreadProbLater and spreadProb
-    if (is(mask, "Raster")) {
+    if (isGridded(mask)) {
       spreadProbLater[mask[] == 1L] <- 0L
       spreadProb[mask[] == 1L] <- 0L
     }
