@@ -32,6 +32,7 @@ spread(
   neighProbs = NULL,
   exactSizes = FALSE,
   relativeSpreadProb = FALSE,
+  maintainSpreadProbWithNAs = NULL,
   ...
 )
 }
@@ -184,6 +185,12 @@ to be \code{TRUE}.}
 required for \code{stopRule}. These
 vectors should be as long as required e.g., length
 \code{loci} if there is one value per event.}
+
+\item{maintainExpectedSize}{Logical. Default \code{FALSE}, which is "normal" \code{spread}
+behaviour. If \code{TRUE}, \code{spread} will rescale the \code{spreadProb} when there are
+\code{NA} cells in the \code{adj} neighbours, such that in each iteration,
+from each "spread from" pixel, the effective \code{spreadProb} is equal to what it
+would have been if all \code{neighbours} existed. See below for explanation.}
 }
 \value{
 Either a \code{RasterLayer} indicating the spread of the process in
@@ -331,6 +338,26 @@ This determines how the \code{stopRule} should be implemented. Because
 spreading occurs outwards in concentric circles or shapes, one cell width at a time, there
 are 4 possible ways to interpret the logical inequality defined in \code{stopRule}.
 In order of number of cells included in resulting events, from most cells to fewest cells:
+}
+
+\section{\code{maintainExpectedSize}}{
+
+When there are \code{NA} cells in a \code{landscape}, there are two possible options for how
+to deal with those. First, the default, is just treat them as places where the spreading
+cannot occur. The effect will be that a landscape with many \code{NA} values will have
+a smaller expected number of pixels spread to, for a given \code{spreadProb}. In the
+case of fires, this would create a landscape with fewer and smaller fires, for the same
+\code{spreadProb}. This is not always the behaviour that is desired. If \code{maintainExpectedSize = TRUE},
+each iteration will adjust the \code{spreadProb} such that the expected number of cells
+spread to will be equal to the expected number of all \code{neighbours} (i.e., 8) cells.
+For example, if we have a pixel that is spreading to its 8 neighbours, and \code{spreadProb = 0.23}
+in all 8 neighbour cells, the expected number of cells spread to is \code{0.23 * 8 = 1.84}.
+If there are 2 \code{NA} cells around an active cell, and \code{maintainExpectedSize = FALSE}, then
+the expected number of cells spread to is \code{0.23 * 6 = 1.38}. If \code{maintainExpectedSize = TRUE},
+each of the 6 neighbours will be rescaled to \code{0.23 * 8/6 = 0.306667}, where \code{8} is the
+number of possible pixels to spread to and 6 is the number of non-NA pixels that
+are available among those \code{8}. The result is that the expected event size will
+be the same as if there were no \code{NA} pixels.
 
 \tabular{ll}{
 \code{"includeRing"} \tab Will include the entire ring of cells that, as a group,

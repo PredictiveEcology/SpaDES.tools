@@ -117,6 +117,25 @@ utils::globalVariables(c(
 #' are 4 possible ways to interpret the logical inequality defined in `stopRule`.
 #' In order of number of cells included in resulting events, from most cells to fewest cells:
 #'
+#' @section `maintainExpectedSize`:
+#' When there are `NA` cells in a `landscape`, there are two possible options for how
+#' to deal with those. First, the default, is just treat them as places where the spreading
+#' cannot occur. The effect will be that a landscape with many `NA` values will have
+#' a smaller expected number of pixels spread to, for a given `spreadProb`. In the
+#' case of fires, this would create a landscape with fewer and smaller fires, for the same
+#' `spreadProb`. This is not always the behaviour that is desired. If `maintainExpectedSize = TRUE`,
+#' each iteration will adjust the `spreadProb` such that the expected number of cells
+#' spread to will be equal to the expected number of all `neighbours` (i.e., 8) cells.
+#' For example, if we have a pixel that is spreading to its 8 neighbours, and `spreadProb = 0.23`
+#' in all 8 neighbour cells, the expected number of cells spread to is `0.23 * 8 = 1.84`.
+#' If there are 2 `NA` cells around an active cell, and `maintainExpectedSize = FALSE`, then
+#' the expected number of cells spread to is `0.23 * 6 = 1.38`. If `maintainExpectedSize = TRUE`,
+#' each of the 6 neighbours will be rescaled to `0.23 * 8/6 = 0.306667`, where `8` is the
+#' number of possible pixels to spread to and 6 is the number of non-NA pixels that
+#' are available among those `8`. The result is that the expected event size will
+#' be the same as if there were no `NA` pixels.
+#'
+#'
 #' \tabular{ll}{
 #'   `"includeRing"` \tab Will include the entire ring of cells that, as a group,
 #'                             caused `stopRule` to be `TRUE`.\cr
@@ -289,6 +308,13 @@ utils::globalVariables(c(
 #'              i.e., the spread history of one or more events.
 #'              NOTE: this is overridden if `returnIndices` is `TRUE`
 #'              or `1` or `2`.
+#'
+#' @param maintainExpectedSize Logical. Default `FALSE`, which is "normal" `spread`
+#'   behaviour. If `TRUE`, `spread` will rescale the `spreadProb` when there are
+#'   `NA` cells in the `adj` neighbours, such that in each iteration,
+#'   from each "spread from" pixel, the effective `spreadProb` is equal to what it
+#'   would have been if all `neighbours` existed. See below for explanation.
+#'
 #'
 #' @return Either a `RasterLayer` indicating the spread of the process in
 #' the landscape or a `data.table` if `returnIndices` is `TRUE`.
@@ -803,10 +829,32 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       }
 
       if (isTRUE(maintainSpreadProbWithNAs)) {
-        spreadProbs <- maintainExpectedSize(potentials, landscapeNotNAs, spreadProbs, spreadsDT, vv, ll, n)
-
+        spreadProbs <- maintainExpectedSize(potentials, landscapeNotNAs, spreadProbs, cellsState, vv, ll, n)
+        if (isTRUE(maintainSpreadProbWithNAs)) { # debugging purposes only
+          if (FALSE) {
+            tbl <- table(potentials[, "to", drop = FALSE])
+            if(any(tbl > 3)) {
+              vall <- names(sort(tbl[tbl > 3], decreasing = TRUE)[1])
+              frmCells <- potentials[potentials[, "to"] %in% vall, "from"]
+              a <- potentials[potentials[, "from", drop = FALSE] %in% frmCells, , drop = FALSE]
+              # if (any(landscapeNotNAs %in% 0)) browser()
+            }
+          }
+        }
       }
       randomSuccesses <- runifC(NROW(potentials)) <= spreadProbs
+
+      if (isTRUE(maintainSpreadProbWithNAs)) { # debugging purposes only
+        if (FALSE) {
+          if (n > 20) {
+            if (!exists("ress1", envir = .GlobalEnv)) assign("ress1", list(), envir = .GlobalEnv)
+            landscapeNotNAsSingle <- exists("landscapeNotNAs", inherits = FALSE)
+            ress1 <- cbind(maintainSpreadProbWithNAs = ifelse(is.null(maintainSpreadProbWithNAs), "NULL", as.character(maintainSpreadProbWithNAs)),
+                           size = NROW(potentials), potentials, randomSuccesses)
+            ress <<- append(ress, list(ress1))
+          }
+        }
+      }
       potentials <- potentials[randomSuccesses, , drop = FALSE]
 
       # random ordering so not always same:
@@ -1311,7 +1359,7 @@ spreadsDTInNamespace <- integer()
 
 
 
-maintainExpectedSize <- function(potentials, landscapeNotNAs, spreadProbs, spreadsDT, vv, ll, n) {
+maintainExpectedSize <- function(potentials, landscapeNotNAs, spreadProbs, cellsState, vv, ll, n) {
   if (NROW(potentials) > 0) {
     for (NAtries in 1:2) {
       NAs <- landscapeNotNAs[potentials[, "to", drop = FALSE]]
@@ -1366,17 +1414,19 @@ maintainExpectedSize <- function(potentials, landscapeNotNAs, spreadProbs, sprea
             potTemp <- cbind(potentials[indOfNeedChanged1, , drop = FALSE], spreadProbs = spreadProbs[indOfNeedChanged1], Nposs, Navail)
             potTemp <- cbind(potTemp, spreadProbsNew = spreadProbsNew)
             pot <- as.data.table(potTemp)
-            if (!identical(pot[, round(max(spreadProbsNew) * unique(Navail)), by = "from"],
-                           pot[, round(max(spreadProbs) * unique(Nposs)), by = "from"])) browser()
-          pot <- data.table(potentials[indOfNeedChanged1, "to", drop = FALSE], spreadProbsNew = spreadProbsNew)
-          pot[, spreadProbsNew := min(spreadProbsNew), by = "to"]
-          # if (any(pot[, .N, by = "to"]$N > 2)) browser()
-          spreadProbsNew <- pot$spreadProbsNew
-          if (anyNA(spreadProbsNew)) browser()
-          if (length(spreadProbsNew) == 0) browser()
-          #}
-          # rm(Nposs, envir = environment()); rm(Navail, envir = environment())
-          # End sanity checking
+            # browser()
+            if (!identical(pot[, round(mean(spreadProbsNew), 4), by = "from"],
+                           pot[, round(mean(max(spreadProbs)), 4), by = "from"])) browser()
+            # print("fine")
+            pot <- data.table(potentials[indOfNeedChanged1, "to", drop = FALSE], spreadProbsNew = spreadProbsNew)
+            pot[, spreadProbsNew := min(spreadProbsNew), by = "to"]
+            # if (any(pot[, .N, by = "to"]$N > 2)) browser()
+            spreadProbsNew <- pot$spreadProbsNew
+            if (anyNA(spreadProbsNew)) browser()
+            if (length(spreadProbsNew) == 0) browser()
+            #}
+            # rm(Nposs, envir = environment()); rm(Navail, envir = environment())
+            # End sanity checking
           }
 
           spreadProbs[indOfNeedChanged1] <- spreadProbsNew

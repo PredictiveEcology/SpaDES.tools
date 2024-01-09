@@ -949,38 +949,105 @@ test_that("landscape with NAs gets rescaled if spreadProb", {
   rastDF <- needTerraAndRaster()
 
   # rastDF <- needTerraAndRaster()
-  ext1 <- terra::ext(0, 1e2, 0, 1e2)
-  extRas <- terra::rast(ext1, res = 1)
 
   for (ii in seq(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     pkg <- rastDF$read[ii]
     read <- eval(parse(text = rastDF$read[ii]))
+    # ggs <- res <- list()
+    res <- list()
 
 
     seed <- 64350
     set.seed(seed)
-    emptyRas <- read(extRas)
-    hab <- randomPolygons(emptyRas, numTypes = 40)
-    names(hab) <- "hab"
-
-    # Set up expectation
-    loci <- middlePixel(hab)
-    events1 <- Map(rep = 1:10, function(rep)
-      spread(hab, spreadProb = 0.23, loci = loci, directions = 8, returnIndices = TRUE))
-    rbindlist(events1)
 
 
 
-    sam <- c(4849L, 4850L, 4851L, 4949L, 4951L, 5049L, 5050L, 5051L)
-    sam <- c(4849L, 4851L, 4951L, 5050L, 5051L)
-    hab[sam] <- NA
-    loci <- middlePixel(hab) + 0:1
-    spreadProb <- hab
-    spreadProb[!is.na(hab[])] <- 0.25
+    runSpreadExpt <- function(its, res = 1e2, N = 1000) {
 
-    events1 <- spread(hab, spreadProb = spreadProb, loci = loci, directions = 8, id = TRUE)
+      ext1 <- terra::ext(0, res, 0, res)
+      extRas <- terra::rast(ext1, res = 1)
+
+      emptyRas <- read(extRas)
+      hab <- randomPolygons(emptyRas, numTypes = 40)
+      names(hab) <- "hab"
+      print(paste0("starting iterations: ", its))
+      repseq <- 1:N
+      sprPro <- 0.225
+      # Set up expectation -- no NAs
+      loci <- middlePixel(hab)
+      (st1 <- system.time(events1 <- Map(rep = repseq, function(rep)
+        spread(hab, spreadProb = sprPro, loci = loci, iterations = its, directions = 8, returnIndices = TRUE))))
+      means1 <- rbindlist(events1, idcol = "rep")#[, .N, by = "rep"]
+
+      # Set up expectation -- no NAs but using `maintainSpreadProbWithNAs = TRUE` -- should be same
+      (st2 <- system.time(events2 <- Map(rep = repseq, function(rep)
+        spread(hab, spreadProb = sprPro, loci = loci, iterations = its, directions = 8, returnIndices = TRUE,
+               maintainSpreadProbWithNAs = TRUE))))
+      means2 <- rbindlist(events2, idcol = "rep")#[, .N, by = "rep"]
+
+      # sam <- c(4849L, 4851L, 4951L, 5050L, 5051L)
+      sam <- sample(ncell(hab), size = ncell(hab) / 10)
+      hab[sam] <- NA
+      # loci <- middlePixel(hab) # + 0:1
+      spreadProb <- hab
+      spreadProb[!is.na(hab[])] <- sprPro
+
+      (st3 <- system.time(events3 <- Map(rep = repseq, function(rep)
+        spread(hab, spreadProb = spreadProb, loci = loci, iterations = its, directions = 8, returnIndices = TRUE,
+               maintainSpreadProbWithNAs = FALSE))))
+      means3 <- rbindlist(events3, idcol = "rep")# [, .N, by = "rep"]
+
+      (st4 <- system.time(events4 <- Map(rep = repseq, function(rep)
+        spread(hab, spreadProb = spreadProb, loci = loci, iterations = its, directions = 8, returnIndices = TRUE,
+               maintainSpreadProbWithNAs = TRUE))))
+      means4 <- rbindlist(events4, idcol = "rep")# [, .N, by = "rep"]
+      print(paste0("Elapsed time: ", round(sum(st1[3], st2[3], st3[3], st4[3]), 2)))
+      data.table(its, rbindlist(list(means1, means2, means3, means4), idcol = "Method"))
+    }
+
+
+    if (exists("ress")) {
+      ress1 <- rbindlist(lapply(ress, as.data.table), idcol = "rep")
+      out1 <- ress1[, list(sum = sum(as.integer(randomSuccesses %in% TRUE)), mean = mean(as.integer(randomSuccesses %in% "TRUE")), N = .N), by = c("maintainSpreadProbWithNAs", "rep")]
+      out1[, list(meanOfMean = mean(mean), mean = mean(sum), sd = sd(sum)), by = list(maintainSpreadProbWithNAs)]
+    }
+
+
+
+
+    library(parallel)
+    cl <- makeCluster(10)
+    clusterExport(cl, varlist = c("runSpreadExpt", "read"), envir= parent.frame())
+    clusterEvalQ(cl, {a = devtools::load_all("C:/Eliot/GitHub/SpaDES.tools")})
+    itsAll <- 1:40
+    res[itsAll] <- parallel::clusterMap(cl = cl, its = itsAll, .scheduling = "dynamic",
+                                function(its) runSpreadExpt(its = its))
+
+    res1 <- rbindlist(res)
+
+    ss <- "Avg Num Pixels In Fire"
+    dt <- res1[, .N, by = c("its", "Method", "rep")]
+    set(dt, NULL, "Method", letters[dt$Method])
+    yLab <- "Sum pixels spread to"
+    dt1 <- as.data.table(c(a = "No NAs on map", b = "No NAs on map - test code",
+                           c = "NAs on map, original", d = "NAs on map, maintainExpectedSize"), keep.rownames = TRUE)
+    setnames(dt1, old = c("V1"), new = c("Method"))
+    dt <- dt[dt1, on = c("Method")]
+    setnames(dt, old = "V2", "Method2")
+    ggplot(dt, aes(x = its, y = N, col = Method2)) + geom_smooth() +
+      theme_bw() +
+      theme(text = element_text(size=20)) +
+      labs(y= ss, x = "Spread fn number iterations", color='')
+
+     dt1 <- as.data.table(c(a = "No NAs on map", b = "No NAs on map - test code",
+                            c = "NAs on map, original", d = "NAs on map, maintainExpectedSize"), keep.rownames = TRUE)
+     dt1[dt, on = c(V1 = "Method")]
+
+    ad.test(means2$N, means1$N)
+    ad.test(means3$N, means1$N)
+    ad.test(means4$N, means1$N)
 
   }
 })
