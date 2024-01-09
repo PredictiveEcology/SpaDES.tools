@@ -339,7 +339,8 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
                    circle = FALSE, circleMaxRadius = NA_real_,
                    stopRule = NA, stopRuleBehavior = "includeRing", allowOverlap = FALSE,
                    asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
-                   neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE, ...) {
+                   neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE,
+                   maintainSpreadProbWithNAs = NULL, ...) {
 
     if (!is.null(neighProbs)) {
       if (isTRUE(allowOverlap))
@@ -635,6 +636,11 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
 
     toColumn <- c("to", "indices")
+    if (isTRUE(maintainSpreadProbWithNAs)) {
+      landscapeNotNAs <- as.integer(!is.na(values(landscape, mat = FALSE)))
+      vv <- integer(length(landscapeNotNAs))
+      ll <- integer(length(landscapeNotNAs))
+    }
 
     #browser(expr = exists("aaaaa"))
     # while there are active cells
@@ -796,6 +802,10 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         spreadProbs[spreadProbs > 0] <- 1
       }
 
+      if (isTRUE(maintainSpreadProbWithNAs)) {
+        spreadProbs <- maintainExpectedSize(potentials, landscapeNotNAs, spreadProbs, spreadsDT, vv, ll, n)
+
+      }
       randomSuccesses <- runifC(NROW(potentials)) <= spreadProbs
       potentials <- potentials[randomSuccesses, , drop = FALSE]
 
@@ -1298,3 +1308,83 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
 }
 
 spreadsDTInNamespace <- integer()
+
+
+
+maintainExpectedSize <- function(potentials, landscapeNotNAs, spreadProbs, spreadsDT, vv, ll, n) {
+  if (NROW(potentials) > 0) {
+    for (NAtries in 1:2) {
+      NAs <- landscapeNotNAs[potentials[, "to", drop = FALSE]]
+      if (anyNA(NAs)) {
+        NAsToRm <- is.na(potentials[, "to", drop = FALSE])
+        potentials <- potentials[NAsToRm, , drop = FALSE]
+        spreadProbs <- spreadProbs[NAsToRm]
+      } else {
+        break
+      }
+    }
+    if (sum(NAs, na.rm = TRUE)) {
+      Ns <- rowsum(NAs, potentials[, "from"])
+      nams <- rownames(Ns)
+
+      needChangedOuter <- as.integer(nams)
+      lens1 <- tabulate(potentials[, "from"])
+      lens <- lens1[needChangedOuter]
+      names(lens) <- nams
+
+      difs <- Ns[Ns[names(lens), ] != lens, ]
+
+      if (length(difs)) {
+        # if (!identical(difs, difs1)) browser()
+        for (i in 1:2) {
+          needChanged <- as.integer(names(difs))
+          zeros <- difs == 0
+          if (any(zeros)) {
+            difs <- difs[!zeros]
+          } else {
+            break
+          }
+        }
+        vv[needChanged] <- unname(Ns[names(difs), ])
+        indOfNeedChanged1 <- potentials[, "from"] %in% needChanged
+        if (sum(indOfNeedChanged1)) {
+          indOfNeedChanged <- potentials[indOfNeedChanged1, "from"]
+          Navail <- vv[indOfNeedChanged]
+
+          ll[needChanged] <- unname(lens[names(difs)])
+          Nposs <- ll[indOfNeedChanged]
+          # if (n > 15) browser()
+          # if (any(Nposs < 3)) browser()
+
+          spreadProbsNew <- spreadProbs[indOfNeedChanged1] * Nposs / Navail
+
+
+          # Sanity checking -- the probabilities must add up ... original * possible == new * available
+          #if (n > 15) {
+          # browser()
+          if (FALSE) {
+            potTemp <- cbind(potentials[indOfNeedChanged1, , drop = FALSE], spreadProbs = spreadProbs[indOfNeedChanged1], Nposs, Navail)
+            potTemp <- cbind(potTemp, spreadProbsNew = spreadProbsNew)
+            pot <- as.data.table(potTemp)
+            if (!identical(pot[, round(max(spreadProbsNew) * unique(Navail)), by = "from"],
+                           pot[, round(max(spreadProbs) * unique(Nposs)), by = "from"])) browser()
+          pot <- data.table(potentials[indOfNeedChanged1, "to", drop = FALSE], spreadProbsNew = spreadProbsNew)
+          pot[, spreadProbsNew := min(spreadProbsNew), by = "to"]
+          # if (any(pot[, .N, by = "to"]$N > 2)) browser()
+          spreadProbsNew <- pot$spreadProbsNew
+          if (anyNA(spreadProbsNew)) browser()
+          if (length(spreadProbsNew) == 0) browser()
+          #}
+          # rm(Nposs, envir = environment()); rm(Navail, envir = environment())
+          # End sanity checking
+          }
+
+          spreadProbs[indOfNeedChanged1] <- spreadProbsNew
+        }
+
+      }
+    }
+
+  }
+  spreadProbs
+}
