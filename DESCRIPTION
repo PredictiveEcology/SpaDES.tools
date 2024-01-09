@@ -81,6 +81,7 @@ Collate:
     'neighbourhood.R'
     'numerical-comparisons.R'
     'probability.R'
+    'reexports.R'
     'resample.R'
     'rings.R'
     'spades-tools-deprecated.R'

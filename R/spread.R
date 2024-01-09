@@ -339,7 +339,8 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
                    circle = FALSE, circleMaxRadius = NA_real_,
                    stopRule = NA, stopRuleBehavior = "includeRing", allowOverlap = FALSE,
                    asymmetry = NA_real_, asymmetryAngle = NA_real_, quick = FALSE,
-                   neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE, ...) {
+                   neighProbs = NULL, exactSizes = FALSE, relativeSpreadProb = FALSE,
+                   ...) {
 
     if (!is.null(neighProbs)) {
       if (isTRUE(allowOverlap))
@@ -474,19 +475,21 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       needEmptySpreads <- TRUE
       stNamespace <- asNamespace("SpaDES.tools")
       if (exists("spreadsDTInNamespace", envir = stNamespace)) {
-        spreadsDT <- getFromNamespace("spreadsDTInNamespace", "SpaDES.tools")
+        cellsState <- integer()
+        # spreadsDT <- getFromNamespace("spreadsDTInNamespace", "SpaDES.tools")
         # set(spreadsDT, NULL, "spreads", 0L)
-        # spreads <- spreadsDT$spreads
-        if (identical(NROW(spreadsDT), ncells)) {
+        # spreads <- cellsState
+        if (identical(NROW(cellsState), ncells)) {
           needEmptySpreads <- FALSE
         }
       }
       if (needEmptySpreads) {
-        spreadsDT <- data.table(spreads = vector("integer", ncells))
-        set(spreadsDT, NULL, "spreads", 0L)
+        cellsState <- rep(0L, ncells) # vector("integer", ncells)
+        # spreadsDT <- data.table(spreads = vector("integer", ncells))
+        # set(spreadsDT, NULL, "spreads", 0L)
         # put the empty data.table into the SpaDES.tools namespace
-        assignInMyNamespace("spreadsDTInNamespace", spreadsDT)
-        on.exit(assignInMyNamespace("spreadsDTInNamespace", integer()), add = TRUE)
+        # assignInMyNamespace("spreadsDTInNamespace", spreadsDT)
+        # on.exit(assignInMyNamespace("spreadsDTInNamespace", integer()), add = TRUE)
       }
     }
 
@@ -548,12 +551,13 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     if (!allowOverlap && !returnDistances) {
       if (id | returnIndices > 0 | relativeSpreadProb) {
         if (!spreadStateExists) {
-          set(spreadsDT, loci, "spreads", seq_along(loci))
+          cellsState[loci] <- seq_along(loci)
+          # set(spreadsDT, loci, "spreads", seq_along(loci))
           ##DT spreads[loci] <- seq_along(loci)
           # give values to spreads vector at initialLoci
         }
       } else {
-        spreadsDT$spreads[loci] <- n
+        cellsState[loci] <- n
       }
       spreadsIndices <- unname(loci)
       #browser(expr = exists("aaaaa"))
@@ -635,6 +639,11 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
 
     toColumn <- c("to", "indices")
+    if (isTRUE(maintainSpreadProbWithNAs)) {
+      landscapeNotNAs <- as.integer(!is.na(values(landscape, mat = FALSE)))
+      vv <- integer(length(landscapeNotNAs))
+      ll <- integer(length(landscapeNotNAs))
+    }
 
     #browser(expr = exists("aaaaa"))
     # while there are active cells
@@ -710,7 +719,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         }
       } else {
         # Keep only the ones where it hasn't been spread to yet
-        keep <- spreadsDT$spreads[potentials[, 2L]] == 0L
+        keep <- cellsState[potentials[, 2L]] == 0L
         # keep <- spreads[potentials[, 2L]] == 0L
         potentials <- potentials[keep, , drop = FALSE]
       }
@@ -756,7 +765,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
             a <- cbind(id = spreads[potentials[, 1L]], to = potentials[, 2L],
                        xyFromCell(landscape, potentials[, 2L]))
           } else {
-            a <- cbind(id = spreadsDT$spreads[potentials[, 1L]], to = potentials[, 2L],
+            a <- cbind(id = cellsState[potentials[, 1L]], to = potentials[, 2L],
                        xyFromCell(landscape, potentials[, 2L]))
           }
         }
@@ -796,6 +805,10 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         spreadProbs[spreadProbs > 0] <- 1
       }
 
+      if (isTRUE(maintainSpreadProbWithNAs)) {
+        spreadProbs <- maintainExpectedSize(potentials, landscapeNotNAs, spreadProbs, spreadsDT, vv, ll, n)
+
+      }
       randomSuccesses <- runifC(NROW(potentials)) <= spreadProbs
       potentials <- potentials[randomSuccesses, , drop = FALSE]
 
@@ -829,7 +842,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
                 a <- cbind(potentials, id = spreads[potentials[, "from"]],
                            xyFromCell(landscape, potentials[, "to"]))
               } else {
-                a <- cbind(potentials, id = spreadsDT$spreads[potentials[, "from"]],
+                a <- cbind(potentials, id = cellsState[potentials[, "from"]],
                            xyFromCell(landscape, potentials[, "to"]))
               }
             }
@@ -863,7 +876,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
           } else {
             # actually interested in potential[,2L], but they don't have values yet..
             #  can use their source
-            len <- tabulate(spreadsDT$spreads[potentials[, 1L]], length(maxSize))
+            len <- tabulate(cellsState[potentials[, 1L]], length(maxSize))
           }
           if (any((size + len) > maxSize & size <= maxSize)) {
             whichID <- which(size + len > maxSize)
@@ -875,7 +888,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
               if (useMatrixVersionSpreads) {
                 thisID <- which(potentials[, 3L] == whichID[i])
               } else {
-                thisID <- which(spreadsDT$spreads[potentials[, 1L]] == whichID[i])
+                thisID <- which(cellsState[potentials[, 1L]] == whichID[i])
               }
 
               # some unusual cases where there are none on the spreads. Unsure how this occurs
@@ -908,10 +921,10 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
                                   landscape = if (landRasNeeded) landRas[potentials[, 2L]] else NULL,
                                   cells = potentials[, 2L], prev = 0)
             } else {
-              prevCells <- cbind(id = spreadsDT$spreads[whgtZero],
+              prevCells <- cbind(id = cellsState[whgtZero],
                                  landscape = if (landRasNeeded) landRas[whgtZero] else NULL,
                                  cells = whgtZero, prev = 1)
-              eventCells <- cbind(id = spreadsDT$spreads[potentials[, 1L]],
+              eventCells <- cbind(id = cellsState[potentials[, 1L]],
                                   landscape = if (landRasNeeded) landRas[potentials[, 2L]] else NULL,
                                   cells = potentials[, 2L], prev = 0)
             }
@@ -1018,9 +1031,11 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
           } else {
             if (id | returnIndices > 0 | relativeSpreadProb) {
               # give new cells, the id of the source cell
-              set(spreadsDT, events, "spreads", spreadsDT$spreads[potentials[, 1L]])
+              cellsState[events] <- cellsState[potentials[, 1L]]
+              # set(spreadsDT, events, "spreads", cellsState[potentials[, 1L]])
             } else {
-              set(spreadsDT, events, "spreads", n)
+              cellsState[events] <- n
+              # set(spreadsDT, events, "spreads", n)
             }
             curEventsLen <- length(events)
             addedIndices <- prevSpreadIndicesActiveLen + 1:curEventsLen
@@ -1048,7 +1063,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
                 if (useMatrixVersionSpreads) {
                   maxSizeKeep <- !spreads[events] %in% whichID
                 } else {
-                  maxSizeKeep <- !spreadsDT$spreads[events] %in% whichID
+                  maxSizeKeep <- !cellsState[events] %in% whichID
                 }
               }
               events <- events[maxSizeKeep]
@@ -1088,8 +1103,8 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
               tooSmall <- tabulate(spreads, length(maxSize)) < maxSize
               inactive <- tabulate(spreads[events], length(maxSize)) == 0
             } else {
-              tooSmall <- tabulate(spreadsDT$spreads, length(maxSize)) < maxSize
-              inactive <- tabulate(spreadsDT$spreads[events], length(maxSize)) == 0
+              tooSmall <- tabulate(cellsState, length(maxSize)) < maxSize
+              inactive <- tabulate(cellsState[events], length(maxSize)) == 0
             }
           }
 
@@ -1154,7 +1169,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         #   }
         # } else {
              plotCur <- terra::rast(landscape)
-             plotCur <- setValues(plotCur, spreadsDT$spreads)
+             plotCur <- setValues(plotCur, cellsState)
              terra::plot(plotCur)
         # }
       }
@@ -1198,10 +1213,10 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         # wh already contains the potentials for next iteration -- these should be not duplicated
         #   inside "completed"
         wh <- wh[!(wh %in% potentials[, 2L])]
-        completed <- data.table(indices = wh, id = spreadsDT$spreads[wh], active = FALSE)
+        completed <- data.table(indices = wh, id = cellsState[wh], active = FALSE)
         if (NROW(potentials) > 0) {
           active <- data.table(indices = as.integer(potentials[, 2L]),
-                               id = spreadsDT$spreads[potentials[, 1L]],
+                               id = cellsState[potentials[, 1L]],
                                active = TRUE)
         } else {
           active <- data.table(indices = integer(0), id = integer(0), active = logical(0))
@@ -1245,7 +1260,8 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         }
       if  (!(useMatrixVersionSpreads)) {
         #browser(expr = exists("aaaaa"))
-        set(spreadsDT, allCells$indices, "spreads", 0L)
+        cellsState[allCells$indices] <- 0L
+        # set(spreadsDT, allCells$indices, "spreads", 0L)
         # remove the previous on.exit which had the effect of deleting the contents
         #   completely on a failed `spread`. Here, we want to delete the previous
         #   on.exit --> allowing the object to stay intact, but with only zeros.
@@ -1284,17 +1300,99 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         landscape[pixVal$indices] <- pixVal$V1
       }
     } else {
-      landscape[wh] <- spreadsDT$spreads[wh]
+      landscape[wh] <- cellsState[wh]
       if (exists("potentials")) {
         if (NROW(potentials) > 0) {
-          landscape[potentials[, 1L]] <- spreadsDT$spreads[potentials[, 2L]]
-          set(spreadsDT, as.integer(potentials[, 1L]), "spreads", 0L)
+          landscape[potentials[, 1L]] <- cellsState[potentials[, 2L]]
+          cellsState[as.integer(potentials[, 1L])] <- 0L
+          # set(spreadsDT, as.integer(potentials[, 1L]), "spreads", 0L)
         }
       }
-      set(spreadsDT, wh, "spreads", 0L)
+      cellsState[wh] <- 0L
+      # set(spreadsDT, wh, "spreads", 0L)
 
     }
     return(landscape)
 }
 
 spreadsDTInNamespace <- integer()
+
+
+
+maintainExpectedSize <- function(potentials, landscapeNotNAs, spreadProbs, spreadsDT, vv, ll, n) {
+  if (NROW(potentials) > 0) {
+    for (NAtries in 1:2) {
+      NAs <- landscapeNotNAs[potentials[, "to", drop = FALSE]]
+      if (anyNA(NAs)) {
+        NAsToRm <- is.na(potentials[, "to", drop = FALSE])
+        potentials <- potentials[NAsToRm, , drop = FALSE]
+        spreadProbs <- spreadProbs[NAsToRm]
+      } else {
+        break
+      }
+    }
+    if (sum(NAs, na.rm = TRUE)) {
+      Ns <- rowsum(NAs, potentials[, "from"])
+      nams <- rownames(Ns)
+
+      needChangedOuter <- as.integer(nams)
+      lens1 <- tabulate(potentials[, "from"])
+      lens <- lens1[needChangedOuter]
+      names(lens) <- nams
+
+      difs <- Ns[Ns[names(lens), ] != lens, ]
+
+      if (length(difs)) {
+        # if (!identical(difs, difs1)) browser()
+        for (i in 1:2) {
+          needChanged <- as.integer(names(difs))
+          zeros <- difs == 0
+          if (any(zeros)) {
+            difs <- difs[!zeros]
+          } else {
+            break
+          }
+        }
+        vv[needChanged] <- unname(Ns[names(difs), ])
+        indOfNeedChanged1 <- potentials[, "from"] %in% needChanged
+        if (sum(indOfNeedChanged1)) {
+          indOfNeedChanged <- potentials[indOfNeedChanged1, "from"]
+          Navail <- vv[indOfNeedChanged]
+
+          ll[needChanged] <- unname(lens[names(difs)])
+          Nposs <- ll[indOfNeedChanged]
+          # if (n > 15) browser()
+          # if (any(Nposs < 3)) browser()
+
+          spreadProbsNew <- spreadProbs[indOfNeedChanged1] * Nposs / Navail
+
+
+          # Sanity checking -- the probabilities must add up ... original * possible == new * available
+          #if (n > 15) {
+          # browser()
+          if (FALSE) {
+            potTemp <- cbind(potentials[indOfNeedChanged1, , drop = FALSE], spreadProbs = spreadProbs[indOfNeedChanged1], Nposs, Navail)
+            potTemp <- cbind(potTemp, spreadProbsNew = spreadProbsNew)
+            pot <- as.data.table(potTemp)
+            if (!identical(pot[, round(max(spreadProbsNew) * unique(Navail)), by = "from"],
+                           pot[, round(max(spreadProbs) * unique(Nposs)), by = "from"])) browser()
+          pot <- data.table(potentials[indOfNeedChanged1, "to", drop = FALSE], spreadProbsNew = spreadProbsNew)
+          pot[, spreadProbsNew := min(spreadProbsNew), by = "to"]
+          # if (any(pot[, .N, by = "to"]$N > 2)) browser()
+          spreadProbsNew <- pot$spreadProbsNew
+          if (anyNA(spreadProbsNew)) browser()
+          if (length(spreadProbsNew) == 0) browser()
+          #}
+          # rm(Nposs, envir = environment()); rm(Navail, envir = environment())
+          # End sanity checking
+          }
+
+          spreadProbs[indOfNeedChanged1] <- spreadProbsNew
+        }
+
+      }
+    }
+
+  }
+  spreadProbs
+}
