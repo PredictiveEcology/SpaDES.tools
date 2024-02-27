@@ -27,7 +27,7 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #'    - or where the modulo of the "to" cells is equal to 0 if "from" cells are 1 (wrapped
 #'      left to right)
 #'
-#' @param x `Raster*` object for which adjacency will be calculated.
+#' @param x `SpatRaster` object for which adjacency will be calculated.
 #'
 #' @param cells vector of cell numbers for which adjacent cells should be found.
 #'              Cell numbers start with 1 in the upper-left corner and increase
