@@ -15,7 +15,7 @@ jobs:
     if: "!contains(github.event.commits[0].message, '[skip-ci]')"
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }}) (nosuggests ${{ matrix.config.nosuggests }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }}, nosuggests ${{ matrix.config.nosuggests }})
 
     strategy:
       fail-fast: false
@@ -24,6 +24,7 @@ jobs:
           - {os: macOS-latest,   nosuggests: false, r: 'release'}
           - {os: windows-latest, nosuggests: false, r: 'devel'}
           - {os: windows-latest, nosuggests: false, r: 'release'}
+          - {os: windows-latest, nosuggests: true,  r: 'release'}
           - {os: windows-latest, nosuggests: false, r: 'oldrel'}
           - {os: ubuntu-20.04,   nosuggests: false, r: 'devel'}
           - {os: ubuntu-20.04,   nosuggests: false, r: 'release'}

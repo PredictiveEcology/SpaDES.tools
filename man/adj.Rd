@@ -23,7 +23,7 @@ adj(
 )
 }
 \arguments{
-\item{x}{\verb{Raster*} object for which adjacency will be calculated.}
+\item{x}{\code{SpatRaster} object for which adjacency will be calculated.}
 
 \item{cells}{vector of cell numbers for which adjacent cells should be found.
 Cell numbers start with 1 in the upper-left corner and increase

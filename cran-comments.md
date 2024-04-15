@@ -1,6 +1,6 @@
 ## Release information
 
-This update deals with recent upstream changes made in dependency package `reproducible`.
+This update drops support for R 4.1 due to changes in dependency packages.
 See `NEWS.md` for a full list of changes.
 
 ## Test environments
@@ -8,26 +8,25 @@ See `NEWS.md` for a full list of changes.
 ## Test environments
 
 ### Previous R versions
-* Ubuntu 20.04                 (GitHub), R 4.1.3
 * Ubuntu 20.04                 (GitHub), R 4.2.3
-* Windows                      (GitHub), R 4.1.3
 * Windows                      (GitHub), R 4.2.3
+* Windows                 (win-builder), R 4.2.3
 
 ### Current R versions
-* macOS 12.6.9 Monterey        (GitHub), R 4.3.2
-* macOS (M2) 14.1.1 Sonoma      (local), R 4.3.2
-* macOS (M1) Big Sur             (rhub), R 4.3.2
-* Ubuntu 20.04                 (GitHub), R 4.3.2
-* Ubuntu 20.04                  (local), R 4.3.2
-* Windows                      (GitHub), R 4.3.2
-* Windows                       (local), R 4.3.2
+* macOS 12.6.3                 (GitHub), R 4.3.3
+* macOS 13.3.1            (mac-builder), R 4.3.3
+* macOS 14.4.1                  (local), R 4.3.3
+* Ubuntu 20.04                 (GitHub), R 4.3.3
+* Ubuntu 20.04                  (local), R 4.3.3
+* Windows                      (GitHub), R 4.3.3
+* Windows                       (local), R 4.3.3
+* Windows                 (win-builder), R 4.3.3
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2023-11-08 r85496)
-* Ubuntu 20.04                  (local), R-devel (2023-11-08 r85496)
-* Windows                      (GitHub), R-devel (2023-11-09 r85497 ucrt)
-* Windows                 (win-builder), R-devel (2023-11-09 r85497 ucrt)
-* Windows                       (local), R-devel (2023-11-09 r85497 ucrt)
+* Ubuntu 20.04                 (GitHub), R-devel (2024-04-09 r86391)
+* Ubuntu 20.04                  (local), R-devel (2024-04-10 r86396)
+* Windows                      (GitHub), R-devel (2024-04-09 r86391 ucrt)
+* Windows                 (win-builder), R-devel (2024-04-09 r86391 ucrt)
 
 ## R CMD check results
 

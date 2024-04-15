@@ -1,3 +1,14 @@
+# SpaDES.tools 2.0.6
+
+## Enhancements
+* minor documentation updates
+
+## Dependency changes
+* drop support for R 4.1 due to changes in dependency packages
+
+## Bug fixes
+* none
+
 # SpaDES.tools 2.0.5
 
 ## Enhancements
