@@ -12,10 +12,10 @@ Description: Provides GIS and map utilities, plus additional modeling tools for
 URL:
     https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2023-11-10
-Version: 2.0.5
+Date: 2024-04-15
+Version: 2.0.6
 Authors@R: c(
-    person("Eliot J B", "McIntire", , "achubaty@for-cast.ca", role = c("aut"),
+    person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = c("aut"),
            comment = c(ORCID = "0000-0002-6914-8316")),
     person("Alex M", "Chubaty", , "achubaty@for-cast.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7146-8135")),
@@ -27,7 +27,7 @@ Authors@R: c(
     person("His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada", role = "cph")
   )
 Depends:
-    R (>= 4.1)
+    R (>= 4.2)
 Imports:
     backports,
     checkmate (>= 1.8.2),
@@ -88,6 +88,6 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
