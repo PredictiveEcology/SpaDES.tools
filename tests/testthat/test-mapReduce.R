@@ -67,7 +67,7 @@ test_that("mapReduce: file does not work correctly 2", {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
-    extFun <- eval(parse(text = rastDF$ext[ii]))
+    extFun <- eval(parse(text = rastDF$extent[ii]))
 
     ras <- read(rasOrig)
     fullRas <- randomPolygons(ras, numTypes = 5)
@@ -80,14 +80,14 @@ test_that("mapReduce: file does not work correctly 2", {
     )
     biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
 
-    expect_equal(sort(unique(as.numeric(terra::values(biomass, mat = FALSE)))), sort(reducedDT$biomass))
-    expect_equal(length(unique(as.numeric(terra::values(biomass, mat = FALSE)))),
-                 length(unique(as.numeric(terra::values(fullRas, mat = FALSE)))))
+    expect_equal(sort(unique(as.numeric(terra::values(biomass)))), sort(reducedDT$biomass))
+    expect_equal(length(unique(as.numeric(terra::values(biomass)))),
+                 length(unique(as.numeric(terra::values(fullRas)))))
 
     setkey(reducedDT, biomass)
     communities <- rasterizeReduced(reducedDT, fullRas, "communities")
-    expect_equal(sort(unique(as.numeric(terra::values(communities, mat = FALSE)))), sort(reducedDT$communities))
-    expect_equal(length(unique(as.numeric(terra::values(communities, mat = FALSE)))),
-                 length(unique(as.numeric(terra::values(fullRas, mat = FALSE)))))
+    expect_equal(sort(unique(as.numeric(terra::values(communities)))), sort(reducedDT$communities))
+    expect_equal(length(unique(as.numeric(terra::values(communities)))),
+                 length(unique(as.numeric(terra::values(fullRas)))))
   }
 })
