@@ -118,7 +118,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
     }
   } else {
     ras <- rasterFUN(fullRaster)
-    names(ras) <- names(rasterFUN())
+    names(ras) <- names(rasterFUN(fullRaster))
 
     if (is.factor(BsumVec[[newRasterCols]]) && is(ras, "SpatRaster")) {
       ras[] <- as.numeric(BsumVec[[newRasterCols]])
