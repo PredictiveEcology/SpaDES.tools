@@ -14,15 +14,23 @@
 )
 }
 \arguments{
-\item{from}{TODO: description needed}
+\item{from}{Numeric matrix with 2 or 3 or more columns. They must include x and y,
+representing x and y coordinates of "from" cell. If there is a column
+named "id", it will be "id" from \code{to}, i.e,. specific pair distances.
+All other columns will be included in the return value of the function.}
 
-\item{to}{TODO: description needed}
+\item{to}{Numeric matrix with 2  or 3 columns (or optionally more, all of which
+will be returned),
+x and y, representing x and y coordinates of "to" cells, and
+optional "id" which will be matched with "id" from \code{from}. Default is all cells.}
 
-\item{angles}{TODO: description needed}
+\item{angles}{Logical. If \code{TRUE}, then the function will return angles in radians,
+as well as distances.}
 
-\item{maxDistance}{TODO: description needed}
-
-\item{otherFromCols}{TODO: description needed}
+\item{maxDistance}{Numeric in units of number of cells. The algorithm will build
+the whole surface (from \code{from} to \code{to}), but will
+remove all distances that are above this distance.
+Using this will keep memory use down.}
 }
 \description{
 These have been written with speed in mind.
