@@ -366,7 +366,7 @@ test_that("spread stopRule does not work correctly", {
                       stopRule = stopRule2, maxVal = maxVal, returnIndices = TRUE,
                       id = TRUE, allowOverlap = TRUE, stopRuleBehavior = "includeRing")
 
-      if (getRversion() >= 4.3) {
+      if (getRversion() >= "4.3.0") {
         ## TODO: misc error on R 4.2:
         ## Error in `tapply(hab[circs$indices], circs$id, sum)`: arguments must have same length
         vals <- tapply(hab[circs$indices], circs$id, sum)
