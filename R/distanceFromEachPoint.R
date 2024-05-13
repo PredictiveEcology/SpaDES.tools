@@ -281,7 +281,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'
 #' @inheritParams distanceFromEachPoint
 #'
-#' @param otherFromCols other colunms to use as 'from'
+#' @param otherFromCols other columns to use as 'from'
 #'
 #' @aliases pointDistance
 #' @export

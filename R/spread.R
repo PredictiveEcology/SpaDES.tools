@@ -319,7 +319,7 @@ utils::globalVariables(c(
 #'
 #' This will generally be more useful when `allowOverlap` is `TRUE`.
 #'
-#' @note `dqrng` v0.4.0 changed the default RNG. If backwards compatibility is needed,
+#' @note `dqrng` version 0.4.0 changed the default RNG. If backwards compatibility is needed,
 #' set `dqrng::dqRNGkind("Xoroshiro128+")` before running `spread` to ensure numerical
 #' reproducibility with previous versions.
 #'
@@ -498,7 +498,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     n <- 1L
 
     # circle needs directions to be 8
-    if (circle | !is.na(asymmetry)) {
+    if (circle || !is.na(asymmetry)) {
       if (circle) directions <- 8L # only required for circle
       initialLociXY <- cbind(id = seq_along(initialLoci), xyFromCell(landscape, initialLoci))
       id <- TRUE
@@ -551,7 +551,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
 
     if (!allowOverlap && !returnDistances) {
-      if (id | returnIndices > 0 | relativeSpreadProb) {
+      if (id || returnIndices > 0 || relativeSpreadProb) {
         if (!spreadStateExists) {
           set(spreadsDT, loci, "spreads", seq_along(loci))
           ##DT spreads[loci] <- seq_along(loci)
@@ -643,7 +643,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
 
     #browser(expr = exists("aaaaa"))
     # while there are active cells
-    while (length(loci) & (n <= iterations)) {
+    while (length(loci) && (n <= iterations)) {
       if (!is.null(neighProbs)) {
         numNeighs <- if (is.list(neighProbs)) {
           unlist(lapply(neighProbs, function(x) {
@@ -662,7 +662,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         spreads[whActive, "active"] <- 0
         potentials <- cbind(potentials, active = 1)
       } else {
-        if (id | returnIndices > 0 | circle | relativeSpreadProb | !is.null(neighProbs)) {
+        if (id || returnIndices > 0 || circle || relativeSpreadProb || !is.null(neighProbs)) {
           potentials <- adj(landscape, loci, directions, pairs = TRUE)
         } else {
           # must pad the first column of potentials
@@ -728,7 +728,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       if (is.numeric(spreadProb)) {
         if (!(length(spreadProb) == 1 || length(spreadProb) == terra::ncell(landscape)))
           stop("spreadProb must be length 1 or length terra::ncell(landscape), or a raster")
-        if (n == 1 & spreadProbLaterExists) {
+        if (n == 1 && spreadProbLaterExists) {
           # need cell specific values
           spreadProbs <- rep(spreadProb, NROW(potentials))
           spreadProb <- spreadProbLater
@@ -741,7 +741,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         }
       } else {
         # here for raster spreadProb
-        if (n == 1 & spreadProbLaterExists) {
+        if (n == 1 && spreadProbLaterExists) {
           # need cell specific values
           spreadProbs <- spreadProb[][potentials[, 2L]]
           spreadProb <- spreadProbLater
@@ -772,7 +772,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         spreadProbs <- spreadProbs - diff(c(spreadProb[], mean(spreadProbs)))
       }
 
-      if (!is.null(neighProbs) | relativeSpreadProb) {
+      if (!is.null(neighProbs) || relativeSpreadProb) {
         aaa <- split(seq_along(potentials[, toColumn[spreadStateExists + 1]]),
                      potentials[, "from"])
         if (length(aaa) != length(numNeighs)) {
@@ -893,7 +893,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         }
 
         # Implement stopRule section
-        if (is.function(stopRule) & length(events) > 0) {
+        if (is.function(stopRule) && length(events) > 0) {
           if (allowOverlapOrReturnDistances) {
             prevCells <- cbind(
               id = spreads[, "id"],
@@ -1011,7 +1011,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
             fromCol <- colnames(potentials) == "from"
 
             spreads <- rbind(spreads, potentials[, !fromCol])
-            if ((returnDistances | spreadStateExists) & !allowOverlap) {
+            if ((returnDistances || spreadStateExists) && !allowOverlap) {
               # 2nd place where allowOverlap and returnDistances differ
               notDups <- !duplicated(spreads[, "indices"])
               nrSpreads <- NROW(spreads)
@@ -1021,7 +1021,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
               events <- events[notDupsEvents]
             }
           } else {
-            if (id | returnIndices > 0 | relativeSpreadProb) {
+            if (id || returnIndices > 0 || relativeSpreadProb) {
               # give new cells, the id of the source cell
               set(spreadsDT, events, "spreads", spreadsDT$spreads[potentials[, 1L]])
             } else {
@@ -1173,12 +1173,12 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       set.seed(dqrng::dqsample.int(1e9, 1) + sample.int(1e9, 1))
     }
 
-    if (!allowOverlap & !returnDistances) {
+    if (!allowOverlap && !returnDistances) {
       spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
     }
 
     # Convert the data back to raster
-    if (!allowOverlap & !returnDistances & !spreadStateExists) {
+    if (!allowOverlap && !returnDistances && !spreadStateExists) {
       # if (lowMemory) {
       #   wh <- as.ram(ffwhich(spreads, spreads > 0))
       #   if (returnIndices > 0) {
@@ -1275,11 +1275,11 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
     }
 
     if (allowOverlapOrReturnDistances) {
-      if (returnDistances & !allowOverlap) {
+      if (returnDistances && !allowOverlap) {
         landscape[spreads[, "indices"]] <- spreads[, "dists"]
       } else {
         spreadsDTFinal <- data.table(spreads)
-        if (returnDistances & allowOverlap) {
+        if (returnDistances && allowOverlap) {
           pixVal <- spreadsDTFinal[, min(dists), by = indices]
           message("returnDistances is TRUE, allowOverlap is TRUE, but returnIndices is FALSE; ",
                   "returning minimum distance raster.")

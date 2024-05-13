@@ -270,7 +270,7 @@ asymmetric spreadProbs is always equal to spreadProb at every iteration:
 \code{spreadProbs <- spreadProbs - diff(c(spreadProb, mean(spreadProbs)))}
 }
 \note{
-\code{dqrng} v0.4.0 changed the default RNG. If backwards compatibility is needed,
+\code{dqrng} version 0.4.0 changed the default RNG. If backwards compatibility is needed,
 set \code{dqrng::dqRNGkind("Xoroshiro128+")} before running \code{spread} to ensure numerical
 reproducibility with previous versions.
 }

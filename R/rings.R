@@ -39,9 +39,9 @@ rings <- function(landscape, loci = NA_real_, id = FALSE, minRadius = 2, maxRadi
                          circleMaxRadius = maxRadius, spreadProb = 1, id = TRUE,
                          returnDistances = TRUE, returnIndices = TRUE,
                          allowOverlap = allowOverlap, ...)
-  if (length(minRadius) > 1 | length(maxRadius) > 1) {
+  if (length(minRadius) > 1 || length(maxRadius) > 1) {
     len <- length(loci)
-    if (!(length(minRadius) == len | length(maxRadius) == len)) {
+    if (!(length(minRadius) == len || length(maxRadius) == len)) {
       warning("minRadius and maxRadius should be length 1 or same length as loci. ",
               "Recycling values which may not produce desired effects.")
     }

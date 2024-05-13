@@ -461,7 +461,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
   # This means that if an event can not spread any more, it will try 10 times, incl. 2 jumps
   # maxRetriesPerID <- 10
 
-  if (!is.numeric(start) & !is.data.table(start)) {
+  if (!is.numeric(start) && !is.data.table(start)) {
     if (is(start, "Raster") || is(start, "SpatRaster")) {
       start <- attr(start, "pixel")
     } else {
@@ -525,7 +525,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       clusterDT <- as.data.table(attr(start, "spreadState")$clusterDT)
 
       ## make sure maxSize column exists when maxSize argument is passed.
-      if (!anyNA(maxSize) & is.null(clusterDT$maxSize)) {
+      if (!anyNA(maxSize) && is.null(clusterDT$maxSize)) {
         message("maxSize provided, but not present in attr(start, 'spreadState')$maxSize. ",
                 "Using the maxSize provided: ", maxSize)
         set(clusterDT, NULL, "maxSize", maxSize)
@@ -858,7 +858,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 6 -- spreadProb implementation - uses an absolute probability for
     # each potential neighbour
     # Extract spreadProb for the current set of potentials
-    if (length(spreadProb) == 1 & !inherits(spreadProb, "SpatRaster")) {
+    if (length(spreadProb) == 1 && !inherits(spreadProb, "SpatRaster")) {
       actualSpreadProb <- rep(spreadProb, NROW(dtPotential))
     } else {
       actualSpreadProb <- as.vector(spreadProb)[dtPotential$to]
@@ -875,7 +875,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     # Step 6a -- asymmetry -- this will modify spreadProb if it is not a circle
     #  -- circle asymmetry happens elsewhere
     # modify actualSpreadProb if there is asymmetry
-    if (usingAsymmetry & !circle) {
+    if (usingAsymmetry && !circle) {
       actualAsymmetry <- if (length(asymmetry) == 1) {
         asymmetry
       } else {
@@ -917,7 +917,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # Step 8 - Remove duplicates & bind dt and dtPotential
     if (anyNAneighProbs) {
-      if (isTRUE(allowOverlap > 0) | is.na(allowOverlap) | !canUseAvailable) {
+      if (isTRUE(allowOverlap > 0) || is.na(allowOverlap) || !canUseAvailable) {
         ## overlapping allowed
         dtPotential <- dtPotential[spreadProbSuccess]
         dtNROW <- NROW(dt)
@@ -992,7 +992,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     }
 
     # Step 9 -- Size issues: i.e., if too big (remove extras) or too small (make sure keeps going)
-    if (!anyNA(maxSize) | !(anyNA(exactSize))) {
+    if (!anyNA(maxSize) || !(anyNA(exactSize))) {
       # Too big first
       setkeyv(dt, "initialPixels") # must sort because maxSize is sorted
       setkeyv(dtPotential, "initialPixels")
@@ -1061,7 +1061,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # Step 10 - Change states of cells
     if (usingAsymmetry) {
-      if (!(isTRUE(allowOverlap > 0) | is.na(allowOverlap))) {
+      if (!(isTRUE(allowOverlap > 0) || is.na(allowOverlap))) {
         if (circle) {
           if (length(saturated)) {
             set(dt, which(dt$pixels %in% saturated), "state", "activeSource")
@@ -1111,13 +1111,11 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # Step 11 - plot it if necessary
     if (plot.it) {
-      # .requireNamespace("quickPlot")
-
       newPlot <- FALSE
       if (totalIterations == 1) {
         newPlot <- TRUE
       }
-      if (newPlot | !(exists("spread2Ras", inherits = FALSE))) {
+      if (newPlot || !(exists("spread2Ras", inherits = FALSE))) {
         if (any(landscapeOrigClass == "Raster"))
           spread2Ras <- raster::raster(landscape)
         else

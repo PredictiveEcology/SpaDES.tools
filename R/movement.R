@@ -124,7 +124,8 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   xycolNames <- colnames(crds)
 
   if (!is.matrix(agent)) {
-    if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent, FUN.VALUE = logical(1)))) {
+    if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent,
+                    FUN.VALUE = logical(1)))) {
       if (is(agent, "SpatVector"))
         if (!identical("points", geomtype(agent)))
           stop("crs can only take SpatialPoints* or SpatVector points geometry")
@@ -173,10 +174,9 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   if (inherits(agent, "SpatialPoints"))  {
     message("agent does not have columns named x1 and y1, which represent the 'previous' ",
             "locations. Assigning random values to those columns.")
-    # names(agent) <- x1y1colNames
     agent1 <- cbind(coords(agent), prevCoords)
     agent1 <- crw(agent1, extent = extent, stepLength = stepLength,
-                 stddev = stddev, lonlat = lonlat, torus = torus)
+                  stddev = stddev, lonlat = lonlat, torus = torus)
 
     if (returnMatrix %in% FALSE)
       if (!inherits(agent1, origClass)) {
@@ -232,4 +232,3 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
     return(agent)
   }
 }
-

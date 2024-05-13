@@ -13,7 +13,7 @@ test_that("numerical-comparisons: inRange handles various inputs", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
 
     r <- switch(pkg,
@@ -22,8 +22,7 @@ test_that("numerical-comparisons: inRange handles various inputs", {
 
     ids <- which(inRange(r, 850, 875))
     if (requireNamespace("raster", quietly = TRUE))
-      if (packageVersion("raster") < "3.3.3" &
-          pkg == "raster") {
+      if (packageVersion("raster") < "3.3.3" && pkg == "raster") {
         expect_equal(ids, c(708L, 1502L, 2853L, 3553L, 3638L, 3950L, 5708L, 6333L))
       } else {
         expect_equal(ids, c(1741L, 2774L, 3091L, 3092L, 3171L, 3645L, 3873L, 3878L, 3951L,

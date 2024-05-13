@@ -2,7 +2,7 @@ test_that("mapReduce: file does not work correctly 1", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
@@ -63,7 +63,7 @@ test_that("mapReduce: file does not work correctly 2", {
   rasOrig <- terra::rast(terra::ext(0, 15, 0, 15), resolution = 1)
   set.seed(321) # random fails here ... trying set.seed as a solution
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))

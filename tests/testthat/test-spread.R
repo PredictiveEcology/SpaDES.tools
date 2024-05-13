@@ -2,7 +2,7 @@ test_that("spread produces legal RasterLayer", {
   testInit(c("dqrng", "terra"))
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     pkg <- rastDF$read[ii]
@@ -15,34 +15,34 @@ test_that("spread produces legal RasterLayer", {
     a <- read(a)
     b <- read(b)
 
-    # check it makes a RasterLayer
+    ## check it makes a RasterLayer
     expect_s4_class(spread(a, loci = ncell(a) / 2, stats::runif(1, 0.15, 0.25)), cls)
 
-    #check wide range of spreadProbs
+    ## check wide range of spreadProbs
     for (wwt in 1:20) {
       expect_s4_class(spread(a, loci = ncell(a) / 2, stats::runif(1, 0, 1)), cls)
     }
 
-    # Test for NAs in a numeric vector of spreadProb values
+    ## Test for NAs in a numeric vector of spreadProb values
     numNAs <- 50
     sps <- sample(c(rep(NA_real_, numNAs), runif(ncell(a) - numNAs, 0, 0.5)))
     expect_s4_class(spread(a, loci = ncell(a) / 2, spreadProb = sps), cls)
 
-    # check spreadProbs outside of legal returns an "spreadProb is not a probability"
+    ## check spreadProbs outside of legal returns an "spreadProb is not a probability"
     expect_error(spread(a, loci = ncell(a) / 2, 1.1), "spreadProb is not a probability")
     expect_error(spread(a, loci = ncell(a) / 2, -0.1), "spreadProb is not a probability")
 
-    # checks if maxSize is working properly
-    # One process spreading
+    ## checks if maxSize is working properly
+    ## One process spreading
     expect_equal(ncell(a), tabulate(spread(a, spreadProb = 1, id = TRUE)[]))
 
-    # several processes spreading
+    ## several processes spreading
     sizes <- rep_len(50, 3)
     expect_equal(sizes,
                  tabulate(spread(a, loci = c(40, 200, 350), spreadProb = 1,
                                  id = TRUE, maxSize = sizes)[]))
 
-    # Check that with maxSize, the active cells are removed when maxSize is reached
+    ## Check that with maxSize, the active cells are removed when maxSize is reached
     b <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
     if (pkg == "raster::raster") {
       a <- read(a)
@@ -112,7 +112,7 @@ test_that("allowOverlap -- produces exact result", {
   lrgExt <- terra::extend(smallExt, 1)
   a <- terra::rast(lrgExt, resolution = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     pkg <- rastDF$read[ii]
@@ -186,7 +186,7 @@ test_that("spread stopRule does not work correctly", {
   testInit(c("terra"))
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     pkg <- rastDF$read[ii]
@@ -439,7 +439,7 @@ test_that("asymmetry doesn't work properly", {
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
 
     hab <- read(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
@@ -510,7 +510,7 @@ test_that("rings and cir", {
   testInit(c("terra"))
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     pkg <- rastDF$read[ii]
@@ -689,7 +689,7 @@ test_that("simple cir does not work correctly", {
 
   hab <- terra::rast(terra::ext(0, 1e1, 0, 1e1), resolution = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     if (type == "raster")
       hab <- raster::raster(hab)
@@ -872,7 +872,7 @@ test_that("spreadProb with relative values does not work correctly", {
 
   ext1 <- terra::ext(0, 1e2, 0, 1e2)
   extRas <- terra::rast(ext1, resolution = 1)
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     type <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     pkg <- rastDF$read[ii]

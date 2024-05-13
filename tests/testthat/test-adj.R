@@ -2,7 +2,7 @@ test_that("adj.R results not identical to adjacent", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     a <- switch(pkg,
                 raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1),
@@ -125,7 +125,7 @@ test_that("errors in adj are not correct", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
 
     a <- switch(pkg,
@@ -142,7 +142,7 @@ test_that("adj.R: torus does not work as expected", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     a <- switch(pkg,
                 raster = raster::raster(raster::extent(0, 4, 0, 4), res = 1),

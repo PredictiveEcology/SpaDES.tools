@@ -32,7 +32,7 @@ the whole surface (from \code{from} to \code{to}), but will
 remove all distances that are above this distance.
 Using this will keep memory use down.}
 
-\item{otherFromCols}{other colunms to use as 'from'}
+\item{otherFromCols}{other columns to use as 'from'}
 }
 \description{
 These have been written with speed in mind.

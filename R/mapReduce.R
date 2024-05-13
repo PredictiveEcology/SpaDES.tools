@@ -88,17 +88,8 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
 
   colsToKeep <- c(mapcode, newRasterCols)
   BsumVec <- reduced[, ..colsToKeep][fullRasterVals] |> unique()
-
-  # This was removed by Eliot May 28, 2019 -- seems redundant -- if there are errors, this may be why
-  # if (length(newRasterCols) > 1) {
-  #   for (i in seq_along(newRasterCols)) {
-  #     BsumVec[is.na(get(newRasterCols[i])), c(newRasterCols[i]) := NA]
-  #   }
-  # } else {
-  #   browser()
-  #   BsumVec[is.na(get(newRasterCols)), c(newRasterCols) := NA]
-  # }
   setkeyv(BsumVec, "row_number")
+
   if (length(newRasterCols) > 1) {
     ras <- list()
     for (i in newRasterCols) {
@@ -118,7 +109,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
     }
   } else {
     ras <- rasterFUN(fullRaster)
-    names(ras) <- names(rasterFUN(fullRaster))
+    names(ras) <- names(rasterFUN())
 
     if (is.factor(BsumVec[[newRasterCols]]) && is(ras, "SpatRaster")) {
       ras[] <- as.numeric(BsumVec[[newRasterCols]])
