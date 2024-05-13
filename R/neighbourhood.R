@@ -677,17 +677,16 @@ cir <- function(landscape, coords, loci,
     d <- distanceFromEachPoint(b, a)
 
     if (closest) {
-      d <- d[order(d[, "rads"]), NULL, drop = FALSE]
+      d <- d[order(d[, "rads"]), , drop = FALSE]
       dups <- duplicated(d[, "to", drop = FALSE])
       d <- d[!dups, , drop = FALSE]
-
     }
 
     if (includeBehavior == "excludePixels") {
       if (equalRadii) {
-        d <- d[d[, "dists"] %<=% maxRad & d[, "dists"] %>=% minRad, NULL, drop = FALSE]
+        d <- d[d[, "dists"] %<=% maxRad & d[, "dists"] %>=% minRad, , drop = FALSE]
       } else {
-        d <- d[d[, "dists"] %<=% d[, "maxRad"] & d[, "dists"] %>=% d[, "minRad"], NULL, drop = FALSE]
+        d <- d[d[, "dists"] %<=% d[, "maxRad"] & d[, "dists"] %>=% d[, "minRad"], , drop = FALSE]
       }
     }
 
