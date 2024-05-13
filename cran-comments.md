@@ -1,6 +1,6 @@
 ## Release information
 
-This update drops support for R 4.1 due to changes in dependency packages.
+This update deals with changes to a forthcoming version of `dqrng` (v0.4.0).
 See `NEWS.md` for a full list of changes.
 
 ## Test environments
@@ -23,10 +23,10 @@ See `NEWS.md` for a full list of changes.
 * Windows                 (win-builder), R 4.3.3
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2024-04-09 r86391)
-* Ubuntu 20.04                  (local), R-devel (2024-04-10 r86396)
-* Windows                      (GitHub), R-devel (2024-04-09 r86391 ucrt)
-* Windows                 (win-builder), R-devel (2024-04-09 r86391 ucrt)
+* Ubuntu 20.04                 (GitHub), R-devel (2024-05-11 r86532)
+* Ubuntu 20.04                  (local), R-devel (2024-05-11 r86532)
+* Windows                      (GitHub), R-devel (2024-05-11 r86532 ucrt)
+* Windows                 (win-builder), R-devel (2024-05-11 r86532 ucrt)
 
 ## R CMD check results
 
