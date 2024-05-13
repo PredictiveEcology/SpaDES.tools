@@ -275,10 +275,10 @@ utils::globalVariables(c(
 #'                      between 0 and 1, which will force `relativeSpreadProb`
 #'                      to be `TRUE`.
 #'
-#' @param ...           Additional named vectors or named list of named vectors
-#'                      required for `stopRule`. These
-#'                      vectors should be as long as required e.g., length
-#'                      `loci` if there is one value per event.
+#' @param ...       Additional named vectors or named list of named vectors required for `stopRule`.
+#'                  These vectors should be as long as required e.g., length `loci` if there is
+#'                  one value per event.
+#'
 #' @param plot.it  If `TRUE`, then plot the raster at every iteration,
 #'                 so one can watch the spread event grow.
 #'
@@ -319,6 +319,10 @@ utils::globalVariables(c(
 #'
 #' This will generally be more useful when `allowOverlap` is `TRUE`.
 #'
+#' @note `dqrng` v0.4.0 changed the default RNG. If backwards compatibility is needed,
+#' set `dqrng::dqRNGkind("Xoroshiro128+")` before running `spread` to ensure numerical
+#' reproducibility with previous versions.
+#'
 #' @example inst/examples/example_spread.R
 #'
 #' @author Eliot McIntire and Steve Cumming
@@ -346,9 +350,9 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
         stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
     if (requireNamespace("dqrng", quietly = TRUE)) {
+
+      dqrng::dqset.seed(sample.int(1e9, 2)) ## set dqrng seed from base state
       samInt <- dqrng::dqsample.int
-      # set dqrng seed from base state
-      dqrng::dqset.seed(sample.int(1e9, 2))
     } else {
       samInt <- sample.int
     }
@@ -456,21 +460,22 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       if (!is.null(lowMemory)) {
         message("lowMemory argument is now deprecated; using standard spread.")
       }
-      # The experimental new spread function has some changes for speed. 1) The
-      # bottleneck amazingly, was the creation of a new empty vector of length
-      # ncell(landscape) ... it took >50% of the time of the spread function
-      # when called 100,000s of times on a variety of spreadProb situations. 2) I
-      # found that the only way to stop instantiating this was to have a
-      # data.table object that uses reference semantics. 3) Put a simple, 1 column
-      # data.table object into the SpaDES.tools namespace. It will contain the
-      # former spreads object which was 0 everywhere the events hadn't spread
-      # to, and a non-zero integer otherwise. 4) The function has to make sure that
-      # it is "correct" on leaving the function. Two different cases: A) it
-      # exits improperly --> action is delete this object; B) it exits correctly
-      # --> action is to change all the values that were non-zero back to zero,
-      # rather than delete the object. The whole point is to keep the object
-      # intact after it has exited spread, so that it is available again
-      # immediately for reuse.
+      ## The experimental new spread function has some changes for speed.
+      ## 1) The bottleneck, amazingly, was the creation of a new empty vector of length
+      ## ncell(landscape) ... it took >50% of the time of the spread function
+      ## when called 100,000s of times on a variety of spreadProb situations.
+      ## 2) I found that the only way to stop instantiating this was to have a
+      ## data.table object that uses reference semantics.
+      ## 3) Put a simple, 1 column data.table object into the SpaDES.tools namespace.
+      ## It will contain the former spreads object which was 0 everywhere the events
+      ## hadn't spread to, and a non-zero integer otherwise.
+      ## 4) The function has to make sure that it is "correct" on leaving the function.
+      ## Two different cases:
+      ## A) it exits improperly --> action is delete this object;
+      ## B) it exits correctly --> action is to change all the values that were non-zero
+      ## back to zero, rather than delete the object.
+      ## The whole point is to keep the object intact after it has exited spread,
+      ## so that it is available again immediately for reuse.
       needEmptySpreads <- TRUE
       stNamespace <- asNamespace("SpaDES.tools")
       if (exists("spreadsDTInNamespace", envir = stNamespace)) {
@@ -802,7 +807,7 @@ spread <- function(landscape, loci = NA_real_, spreadProb = 0.23, persistence = 
       # random ordering so not always same:
       lenPot <- NROW(potentials)
       if (lenPot) {
-        reorderVals <- samInt(lenPot) ## TODO: uses sample.int(..., replace = FALSE)
+        reorderVals <- samInt(lenPot)
         potentials <- potentials[reorderVals, , drop = FALSE]
       }
       if (!allowOverlap) {

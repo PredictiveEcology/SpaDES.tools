@@ -180,10 +180,9 @@ the sum of the probabilities of all neighbours will be 1. Default
 between 0 and 1, which will force \code{relativeSpreadProb}
 to be \code{TRUE}.}
 
-\item{...}{Additional named vectors or named list of named vectors
-required for \code{stopRule}. These
-vectors should be as long as required e.g., length
-\code{loci} if there is one value per event.}
+\item{...}{Additional named vectors or named list of named vectors required for \code{stopRule}.
+These vectors should be as long as required e.g., length \code{loci} if there is
+one value per event.}
 }
 \value{
 Either a \code{RasterLayer} indicating the spread of the process in
@@ -269,6 +268,11 @@ To maintain an expected \code{spreadProb} that is the same as the asymmetric
 \code{spreadProbs}, these are then rescaled so that the mean of the
 asymmetric spreadProbs is always equal to spreadProb at every iteration:
 \code{spreadProbs <- spreadProbs - diff(c(spreadProb, mean(spreadProbs)))}
+}
+\note{
+\code{dqrng} v0.4.0 changed the default RNG. If backwards compatibility is needed,
+set \code{dqrng::dqRNGkind("Xoroshiro128+")} before running \code{spread} to ensure numerical
+reproducibility with previous versions.
 }
 \section{Breaking out of spread events}{
 

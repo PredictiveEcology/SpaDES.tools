@@ -24,10 +24,10 @@ randomPolygon(x, hectares, area)
 
 \item{...}{Other arguments passed to \code{spread}. No known uses currently.}
 
-\item{x}{Either a \code{SpatVector}, or \code{SpatialPoints} (deprecated), \code{SpatialPolygons}
-(deprecated), or \code{matrix} with two
-dimensions, 1 row, with the approximate centre of the new random polygon to create.
-If \code{matrix}, then longitude and latitude are assumed (epsg:4326)}
+\item{x}{Either a \code{SpatVector}, or \code{SpatialPoints} (deprecated), \code{SpatialPolygons} (deprecated),
+or \code{matrix} with two dimensions, 1 row, with the approximate centre of the new random
+polygon to create.
+If \code{matrix}, then longitude and latitude are assumed (\code{epsg:4326}).}
 
 \item{hectares}{Deprecated. Use \code{area} in meters squared.}
 
@@ -37,7 +37,7 @@ If \code{matrix}, then longitude and latitude are assumed (epsg:4326)}
 A map of extent \code{ext} with random polygons.
 
 A \code{SpatVector} polygons object, with approximately the area request,
-centred approximately at the coordinates requested, in the projection of \code{x}
+centred approximately at the coordinates requested, in the projection of \code{x}.
 }
 \description{
 These are built with the \code{\link[=spread]{spread()}} function internally.

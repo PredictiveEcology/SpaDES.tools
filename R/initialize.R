@@ -126,17 +126,17 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 #' Produces a `SpatVector` polygons object with 1 feature that will have approximately an area
 #' equal to `area` (expecting area in hectares), #' and a centre at approximately `x`.
 #'
-#' @param x Either a `SpatVector`, or `SpatialPoints` (deprecated), `SpatialPolygons`
-#'          (deprecated), or `matrix` with two
-#'          dimensions, 1 row, with the approximate centre of the new random polygon to create.
-#'          If `matrix`, then longitude and latitude are assumed (epsg:4326)
+#' @param x Either a `SpatVector`, or `SpatialPoints` (deprecated), `SpatialPolygons` (deprecated),
+#'          or `matrix` with two dimensions, 1 row, with the approximate centre of the new random
+#'          polygon to create.
+#'          If `matrix`, then longitude and latitude are assumed (`epsg:4326`).
 #'
 #' @param area A numeric, the approximate area in `meters squared` of the random polygon.
 #'
 #' @param hectares Deprecated. Use `area` in meters squared.
 #'
 #' @return A `SpatVector` polygons object, with approximately the area request,
-#'         centred approximately at the coordinates requested, in the projection of `x`
+#'         centred approximately at the coordinates requested, in the projection of `x`.
 #'
 #' @importFrom terra crs crs<-
 #' @importFrom stats rbeta runif

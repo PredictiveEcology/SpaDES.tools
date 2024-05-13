@@ -683,7 +683,7 @@ test_that("spread2 works with terra", {
     expect_silent({
       out <- spread2(a, start = sams, 1, iterations = 1, asRaster = FALSE)
     })
-    #TODO: add more tests once asymmetry, circle, etc works
+    # TODO: add more tests once asymmetry, circle, etc works
     expect_true(all(out[pixels %in% sams]$state == "inactive"))
     expect_true(any("activeSource" %in% out$state))
 
