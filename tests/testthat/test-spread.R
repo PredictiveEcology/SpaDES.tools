@@ -1,5 +1,6 @@
 test_that("spread produces legal RasterLayer", {
   testInit(c("dqrng", "terra"))
+  dqrng::dqRNGkind("Xoroshiro128+")
   rastDF <- needTerraAndRaster()
 
   set.seed(123)
@@ -106,6 +107,7 @@ test_that("spread produces legal RasterLayer", {
 
 test_that("allowOverlap -- produces exact result", {
   testInit(c("dqrng", "terra"))
+  dqrng::dqRNGkind("Xoroshiro128+")
   rastDF <- needTerraAndRaster()
   N <- 10
   smallExt <- terra::ext(1, N - 1, 1, N - 1)
