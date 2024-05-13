@@ -1,4 +1,4 @@
-# SpaDES.tools (development version)
+# SpaDES.tools 2.0.7
 
 ## bug fixes
 * fixed issue with `rasterizeReduced()`;
