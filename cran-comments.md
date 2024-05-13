@@ -26,7 +26,7 @@ See `NEWS.md` for a full list of changes.
 * Ubuntu 20.04                 (GitHub), R-devel (2024-05-11 r86532)
 * Ubuntu 20.04                  (local), R-devel (2024-05-11 r86532)
 * Windows                      (GitHub), R-devel (2024-05-11 r86532 ucrt)
-* Windows                 (win-builder), R-devel (2024-05-11 r86532 ucrt)
+* Windows                 (win-builder), R-devel (2024-05-12 r86534 ucrt)
 
 ## R CMD check results
 
