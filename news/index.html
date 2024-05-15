@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.7</span>
       </span>
     </div>
 
@@ -47,6 +47,14 @@
       <small>Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.7" id="spadestools-207">SpaDES.tools 2.0.7<a class="anchor" aria-label="anchor" href="#spadestools-207"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-2-0-7">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-0-7"></a></h3>
+<ul><li>fixed issue with <code><a href="../reference/rasterizeReduced.html">rasterizeReduced()</a></code>;</li>
+<li>updates to deal with changes to RNG in <code>dqrng</code> (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/96" class="external-link">#96</a>; <a href="https://github.com/rstub" class="external-link">@rstub</a>). if backwards compatibility is needed, set <code>dqrng::dqRNGkind("Xoroshiro128+")</code> before running <code>spread</code> to ensure numerical reproducibility with previous versions;</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.6" id="spadestools-206">SpaDES.tools 2.0.6<small>2024-04-15</small><a class="anchor" aria-label="anchor" href="#spadestools-206"></a></h2>
 <div class="section level3">
@@ -408,7 +416,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer></div>

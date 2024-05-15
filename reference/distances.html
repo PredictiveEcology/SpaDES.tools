@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.7</span>
       </span>
     </div>
 
@@ -65,23 +65,33 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>from</dt>
-<dd><p>TODO: description needed</p></dd>
+<dd><p>Numeric matrix with 2 or 3 or more columns. They must include x and y,
+representing x and y coordinates of "from" cell. If there is a column
+named "id", it will be "id" from <code>to</code>, i.e,. specific pair distances.
+All other columns will be included in the return value of the function.</p></dd>
 
 
 <dt>to</dt>
-<dd><p>TODO: description needed</p></dd>
+<dd><p>Numeric matrix with 2  or 3 columns (or optionally more, all of which
+will be returned),
+x and y, representing x and y coordinates of "to" cells, and
+optional "id" which will be matched with "id" from <code>from</code>. Default is all cells.</p></dd>
 
 
 <dt>angles</dt>
-<dd><p>TODO: description needed</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, then the function will return angles in radians,
+as well as distances.</p></dd>
 
 
 <dt>maxDistance</dt>
-<dd><p>TODO: description needed</p></dd>
+<dd><p>Numeric in units of number of cells. The algorithm will build
+the whole surface (from <code>from</code> to <code>to</code>), but will
+remove all distances that are above this distance.
+Using this will keep memory use down.</p></dd>
 
 
 <dt>otherFromCols</dt>
-<dd><p>TODO: description needed</p></dd>
+<dd><p>other columns to use as 'from'</p></dd>
 
 </dl></div>
 
@@ -97,7 +107,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer></div>

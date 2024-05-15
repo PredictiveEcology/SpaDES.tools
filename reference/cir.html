@@ -21,7 +21,7 @@ This code is substantially adapted from PlotRegionHighlighter::createCircle."><!
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.7</span>
       </span>
     </div>
 
@@ -215,7 +215,7 @@ For the more general GIS buffering, see <code><a href="https://r-spatial.github.
 <span class="r-in"><span><span class="co"># circle centred</span></span></span>
 <span class="r-in"><span><span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">15</span>, <span class="fl">0</span>, <span class="fl">15</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span>, val <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">middleCircle</span> <span class="op">&lt;-</span> <span class="fu">cir</span><span class="op">(</span><span class="va">ras</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ras</span><span class="op">[</span><span class="va">middleCircle</span><span class="op">[</span> , <span class="st">"indices"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="va">ras</span><span class="op">[</span><span class="va">middleCircle</span><span class="op">[</span>, <span class="st">"indices"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="va">circlePoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">middleCircle</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="co"># clearPlot()</span></span></span>
@@ -307,7 +307,7 @@ For the more general GIS buffering, see <code><a href="https://r-spatial.github.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer></div>
