@@ -1,0 +1,501 @@
+# --------------------------------------------
+# CITATION file created with {cffr} R package
+# See also: https://docs.ropensci.org/cffr/
+# --------------------------------------------
+ 
+cff-version: 1.2.0
+message: 'To cite package "SpaDES.tools" in publications use:'
+type: software
+license: GPL-3.0-only
+title: 'SpaDES.tools: Additional Tools for Developing Spatially Explicit Discrete
+  Event Simulation (SpaDES) Models'
+version: 2.0.7
+abstract: 'Provides GIS and map utilities, plus additional modeling tools for developing
+  cellular automata, dynamic raster models, and agent based models in ''SpaDES''.
+  Included are various methods for spatial spreading, spatial agents, GIS operations,
+  random map generation, and others. See ''?SpaDES.tools'' for an categorized overview
+  of these additional tools. The suggested package ''NLMR'' can be installed from
+  the following repository: (<https://PredictiveEcology.r-universe.dev>).'
+authors:
+- family-names: McIntire
+  given-names: Eliot J B
+  email: eliot.mcintire@nrcan-rncan.gc.ca
+  orcid: https://orcid.org/0000-0002-6914-8316
+- family-names: Chubaty
+  given-names: Alex M
+  email: achubaty@for-cast.ca
+  orcid: https://orcid.org/0000-0001-7146-8135
+repository: https://CRAN.R-project.org/package=SpaDES.tools
+repository-code: https://github.com/PredictiveEcology/SpaDES.tools
+url: https://spades-tools.predictiveecology.org
+date-released: '2024-05-14'
+contact:
+- family-names: Chubaty
+  given-names: Alex M
+  email: achubaty@for-cast.ca
+  orcid: https://orcid.org/0000-0001-7146-8135
+keywords: r
+references:
+- type: software
+  title: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  url: https://www.R-project.org/
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+  version: '>= 4.2'
+- type: software
+  title: backports
+  abstract: 'backports: Reimplementations of Functions Introduced Since R-3.0.0'
+  notes: Imports
+  url: https://github.com/r-lib/backports
+  repository: https://CRAN.R-project.org/package=backports
+  authors:
+  - family-names: Lang
+    given-names: Michel
+    email: michellang@gmail.com
+    orcid: https://orcid.org/0000-0001-9754-0393
+  - name: R Core Team
+  year: '2024'
+- type: software
+  title: checkmate
+  abstract: 'checkmate: Fast and Versatile Argument Checks'
+  notes: Imports
+  url: https://mllg.github.io/checkmate/
+  repository: https://CRAN.R-project.org/package=checkmate
+  authors:
+  - family-names: Lang
+    given-names: Michel
+    email: michellang@gmail.com
+    orcid: https://orcid.org/0000-0001-9754-0393
+  year: '2024'
+  version: '>= 1.8.2'
+- type: software
+  title: data.table
+  abstract: 'data.table: Extension of `data.frame`'
+  notes: Imports
+  url: https://r-datatable.com
+  repository: https://CRAN.R-project.org/package=data.table
+  authors:
+  - family-names: Barrett
+    given-names: Tyson
+    email: t.barrett88@gmail.com
+  - family-names: Dowle
+    given-names: Matt
+    email: mattjdowle@gmail.com
+  - family-names: Srinivasan
+    given-names: Arun
+    email: asrini@pm.me
+  - family-names: Gorecki
+    given-names: Jan
+  - family-names: Chirico
+    given-names: Michael
+  - family-names: Hocking
+    given-names: Toby
+    orcid: https://orcid.org/0000-0002-3146-0865
+  year: '2024'
+  version: '>= 1.10.4'
+- type: software
+  title: fpCompare
+  abstract: 'fpCompare: Reliable Comparison of Floating Point Numbers'
+  notes: Imports
+  url: https://github.com/PredictiveEcology/fpCompare
+  repository: https://CRAN.R-project.org/package=fpCompare
+  authors:
+  - family-names: Chubaty
+    given-names: Alex M
+    email: achubaty@for-cast.ca
+    orcid: https://orcid.org/0000-0001-7146-8135
+  year: '2024'
+  version: '>= 0.2.1'
+- type: software
+  title: graphics
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+- type: software
+  title: methods
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+- type: software
+  title: parallel
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+- type: software
+  title: Rcpp
+  abstract: 'Rcpp: Seamless R and C++ Integration'
+  notes: Imports
+  url: https://www.rcpp.org
+  repository: https://CRAN.R-project.org/package=Rcpp
+  authors:
+  - family-names: Eddelbuettel
+    given-names: Dirk
+  - family-names: Francois
+    given-names: Romain
+  - family-names: Allaire
+    given-names: JJ
+  - family-names: Ushey
+    given-names: Kevin
+  - family-names: Kou
+    given-names: Qiang
+  - family-names: Russell
+    given-names: Nathan
+  - family-names: Ucar
+    given-names: Inaki
+  - family-names: Bates
+    given-names: Douglas
+  - family-names: Chambers
+    given-names: John
+  year: '2024'
+  version: '>= 0.12.12'
+- type: software
+  title: reproducible
+  abstract: 'reproducible: Enhance Reproducibility of R Code'
+  notes: Imports
+  url: https://reproducible.predictiveecology.org
+  repository: https://CRAN.R-project.org/package=reproducible
+  authors:
+  - family-names: McIntire
+    given-names: Eliot J B
+    email: eliot.mcintire@canada.ca
+    orcid: https://orcid.org/0000-0002-6914-8316
+  - family-names: Chubaty
+    given-names: Alex M
+    email: achubaty@for-cast.ca
+    orcid: https://orcid.org/0000-0001-7146-8135
+  year: '2024'
+  version: '>= 2.0.9'
+- type: software
+  title: stats
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+- type: software
+  title: terra
+  abstract: 'terra: Spatial Data Analysis'
+  notes: Imports
+  url: https://rspatial.org/
+  repository: https://CRAN.R-project.org/package=terra
+  authors:
+  - family-names: Hijmans
+    given-names: Robert J.
+    email: r.hijmans@gmail.com
+    orcid: https://orcid.org/0000-0001-5872-2872
+  year: '2024'
+- type: software
+  title: animation
+  abstract: 'animation: A Gallery of Animations in Statistics and Utilities to Create
+    Animations'
+  notes: Suggests
+  url: https://yihui.org/animation/
+  repository: https://CRAN.R-project.org/package=animation
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+  year: '2024'
+- type: software
+  title: bit
+  abstract: 'bit: Classes and Methods for Fast Memory-Efficient Boolean Selections'
+  notes: Suggests
+  url: https://github.com/truecluster/bit
+  repository: https://CRAN.R-project.org/package=bit
+  authors:
+  - family-names: Oehlschlägel
+    given-names: Jens
+  - family-names: Ripley
+    given-names: Brian
+  year: '2024'
+  version: '>= 1.1-12'
+- type: software
+  title: covr
+  abstract: 'covr: Test Coverage for Packages'
+  notes: Suggests
+  url: https://covr.r-lib.org
+  repository: https://CRAN.R-project.org/package=covr
+  authors:
+  - family-names: Hester
+    given-names: Jim
+    email: james.f.hester@gmail.com
+  year: '2024'
+- type: software
+  title: DEoptim
+  abstract: 'DEoptim: Global Optimization by Differential Evolution'
+  notes: Suggests
+  url: https://github.com/ArdiaD/DEoptim
+  repository: https://CRAN.R-project.org/package=DEoptim
+  authors:
+  - family-names: Ardia
+    given-names: David
+    email: david.ardia.ch@gmail.com
+    orcid: https://orcid.org/0000-0003-2823-782X
+  - family-names: Mullen
+    given-names: Katharine
+    email: mullenkate@gmail.com
+  - family-names: Peterson
+    given-names: Brian
+  - family-names: Ulrich
+    given-names: Joshua
+  year: '2024'
+  version: '>= 2.2-4'
+- type: software
+  title: dqrng
+  abstract: 'dqrng: Fast Pseudo Random Number Generators'
+  notes: Suggests
+  url: https://daqana.github.io/dqrng/
+  repository: https://CRAN.R-project.org/package=dqrng
+  authors:
+  - family-names: Stubner
+    given-names: Ralf
+    email: ralf.stubner@gmail.com
+  year: '2024'
+- type: software
+  title: fastmatch
+  abstract: 'fastmatch: Fast ''match()'' Function'
+  notes: Suggests
+  url: http://www.rforge.net/fastmatch
+  repository: https://CRAN.R-project.org/package=fastmatch
+  authors:
+  - family-names: Urbanek
+    given-names: Simon
+    email: simon.urbanek@r-project.org
+  year: '2024'
+- type: software
+  title: knitr
+  abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
+  notes: Suggests
+  url: https://yihui.org/knitr/
+  repository: https://CRAN.R-project.org/package=knitr
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  year: '2024'
+- type: software
+  title: NLMR
+  abstract: 'NLMR: Simulating Neutral Landscape Models'
+  notes: Suggests
+  url: https://ropensci.github.io/NLMR/
+  authors:
+  - family-names: Sciaini
+    given-names: Marco
+    email: marco.sciaini@posteo.net
+    orcid: https://orcid.org/0000-0002-3042-5435
+  - family-names: Fritsch
+    given-names: Matthias
+    email: matthias.fritsch@forst.uni-goettingen.de
+  - family-names: Hesselbarth
+    given-names: Maximilian
+    email: mhk.hesselbarth@gmail.com
+  - family-names: Simpkins
+    given-names: Craig
+    email: simpkinscraig063@gmail.com
+    orcid: https://orcid.org/0000-0003-3212-1379
+  - family-names: Scherer
+    given-names: Cédric
+    email: cedricphilippscherer@gmail.com
+    orcid: https://orcid.org/0000-0003-0465-2543
+  - family-names: Hanß
+    given-names: Sebastian
+    orcid: https://orcid.org/0000-0002-3990-4897
+  year: '2024'
+  version: '>= 1.1.1'
+- type: software
+  title: quickPlot
+  abstract: 'quickPlot: A System of Plotting Optimized for Speed and Modularity'
+  notes: Suggests
+  url: https://quickplot.predictiveecology.org
+  repository: https://CRAN.R-project.org/package=quickPlot
+  authors:
+  - family-names: McIntire
+    given-names: Eliot J B
+    email: eliot.mcintire@canada.ca
+    orcid: https://orcid.org/0000-0002-6914-8316
+  - family-names: Chubaty
+    given-names: Alex M
+    email: achubaty@for-cast.ca
+    orcid: https://orcid.org/0000-0001-7146-8135
+  year: '2024'
+  version: '>= 1.0.2'
+- type: software
+  title: raster
+  abstract: 'raster: Geographic Data Analysis and Modeling'
+  notes: Suggests
+  url: https://rspatial.org/raster
+  repository: https://CRAN.R-project.org/package=raster
+  authors:
+  - family-names: Hijmans
+    given-names: Robert J.
+    email: r.hijmans@gmail.com
+    orcid: https://orcid.org/0000-0001-5872-2872
+  year: '2024'
+  version: '>= 2.5-8'
+- type: software
+  title: rmarkdown
+  abstract: 'rmarkdown: Dynamic Documents for R'
+  notes: Suggests
+  url: https://pkgs.rstudio.com/rmarkdown/
+  repository: https://CRAN.R-project.org/package=rmarkdown
+  authors:
+  - family-names: Allaire
+    given-names: JJ
+    email: jj@posit.co
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  - family-names: Dervieux
+    given-names: Christophe
+    email: cderv@posit.co
+    orcid: https://orcid.org/0000-0003-4474-2498
+  - family-names: McPherson
+    given-names: Jonathan
+    email: jonathan@posit.co
+  - family-names: Luraschi
+    given-names: Javier
+  - family-names: Ushey
+    given-names: Kevin
+    email: kevin@posit.co
+  - family-names: Atkins
+    given-names: Aron
+    email: aron@posit.co
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Cheng
+    given-names: Joe
+    email: joe@posit.co
+  - family-names: Chang
+    given-names: Winston
+    email: winston@posit.co
+  - family-names: Iannone
+    given-names: Richard
+    email: rich@posit.co
+    orcid: https://orcid.org/0000-0003-3925-190X
+  year: '2024'
+- type: software
+  title: sf
+  abstract: 'sf: Simple Features for R'
+  notes: Suggests
+  url: https://r-spatial.github.io/sf/
+  repository: https://CRAN.R-project.org/package=sf
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+    orcid: https://orcid.org/0000-0001-8049-7069
+  year: '2024'
+- type: software
+  title: sp
+  abstract: 'sp: Classes and Methods for Spatial Data'
+  notes: Suggests
+  url: https://github.com/edzer/sp/
+  repository: https://CRAN.R-project.org/package=sp
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+  - family-names: Bivand
+    given-names: Roger
+    email: Roger.Bivand@nhh.no
+  year: '2024'
+  version: '>= 1.2-4'
+- type: software
+  title: testthat
+  abstract: 'testthat: Unit Testing for R'
+  notes: Suggests
+  url: https://testthat.r-lib.org
+  repository: https://CRAN.R-project.org/package=testthat
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2024'
+  version: '>= 3.0.0'
+- type: software
+  title: tools
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Suggests
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+- type: software
+  title: withr
+  abstract: 'withr: Run Code ''With'' Temporarily Modified Global State'
+  notes: Suggests
+  url: https://withr.r-lib.org
+  repository: https://CRAN.R-project.org/package=withr
+  authors:
+  - family-names: Hester
+    given-names: Jim
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@posit.co
+  - family-names: Müller
+    given-names: Kirill
+    email: krlmlr+r@mailbox.org
+  - family-names: Ushey
+    given-names: Kevin
+    email: kevinushey@gmail.com
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Chang
+    given-names: Winston
+  year: '2024'
+- type: software
+  title: Rcpp
+  abstract: 'Rcpp: Seamless R and C++ Integration'
+  notes: Imports
+  url: https://www.rcpp.org
+  repository: https://CRAN.R-project.org/package=Rcpp
+  authors:
+  - family-names: Eddelbuettel
+    given-names: Dirk
+  - family-names: Francois
+    given-names: Romain
+  - family-names: Allaire
+    given-names: JJ
+  - family-names: Ushey
+    given-names: Kevin
+  - family-names: Kou
+    given-names: Qiang
+  - family-names: Russell
+    given-names: Nathan
+  - family-names: Ucar
+    given-names: Inaki
+  - family-names: Bates
+    given-names: Douglas
+  - family-names: Chambers
+    given-names: John
+  year: '2024'
+
