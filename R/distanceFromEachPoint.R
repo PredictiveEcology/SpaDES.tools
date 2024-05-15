@@ -279,11 +279,9 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'
 #' These have been written with speed in mind.
 #'
-#' @param from TODO: description needed
-#' @param to TODO: description needed
-#' @param angles TODO: description needed
-#' @param maxDistance TODO: description needed
-#' @param otherFromCols TODO: description needed
+#' @inheritParams distanceFromEachPoint
+#'
+#' @param otherFromCols other columns to use as 'from'
 #'
 #' @aliases pointDistance
 #' @export

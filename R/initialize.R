@@ -126,17 +126,17 @@ randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
 #' Produces a `SpatVector` polygons object with 1 feature that will have approximately an area
 #' equal to `area` (expecting area in hectares), #' and a centre at approximately `x`.
 #'
-#' @param x Either a `SpatVector`, or `SpatialPoints` (deprecated), `SpatialPolygons`
-#'          (deprecated), or `matrix` with two
-#'          dimensions, 1 row, with the approximate centre of the new random polygon to create.
-#'          If `matrix`, then longitude and latitude are assumed (epsg:4326)
+#' @param x Either a `SpatVector`, or `SpatialPoints` (deprecated), `SpatialPolygons` (deprecated),
+#'          or `matrix` with two dimensions, 1 row, with the approximate centre of the new random
+#'          polygon to create.
+#'          If `matrix`, then longitude and latitude are assumed (`epsg:4326`).
 #'
 #' @param area A numeric, the approximate area in `meters squared` of the random polygon.
 #'
 #' @param hectares Deprecated. Use `area` in meters squared.
 #'
 #' @return A `SpatVector` polygons object, with approximately the area request,
-#'         centred approximately at the coordinates requested, in the projection of `x`
+#'         centred approximately at the coordinates requested, in the projection of `x`.
 #'
 #' @importFrom terra crs crs<-
 #' @importFrom stats rbeta runif
@@ -606,9 +606,13 @@ long2UTM <- function(long) {
 #'       requireNamespace("raster", quietly = TRUE)) {
 #'     library(terra)
 #'     nx <- ny <- 100L
-#'     r <- rast(nrows = ny, ncols = nx, xmin = -nx/2, xmax = nx/2, ymin = -ny/2, ymax = ny/2)
+#'     r <- rast(nrows = ny, ncols = nx,
+#'               xmin = -nx/2, xmax = nx/2,
+#'               ymin = -ny/2, ymax = ny/2)
 #'     ## or with raster package:
-#'     # r <- raster::raster(nrows = ny, ncols = nx, xmn = -nx/2, xmx = nx/2, ymn = -ny/2, ymx = ny/2)
+#'     # r <- raster::raster(nrows = ny, ncols = nx,
+#'     #                     xmn = -nx/2, xmx = nx/2,
+#'     #                     ymn = -ny/2, ymx = ny/2)
 #'     map1 <- neutralLandscapeMap(r,
 #'                                 type = "nlm_mpd",
 #'                                 roughness = 0.65,

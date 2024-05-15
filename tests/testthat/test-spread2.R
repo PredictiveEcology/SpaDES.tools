@@ -10,7 +10,7 @@ test_that("spread2 tests", {
 
   spRas <- terra::rast(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     # read <- rastDF$read[ii]
@@ -385,7 +385,7 @@ test_that("spread2 tests -- asymmetry", {
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
 
     # inputs for x
@@ -611,7 +611,7 @@ test_that("spread2 returnFrom", {
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
 
     # inputs for x
@@ -639,7 +639,7 @@ test_that("spread2 tests", {
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
     a <- read(aOrig)
     b <- read(aOrig)
@@ -669,7 +669,7 @@ test_that("spread2 works with terra", {
 
   aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
     a <- read(aOrig)
     b <- read(aOrig)
@@ -683,7 +683,7 @@ test_that("spread2 works with terra", {
     expect_silent({
       out <- spread2(a, start = sams, 1, iterations = 1, asRaster = FALSE)
     })
-    #TODO: add more tests once asymmetry, circle, etc works
+    # TODO: add more tests once asymmetry, circle, etc works
     expect_true(all(out[pixels %in% sams]$state == "inactive"))
     expect_true(any("activeSource" %in% out$state))
 
@@ -696,7 +696,7 @@ test_that("spread2 tests -- persistence", {
 
   aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
     a <- read(aOrig)
     b <- read(aOrig)
@@ -738,7 +738,7 @@ test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
 
   aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
     landscape <- read(aOrig)
     landscape[] <- 1

@@ -1,3 +1,9 @@
+# SpaDES.tools 2.0.7
+
+## bug fixes
+* fixed issue with `rasterizeReduced()`;
+* updates to deal with changes to RNG in `dqrng` (#96; @rstub). if backwards compatibility is needed, set `dqrng::dqRNGkind("Xoroshiro128+")` before running `spread` to ensure numerical reproducibility with previous versions;
+
 # SpaDES.tools 2.0.6
 
 ## Enhancements

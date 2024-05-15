@@ -1,9 +1,8 @@
 test_that("mapReduce: file does not work correctly 1", {
-
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
@@ -61,33 +60,34 @@ test_that("mapReduce: file does not work correctly 1", {
 test_that("mapReduce: file does not work correctly 2", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
-  rasOrig <- terra::rast(terra::ext(0, 15, 0, 15), res = 1)
+  rasOrig <- terra::rast(terra::ext(0, 15, 0, 15), resolution = 1)
   set.seed(321) # random fails here ... trying set.seed as a solution
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
-    extFun <- eval(parse(text = rastDF$ext[ii]))
+    extFun <- eval(parse(text = rastDF$extent[ii]))
 
     ras <- read(rasOrig)
     fullRas <- randomPolygons(ras, numTypes = 5)
     names(fullRas) <- "mapcodeAll"
     uniqueComms <- as.numeric(unique(fullRas[]))
     reducedDT <- data.table(
-      mapcodeAll=uniqueComms,
-      communities=sample(1:1000, length(uniqueComms)),
-      biomass=rnbinom(length(uniqueComms), mu = 4000, 0.4)
+      mapcodeAll = uniqueComms,
+      communities = sample(1:1000, length(uniqueComms)),
+      biomass = rnbinom(length(uniqueComms), mu = 4000, 0.4)
     )
     biomass <- rasterizeReduced(reducedDT, fullRas, "biomass")
 
     expect_equal(sort(unique(as.numeric(terra::values(biomass)))), sort(reducedDT$biomass))
-    expect_equal(length(unique(as.numeric(terra::values(biomass)))), length(unique(as.numeric(terra::values(fullRas)))))
+    expect_equal(length(unique(as.numeric(terra::values(biomass)))),
+                 length(unique(as.numeric(terra::values(fullRas)))))
 
     setkey(reducedDT, biomass)
     communities <- rasterizeReduced(reducedDT, fullRas, "communities")
     expect_equal(sort(unique(as.numeric(terra::values(communities)))), sort(reducedDT$communities))
-    expect_equal(length(unique(as.numeric(terra::values(communities)))), length(unique(as.numeric(terra::values(fullRas)))))
+    expect_equal(length(unique(as.numeric(terra::values(communities)))),
+                 length(unique(as.numeric(terra::values(fullRas)))))
   }
 })
-

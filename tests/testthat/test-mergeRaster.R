@@ -2,7 +2,7 @@ test_that("mergeRaster will return a message if tiles are resampled", {
   rastDF <- needTerraAndRaster()
   nx <- ny <- 3
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
@@ -54,7 +54,7 @@ test_that("mergeRaster will produce a raster layer", {
   rastDF <- needTerraAndRaster()
   nx <- ny <- 3
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
@@ -83,7 +83,7 @@ test_that("mergeRaster will produce a raster layer", {
 test_that("mergeRaster will produce error if only one raster passed", {
   rastDF <- needTerraAndRaster()
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     read <- eval(parse(text = rastDF$read[ii]))
 
@@ -105,11 +105,11 @@ test_that("mergeRaster will produce error if only one raster passed", {
   }
 })
 
-test_that("mergeRaster will use mosaic with default mean if rasters are resampled and fun if passed", {
+test_that("mergeRaster uses mosaic with default mean if rasters are resampled and fun if passed", {
   rastDF <- needTerraAndRaster()
   nx <- ny <- 3
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))

@@ -12,7 +12,7 @@ test_that("neutralLandscapeMap produces consistent rasters", {
   spRas <- terra::rast(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
 
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
@@ -30,7 +30,7 @@ test_that("neutralLandscapeMap produces consistent rasters", {
                   "+datum=NAD83 +units=m +no_defs +type=crs")
     )
 
-    # for (i in seq(NROW(df))) {
+    # for (i in seq_len(NROW(df))) {
     #   pkg <- df$pkg[i]
     #   read <- df$read[i]
 

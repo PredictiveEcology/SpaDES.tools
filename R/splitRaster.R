@@ -49,7 +49,7 @@
 #'
 splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rType = "FLT4S",
                         fExt = ".tif") {
-  if (!is.numeric(nx) | !is.numeric(ny) | !is.numeric(buffer)) {
+  if (!is.numeric(nx) || !is.numeric(ny) || !is.numeric(buffer)) {
     stop("nx, ny, and buffer must be numeric")
   }
   if (!is.integer(nx)) nx <- as.integer(nx)
@@ -133,8 +133,9 @@ splitRaster <- function(r, nx = 1, ny = 1, buffer = c(0, 0), path = NA, cl, rTyp
     if (is.character(tiles[[1]]))
       tiles <- lapply(tiles, terra::rast)
     if (grepl("INT", rType))
-      for (i in 1:length(tiles))
+      for (i in seq_along(tiles)) {
         tiles[[i]][] <- as.integer(tiles[[i]][])
+      }
     tiles
   }
 

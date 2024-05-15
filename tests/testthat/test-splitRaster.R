@@ -5,7 +5,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
                          testFile = c("external/rlogo.grd", "ex/logo.tif"))
   rastDF <- merge(testFiles, rastDF)
 
-  for (ii in seq(NROW(rastDF))) {
+  for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))

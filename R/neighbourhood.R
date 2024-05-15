@@ -123,7 +123,7 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
   J <- NULL # nolint
   cells <- as.integer(cells)
 
-  if (is.null(numCol) | is.null(numCell)) {
+  if (is.null(numCol) || is.null(numCell)) {
     if (is.null(x)) stop("must provide either numCol & numCell or a x")
     numCol <- as.integer(ncol(x))
     numCell <- as.integer(ncell(x))
@@ -238,22 +238,14 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     keepCols <- if (is.null(id)) "to" else c("to", "id")
     if (!torus) {
       if (pairs) {
-        # orig <- adj[
-        #   !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
-        #       ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
-        #   , , drop = FALSE]
-        # return(orig)
-        #possNew <-
-          return(adj[
+        return(adj[
           !((adj[, "to"] <= 0 | adj[, "to"] > numCell)  | # top or bottom of raster
-              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
+              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # right & left edge cells, with neighbours wrapped
           , , drop = FALSE])
-        # if (!identical(orig, possNew)) stop("the new adj algorithm is not the same as the old")
-        #return(possNew)
       } else {
         adj <- adj[
           !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
-              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # | #right & left edge cells, with neighbours wrapped
+              ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # right & left edge cells, with neighbours wrapped
           , keepCols, drop = FALSE]
         if (match.adjacent) {
           adj <- unique(adj[, "to"])
@@ -622,7 +614,7 @@ cir <- function(landscape, coords, loci,
 
   indices <- as.integer(cellFromXY(landscape, cbind(x, y)))
 
-  if (moreThanOne & allowOverlap & !closest) {
+  if (moreThanOne && allowOverlap && !closest) {
     matDT <- data.table(id, indices, rads, angles, x = x, y = y)
     setkeyv(matDT, c("id", "indices"))
     if (!equalRadii) {
@@ -636,7 +628,7 @@ cir <- function(landscape, coords, loci,
     matDT <- as.matrix(matDT)
   } else {
     matDT <- cbind(id, rads, angles, x, y, indices)
-    if (!closest & !allowDuplicates) {
+    if (!closest && !allowDuplicates) {
       notDups <- !duplicatedInt(indices)
       matDT <- matDT[notDups, , drop = FALSE]
     }
@@ -645,7 +637,7 @@ cir <- function(landscape, coords, loci,
   rm(id, indices, rads, x, y)
 
   # only need to calculate distances for these two cases
-  if (includeBehavior == "excludePixels" | returnDistances | closest) {
+  if (includeBehavior == "excludePixels" || returnDistances || closest) {
     if (equalRadii) {
       maxRad <- maxRadius[NROW(maxRadius)]
       minRad <- maxRadius[1]
@@ -653,17 +645,17 @@ cir <- function(landscape, coords, loci,
 
     # if distances are not required, then only need the inner circle and outer
     # circle distances. Don't waste resources on calculating all distances.
-    if (returnDistances | closest) {
+    if (returnDistances || closest) {
       matDT2 <- matDT
     } else {
       if (equalRadii) {
         # 0.71 is the sqrt of 1, so keep
         matDT2 <- matDT[matDT[, "rads"] >= (maxRad - 0.71) | matDT[, "rads"] <=
-                      (minRad + 0.71), , drop = FALSE]
+                          (minRad + 0.71), , drop = FALSE]
       } else {
         # 0.71 is the sqrt of 1, so keep
         matDT2 <- matDT[matDT[, "rads"] >= (matDT[, "maxRad"] - 0.71) | matDT[, "rads"] <=
-                      (matDT[, "minRad"] + 0.71), , drop = FALSE]
+                          (matDT[, "minRad"] + 0.71), , drop = FALSE]
       }
     } #  only pixels that are in inner or outer ring of pixels
 
@@ -688,14 +680,15 @@ cir <- function(landscape, coords, loci,
       d <- d[order(d[, "rads"]), , drop = FALSE]
       dups <- duplicated(d[, "to", drop = FALSE])
       d <- d[!dups, , drop = FALSE]
-
     }
 
-    if (includeBehavior == "excludePixels")
-      if (equalRadii)
+    if (includeBehavior == "excludePixels") {
+      if (equalRadii) {
         d <- d[d[, "dists"] %<=% maxRad & d[, "dists"] %>=% minRad, , drop = FALSE]
-    else
-      d <- d[d[, "dists"] %<=% d[, "maxRad"] & d[, "dists"] %>=% d[, "minRad"], , drop = FALSE]
+      } else {
+        d <- d[d[, "dists"] %<=% d[, "maxRad"] & d[, "dists"] %>=% d[, "minRad"], , drop = FALSE]
+      }
+    }
 
     colnames(d)[which(colnames(d) == "to")] <- "indices"
     if (!returnDistances)

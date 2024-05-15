@@ -235,7 +235,7 @@ spread3 <- function(start, rasQuality, rasAbundance, advectionDir,
     keepRows <- which(b$indWithin == 1 | is.na(b$indWithin))
     b <- b[keepRows]
     active <- na.omit(match(active, b$indFull))
-    #b[, indFull := seq(NROW(b))]
+    #b[, indFull := seq_len(NROW(b))]
 
     set(b, active, "sumAbund2", b[["sumAbund"]][active] * b[["meanNumNeighs"]][active] /
           mean(b[["mags"]][active]))

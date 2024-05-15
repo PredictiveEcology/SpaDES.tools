@@ -44,7 +44,7 @@ dwrpnorm2 <- function(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc) {
   if (length(theta) != len)
     theta <- rep(theta, len)
 
-  if (rho < 0 | rho > 1)
+  if (rho < 0 || rho > 1)
     stop("rho must be between 0 and 1")
 
   var <- -2 * log(rho)

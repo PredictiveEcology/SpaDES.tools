@@ -35,7 +35,6 @@ crw
 dists
 doesn
 donut
-epsg
 georeferencing
 iteratively
 modeling
@@ -44,6 +43,7 @@ oldrel
 preceeding
 probabilistically
 rasters
+reproducibility
 rescaled
 runif
 spreadProb
