@@ -126,17 +126,17 @@ previous agent locations.</p>
 <span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">agent</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crds.html" class="external-link">crds</a></span><span class="op">(</span><span class="va">agent</span><span class="op">)</span> <span class="co"># many are "off" the map, i.e., beyond the extent of hab</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                x         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]   6.675128 -55.74968</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -40.525784  28.41378</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] -37.945323  18.14058</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -10.143468  31.16253</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] -59.296128  24.73587</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -52.105990 -41.22225</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] -33.873642  66.28058</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]  25.918321 -66.73337</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] -57.863912  29.35450</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]  71.525150  11.47005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                x          y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  -7.359131  47.350120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -36.349039  -4.654296</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] -39.489929 -15.540533</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]  31.315504  52.929017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  46.081860 -18.054884</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -19.956107  22.787570</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] -66.934582 -30.752109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -68.224197  18.961591</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  24.542212 -62.033998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -40.338536  42.934977</span>
 <span class="r-in"><span><span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">SpaDES.tools</span><span class="fu">::</span><span class="fu">wrap</span><span class="op">(</span><span class="va">agent</span>, bounds <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="va">hab</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">agent</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="co"># now inside the extent of hab</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in graphics::plot.xy(list(x = g[, 3], y = g[, 4]), type = "p", pch = pch,     col = col, cex = cex, ...):</span> plot.new has not been called yet</span>

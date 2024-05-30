@@ -506,7 +506,7 @@ say, insect swarms.</p>
 <span class="r-in"><span><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu">spread2</span><span class="op">(</span><span class="va">a</span>, <span class="va">sams</span>, <span class="fl">0.225</span>, asRaster <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># The one with high escape probability is larger (most of the time)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span> <span class="co">## TODO: not true</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Use neighProbs, with a spreadProb that is a RasterLayer</span></span></span>
 <span class="r-in"><span><span class="co"># Create a raster of different values, which will be the relative probabilities</span></span></span>
@@ -529,7 +529,7 @@ say, insect swarms.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">sp</span><span class="op">[</span><span class="va">out</span><span class="op">$</span><span class="va">pixels</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> lyr.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1  2  3  4  6  7  8  9 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3  4  5 10 18 11 22 27 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3  6  8  7 16 15 22 23 </span>
 <span class="r-in"><span><span class="co"># should be non-significant -- note no 5 because that was the starting cell</span></span></span>
 <span class="r-in"><span><span class="co">#  This tests whether the null model is true ... there should be proportions</span></span></span>
 <span class="r-in"><span><span class="co">#  equivalent to 1:2:3:4:6:7:8:9 ... i.e,. cell 9 should have 9x as many events</span></span></span>
