@@ -58,6 +58,9 @@ references:
     given-names: Michel
     email: michellang@gmail.com
     orcid: https://orcid.org/0000-0001-9754-0393
+  - family-names: Murdoch
+    given-names: Duncan
+    email: murdoch.duncan@gmail.com
   - name: R Core Team
   year: '2024'
 - type: software
@@ -273,6 +276,7 @@ references:
   - family-names: Stubner
     given-names: Ralf
     email: ralf.stubner@gmail.com
+    orcid: https://orcid.org/0009-0009-1908-106X
   year: '2024'
 - type: software
   title: fastmatch
