@@ -112,11 +112,10 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
   if (!is.null(cumulativeFn)) {
     forms <- names(formals(distFn))
-    # browser()
     fromC <- "fromCell" %in% forms
-    if (fromC) fromCell <- cellFromXY(landscape, from[, xycolNames])
+    if (fromC) fromCell <- cellFromXY(landscape, from[, xycolNames, drop = FALSE])
     toC <- "toCells" %in% forms
-    if (toC) toCells <- cellFromXY(landscape, to[, xycolNames])
+    if (toC) toCells <- cellFromXY(landscape, to[, xycolNames, drop = FALSE])
     land <- "landscape" %in% forms
     distFnArgs <- if (land) list(landscape = landscape[]) else list()
     if (length(list(...)) > 0) distFnArgs <- append(distFnArgs, list(...))
@@ -515,7 +514,7 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
                           otherFromCols = otherFromCols)
     if (NROW(out) > 0) {
       if (toC)
-        toCells <- cellFromXY(landscape, out[, xycolNames])
+        toCells <- cellFromXY(landscape, out[, xycolNames, drop = FALSE])
       if (k == 1) {
         if (fromC) distFnArgs <- append(distFnArgs, list(fromCell = fromCell[k]))
         if (toC) distFnArgs <- append(distFnArgs, list(toCells = toCells))
