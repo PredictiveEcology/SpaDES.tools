@@ -113,8 +113,12 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   if (!is.null(cumulativeFn)) {
     forms <- names(formals(distFn))
     fromC <- "fromCell" %in% forms
+    ff <- from[, xycolNames, drop = FALSE]
+    save(ff, file = "~/test1.rda")
     if (fromC) fromCell <- cellFromXY(landscape, from[, xycolNames, drop = FALSE])
     toC <- "toCells" %in% forms
+    tt <- to[, xycolNames, drop = FALSE]
+    save(tt, file = "~/test2.rda")
     if (toC) toCells <- cellFromXY(landscape, to[, xycolNames, drop = FALSE])
     land <- "landscape" %in% forms
     distFnArgs <- if (land) list(landscape = landscape[]) else list()
@@ -303,7 +307,7 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 
     to <- to[keep, , drop = FALSE]
     run <- from[, "x"] - to[, "x"]
-  } 
+  }
 
   rise <- from[, "y"] - to[, "y"]
   # run <- from[, "x"] - to[, "x"]
@@ -522,9 +526,14 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
     out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
                           angles = angles, maxDistance = maxDistance,
                           otherFromCols = otherFromCols)
+
     if (NROW(out) > 0) {
-      if (toC)
+      if (toC) {
+        oo <- out[, xycolNames, drop = FALSE]
+        save(oo, file = "~/test3.rda")
+
         toCells <- cellFromXY(landscape, out[, xycolNames, drop = FALSE])
+      }
       if (k == 1) {
         if (fromC) distFnArgs <- append(distFnArgs, list(fromCell = fromCell[k]))
         if (toC) distFnArgs <- append(distFnArgs, list(toCells = toCells))
