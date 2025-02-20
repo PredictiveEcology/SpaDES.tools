@@ -529,8 +529,8 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
 
     if (NROW(out) > 0) {
       if (toC) {
-        oo <- out[, xycolNames, drop = FALSE]
-        save(oo, file = "~/test3.rda")
+        # oo <- out[, xycolNames, drop = FALSE]
+        # save(oo, file = "~/test3.rda")
 
         toCells <- cellFromXY(landscape, out[, xycolNames, drop = FALSE])
       }
