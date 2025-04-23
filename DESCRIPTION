@@ -27,7 +27,7 @@ Authors@R: c(
     person("His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada", role = "cph")
   )
 Depends:
-    R (>= 4.2)
+    R (>= 4.3)
 Imports:
     backports,
     checkmate (>= 1.8.2),
@@ -91,6 +91,6 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3

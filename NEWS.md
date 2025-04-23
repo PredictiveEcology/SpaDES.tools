@@ -1,6 +1,6 @@
 # SpaDES.tools (development version)
 
-* n/a
+* drop support for R 4.2;
 
 # SpaDES.tools 2.0.7
 
