@@ -1,18 +1,17 @@
 on:
   push:
     branches:
-      - master
+      - main
       - development
   pull_request:
     branches:
-      - master
+      - main
       - development
 
 name: test-coverage
 
 jobs:
   test-coverage:
-    if: "!contains(github.event.commits[0].message, '[skip-ci]')"
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -34,13 +33,11 @@ jobs:
         with:
           extra-packages: |
             any::covr
-            fastshp=?ignore
             NLMR=?ignore
 
       - name: Install additional package dependencies
         run: |
           pak::pkg_install("remotes")
-          remotes::install_github("s-u/fastshp")
           remotes::install_github("ropensci/NLMR")
         shell: Rscript {0}
 
