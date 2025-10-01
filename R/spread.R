@@ -55,7 +55,7 @@ utils::globalVariables(c(
 #' `spreadProbs <- lowSpreadProb + (angleQuality * diff(spreadProbsLH))`
 #' To maintain an expected `spreadProb` that is the same as the asymmetric
 #' `spreadProbs`, these are then rescaled so that the mean of the
-#' asymmetric spreadProbs is always equal to spreadProb at every iteration:
+#' asymmetric `spreadProbs` is always equal to spreadProb at every iteration:
 #' `spreadProbs <- spreadProbs - diff(c(spreadProb, mean(spreadProbs)))`
 #'
 #' @section Breaking out of spread events:
