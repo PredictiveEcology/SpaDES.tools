@@ -53,6 +53,7 @@ Suggests:
     raster (>= 2.5-8),
     rmarkdown,
     sf,
+    snow,
     sp (>= 1.2-4),
     testthat (>= 3.0.0),
     tools,
