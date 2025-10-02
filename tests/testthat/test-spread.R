@@ -1,5 +1,5 @@
-test_that("spread produces legal RasterLayer", {
-  testInit(c("dqrng", "terra", "withr"))
+test_that("spread produces legal raster", {
+  testInit(c("dqrng", "raster", "terra", "withr"))
   rastDF <- needTerraAndRaster()
 
   for (ii in seq_len(NROW(rastDF))) {
@@ -8,8 +8,9 @@ test_that("spread produces legal RasterLayer", {
     pkg <- rastDF$read[ii]
     read <- eval(parse(text = rastDF$read[ii]))
 
-    withr::local_seed(125)
     a <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
+
+    withr::local_seed(125)
     b <- terra::rast(
       terra::ext(a),
       resolution = 1,
@@ -19,7 +20,7 @@ test_that("spread produces legal RasterLayer", {
     a <- read(a)
     b <- read(b)
 
-    ## check it makes a RasterLayer
+    ## check it makes a RasterLayer or SpatRaster
     expect_s4_class(
       spread(a, loci = ncell(a) / 2, stats::runif(1, 0.15, 0.25)),
       cls
@@ -66,11 +67,11 @@ test_that("spread produces legal RasterLayer", {
     }
 
     loci <- sample(ncell(b), size = 1)
-    spreadProb <- 0.27
-    seed <- 9149
-    withr::local_seed(seed)
     maxSize1 <- 1e2
-    spreadState <- SpaDES.tools::spread(
+    spreadProb <- 0.27
+
+    withr::local_seed(9149)
+    spreadState <- spread(
       landscape = b,
       loci = loci,
       spreadProb = spreadProb,
@@ -78,8 +79,8 @@ test_that("spread produces legal RasterLayer", {
       maxSize = maxSize1
     )
 
-    expect_equal(length(unique(spreadState[["indices"]])), maxSize1)
-    expect_equal(length(spreadState[["indices"]]), maxSize1)
+    expect_equal(length(unique(spreadState[["indices"]])), maxSize1 * length(loci))
+    expect_equal(length(spreadState[["indices"]]), maxSize1 * length(loci))
 
     ## Test that spreadState with a data.table works
     fires <- list()
@@ -150,7 +151,6 @@ test_that("spread produces legal RasterLayer", {
     expect_true(all(fires2[, unique(id)] %in% fires[, unique(id)]))
     expect_true(all(fires[, unique(id)] %in% fires2[, unique(id)]))
 
-    ## TODO: 2024-05-14 R-devel Windows is failing on CRAN win-builder
     if (getRversion() <= "4.5.0" && tolower(.Platform$OS.type) != "windows") {
       if (packageVersion("dqrng") < "0.4.0") {
         expect_true(all(
