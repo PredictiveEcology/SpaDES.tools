@@ -72,7 +72,7 @@ test_that("spread produces legal raster", {
 
     ## test results are RNG seed dependent;
     ## testthat makes calls to e.g., sample() that affect seed;
-    ## newer testthat versions were triggering failures with prev seed (#93)
+    ## newer testthat versions were triggering failures with prev seed (#98)
     withr::local_seed(9194)
     spreadState <- spread(
       landscape = b,
