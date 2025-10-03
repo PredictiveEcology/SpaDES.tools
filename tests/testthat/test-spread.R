@@ -11,27 +11,17 @@ test_that("spread produces legal raster", {
     a <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
 
     withr::local_seed(125)
-    b <- terra::rast(
-      terra::ext(a),
-      resolution = 1,
-      vals = stats::runif(ncell(a), 0, 1)
-    )
+    b <- terra::rast(terra::ext(a), resolution = 1, vals = stats::runif(ncell(a), 0, 1))
 
     a <- read(a)
     b <- read(b)
 
     ## check it makes a RasterLayer or SpatRaster
-    expect_s4_class(
-      spread(a, loci = ncell(a) / 2, stats::runif(1, 0.15, 0.25)),
-      cls
-    )
+    expect_s4_class(spread(a, loci = ncell(a) / 2, stats::runif(1, 0.15, 0.25)), cls)
 
     ## check wide range of spreadProbs
     for (wwt in 1:20) {
-      expect_s4_class(
-        spread(a, loci = ncell(a) / 2, stats::runif(1, 0, 1)),
-        cls
-      )
+      expect_s4_class(spread(a, loci = ncell(a) / 2, stats::runif(1, 0, 1)), cls)
     }
 
     ## Test for NAs in a numeric vector of spreadProb values
@@ -51,13 +41,7 @@ test_that("spread produces legal raster", {
     sizes <- rep_len(50, 3)
     expect_equal(
       sizes,
-      tabulate(spread(
-        a,
-        loci = c(40, 200, 350),
-        spreadProb = 1,
-        id = TRUE,
-        maxSize = sizes
-      )[])
+      tabulate(spread(a, loci = c(40, 200, 350), spreadProb = 1, id = TRUE, maxSize = sizes)[])
     )
 
     ## Check that with maxSize, the active cells are removed when maxSize is reached
@@ -295,10 +279,7 @@ test_that("spread stopRule does not work correctly", {
       circle = TRUE,
       stopRule = stopRule1
     )
-    foo <- cbind(
-      vals = as.numeric(hab[stopRuleA > 0]),
-      id = as.numeric(stopRuleA[stopRuleA > 0])
-    )
+    foo <- cbind(vals = as.numeric(hab[stopRuleA > 0]), id = as.numeric(stopRuleA[stopRuleA > 0]))
     expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) > maxVal))
 
     ## using stopRuleBehavior = "excludePixel"
@@ -317,10 +298,7 @@ test_that("spread stopRule does not work correctly", {
       stopRule = stopRule1,
       stopRuleBehavior = "excludePixel"
     )
-    foo <- cbind(
-      vals = as.numeric(hab[stopRuleB > 0]),
-      id = as.numeric(stopRuleB[stopRuleB > 0])
-    )
+    foo <- cbind(vals = as.numeric(hab[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
     expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) <= maxVal))
 
     ## If boolean, then it is exact
@@ -338,10 +316,7 @@ test_that("spread stopRule does not work correctly", {
       stopRule = stopRule1,
       stopRuleBehavior = "excludePixel"
     )
-    foo <- cbind(
-      vals = as.numeric(hab2[stopRuleB]),
-      id = as.numeric(stopRuleB[stopRuleB > 0])
-    )
+    foo <- cbind(vals = as.numeric(hab2[stopRuleB]), id = as.numeric(stopRuleB[stopRuleB > 0]))
     expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == maxVal))
 
     ## Test vector maxSize and stopRule when they interfere
@@ -363,13 +338,8 @@ test_that("spread stopRule does not work correctly", {
     if (interactive()) {
       terra::plot(stopRuleB, new = TRUE)
     }
-    foo <- cbind(
-      vals = as.numeric(hab2[stopRuleB > 0]),
-      id = as.numeric(stopRuleB[stopRuleB > 0])
-    )
-    expect_true(all(
-      tapply(foo[, "vals"], foo[, "id"], sum) == pmin(maxSizes, maxVal)
-    ))
+    foo <- cbind(vals = as.numeric(hab2[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
+    expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == pmin(maxSizes, maxVal)))
 
     ## Test non integer maxSize and stopRule when they interfere
     maxSizes <- runif(length(startCells), 1, maxVal * 2)
@@ -390,13 +360,8 @@ test_that("spread stopRule does not work correctly", {
     if (interactive()) {
       terra::plot(stopRuleB, new = TRUE)
     }
-    foo <- cbind(
-      vals = as.numeric(hab2[stopRuleB > 0]),
-      id = as.numeric(stopRuleB[stopRuleB > 0])
-    )
-    expect_true(all(
-      tapply(foo[, "vals"], foo[, "id"], sum) == pmin(floor(maxSizes), maxVal)
-    ))
+    foo <- cbind(vals = as.numeric(hab2[stopRuleB > 0]), id = as.numeric(stopRuleB[stopRuleB > 0]))
+    expect_true(all(tapply(foo[, "vals"], foo[, "id"], sum) == pmin(floor(maxSizes), maxVal)))
 
     ## Test for stopRuleBehavior ------------------------------------------------
     withr::local_seed(53432)
@@ -519,22 +484,12 @@ test_that("spread stopRule does not work correctly", {
       cells <- which(as.numeric(terra::values(circs)) == whCirc)
       centre <- xyFromCell(hab2, startCells)
       allCells <- xyFromCell(hab2, cells)
-      pd <- as.numeric(terra::distance(
-        centre[whCirc, , drop = FALSE],
-        allCells,
-        lonlat = FALSE
-      ))
+      pd <- as.numeric(terra::distance(centre[whCirc, , drop = FALSE], allCells, lonlat = FALSE))
       circEdge <- circs
       circEdge[] <- 0
       circEdge[cells[pd == maxRadius]] <- 1
       expect_true(all(circs[cells[pd == maxRadius]] == whCirc))
-      if (
-        !is.null(circs[as.vector(adj(
-          hab2,
-          cells[pd == maxRadius],
-          pairs = FALSE
-        ))])
-      ) {
+      if (!is.null(circs[as.vector(adj(hab2, cells[pd == maxRadius], pairs = FALSE))])) {
         ## Test that there are both 0 and whCirc values, i.e,. it is on an edge
         expect_true(all(
           c(0, whCirc) %in%
@@ -589,13 +544,7 @@ test_that("spread stopRule does not work correctly", {
       allowOverlap = TRUE
     )
 
-    circs <- spread(
-      hab2,
-      spreadProb = 1,
-      loci = initialLoci,
-      maxSize = 10,
-      allowOverlap = TRUE
-    )
+    circs <- spread(hab2, spreadProb = 1, loci = initialLoci, maxSize = 10, allowOverlap = TRUE)
 
     circs <- spread(
       hab2,
@@ -685,13 +634,7 @@ test_that("spread stopRule does not work correctly", {
       quality[] <- runif(ncell(quality), 0, 1)
       sumLandscapeRule <- 100
       meanHabitatRule <- 0.4
-      stopRule4 <- function(
-        landscape,
-        quality,
-        cells,
-        sumLandscapeRule,
-        meanHabitatRule
-      ) {
+      stopRule4 <- function(landscape, quality, cells, sumLandscapeRule, meanHabitatRule) {
         (sum(landscape) > sumLandscapeRule) |
           (mean(terra::values(quality)[cells]) < meanHabitatRule)
       }
@@ -803,19 +746,11 @@ test_that("asymmetry doesn't work properly", {
         ciCentre[ciCentre == 0] <- NA
         terra::plot(ciCentre, add = TRUE, col = "black", legend = FALSE)
       }
-      a <- cbind(
-        id = circs$id,
-        to = circs$indices,
-        xyFromCell(hab, circs$indices)
-      )
-      initialLociXY <- cbind(
-        id = unique(circs$id),
-        xyFromCell(hab, unique(circs$initialLocus))
-      )
+      a <- cbind(id = circs$id, to = circs$indices, xyFromCell(hab, circs$indices))
+      initialLociXY <- cbind(id = unique(circs$id), xyFromCell(hab, unique(circs$initialLocus)))
       dirs <- directionFromEachPoint(from = initialLociXY, to = a)
       dirs[, "angles"] <- deg2(dirs[, "angles"])
-      avgAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], meanAngle) %%
-        360
+      avgAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], meanAngle) %% 360
       lenAngles[asymAng] <- tapply(dirs[, "angles"], dirs[, "id"], length)
     }
 
@@ -1017,11 +952,7 @@ test_that("distanceFromPoints does not work correctly", {
   ## TODO: also need tests with polygons/vect
   testInit(c("terra", "withr"))
 
-  hab <- terra::rast(system.file(
-    "extdata",
-    "hab.tif",
-    package = "SpaDES.tools"
-  ))
+  hab <- terra::rast(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
   names(hab) <- "hab"
   terra::crs(hab) <- "epsg:23028"
 
@@ -1034,16 +965,10 @@ test_that("distanceFromPoints does not work correctly", {
   terra::crs(coordsVect) <- terra::crs(hab)
   distsDFP1Pt <- terra::distance(hab, coordsVect)
   # distsDFP1Pt <- distanceFromPoints(hab, coords[1, , drop = FALSE])
-  distsDFEP1Pt <- distanceFromEachPoint(
-    coords[1, , drop = FALSE],
-    landscape = hab
-  )
+  distsDFEP1Pt <- distanceFromEachPoint(coords[1, , drop = FALSE], landscape = hab)
   ras1 <- terra::rast(hab)
   ras1[] <- distsDFEP1Pt[, "dists"]
-  expect_identical(
-    0,
-    unique(round(as.numeric(terra::values(distsDFP1Pt - ras1)), 7))
-  )
+  expect_identical(0, unique(round(as.numeric(terra::values(distsDFP1Pt - ras1)), 7)))
   if (interactive()) {
     terra::plot(distsDFP1Pt)
     terra::plot(ras1)
@@ -1066,17 +991,10 @@ test_that("distanceFromPoints does not work correctly", {
     x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
     y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5
   )
-  dfep20 <- distanceFromEachPoint(
-    coords[, xycolNames, drop = FALSE],
-    landscape = hab
-  )
-  idw <- tapply(
-    dfep20[, c("dists")],
-    cellFromXY(hab, dfep20[, xycolNames]),
-    function(x) {
-      sum(1 / (1 + x))
-    }
-  )
+  dfep20 <- distanceFromEachPoint(coords[, xycolNames, drop = FALSE], landscape = hab)
+  idw <- tapply(dfep20[, c("dists")], cellFromXY(hab, dfep20[, xycolNames]), function(x) {
+    sum(1 / (1 + x))
+  })
   dfep <- distanceFromEachPoint(
     coords[, xycolNames, drop = FALSE],
     landscape = hab,
@@ -1110,10 +1028,7 @@ test_that("simple cir does not work correctly", {
       x1 = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
       y1 = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5
     )
-    expect_error(
-      cir(hab, coords = coords),
-      "coords must have columns named x and y"
-    )
+    expect_error(cir(hab, coords = coords), "coords must have columns named x and y")
 
     ## test id column in coords
     n <- 2
@@ -1157,9 +1072,7 @@ test_that("simple cir does not work correctly", {
       allowOverlap = FALSE
     )
     expect_true(all(table(cirsClosestF[, "id"]) == c(17, 4)))
-    expect_true(all(
-      table(cirsClosestT[, "id"]) - table(cirsClosestF[, "id"]) == c(-5, 5)
-    ))
+    expect_true(all(table(cirsClosestT[, "id"]) - table(cirsClosestF[, "id"]) == c(-5, 5)))
 
     cirs2 <- cir(
       hab,
@@ -1257,11 +1170,7 @@ test_that("wrap does not work correctly", {
         SpaDES.tools::wrap(starts, hab)
     ))
     expect_true(all(
-      coords(SpaDES.tools::wrap(
-        sf,
-        bounds = terra::ext(hab),
-        withHeading = FALSE
-      )) ==
+      coords(SpaDES.tools::wrap(sf, bounds = terra::ext(hab), withHeading = FALSE)) ==
         SpaDES.tools::wrap(starts, hab)
     ))
     expect_error(
@@ -1319,10 +1228,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
   if (interactive()) {
     testInit(c("raster", "parallel", "DEoptim", "withr"))
 
-    hab <- randomPolygons(
-      terra::rast(terra::ext(0, 1e2, 0, 1e2)),
-      resolution = 1
-    )
+    hab <- randomPolygons(terra::rast(terra::ext(0, 1e2, 0, 1e2)), resolution = 1)
 
     ## evaluate cumulativeFn
     n <- 50
