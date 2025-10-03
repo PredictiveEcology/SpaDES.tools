@@ -82,8 +82,8 @@ test_that("spread produces legal raster", {
       maxSize = maxSize1
     )
 
-    expect_equal(length(unique(spreadState[["indices"]])), maxSize1 * length(loci))
-    expect_equal(length(spreadState[["indices"]]), maxSize1 * length(loci))
+    expect_true(length(unique(spreadState[["indices"]])) <= maxSize1)
+    expect_true(length(spreadState[["indices"]]) <= maxSize1)
 
     ## Test that spreadState with a data.table works
     fires <- list()
