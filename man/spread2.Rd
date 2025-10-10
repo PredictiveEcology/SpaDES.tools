@@ -213,8 +213,8 @@ This can be used to simulate fires, seed dispersal, calculation of iterative,
 concentric, symmetric (currently) landscape values and many other things.
 Essentially, it starts from a collection of cells (\code{start}, called "events")
 and spreads to neighbours, according to the \code{directions}
-and \code{spreadProb} with modifications due to other arguments. \strong{NOTE:}
-the \code{spread} function is similar, but sometimes slightly faster, but less
+and \code{spreadProb} with modifications due to other arguments.
+\strong{NOTE:} \code{\link[=spread]{spread()}} is similar, but sometimes slightly faster, but less
 robust, and more difficult to use iteratively.
 }
 \details{
@@ -225,12 +225,12 @@ neighbours (either 4 or 8, depending on  \code{directions}), and will "activate"
 whichever neighbours successfully pass independent calls to
 \code{runif(1,0,1) < spreadProb}.
 The algorithm will iterate again and again, each time starting from the newly
-"activated" cells. Several built-in decisions are as follows.
+"activated" cells. Several built-in decisions are as follows:
 \enumerate{
 \item no active cell can activate a cell that was already activated by
-the same event (i.e., "it won't go backwards"). 2. If \code{allowOverlap} is
-\code{FALSE}, then the previous rule will also apply, regardless of which
-"event" caused the pixels to be previously active.
+the same event (i.e., "it won't go backwards");
+\item If \code{allowOverlap} is \code{FALSE}, then the previous rule will also apply,
+regardless of which "event" caused the pixels to be previously active.
 }
 
 This function can be interrupted before all active cells are exhausted if

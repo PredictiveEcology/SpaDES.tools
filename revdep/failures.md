@@ -1,28 +1,22 @@
-# SpaDES.core
+# LandWebUtils
 
 <details>
 
-* Version: 2.0.2
-* GitHub: https://github.com/PredictiveEcology/SpaDES.core
-* Source code: https://github.com/cran/SpaDES.core
-* Date/Publication: 2023-07-06 12:53:16 UTC
-* Number of recursive dependencies: 138
+* Version: 1.0.0
+* GitHub: https://github.com/PredictiveEcology/LandWebUtils
+* Source code: https://github.com/cran/LandWebUtils
+* Number of recursive dependencies: 155
 
-Run `revdepcheck::revdep_details(, "SpaDES.core")` for more info
+Run `revdepcheck::revdep_details(, "LandWebUtils")` for more info
 
 </details>
 
 ## In both
 
-*   checking whether package ‘SpaDES.core’ can be installed ... ERROR
+*   checking whether package ‘LandWebUtils’ can be installed ... ERROR
     ```
     Installation failed.
-    See ‘/home/emcintir/GitHub/SpaDES.tools/revdep/checks/SpaDES.core/new/SpaDES.core.Rcheck/00install.out’ for details.
-    ```
-
-*   checking package dependencies ... NOTE
-    ```
-    Package suggested but not available for checking: ‘NLMR’
+    See ‘/Users/achubaty/Documents/GitHub/PredictiveEcology/SpaDES.tools/revdep/checks.noindex/LandWebUtils/new/LandWebUtils.Rcheck/00install.out’ for details.
     ```
 
 ## Installation
@@ -30,36 +24,32 @@ Run `revdepcheck::revdep_details(, "SpaDES.core")` for more info
 ### Devel
 
 ```
-* installing *source* package ‘SpaDES.core’ ...
-** package ‘SpaDES.core’ successfully unpacked and MD5 sums checked
+* installing *source* package ‘LandWebUtils’ ...
 ** using staged installation
 ** R
-** inst
 ** byte-compile and prepare package for lazy loading
-Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
-  there is no package called ‘stringfish’
+Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
+  there is no package called ‘rgeos’
 Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
 Execution halted
-ERROR: lazy loading failed for package ‘SpaDES.core’
-* removing ‘/home/emcintir/GitHub/SpaDES.tools/revdep/checks/SpaDES.core/new/SpaDES.core.Rcheck/SpaDES.core’
+ERROR: lazy loading failed for package ‘LandWebUtils’
+* removing ‘/Users/achubaty/Documents/GitHub/PredictiveEcology/SpaDES.tools/revdep/checks.noindex/LandWebUtils/new/LandWebUtils.Rcheck/LandWebUtils’
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘SpaDES.core’ ...
-** package ‘SpaDES.core’ successfully unpacked and MD5 sums checked
+* installing *source* package ‘LandWebUtils’ ...
 ** using staged installation
 ** R
-** inst
 ** byte-compile and prepare package for lazy loading
-Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
-  there is no package called ‘stringfish’
+Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
+  there is no package called ‘rgeos’
 Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
 Execution halted
-ERROR: lazy loading failed for package ‘SpaDES.core’
-* removing ‘/home/emcintir/GitHub/SpaDES.tools/revdep/checks/SpaDES.core/old/SpaDES.core.Rcheck/SpaDES.core’
+ERROR: lazy loading failed for package ‘LandWebUtils’
+* removing ‘/Users/achubaty/Documents/GitHub/PredictiveEcology/SpaDES.tools/revdep/checks.noindex/LandWebUtils/old/LandWebUtils.Rcheck/LandWebUtils’
 
 
 ```

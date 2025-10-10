@@ -266,7 +266,7 @@ These are then converted to multiple \code{spreadProbs} by
 \code{spreadProbs <- lowSpreadProb + (angleQuality * diff(spreadProbsLH))}
 To maintain an expected \code{spreadProb} that is the same as the asymmetric
 \code{spreadProbs}, these are then rescaled so that the mean of the
-asymmetric spreadProbs is always equal to spreadProb at every iteration:
+asymmetric \code{spreadProbs} is always equal to spreadProb at every iteration:
 \code{spreadProbs <- spreadProbs - diff(c(spreadProb, mean(spreadProbs)))}
 }
 \note{

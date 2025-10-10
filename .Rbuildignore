@@ -7,6 +7,7 @@
 ^_ignore$
 ^\.lintr$
 ^_pkgdown\.yml$
+^CITATION\.cff$
 ^CONTRIBUTING\.md$
 ^CRAN-RELEASE$
 ^cran-comments\.md$
@@ -18,4 +19,5 @@ vignettes/.*\.log$
 ^\.github$
 ^codecov\.yml$
 tests/manualTests/*
-^CRAN-SUBMISSION$
+^[.]?air[.]toml$
+^\.vscode$

@@ -11,8 +11,8 @@ utils::globalVariables(c(
 #' concentric, symmetric (currently) landscape values and many other things.
 #' Essentially, it starts from a collection of cells (`start`, called "events")
 #' and spreads to neighbours, according to the `directions`
-#' and `spreadProb` with modifications due to other arguments. **NOTE:**
-#' the `spread` function is similar, but sometimes slightly faster, but less
+#' and `spreadProb` with modifications due to other arguments.
+#' **NOTE:** [spread()] is similar, but sometimes slightly faster, but less
 #' robust, and more difficult to use iteratively.
 #'
 #' There are 2 main underlying algorithms for active cells to "spread" to
@@ -22,11 +22,12 @@ utils::globalVariables(c(
 #' whichever neighbours successfully pass independent calls to
 #' `runif(1,0,1) < spreadProb`.
 #' The algorithm will iterate again and again, each time starting from the newly
-#' "activated" cells. Several built-in decisions are as follows.
+#' "activated" cells. Several built-in decisions are as follows:
+#'
 #' 1. no active cell can activate a cell that was already activated by
-#' the same event (i.e., "it won't go backwards"). 2. If `allowOverlap` is
-#' `FALSE`, then the previous rule will also apply, regardless of which
-#' "event" caused the pixels to be previously active.
+#'    the same event (i.e., "it won't go backwards");
+#' 2. If `allowOverlap` is `FALSE`, then the previous rule will also apply,
+#'    regardless of which "event" caused the pixels to be previously active.
 #'
 #' This function can be interrupted before all active cells are exhausted if
 #' the `iterations` value is reached before there are no more active
