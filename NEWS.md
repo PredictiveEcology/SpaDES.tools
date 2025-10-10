@@ -2,6 +2,7 @@
 
 * drop support for R 4.2;
 * improved `spread` for use with `SpatRasters` (#93);
+* improved speed of `.pointDistance` (#97);
 * fix a failing test when using `testthat > 3.2.3` (#98);
 * documentation improvements;
 
