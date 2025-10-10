@@ -21,3 +21,4 @@ vignettes/.*\.log$
 tests/manualTests/*
 ^[.]?air[.]toml$
 ^\.vscode$
+^CRAN-SUBMISSION$
