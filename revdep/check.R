@@ -4,12 +4,12 @@ library("revdepcheck")
 options(
   repos = c(
     PE = "https://predictiveecology.r-universe.dev",
-    CRAN =  paste0("https://", "cloud.", "r-project.", "org")
+    CRAN = paste0("https://", "cloud.", "r-project.", "org")
   )
 )
 
 revdepcheck::revdep_reset()
-revdepcheck::revdep_check(num_workers = getOption("Ncpus", 8L), timeout = 30*60) ## 30 mins
+revdepcheck::revdep_check(num_workers = getOption("Ncpus", 8L), timeout = 30 * 60) ## 30 mins
 revdepcheck::revdep_report_cran() ## update cran-comments with this output
 
 ### email maintainers of revdep packages (need to edit: `revdep/email.yml`)
