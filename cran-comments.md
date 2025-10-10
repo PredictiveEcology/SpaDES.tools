@@ -21,16 +21,16 @@ See `NEWS.md` for a full list of changes.
 * Windows                 (win-builder), R 4.5.1
 
 ### Development R version
-* Ubuntu 24.04                 (GitHub), R-devel (2025-10-08 r88906)
+* Ubuntu 24.04                 (GitHub), R-devel (2025-10-09 r88913)
 * Ubuntu 24.04                  (local), R-devel (2025-10-08 r88906)
-* Windows                      (GitHub), R-devel (2025-10-08 r88906 ucrt)
-* Windows                 (win-builder), R-devel (2025-10-08 r88906 ucrt)
+* Windows                      (GitHub), R-devel (2025-10-09 r88913 ucrt)
+* Windows                 (win-builder), R-devel (2025-10-09 r88913 ucrt)
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
 
-There were 2 NOTEs
+There was 1 NOTE:
 
 1. The suggested package `NLMR` is available in a additional repository, for which we provide instructions for installation:
 
