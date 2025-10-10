@@ -1,6 +1,9 @@
-# SpaDES.tools (development version)
+# SpaDES.tools 2.0.8
 
+## Dependency changes
 * drop support for R 4.2;
+
+## Enhancements
 * improved `spread` for use with `SpatRasters` (#93);
 * improved speed of `.pointDistance` (#97);
 * fix a failing test when using `testthat > 3.2.3` (#98);
@@ -8,7 +11,7 @@
 
 # SpaDES.tools 2.0.7
 
-## bug fixes
+## Bug fixes
 * fixed issue with `rasterizeReduced()`;
 * updates to deal with changes to RNG in `dqrng` (#96; @rstub). if backwards compatibility is needed, set `dqrng::dqRNGkind("Xoroshiro128+")` before running `spread` to ensure numerical reproducibility with previous versions;
 

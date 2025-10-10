@@ -1,21 +1,11 @@
-Package: SpaDES.tools
 Type: Package
-Title: Additional Tools for Developing Spatially Explicit Discrete Event Simulation (SpaDES) Models
-Description: Provides GIS and map utilities, plus additional modeling tools for
-    developing cellular automata, dynamic raster models, and agent based models
-    in 'SpaDES'.
-    Included are various methods for spatial spreading, spatial agents, GIS operations,
-    random map generation, and others.
-    See '?SpaDES.tools' for an categorized overview of these additional tools.
-    The suggested package 'NLMR' can be installed from the following repository:
-    (<https://PredictiveEcology.r-universe.dev>).
-URL:
-    https://spades-tools.predictiveecology.org,
-    https://github.com/PredictiveEcology/SpaDES.tools
-Date: 2025-10-03
-Version: 2.0.7.9003
+Package: SpaDES.tools
+Title: Additional Tools for Developing Spatially Explicit Discrete Event
+    Simulation (SpaDES) Models
+Version: 2.0.8
+Date: 2025-10-10
 Authors@R: c(
-    person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = c("aut"),
+    person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = "aut",
            comment = c(ORCID = "0000-0002-6914-8316")),
     person("Alex M", "Chubaty", , "achubaty@for-cast.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7146-8135")),
@@ -26,6 +16,18 @@ Authors@R: c(
     person("Jean", "Marchal", , "jean.d.marchal@gmail.com", role = "ctb"),
     person("His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada", role = "cph")
   )
+Description: Provides GIS and map utilities, plus additional modeling
+    tools for developing cellular automata, dynamic raster models, and
+    agent based models in 'SpaDES'.  Included are various methods for
+    spatial spreading, spatial agents, GIS operations, random map
+    generation, and others.  See '?SpaDES.tools' for an categorized
+    overview of these additional tools.  The suggested package 'NLMR' can
+    be installed from the following repository:
+    (<https://PredictiveEcology.r-universe.dev>).
+License: GPL-3
+URL: https://spades-tools.predictiveecology.org,
+    https://github.com/PredictiveEcology/SpaDES.tools
+BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 Depends:
     R (>= 4.3)
 Imports:
@@ -58,18 +60,20 @@ Suggests:
     testthat (>= 3.0.0),
     tools,
     withr
+LinkingTo: 
+    Rcpp
 Remotes:
-    ropensci/NLMR,
     PredictiveEcology/quickPlot@development,
     PredictiveEcology/reproducible@development,
-    r-lib/testthat
+    r-lib/testthat,
+    ropensci/NLMR
+Additional_repositories: https://predictiveecology.r-universe.dev/
+ByteCompile: yes
+Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-CA
-LinkingTo: Rcpp
-License: GPL-3
-Additional_repositories: https://predictiveecology.r-universe.dev/
-BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
-ByteCompile: yes
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
 Collate: 
     'RcppExports.R'
     'heading.R'
@@ -84,6 +88,7 @@ Collate:
     'neighbourhood.R'
     'numerical-comparisons.R'
     'probability.R'
+    'reexports.R'
     'resample.R'
     'rings.R'
     'spades-tools-deprecated.R'
@@ -94,6 +99,3 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
-RoxygenNote: 7.3.3
-Roxygen: list(markdown = TRUE)
-Config/testthat/edition: 3
