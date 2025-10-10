@@ -112,11 +112,14 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   }
   if (!is.null(cumulativeFn)) {
     forms <- names(formals(distFn))
-    # browser()
     fromC <- "fromCell" %in% forms
-    if (fromC) fromCell <- cellFromXY(landscape, from[, xycolNames])
+    ff <- from[, xycolNames, drop = FALSE]
+    save(ff, file = "~/test1.rda")
+    if (fromC) fromCell <- cellFromXY(landscape, from[, xycolNames, drop = FALSE])
     toC <- "toCells" %in% forms
-    if (toC) toCells <- cellFromXY(landscape, to[, xycolNames])
+    tt <- to[, xycolNames, drop = FALSE]
+    save(tt, file = "~/test2.rda")
+    if (toC) toCells <- cellFromXY(landscape, to[, xycolNames, drop = FALSE])
     land <- "landscape" %in% forms
     distFnArgs <- if (land) list(landscape = landscape[]) else list()
     if (length(list(...)) > 0) distFnArgs <- append(distFnArgs, list(...))
@@ -288,9 +291,14 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #' @name .pointDistance
 #' @rdname distances
 .pointDistance <- function(from, to, angles = NA, maxDistance = NA_real_, otherFromCols = FALSE) {
+  run <- to[, "x"] - from[, "x"]
   if (!is.na(maxDistance)) {
-    keep3 <- which(abs(to[, "x"] - from[, "x"]) <= maxDistance)
-    keep4 <- which(abs(to[keep3, "y"] - from[, "y"]) <= maxDistance)
+    keep3 <- which(abs(run) <= maxDistance)
+    if (length(keep3) == 1) {
+      keep4 <- which(abs(to[keep3, "y"] - from[, "y"]) <= maxDistance)
+    } else {
+      keep4 <- abs(to[keep3, "y"] - from[, "y"]) <= maxDistance
+    }
     keep <- keep3[keep4]
 
     # keepOrig <- which((abs(to[, "x"] - from[, "x"]) <= maxDistance)  &
@@ -298,11 +306,14 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
     # if (!identical(keepOrig, keep)) browser()
 
     to <- to[keep, , drop = FALSE]
+    run <- from[, "x"] - to[, "x"]
   }
 
-  dists <- cbind(to, dists = sqrt((from[, "x"] - to[, "x"])^2 + (from[, "y"] - to[, "y"])^2))
+  rise <- from[, "y"] - to[, "y"]
+  # run <- from[, "x"] - to[, "x"]
+  dists <- cbind(to, dists = sqrt((run)^2 + (rise)^2))
   if (isTRUE(angles)) {
-    dists <- cbind(dists, angles = .pointDirectionInner(from = from, to = to))
+    dists <- cbind(dists, angles = .pointDirectionInner(rise = rise, run = run))
   }
 
   if (!is.na(maxDistance)) {
@@ -461,9 +472,11 @@ directionFromEachPoint <- function(from, to = NULL, landscape) {
   cbind(to, angles = angls)
 }
 
-.pointDirectionInner <- function(from, to) {
-  rise <- to[, "y"] - from[, "y"]
-  run <- to[, "x"] - from[, "x"]
+.pointDirectionInner <- function(from, to, rise, run) {
+  if (missing(rise)) {
+    rise <- to[, "y"] - from[, "y"]
+    run <- to[, "x"] - from[, "x"]
+  }
   pi / 2 - atan2(rise, run) # Convert to geographic 0 = North
 }
 
@@ -513,9 +526,14 @@ outerCumFun <- function(x, from, fromCell, landscape, to, angles, maxDistance, x
     out <- .pointDistance(from = from[k, , drop = FALSE], to = to,
                           angles = angles, maxDistance = maxDistance,
                           otherFromCols = otherFromCols)
+
     if (NROW(out) > 0) {
-      if (toC)
-        toCells <- cellFromXY(landscape, out[, xycolNames])
+      if (toC) {
+        # oo <- out[, xycolNames, drop = FALSE]
+        # save(oo, file = "~/test3.rda")
+
+        toCells <- cellFromXY(landscape, out[, xycolNames, drop = FALSE])
+      }
       if (k == 1) {
         if (fromC) distFnArgs <- append(distFnArgs, list(fromCell = fromCell[k]))
         if (toC) distFnArgs <- append(distFnArgs, list(toCells = toCells))
