@@ -1,8 +1,9 @@
 # SpaDES.tools (development version)
 
 * drop support for R 4.2;
+* improved `spread` for use with `SpatRasters` (#93);
+* fix a failing test when using `testthat > 3.2.3` (#98);
 * documentation improvements;
-* fix a failing test when using `testthat > 3.2.3`;
 
 # SpaDES.tools 2.0.7
 
