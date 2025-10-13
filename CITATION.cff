@@ -9,7 +9,8 @@ type: software
 license: GPL-3.0-only
 title: 'SpaDES.tools: Additional Tools for Developing Spatially Explicit Discrete
   Event Simulation (SpaDES) Models'
-version: 2.0.7
+version: 2.0.9
+doi: 10.32614/CRAN.package.SpaDES.tools
 abstract: 'Provides GIS and map utilities, plus additional modeling tools for developing
   cellular automata, dynamic raster models, and agent based models in ''SpaDES''.
   Included are various methods for spatial spreading, spatial agents, GIS operations,
@@ -28,7 +29,7 @@ authors:
 repository: https://CRAN.R-project.org/package=SpaDES.tools
 repository-code: https://github.com/PredictiveEcology/SpaDES.tools
 url: https://spades-tools.predictiveecology.org
-date-released: '2024-05-14'
+date-released: '2025-10-10'
 contact:
 - family-names: Chubaty
   given-names: Alex M
@@ -45,8 +46,8 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2024'
-  version: '>= 4.2'
+  year: '2025'
+  version: '>= 4.3'
 - type: software
   title: backports
   abstract: 'backports: Reimplementations of Functions Introduced Since R-3.0.0'
@@ -62,7 +63,8 @@ references:
     given-names: Duncan
     email: murdoch.duncan@gmail.com
   - name: R Core Team
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.backports
 - type: software
   title: checkmate
   abstract: 'checkmate: Fast and Versatile Argument Checks'
@@ -74,7 +76,8 @@ references:
     given-names: Michel
     email: michellang@gmail.com
     orcid: https://orcid.org/0000-0001-9754-0393
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.checkmate
   version: '>= 1.8.2'
 - type: software
   title: data.table
@@ -86,6 +89,7 @@ references:
   - family-names: Barrett
     given-names: Tyson
     email: t.barrett88@gmail.com
+    orcid: https://orcid.org/0000-0002-2137-1391
   - family-names: Dowle
     given-names: Matt
     email: mattjdowle@gmail.com
@@ -96,10 +100,19 @@ references:
     given-names: Jan
   - family-names: Chirico
     given-names: Michael
+    orcid: https://orcid.org/0000-0003-0787-087X
   - family-names: Hocking
     given-names: Toby
     orcid: https://orcid.org/0000-0002-3146-0865
-  year: '2024'
+  - family-names: Schwendinger
+    given-names: Benjamin
+    orcid: https://orcid.org/0000-0003-3315-8114
+  - family-names: Krylov
+    given-names: Ivan
+    email: ikrylov@disroot.org
+    orcid: https://orcid.org/0000-0002-0172-3812
+  year: '2025'
+  doi: 10.32614/CRAN.package.data.table
   version: '>= 1.10.4'
 - type: software
   title: fpCompare
@@ -112,7 +125,8 @@ references:
     given-names: Alex M
     email: achubaty@for-cast.ca
     orcid: https://orcid.org/0000-0001-7146-8135
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.fpCompare
   version: '>= 0.2.1'
 - type: software
   title: graphics
@@ -123,7 +137,7 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2024'
+  year: '2025'
 - type: software
   title: methods
   abstract: 'R: A Language and Environment for Statistical Computing'
@@ -133,7 +147,7 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2024'
+  year: '2025'
 - type: software
   title: parallel
   abstract: 'R: A Language and Environment for Statistical Computing'
@@ -143,7 +157,7 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2024'
+  year: '2025'
 - type: software
   title: Rcpp
   abstract: 'Rcpp: Seamless R and C++ Integration'
@@ -153,23 +167,32 @@ references:
   authors:
   - family-names: Eddelbuettel
     given-names: Dirk
+    email: edd@debian.org
+    orcid: https://orcid.org/0000-0001-6419-907X
   - family-names: Francois
     given-names: Romain
+    orcid: https://orcid.org/0000-0002-2444-4226
   - family-names: Allaire
     given-names: JJ
+    orcid: https://orcid.org/0000-0003-0174-9868
   - family-names: Ushey
     given-names: Kevin
+    orcid: https://orcid.org/0000-0003-2880-7407
   - family-names: Kou
     given-names: Qiang
+    orcid: https://orcid.org/0000-0001-6786-5453
   - family-names: Russell
     given-names: Nathan
   - family-names: Ucar
-    given-names: Inaki
+    given-names: Iñaki
+    orcid: https://orcid.org/0000-0001-6403-5550
   - family-names: Bates
-    given-names: Douglas
+    given-names: Doug
+    orcid: https://orcid.org/0000-0001-8316-9503
   - family-names: Chambers
     given-names: John
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.Rcpp
   version: '>= 0.12.12'
 - type: software
   title: reproducible
@@ -186,7 +209,8 @@ references:
     given-names: Alex M
     email: achubaty@for-cast.ca
     orcid: https://orcid.org/0000-0001-7146-8135
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.reproducible
   version: '>= 2.0.9'
 - type: software
   title: stats
@@ -197,7 +221,7 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2024'
+  year: '2025'
 - type: software
   title: terra
   abstract: 'terra: Spatial Data Analysis'
@@ -209,7 +233,8 @@ references:
     given-names: Robert J.
     email: r.hijmans@gmail.com
     orcid: https://orcid.org/0000-0001-5872-2872
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.terra
 - type: software
   title: animation
   abstract: 'animation: A Gallery of Animations in Statistics and Utilities to Create
@@ -221,19 +246,23 @@ references:
   - family-names: Xie
     given-names: Yihui
     email: xie@yihui.name
-  year: '2024'
+    orcid: https://orcid.org/0000-0003-0645-5666
+  year: '2025'
+  doi: 10.32614/CRAN.package.animation
 - type: software
   title: bit
   abstract: 'bit: Classes and Methods for Fast Memory-Efficient Boolean Selections'
   notes: Suggests
-  url: https://github.com/truecluster/bit
+  url: https://github.com/r-lib/bit
   repository: https://CRAN.R-project.org/package=bit
   authors:
+  - family-names: Chirico
+    given-names: Michael
+    email: MichaelChirico4@gmail.com
   - family-names: Oehlschlägel
     given-names: Jens
-  - family-names: Ripley
-    given-names: Brian
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.bit
   version: '>= 1.1-12'
 - type: software
   title: covr
@@ -245,7 +274,8 @@ references:
   - family-names: Hester
     given-names: Jim
     email: james.f.hester@gmail.com
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.covr
 - type: software
   title: DEoptim
   abstract: 'DEoptim: Global Optimization by Differential Evolution'
@@ -264,7 +294,8 @@ references:
     given-names: Brian
   - family-names: Ulrich
     given-names: Joshua
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.DEoptim
   version: '>= 2.2-4'
 - type: software
   title: dqrng
@@ -277,7 +308,8 @@ references:
     given-names: Ralf
     email: ralf.stubner@gmail.com
     orcid: https://orcid.org/0009-0009-1908-106X
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.dqrng
 - type: software
   title: fastmatch
   abstract: 'fastmatch: Fast ''match()'' Function'
@@ -287,8 +319,10 @@ references:
   authors:
   - family-names: Urbanek
     given-names: Simon
-    email: simon.urbanek@r-project.org
-  year: '2024'
+    email: Simon.Urbanek@r-project.org
+    orcid: https://orcid.org/0000-0003-2297-1732
+  year: '2025'
+  doi: 10.32614/CRAN.package.fastmatch
 - type: software
   title: knitr
   abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
@@ -300,7 +334,8 @@ references:
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.knitr
 - type: software
   title: NLMR
   abstract: 'NLMR: Simulating Neutral Landscape Models'
@@ -328,7 +363,7 @@ references:
   - family-names: Hanß
     given-names: Sebastian
     orcid: https://orcid.org/0000-0002-3990-4897
-  year: '2024'
+  year: '2025'
   version: '>= 1.1.1'
 - type: software
   title: quickPlot
@@ -345,7 +380,8 @@ references:
     given-names: Alex M
     email: achubaty@for-cast.ca
     orcid: https://orcid.org/0000-0001-7146-8135
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.quickPlot
   version: '>= 1.0.2'
 - type: software
   title: raster
@@ -358,7 +394,8 @@ references:
     given-names: Robert J.
     email: r.hijmans@gmail.com
     orcid: https://orcid.org/0000-0001-5872-2872
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.raster
   version: '>= 2.5-8'
 - type: software
   title: rmarkdown
@@ -402,7 +439,8 @@ references:
     given-names: Richard
     email: rich@posit.co
     orcid: https://orcid.org/0000-0003-3925-190X
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.rmarkdown
 - type: software
   title: sf
   abstract: 'sf: Simple Features for R'
@@ -414,7 +452,24 @@ references:
     given-names: Edzer
     email: edzer.pebesma@uni-muenster.de
     orcid: https://orcid.org/0000-0001-8049-7069
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.sf
+- type: software
+  title: snow
+  abstract: 'snow: Simple Network of Workstations'
+  notes: Suggests
+  repository: https://CRAN.R-project.org/package=snow
+  authors:
+  - family-names: Tierney
+    given-names: Luke
+  - family-names: Rossini
+    given-names: A. J.
+  - family-names: Li
+    given-names: Na
+  - family-names: Sevcikova
+    given-names: H.
+  year: '2025'
+  doi: 10.32614/CRAN.package.snow
 - type: software
   title: sp
   abstract: 'sp: Classes and Methods for Spatial Data'
@@ -428,7 +483,8 @@ references:
   - family-names: Bivand
     given-names: Roger
     email: Roger.Bivand@nhh.no
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.sp
   version: '>= 1.2-4'
 - type: software
   title: testthat
@@ -440,7 +496,8 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@posit.co
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.testthat
   version: '>= 3.0.0'
 - type: software
   title: tools
@@ -451,7 +508,7 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2024'
+  year: '2025'
 - type: software
   title: withr
   abstract: 'withr: Run Code ''With'' Temporarily Modified Global State'
@@ -475,7 +532,8 @@ references:
     email: hadley@posit.co
   - family-names: Chang
     given-names: Winston
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.withr
 - type: software
   title: Rcpp
   abstract: 'Rcpp: Seamless R and C++ Integration'
@@ -485,21 +543,30 @@ references:
   authors:
   - family-names: Eddelbuettel
     given-names: Dirk
+    email: edd@debian.org
+    orcid: https://orcid.org/0000-0001-6419-907X
   - family-names: Francois
     given-names: Romain
+    orcid: https://orcid.org/0000-0002-2444-4226
   - family-names: Allaire
     given-names: JJ
+    orcid: https://orcid.org/0000-0003-0174-9868
   - family-names: Ushey
     given-names: Kevin
+    orcid: https://orcid.org/0000-0003-2880-7407
   - family-names: Kou
     given-names: Qiang
+    orcid: https://orcid.org/0000-0001-6786-5453
   - family-names: Russell
     given-names: Nathan
   - family-names: Ucar
-    given-names: Inaki
+    given-names: Iñaki
+    orcid: https://orcid.org/0000-0001-6403-5550
   - family-names: Bates
-    given-names: Douglas
+    given-names: Doug
+    orcid: https://orcid.org/0000-0001-8316-9503
   - family-names: Chambers
     given-names: John
-  year: '2024'
+  year: '2025'
+  doi: 10.32614/CRAN.package.Rcpp
 
