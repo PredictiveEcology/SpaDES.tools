@@ -1,6 +1,6 @@
 ## Release information
 
-This update deals with changes to a forthcoming version of `testthat`.
+This update fixes an issue with test files being left behind in user's home directory.
 See `NEWS.md` for a full list of changes.
 
 ## Test environments
