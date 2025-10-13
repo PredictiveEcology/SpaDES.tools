@@ -1,3 +1,7 @@
+# SpaDES.tools 2.0.9
+
+* cleanup test files left behind in `distanceFromEachPoint`;
+
 # SpaDES.tools 2.0.8
 
 ## Dependency changes

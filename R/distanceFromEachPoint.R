@@ -110,15 +110,16 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
   if (is.null(to)) {
     to <- xyFromCell(landscape, 1:ncell(landscape))
   }
+
   if (!is.null(cumulativeFn)) {
     forms <- names(formals(distFn))
     fromC <- "fromCell" %in% forms
     ff <- from[, xycolNames, drop = FALSE]
-    save(ff, file = "~/test1.rda")
+    # save(ff, file = "~/test1.rda")
     if (fromC) fromCell <- cellFromXY(landscape, from[, xycolNames, drop = FALSE])
     toC <- "toCells" %in% forms
     tt <- to[, xycolNames, drop = FALSE]
-    save(tt, file = "~/test2.rda")
+    # save(tt, file = "~/test2.rda")
     if (toC) toCells <- cellFromXY(landscape, to[, xycolNames, drop = FALSE])
     land <- "landscape" %in% forms
     distFnArgs <- if (land) list(landscape = landscape[]) else list()
