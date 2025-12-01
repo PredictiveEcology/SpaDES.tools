@@ -39,7 +39,7 @@ Imports:
     methods,
     parallel,
     Rcpp (>= 0.12.12),
-    reproducible (>= 2.0.9),
+    reproducible (>= 2.1.2.9999),
     stats,
     terra
 Suggests:
@@ -88,7 +88,6 @@ Collate:
     'neighbourhood.R'
     'numerical-comparisons.R'
     'probability.R'
-    'reexports.R'
     'resample.R'
     'rings.R'
     'spades-tools-deprecated.R'

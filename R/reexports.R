@@ -1,1 +1,0 @@
-isGridded <- getFromNamespace("isGridded", "reproducible")
