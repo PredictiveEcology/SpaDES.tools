@@ -6,12 +6,13 @@ from reproducible. See `NEWS.md` for a full list of changes.
 ## Test environments
 
 ### Previous R versions
-* Ubuntu 24.04                 (GitHub), R 4.4.3
-* Windows                      (GitHub), R 4.4.3
-* Windows                 (win-builder), R 4.4.3
+* Ubuntu 24.04                 (GitHub), R 4.3.3, 4.4.3
+* Windows                      (GitHub), R 4.3.3, 4.4.3
+* Windows                 (win-builder), R 4.3.3, 4.4.3
 
 ### Current R versions
 * macOS 14.7.6                 (GitHub), R 4.5.2
+* macOS 26.2                    (local), R 4.5.2
 * Ubuntu 24.04                 (GitHub), R 4.5.2
 * Ubuntu 24.04                  (local), R 4.5.2
 * Windows                      (GitHub), R 4.5.2
