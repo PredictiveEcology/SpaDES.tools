@@ -69,7 +69,9 @@ if (interactive()) {
 data.table::setDTthreads(origDTThreads)
 options(Ncpus = origNcpus)
 
-a1 <- terra::vect(cbind(-110, 59), crs = "epsg:4326")
+latLong <- terra::crs("+proj=longlat +datum=WGS84 +no_defs")
+# "epsg:4326"
+a1 <- terra::vect(cbind(-110, 59), crs = latLong)
 a2 <- randomPolygon(a1, area = 1e7)
 
 if (interactive()) {
@@ -78,13 +80,16 @@ if (interactive()) {
 }
 
 if (require("sf", quietly = TRUE)) {
+  latLong <- sf::st_crs("+proj=longlat +datum=WGS84 +no_defs")
+  # "epsg:4326"
+
   b1 <- list(cbind(
     x = c(-122.98, -116.1, -99.2, -106, -122.98),
     y = c(59.9, 65.73, 63.58, 54.79, 59.9)
   )) |>
     sf::st_polygon() |>
     sf::st_sfc() |>
-    sf::st_sf(geometry = _, ID = 1L, shinyLabel = "zone2", crs = "epsg:4326")
+    sf::st_sf(geometry = _, ID = 1L, shinyLabel = "zone2", crs = latLong)
   b2 <- randomPolygon(b1, area = 1e10)
 
   if (interactive()) {
