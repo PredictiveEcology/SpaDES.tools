@@ -39,7 +39,7 @@ Imports:
     methods,
     parallel,
     Rcpp (>= 0.12.12),
-    reproducible (>= 2.1.2.9999),
+    reproducible (>= 2.1.3),
     stats,
     terra
 Suggests:
