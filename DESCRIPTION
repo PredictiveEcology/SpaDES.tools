@@ -2,7 +2,7 @@ Type: Package
 Package: SpaDES.tools
 Title: Additional Tools for Developing Spatially Explicit Discrete Event
     Simulation (SpaDES) Models
-Version: 2.0.9.9002
+Version: 2.0.9.9003
 Date: 2026-01-08
 Authors@R: c(
     person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = "aut",
@@ -62,11 +62,6 @@ Suggests:
     withr
 LinkingTo: 
     Rcpp
-Remotes:
-    PredictiveEcology/quickPlot@development,
-    PredictiveEcology/reproducible@development,
-    r-lib/testthat,
-    ropensci/NLMR
 Additional_repositories: https://predictiveecology.r-universe.dev/
 ByteCompile: yes
 Config/testthat/edition: 3
