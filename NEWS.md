@@ -1,5 +1,3 @@
-# SpaDES.tools (development version)
-
 # SpaDES.tools 2.1.0
 
 * `reproducible:::isGridded` now exported as `.isGridded` (#99);
