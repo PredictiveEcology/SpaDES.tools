@@ -1,7 +1,7 @@
 ## Release information
 
-This is a minor update to deal with changes to an exported function
-from reproducible. See `NEWS.md` for a full list of changes.
+This is a minor update to deal with changes to an exported function from reproducible.
+See `NEWS.md` for a full list of changes.
 
 ## Test environments
 
