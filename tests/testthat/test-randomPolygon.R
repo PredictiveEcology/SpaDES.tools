@@ -3,7 +3,8 @@ test_that("randomPolygon: does not work properly", {
   testInit("terra")
 
   set.seed(1234) ## TODO: some seeds produce failing area test below!!
-  latLong <- crs("epsg:4326")
+  # latLong <- crs("epsg:4326")
+  latLong <- terra::crs("+proj=longlat +datum=WGS84 +no_defs")
 
   area <- 1e4
   center <- cbind(-110, 59)

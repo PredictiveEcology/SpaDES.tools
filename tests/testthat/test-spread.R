@@ -774,7 +774,12 @@ test_that("rings and cir", {
     read <- eval(parse(text = rastDF$read[ii]))
 
     hab <- rast(system.file("extdata", "hab.tif", package = "SpaDES.tools")) #
-    terra::crs(hab) <- "epsg:23028"
+
+
+    utm <- "+proj=utm +zone=28 +datum=WGS84 +units=m +no_defs"
+    terra::crs(hab) <- utm
+    # terra::crs(hab) <- "epsg:23028"
+
     names(hab) <- "hab"
     hab2 <- hab > 0
     n <- 2
@@ -782,7 +787,8 @@ test_that("rings and cir", {
       x = stats::runif(n, xmin(hab), xmax(hab)),
       y = stats::runif(n, xmin(hab), xmax(hab))
     ))
-    terra::crs(caribou) <- "epsg:23028"
+    terra::crs(caribou) <- utm
+    # terra::crs(caribou) <- "epsg:23028"
 
     radius <- 15
     cirsEx <- cir(
@@ -857,7 +863,9 @@ test_that("rings and cir", {
       x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
       y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5
     ))
-    terra::crs(caribou) <- "epsg:23028"
+
+    terra::crs(caribou) <- utm
+    # terra::crs(caribou) <- "epsg:23028"
 
     loci <- terra::cellFromXY(hab, matrix(terra::crds(caribou)[1, ], ncol = 2))
     cirs <- data.table(cir(
@@ -898,7 +906,9 @@ test_that("rings and cir", {
       x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
       y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5
     ))
-    terra::crs(caribou) <- "epsg:23028"
+
+    terra::crs(caribou) <- utm
+    # terra::crs(caribou) <- "epsg:23028"
 
     loci <- cellFromXY(hab, terra::crds(caribou))
 
@@ -954,7 +964,9 @@ test_that("distanceFromPoints does not work correctly", {
 
   hab <- terra::rast(system.file("extdata", "hab.tif", package = "SpaDES.tools"))
   names(hab) <- "hab"
-  terra::crs(hab) <- "epsg:23028"
+  utm <- "+proj=utm +zone=28 +datum=WGS84 +units=m +no_defs"
+  terra::crs(hab) <- utm
+  # terra::crs(hab) <- "epsg:23028"
 
   n <- 1
   coords <- cbind(

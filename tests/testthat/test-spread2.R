@@ -10,6 +10,10 @@ test_that("spread2 tests", {
 
   spRas <- terra::rast(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
 
+  utm <- "+proj=utm +zone=28 +datum=WGS84 +units=m +no_defs"
+  terra::crs(spRas) <- utm
+
+
   for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
@@ -469,7 +473,11 @@ test_that("spread2 tests -- asymmetry", {
     # test that the events spread to the middle
     # Create a raster with one point at the centre
     ciCentre <- read(hab)
-    terra::crs(ciCentre) <- "epsg:23028"
+
+    utm <- "+proj=utm +zone=28 +datum=WGS84 +units=m +no_defs"
+    terra::crs(ciCentre) <- utm
+
+    # terra::crs(ciCentre) <- "epsg:23028"
     ciCentre <- setValues(ciCentre, 1)
     ciCentre[seq_len(ncell(ciCentre))[-(ncell(ciCentre) / 2 - ncol(ciCentre) / 2)]] <- NA_integer_
     # create a direction raster with all points leading to that point

@@ -1,3 +1,7 @@
+# SpaDES.tools 2.1.1
+
+* `reproducible:::isGridded` now exported as `.isGridded` (#99);
+
 # SpaDES.tools 2.0.9
 
 * cleanup test files left behind in `distanceFromEachPoint`;

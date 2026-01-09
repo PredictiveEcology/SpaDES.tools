@@ -2,8 +2,8 @@ Type: Package
 Package: SpaDES.tools
 Title: Additional Tools for Developing Spatially Explicit Discrete Event
     Simulation (SpaDES) Models
-Version: 2.0.9
-Date: 2025-10-10
+Version: 2.1.1
+Date: 2026-01-09
 Authors@R: c(
     person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = "aut",
            comment = c(ORCID = "0000-0002-6914-8316")),
@@ -39,7 +39,7 @@ Imports:
     methods,
     parallel,
     Rcpp (>= 0.12.12),
-    reproducible (>= 2.0.9),
+    reproducible (>= 2.1.3),
     stats,
     terra
 Suggests:
@@ -83,7 +83,6 @@ Collate:
     'neighbourhood.R'
     'numerical-comparisons.R'
     'probability.R'
-    'reexports.R'
     'resample.R'
     'rings.R'
     'spades-tools-deprecated.R'
