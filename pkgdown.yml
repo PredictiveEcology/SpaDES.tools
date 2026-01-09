@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles: {}
-last_built: 2026-01-09T18:58Z
+last_built: 2026-01-09T19:04Z
 urls:
   reference: https://spades-tools.predictiveecology.org/reference
   article: https://spades-tools.predictiveecology.org/articles
