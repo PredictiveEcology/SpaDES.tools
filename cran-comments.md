@@ -1,36 +1,34 @@
 ## Release information
 
-This update deals with changes to a forthcoming version of `testthat`.
-See `NEWS.md` for a full list of changes.
+This is a minor update to deal with changes to an exported function
+from reproducible. See `NEWS.md` for a full list of changes.
 
 ## Test environments
 
 ### Previous R versions
-* Ubuntu 24.04                 (GitHub), R 4.3.3, 4.4.3
-* Windows                      (GitHub), R 4.3.3, 4.4.3
+* Ubuntu 24.04                 (GitHub), R 4.4.3
+* Windows                      (GitHub), R 4.4.3
 * Windows                 (win-builder), R 4.4.3
 
 ### Current R versions
-* macOS 13.3.1            (mac-builder), R 4.5.1
-* macOS 14.7.6                 (GitHub), R 4.5.1
-* macOS 26.0.1                  (local), R 4.5.1
-* Ubuntu 24.04                 (GitHub), R 4.5.1
-* Ubuntu 24.04                  (local), R 4.5.1
-* Windows                      (GitHub), R 4.5.1
-* Windows                       (local), R 4.5.1
-* Windows                 (win-builder), R 4.5.1
+* macOS 14.7.6                 (GitHub), R 4.5.2
+* Ubuntu 24.04                 (GitHub), R 4.5.2
+* Ubuntu 24.04                  (local), R 4.5.2
+* Windows                      (GitHub), R 4.5.2
+* Windows                       (local), R 4.5.2
+* Windows                 (win-builder), R 4.5.2
 
 ### Development R version
-* Ubuntu 24.04                 (GitHub), R-devel (2025-10-08 r88906)
-* Ubuntu 24.04                  (local), R-devel (2025-10-08 r88906)
-* Windows                      (GitHub), R-devel (2025-10-08 r88906 ucrt)
-* Windows                 (win-builder), R-devel (2025-10-08 r88906 ucrt)
+* Ubuntu 24.04                 (GitHub), R-devel (2026-01-08 r89292)
+* Ubuntu 24.04                  (local), R-devel (2026-01-08 r89292)
+* Windows                      (GitHub), R-devel (2026-01-08 r89292 ucrt)
+* Windows                 (win-builder), R-devel (2026-01-08 r89292 ucrt)
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
 
-There were 2 NOTEs
+There was 1 NOTE
 
 1. The suggested package `NLMR` is available in a additional repository, for which we provide instructions for installation:
 
