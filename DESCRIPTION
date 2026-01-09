@@ -65,7 +65,6 @@ LinkingTo:
 Remotes:
     PredictiveEcology/quickPlot@development,
     PredictiveEcology/reproducible@development,
-    r-lib/testthat,
     ropensci/NLMR
 Additional_repositories: https://predictiveecology.r-universe.dev/
 ByteCompile: yes
