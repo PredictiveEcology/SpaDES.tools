@@ -63,8 +63,6 @@ Suggests:
 LinkingTo: 
     Rcpp
 Remotes:
-    PredictiveEcology/quickPlot@development,
-    PredictiveEcology/reproducible@development,
     ropensci/NLMR
 Additional_repositories: https://predictiveecology.r-universe.dev/
 ByteCompile: yes
@@ -87,6 +85,7 @@ Collate:
     'neighbourhood.R'
     'numerical-comparisons.R'
     'probability.R'
+    'rastFromDF.R'
     'resample.R'
     'rings.R'
     'spades-tools-deprecated.R'
