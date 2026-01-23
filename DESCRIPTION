@@ -2,7 +2,7 @@ Type: Package
 Package: SpaDES.tools
 Title: Additional Tools for Developing Spatially Explicit Discrete Event
     Simulation (SpaDES) Models
-Version: 2.1.1
+Version: 2.1.1.9000
 Date: 2026-01-09
 Authors@R: c(
     person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = "aut",
@@ -63,8 +63,6 @@ Suggests:
 LinkingTo: 
     Rcpp
 Remotes:
-    PredictiveEcology/quickPlot@development,
-    PredictiveEcology/reproducible@development,
     ropensci/NLMR
 Additional_repositories: https://predictiveecology.r-universe.dev/
 ByteCompile: yes
@@ -87,6 +85,7 @@ Collate:
     'neighbourhood.R'
     'numerical-comparisons.R'
     'probability.R'
+    'rastFromDF.R'
     'resample.R'
     'rings.R'
     'spades-tools-deprecated.R'
