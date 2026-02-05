@@ -67,7 +67,8 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   ## instead of `.as.vector(values(fullRaster))` extract by pix ID so that
   ## for factor rasters the value/label of the active category (not its code/level) is extracted
   ## presumably this is the value in reduced.
-  fullRasterVals <- as.data.table(fullRaster[1:ncell(fullRaster)])
+  # fullRasterVals <- as.data.table(fullRaster[1:ncell(fullRaster)])
+  fullRasterVals <- as.data.table(values(fullRaster, mat = FALSE))
   setnames(fullRasterVals, 1, new = mapcode)
 
   ## with RasterLayer we need to use factorValues to convert the mapcodes
