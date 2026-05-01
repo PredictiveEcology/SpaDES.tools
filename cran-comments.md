@@ -37,6 +37,7 @@ There was 1 NOTE
     The Description field contains
         "https://PredictiveEcology.r-universe.dev" 
 
+
 ## Downstream dependencies
 
 We checked 1 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.

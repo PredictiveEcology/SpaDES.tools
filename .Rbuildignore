@@ -7,7 +7,9 @@
 ^_ignore$
 ^\.lintr$
 ^_pkgdown\.yml$
+^CITATION\.cff$
 ^CONTRIBUTING\.md$
+^CRAN-RELEASE$
 ^cran-comments\.md$
 ^docs$
 ^LICENSE$
@@ -19,3 +21,4 @@ vignettes/.*\.log$
 tests/manualTests/*
 ^[.]?air[.]toml$
 ^\.vscode$
+^CRAN-SUBMISSION$
