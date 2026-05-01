@@ -740,6 +740,54 @@ test_that("spread2 tests -- persistence", {
   }
 })
 
+test_that("spread2 is bit-identical across reruns with same seed (seeded grid)", {
+  testInit(c("terra", "withr"))
+
+  ras <- terra::rast(terra::ext(0, 80, 0, 80), resolution = 1, vals = 1)
+  withr::with_seed(7L,   spsRas <- terra::rast(ras, vals = stats::runif(terra::ncell(ras), 0.10, 0.40)))
+  withr::with_seed(11L,  spRel  <- terra::rast(ras, vals = stats::runif(terra::ncell(ras))))
+  withr::with_seed(101L, starts <- sort(sample.int(terra::ncell(ras), 5L)))
+
+  cmpRun <- function(a, b) {
+    if (inherits(a, "data.table")) {
+      expect_equal(a, b)
+    } else if (inherits(a, "SpatRaster")) {
+      expect_identical(terra::values(a), terra::values(b))
+    } else {
+      expect_identical(a, b)
+    }
+  }
+
+  scenarios <- list(
+    list(name = "default_dt",         args = list(start = starts, spreadProb = 0.225, asRaster = FALSE)),
+    list(name = "default_raster",     args = list(start = starts, spreadProb = 0.225, asRaster = TRUE)),
+    list(name = "directions_4",       args = list(start = starts, spreadProb = 0.30, directions = 4L, asRaster = FALSE)),
+    list(name = "directions_8",       args = list(start = starts, spreadProb = 0.30, directions = 8L, asRaster = FALSE)),
+    list(name = "maxSize_scalar",     args = list(start = starts, spreadProb = 0.30, maxSize = 25L, asRaster = FALSE)),
+    list(name = "maxSize_vector",     args = list(start = starts, spreadProb = 0.30,
+                                                  maxSize = c(15, 20, 25, 30, 35), asRaster = FALSE)),
+    list(name = "iterations_finite",  args = list(start = starts, spreadProb = 0.30, iterations = 5L, asRaster = FALSE)),
+    list(name = "neighProbs",         args = list(start = starts, spreadProb = 0.30, neighProbs = c(0.7, 0.3), asRaster = FALSE)),
+    list(name = "persistProb_scalar", args = list(start = starts, spreadProb = 0.225, persistProb = 0.5,
+                                                  asRaster = FALSE, iterations = 5L)),
+    list(name = "spreadProb_raster",  args = list(start = starts, spreadProb = spsRas, asRaster = FALSE)),
+    list(name = "spreadProbRel",      args = list(start = starts, spreadProb = 0.225, spreadProbRel = spRel, asRaster = FALSE)),
+    list(name = "returnDistances",    args = list(start = starts, spreadProb = 0.225, returnDistances = TRUE, asRaster = FALSE)),
+    list(name = "returnDirections",   args = list(start = starts, spreadProb = 0.225, returnDirections = TRUE, asRaster = FALSE)),
+    list(name = "returnFrom",         args = list(start = starts, spreadProb = 0.225, returnFrom = TRUE, asRaster = FALSE)),
+    list(name = "allowOverlap_TRUE",  args = list(start = starts, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)),
+    list(name = "circle_TRUE",        args = list(start = starts, spreadProb = 0.30, circle = TRUE, asRaster = FALSE))
+  )
+
+  for (sc in scenarios) {
+    for (sd in c(1L, 17L, 1234L)) {
+      set.seed(sd); out1 <- do.call(spread2, c(list(landscape = ras), sc$args))
+      set.seed(sd); out2 <- do.call(spread2, c(list(landscape = ras), sc$args))
+      cmpRun(out1, out2)
+    }
+  }
+})
+
 test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   testInit("terra")
   rastDF <- needTerraAndRaster()

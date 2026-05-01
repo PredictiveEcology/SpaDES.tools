@@ -479,6 +479,7 @@ spread <- function(
   }
 
   ncells <- as.integer(terra::ncell(landscape))
+  numCols <- as.integer(terra::ncol(landscape))
 
   #browser(expr = exists("aaaaa"))
   allowOverlapOrReturnDistances <- allowOverlap | returnDistances
@@ -711,7 +712,12 @@ spread <- function(
       potentials <- cbind(potentials, active = 1)
     } else {
       if (id || returnIndices > 0 || circle || relativeSpreadProb || !is.null(neighProbs)) {
-        potentials <- adj(landscape, loci, directions, pairs = TRUE)
+        ## C++ neighbour expansion + edge filter (replaces adj(..., pairs = TRUE))
+        potentials <- adjPairsMatrix(
+          cells = as.integer(loci),
+          numCol = numCols, numCell = ncells,
+          directions = as.integer(directions)
+        )
       } else {
         ## must pad the first column of potentials
         newAdj <- adj(landscape, loci, directions, pairs = FALSE)

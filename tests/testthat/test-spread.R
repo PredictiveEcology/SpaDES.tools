@@ -1234,60 +1234,131 @@ test_that("cir angles arg doesn't work", {
 
 test_that("multi-core version of distanceFromEachPoints does not work correctly", {
   ## Only raster -- beginCluster is a mechanism only in raster AFAIK (Eliot)
-  skip_on_cran()
   skip_on_ci()
 
-  if (interactive()) {
-    testInit(c("raster", "parallel", "DEoptim", "withr"))
+  testInit(c("raster", "parallel", "DEoptim", "withr"))
 
-    hab <- randomPolygons(terra::rast(terra::ext(0, 1e2, 0, 1e2)), resolution = 1)
+  hab <- randomPolygons(terra::rast(terra::ext(0, 1e2, 0, 1e2)), resolution = 1)
 
-    ## evaluate cumulativeFn
-    n <- 50
-    coords <- cbind(
-      x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
-      y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5
+  ## evaluate cumulativeFn
+  n <- 50
+  coords <- cbind(
+    x = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5,
+    y = round(stats::runif(n, xmin(hab), xmax(hab))) + 0.5
+  )
+  dfep <- distanceFromEachPoint(
+    coords[, xycolNames, drop = FALSE],
+    landscape = hab,
+    cumulativeFn = `+`
+  )
+
+  ## using parallel package cluster
+  system.time({
+    cl1 <- makeCluster(1, rscript_args = "--vanilla --no-environ")
+    clusterEvalQ(cl1, {
+      library(SpaDES.tools)
+    })
+  })
+  system.time({
+    dfepCluster <- distanceFromEachPoint(
+      coords[, xycolNames, drop = FALSE],
+      landscape = hab,
+      cumulativeFn = `+`,
+      cl = cl1
     )
-    dfep <- distanceFromEachPoint(
+  })
+  stopCluster(cl1)
+  expect_true(all.equal(dfep, dfepCluster))
+
+  ## using raster package cluster
+  system.time({
+    raster::beginCluster(1, type = "PSOCK")
+  })
+  system.time({
+    dfepCluster2 <- distanceFromEachPoint(
       coords[, xycolNames, drop = FALSE],
       landscape = hab,
       cumulativeFn = `+`
     )
-
-    ## using parallel package cluster
-    system.time({
-      cl1 <- makeCluster(1, rscript_args = "--vanilla --no-environ")
-      clusterEvalQ(cl1, {
-        library(SpaDES.tools)
-      })
-    })
-    system.time({
-      dfepCluster <- distanceFromEachPoint(
-        coords[, xycolNames, drop = FALSE],
-        landscape = hab,
-        cumulativeFn = `+`,
-        cl = cl1
-      )
-    })
-    stopCluster(cl1)
-    expect_true(all.equal(dfep, dfepCluster))
-
-    ## using raster package cluster
-    system.time({
-      raster::beginCluster(1, type = "PSOCK")
-    })
-    system.time({
-      dfepCluster2 <- distanceFromEachPoint(
-        coords[, xycolNames, drop = FALSE],
-        landscape = hab,
-        cumulativeFn = `+`
-      )
-    })
-    raster::endCluster()
-    expect_true(all.equal(dfep, dfepCluster2))
-  }
+  })
+  raster::endCluster()
+  expect_true(all.equal(dfep, dfepCluster2))
 
   withr::deferred_run()
+})
+
+test_that("spread is bit-identical across reruns with same seed (seeded grid)", {
+  testInit(c("terra", "withr"))
+
+  ## spread() takes a fast path through dqrng::dqsample.int when dqrng is
+  ## installed, but that path carries pre-existing non-determinism: the help
+  ## itself notes that only `dqRNGkind("Xoroshiro128+")` gives reproducibility,
+  ## and even then a residual non-determinism remains for some
+  ## (seed, maxSize, allowOverlap) combinations because dqrng's RNG state
+  ## carries across calls in ways spread()'s mid-function reseeding does not
+  ## fully neutralize. To make THIS test bit-identical regardless of whether
+  ## dqrng is installed, force spread() onto its base R sample.int branch by
+  ## monkey-patching base::requireNamespace to lie about dqrng for this test.
+  if (requireNamespace("dqrng", quietly = TRUE)) {
+    rN_orig <- base::requireNamespace
+    rN_mock <- function(package, ...) {
+      if (identical(package, "dqrng")) return(FALSE)
+      rN_orig(package, ...)
+    }
+    base_env <- asNamespace("base")
+    unlockBinding("requireNamespace", base_env)
+    assign("requireNamespace", rN_mock, envir = base_env)
+    lockBinding("requireNamespace", base_env)
+    withr::defer({
+      unlockBinding("requireNamespace", base_env)
+      assign("requireNamespace", rN_orig, envir = base_env)
+      lockBinding("requireNamespace", base_env)
+    })
+  }
+
+  ras <- terra::rast(terra::ext(0, 80, 0, 80), resolution = 1, vals = 1)
+  withr::with_seed(7L,   spsRas   <- terra::rast(ras, vals = stats::runif(terra::ncell(ras), 0.10, 0.40)))
+  withr::with_seed(11L,  spRel    <- terra::rast(ras, vals = stats::runif(terra::ncell(ras))))
+  spRelAbs <- spRel * 100 + 1
+  withr::with_seed(101L, starts   <- sort(sample.int(terra::ncell(ras), 5L)))
+
+  cmpRun <- function(a, b) {
+    if (inherits(a, "SpatRaster")) {
+      expect_identical(terra::values(a), terra::values(b))
+    } else {
+      expect_identical(a, b)
+    }
+  }
+
+  scenarios <- list(
+    list(name = "default_returnRaster", args = list(loci = starts, spreadProb = 0.225)),
+    list(name = "id_TRUE_returnRaster", args = list(loci = starts, spreadProb = 0.225, id = TRUE)),
+    list(name = "returnIndices_1",      args = list(loci = starts, spreadProb = 0.225, returnIndices = 1L)),
+    list(name = "returnIndices_2",      args = list(loci = starts, spreadProb = 0.225, returnIndices = 2L)),
+    list(name = "directions_4",         args = list(loci = starts, spreadProb = 0.30, directions = 4L, returnIndices = 1L)),
+    list(name = "directions_8",         args = list(loci = starts, spreadProb = 0.30, directions = 8L, returnIndices = 1L)),
+    list(name = "maxSize_scalar",       args = list(loci = starts, spreadProb = 0.30, maxSize = 25L, returnIndices = 1L)),
+    list(name = "maxSize_vector_id",    args = list(loci = starts, spreadProb = 0.30,
+                                                    maxSize = c(15L, 20L, 25L, 30L, 35L),
+                                                    id = TRUE, returnIndices = 1L)),
+    list(name = "iterations_finite",    args = list(loci = starts, spreadProb = 0.30, iterations = 5L, returnIndices = 1L)),
+    list(name = "neighProbs",           args = list(loci = starts, spreadProb = 0.30, neighProbs = c(0.7, 0.3), returnIndices = 1L)),
+    list(name = "spreadProb_raster",    args = list(loci = starts, spreadProb = spsRas, returnIndices = 1L)),
+    list(name = "allowOverlap",         args = list(loci = starts, spreadProb = 0.225, allowOverlap = TRUE, returnIndices = 1L)),
+    list(name = "relativeSpreadProb",   args = list(loci = starts, spreadProb = spRelAbs,
+                                                    neighProbs = c(0, 1), maxSize = 30L,
+                                                    exactSizes = TRUE, returnIndices = 1L)),
+    list(name = "circle_maxRadius",     args = list(loci = starts, spreadProb = 0.30,
+                                                    circle = TRUE, circleMaxRadius = 10, returnIndices = 1L))
+  )
+
+  for (sc in scenarios) {
+    for (sd in c(1L, 2L, 3L)) {
+      set.seed(sd); out1 <- do.call(spread, c(list(landscape = ras), sc$args))
+      set.seed(sd); out2 <- do.call(spread, c(list(landscape = ras), sc$args))
+      cmpRun(out1, out2)
+    }
+  }
 })
 
 test_that("spreadProb with relative values does not work correctly", {

@@ -10,6 +10,35 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// adjPairsWithId
+List adjPairsWithId(IntegerVector cells, IntegerVector id, int numCol, int numCell, int directions);
+RcppExport SEXP _SpaDES_tools_adjPairsWithId(SEXP cellsSEXP, SEXP idSEXP, SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type cells(cellsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type id(idSEXP);
+    Rcpp::traits::input_parameter< int >::type numCol(numColSEXP);
+    Rcpp::traits::input_parameter< int >::type numCell(numCellSEXP);
+    Rcpp::traits::input_parameter< int >::type directions(directionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(adjPairsWithId(cells, id, numCol, numCell, directions));
+    return rcpp_result_gen;
+END_RCPP
+}
+// adjPairsMatrix
+IntegerMatrix adjPairsMatrix(IntegerVector cells, int numCol, int numCell, int directions);
+RcppExport SEXP _SpaDES_tools_adjPairsMatrix(SEXP cellsSEXP, SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type cells(cellsSEXP);
+    Rcpp::traits::input_parameter< int >::type numCol(numColSEXP);
+    Rcpp::traits::input_parameter< int >::type numCell(numCellSEXP);
+    Rcpp::traits::input_parameter< int >::type directions(directionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(adjPairsMatrix(cells, numCol, numCell, directions));
+    return rcpp_result_gen;
+END_RCPP
+}
 // duplicatedInt
 LogicalVector duplicatedInt(IntegerVector x);
 RcppExport SEXP _SpaDES_tools_duplicatedInt(SEXP xSEXP) {
@@ -34,6 +63,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_SpaDES_tools_adjPairsWithId", (DL_FUNC) &_SpaDES_tools_adjPairsWithId, 5},
+    {"_SpaDES_tools_adjPairsMatrix", (DL_FUNC) &_SpaDES_tools_adjPairsMatrix, 4},
     {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
     {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
     {NULL, NULL, 0}

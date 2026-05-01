@@ -1,3 +1,16 @@
+# SpaDES.tools 2.1.1.9000
+
+## Enhancements
+* `spread()` and `spread2()` are now faster: the per-iteration `adj()` call
+  has been replaced with surgical Rcpp helpers (`adjPairsMatrix()` for
+  `spread()`, `adjPairsWithId()` for `spread2()`) that compute neighbour
+  pairs and apply edge filtering in C++. Output is byte-identical to the
+  previous implementation across a multi-seed verification battery.
+  Measured speedups: `spread2` ~1.4×, `spread` ~1.6–2.3× depending on
+  `spreadProb` and scenario.
+* New seeded determinism tests for `spread()` and `spread2()`: each runs a
+  parameter grid twice with the same seed and asserts bit-identical output.
+
 # SpaDES.tools 2.1.1
 
 * `reproducible:::isGridded` now exported as `.isGridded` (#99);
