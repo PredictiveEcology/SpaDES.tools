@@ -719,9 +719,15 @@ spread <- function(
           directions = as.integer(directions)
         )
       } else {
-        ## must pad the first column of potentials
-        newAdj <- adj(landscape, loci, directions, pairs = FALSE)
-        potentials <- cbind(NA_integer_, newAdj)
+        ## C++ neighbour expansion + edge filter; the original code padded
+        ## the from column with NA via cbind(NA_integer_, adj(..., pairs=FALSE)),
+        ## so reproduce that here — downstream uses only potentials[, 2L]
+        potentials <- adjPairsMatrix(
+          cells = as.integer(loci),
+          numCol = numCols, numCell = ncells,
+          directions = as.integer(directions)
+        )
+        potentials[, "from"] <- NA_integer_
       }
     }
 
