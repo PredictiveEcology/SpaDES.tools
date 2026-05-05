@@ -101,6 +101,12 @@ test_that("spread2() output matches pre-Rcpp baseline (seeded grid)", {
   testInit(c("terra", "withr"))
 
   skip_if(!dir.exists(snapDir), "snapshot dir missing")
+  ## The baseline snapshots were captured with {bit} installed, so
+  ## spread2()'s spreadState$notAvailable attribute is a <booltype/bit>
+  ## integer vector. Without {bit}, spread2() falls back to a plain
+  ## logical vector — values match but expect_equal() fails on type.
+  ## Skip rather than carry a parallel set of bit-less snapshots.
+  skip_if_not_installed("bit")
 
   ras <- terra::rast(terra::ext(0, 80, 0, 80), resolution = 1, vals = 1)
   withr::with_seed(7L,   spsRas <- terra::rast(ras, vals = stats::runif(terra::ncell(ras), 0.10, 0.40)))
