@@ -44,7 +44,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: r-lib/actions/setup-pandoc@v2
+      # setup-pandoc occasionally fails with HTTP 5xx (hit us today on
+      # ubuntu oldrel-1). Three attempts with continue-on-error.
+      - id: pandoc1
+        continue-on-error: true
+        uses: r-lib/actions/setup-pandoc@v2
+      - if: steps.pandoc1.outcome == 'failure'
+        id: pandoc2
+        continue-on-error: true
+        uses: r-lib/actions/setup-pandoc@v2
+      - if: steps.pandoc1.outcome == 'failure' && steps.pandoc2.outcome == 'failure'
+        uses: r-lib/actions/setup-pandoc@v2
 
       # Install spatial system deps inline. Replaces
       # PredictiveEcology/actions/install-spatial-deps@v0.2, which has been
@@ -92,8 +102,12 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: false
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - id: deps
+        continue-on-error: true
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          # Pin pak stable; devel-pak occasionally regresses on resolve.
+          pak-version: stable
           # Bump when the stock-Noble libgdal/proj soversion changes (or
           # when a stale binary cache otherwise refuses to load). Previous
           # cache had a `terra` binary built against libgdal.so.37 from the
@@ -104,6 +118,22 @@ jobs:
           extra-packages: |
             any::rcmdcheck
             NLMR=?ignore
+
+      # Retry fallback: catches transient pak resolution / GitHub-API
+      # / binary-fetch errors. 3 attempts × 30 min × 60 s backoff.
+      - name: Install R deps (retry fallback)
+        if: steps.deps.outcome == 'failure'
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 60
+          retry_on: error
+          shell: 'Rscript {0}'
+          command: |
+            install.packages("pak", repos = "https://r-lib.github.io/p/pak/stable/")
+            pak::local_install_dev_deps(ask = FALSE, dependencies = TRUE)
+            pak::pkg_install(c("any::rcmdcheck"), ask = FALSE)
 
       - name: Install additional package dependencies
         run: |
