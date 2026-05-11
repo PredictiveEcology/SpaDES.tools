@@ -74,6 +74,8 @@
 #' r
 #' terra::plot(r)  # remaining cells are NA
 #' }
+utils::globalVariables(c("..cols", "..nams"))
+
 rastFromDF <- function(df, rasTemplate, cols = NULL, cellIDcol = NULL) {
   if (!is.data.table(df))
     df <- data.table::as.data.table(df)
@@ -85,7 +87,7 @@ rastFromDF <- function(df, rasTemplate, cols = NULL, cellIDcol = NULL) {
     stop("The data.frame/data.table must have a column named pixel* or cellID or cell*")
   nr <- terra::ncell(rasTemplate)
   # Complete full table of cell numbers
-  full <- list(seq_len(nr)) |> setNames(cellIDcol) |> data.table::setDT()
+  full <- list(seq_len(nr)) |> stats::setNames(cellIDcol) |> data.table::setDT()
   full <- df[full, on = cellIDcol]
   ras <- terra::rast(rasTemplate, nlyrs = NCOL(df) - 1)
   nams <- setdiff(colnames(df), cellIDcol)
