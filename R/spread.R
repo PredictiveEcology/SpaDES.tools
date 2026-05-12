@@ -369,7 +369,11 @@ spread <- function(
   }
   if (requireNamespace("dqrng", quietly = TRUE)) {
     dqrng::dqset.seed(sample.int(1e9, 2)) ## set dqrng seed from base state
-    samInt <- dqrng::dqsample.int
+    ## n<=1 short-circuit: dqsample.int(1) advances the xoroshiro state
+    ## inconsistently (depends on the internal bit-buffer position from the
+    ## previous call), so otherwise two same-seed spread() runs can diverge
+    ## on the next dqsample call.
+    samInt <- function(n) if (n <= 1L) seq_len(n) else dqrng::dqsample.int(n)
   } else {
     samInt <- sample.int
   }
