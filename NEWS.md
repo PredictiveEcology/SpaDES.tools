@@ -1,3 +1,10 @@
+# SpaDES.tools 2.1.1.9000
+
+## Enhancements
+* `rasterizeReduced()`: improved speed (#103). Benchmark on a 2000×2000
+  raster with 200 codes: single-column ~5× (0.65 s → 0.13 s), multi-column
+  ~3.7× (0.69 s → 0.18 s).
+
 # SpaDES.tools 2.1.1
 
 * `reproducible:::isGridded` now exported as `.isGridded` (#99);

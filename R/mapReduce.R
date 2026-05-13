@@ -1,4 +1,4 @@
-utils::globalVariables(c("..colsToKeep", ".N", ".SD", "row_number"))
+utils::globalVariables(c(".N", ".SD"))
 
 ################################################################################
 #' Convert reduced representation to full raster
@@ -31,7 +31,7 @@ utils::globalVariables(c("..colsToKeep", ".N", ".SD", "row_number"))
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom data.table := data.table key setkeyv setnames
+#' @importFrom data.table as.data.table data.table is.data.table
 #' @importFrom terra ext levels rast res values
 #' @rdname rasterizeReduced
 #'
@@ -41,87 +41,64 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   if (!inherits(fullRaster, c("Raster", "SpatRaster"))) {
     stop("fullRaster must be a Raster or SpatRaster")
   }
+  isSpat <- is(fullRaster, "SpatRaster")
 
   ## don't use rasterRead; rasterizeReduced can be used independently of reproducible
-  if (is(fullRaster, "Raster")) {
-    rasterFUN <- function(...) {
-      raster::raster(...)
-    }
-  } else {
-    rasterFUN <- function(...) {
-      rast(...)
-    }
-  }
+  rasterFUN <- if (isSpat) function(x) rast(x) else function(x) raster::raster(x)
 
+  ## as.data.table() not setDT(): setDT mutates the caller's input by reference,
+  ## silently converting their data.frame to a data.table.
   if (!is.data.table(reduced))
-    reduced <- data.table::setDT(reduced)
+    reduced <- data.table::as.data.table(reduced)
 
-  if (!is.null(key(reduced))) {
-    if (key(reduced) != mapcode) {
-      setkeyv(reduced, mapcode)
+  ncell_ <- ncell(fullRaster)
+  isFactorRas <- if (isSpat) isTRUE(is.factor(fullRaster)[1]) else raster::is.factor(fullRaster)
+
+  ## For factor rasters, `fullRaster[1:ncell_]` returns active-category labels.
+  ## For numeric rasters we skip the data.table round-trip entirely -- the
+  ## previous as.data.table()-and-setkey path dominated runtime on large rasters.
+  if (isFactorRas) {
+    fullRasterVals <- fullRaster[1:ncell_]
+    if (is.data.frame(fullRasterVals)) fullRasterVals <- fullRasterVals[[1L]]
+    if (!isSpat) {
+      ## RasterLayer factors need explicit ID -> level translation
+      fullRasterVals <- raster::factorValues(fullRaster, fullRasterVals)[[1L]]
     }
+    if (is.factor(fullRasterVals)) fullRasterVals <- as.character(fullRasterVals)
+  } else if (isSpat) {
+    fullRasterVals <- terra::values(fullRaster, mat = FALSE)
   } else {
-    setkeyv(reduced, mapcode)
+    fullRasterVals <- as.vector(fullRaster[])
   }
 
-  ## instead of `.as.vector(values(fullRaster))` extract by pix ID so that
-  ## for factor rasters the value/label of the active category (not its code/level) is extracted
-  ## presumably this is the value in reduced.
-  # fullRasterVals <- as.data.table(fullRaster[1:ncell(fullRaster)])
-  fullRasterVals <- as.data.table(values(fullRaster, mat = FALSE))
-  setnames(fullRasterVals, 1, new = mapcode)
+  ## Replace the previous keyed-join + unique() round-trip with a single
+  ## match() lookup: for each pixel, find the row in `reduced` whose mapcode
+  ## column equals the pixel value. Equivalent to the old join when `reduced`
+  ## is unique by mapcode (the documented use case); for duplicated mapcodes
+  ## this picks the first occurrence, matching the post-`unique()` behaviour.
+  matchIdx <- match(fullRasterVals, reduced[[mapcode]])
 
-  ## with RasterLayer we need to use factorValues to convert the mapcodes
-  ## to the levels.
-  if (is(fullRaster, "Raster")) {
-    if (raster::is.factor(fullRaster)) {
-      fullRasterVals <- as.data.table(raster::factorValues(fullRaster, fullRasterVals[[mapcode]]))
-      setnames(fullRasterVals, 1, new = mapcode)
-    }
-  }
-
-  if (is.factor(fullRasterVals[[mapcode]])) {
-    fullRasterVals[, (mapcode) := lapply(.SD, as.character), .SDcols = mapcode]
-  }
-
-  set(fullRasterVals, NULL, "row_number", seq(ncell(fullRaster)))
-  setkeyv(fullRasterVals, mapcode)
-
-  colsToKeep <- c(mapcode, newRasterCols)
-  BsumVec <- reduced[, ..colsToKeep][fullRasterVals] |> unique()
-  setkeyv(BsumVec, "row_number")
-
-  if (length(newRasterCols) > 1) {
-    ras <- list()
-    for (i in newRasterCols) {
-      ras[[i]] <- rasterFUN(fullRaster)
-      names(ras[[i]]) <- names(rasterFUN(fullRaster))
-
-      if (is.factor(BsumVec[[i]]) && is(ras, "SpatRaster")) {
-        ras[[i]][] <- as.numeric(BsumVec[[i]])
-        levs <- unique(data.frame(id = na.omit(as.numeric(BsumVec[[i]])),
-                                  values = na.omit(BsumVec[[i]])))
-        levels(ras[[i]][]) <- levs
-      } else {
-        ## if factor values are attributed to a RasterLayer,
-        ## the attributes table is automatically added
-        ras[[i]][] <- BsumVec[[i]]
-      }
-    }
-  } else {
-    ras <- rasterFUN(fullRaster)
-    names(ras) <- names(rasterFUN())
-
-    if (is.factor(BsumVec[[newRasterCols]]) && is(ras, "SpatRaster")) {
-      ras[] <- as.numeric(BsumVec[[newRasterCols]])
-      levs <- unique(data.frame(id = na.omit(as.numeric(BsumVec[[newRasterCols]])),
-                                values = na.omit(BsumVec[[newRasterCols]])))
-      levels(ras) <- levs
+  fillRas <- function(col) {
+    r <- rasterFUN(fullRaster)
+    names(r) <- col
+    vals <- reduced[[col]][matchIdx]
+    if (is.factor(vals) && isSpat) {
+      r[] <- as.numeric(vals)
+      levs <- unique(data.frame(id = na.omit(as.numeric(vals)),
+                                values = na.omit(vals)))
+      levels(r) <- levs
     } else {
       ## if factor values are attributed to a RasterLayer,
       ## the attributes table is automatically added
-      ras[] <- BsumVec[[newRasterCols]]
+      r[] <- vals
     }
+    r
   }
-  return(ras)
+
+  if (length(newRasterCols) > 1) {
+    ras <- lapply(setNames(newRasterCols, newRasterCols), fillRas)
+  } else {
+    ras <- fillRas(newRasterCols)
+  }
+  ras
 }
