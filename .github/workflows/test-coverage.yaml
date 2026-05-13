@@ -34,11 +34,35 @@ jobs:
           Ncpus: 2
           use-public-rspm: false
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - id: deps
+        continue-on-error: true
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          # Pin pak stable; devel-pak occasionally regresses on resolve.
+          pak-version: stable
+          # Bump alongside R-CMD-check's cache-version when stale binaries
+          # need to be invalidated.
+          cache-version: 2
           extra-packages: |
             any::covr
             NLMR=?ignore
+
+      # Retry fallback: catches transient pak resolution / GitHub-API
+      # / binary-fetch errors. 3 attempts x 30 min x 60 s backoff. Mirrors
+      # the same retry block in R-CMD-check.yaml.
+      - name: Install R deps (retry fallback)
+        if: steps.deps.outcome == 'failure'
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 60
+          retry_on: error
+          shell: 'Rscript {0}'
+          command: |
+            install.packages("pak", repos = "https://r-lib.github.io/p/pak/stable/")
+            pak::local_install_dev_deps(ask = FALSE, dependencies = TRUE)
+            pak::pkg_install(c("any::covr"), ask = FALSE)
 
       - name: Install additional package dependencies
         run: |
