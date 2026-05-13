@@ -1,4 +1,4 @@
-# SpaDES.tools 2.1.1.9000
+# SpaDES.tools 2.1.2
 
 ## Enhancements
 * `spread()` and `spread2()` are now faster: the per-iteration `adj()` call
@@ -20,6 +20,15 @@
   pre-Rcpp baseline across 30 seeded scenarios (15 `spread` × 3 seeds and
   16 `spread2` × 3 seeds). Snapshots and the regeneration script live in
   `tests/testthat/_spread_snapshots/`.
+* `neutralLandscapeMap()` gains a built-in default generator
+  (`type = "gaussian"`) that fills a padded grid with i.i.d. normal noise
+  and smooths it with a square mean kernel. It produces a roughly Gaussian
+  random field similar in look to `NLMR::nlm_gaussianfield`, but with no
+  dependency on `NLMR` or `RandomFields`. Use the new `smooth` argument to
+  control autocorrelation length. The `NLMR` types still work when `NLMR`
+  is installed; if it is not, the function now suggests `type = "gaussian"`
+  instead of erroring. Step toward removing the `NLMR` dependency
+  (PredictiveEcology/SpaDES.core#334).
 
 # SpaDES.tools 2.1.1
 
