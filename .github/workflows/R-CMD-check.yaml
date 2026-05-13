@@ -66,7 +66,10 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev libsqlite3-dev
+          # libuv1-dev (-> fs) and libmagick++-dev (-> magick) are needed
+          # when the remotes fallback source-installs Suggests-chain deps
+          # that the pak/rspm binary path would have skipped compiling.
+          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev libsqlite3-dev libuv1-dev libmagick++-dev
         shell: bash
 
       - name: Install spatial system dependencies (macOS)
