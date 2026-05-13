@@ -1,3 +1,15 @@
+# SpaDES.tools 2.1.1.9001
+
+* `neutralLandscapeMap()` gains a built-in default generator
+  (`type = "gaussian"`) that fills a padded grid with i.i.d. normal noise
+  and smooths it with a square mean kernel. It produces a roughly Gaussian
+  random field similar in look to `NLMR::nlm_gaussianfield`, but with no
+  dependency on `NLMR` or `RandomFields`. Use the new `smooth` argument to
+  control autocorrelation length. The `NLMR` types still work when `NLMR`
+  is installed; if it is not, the function now suggests `type = "gaussian"`
+  instead of erroring. Step toward removing the `NLMR` dependency
+  (PredictiveEcology/SpaDES.core#334).
+
 # SpaDES.tools 2.1.1
 
 * `reproducible:::isGridded` now exported as `.isGridded` (#99);

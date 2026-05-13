@@ -2,60 +2,95 @@
 % Please edit documentation in R/initialize.R
 \name{neutralLandscapeMap}
 \alias{neutralLandscapeMap}
-\title{Produce a neutral landscape using a midpoint displacement algorithm}
+\title{Produce a neutral (random) landscape raster}
 \usage{
 neutralLandscapeMap(
   x,
   pad = 10L,
-  type = c("nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient", "nlm_edgegradient",
-    "nlm_fbm", "nlm_mosaicfield", "nlm_mosaicgibbs", "nlm_mosaictess", "nlm_neigh",
-    "nlm_percolation", "nlm_planargradient", "nlm_random",
+  type = c("gaussian", "nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient",
+    "nlm_edgegradient", "nlm_fbm", "nlm_mosaicfield", "nlm_mosaicgibbs",
+    "nlm_mosaictess", "nlm_neigh", "nlm_percolation", "nlm_planargradient", "nlm_random",
     "nlm_randomrectangularcluster"),
+  smooth = 3L,
+  rescale = TRUE,
   ...
 )
 }
 \arguments{
-\item{x}{A \code{RasterLayer}/\code{SpatRaster} to use as a template.}
+\item{x}{A \code{SpatRaster} (or \code{RasterLayer}) to use as a template for
+the grid and CRS.}
 
-\item{pad}{Integer. Number of cells by which to pad \code{x} internally to ensure
-\code{nlm_mpd} produces a raster corresponding to the dimensions of \code{x}.}
+\item{pad}{Integer. Number of cells by which to pad \code{x} internally;
+padding is cropped from the result. For \code{NLMR} types this
+ensures the output matches \code{x}'s dimensions even when the
+\code{NLMR} algorithm trims the grid.}
 
-\item{type}{One of the supported \code{NLMR} functions.}
+\item{type}{\code{"gaussian"} (default; built-in, no extra packages needed)
+or one of the supported \code{NLMR} function names. See Details.}
 
-\item{...}{Further arguments passed to \code{NLMR} function specified in \code{type}
-(except \code{ncol}, \code{nrow} and \code{resolution}, which are extracted from \code{x}).}
+\item{smooth}{Used only when \code{type = "gaussian"}. Half-width (in cells) of
+the smoothing kernel; larger values produce smoother
+landscapes with longer-range autocorrelation.}
+
+\item{rescale}{Used only when \code{type = "gaussian"}. If \code{TRUE} (default),
+rescale output values to \verb{[0, 1]}.}
+
+\item{...}{For \code{NLMR} types, further arguments passed to the underlying
+\code{NLMR} function (\code{ncol}, \code{nrow}, \code{resolution} are taken from
+\code{x} and should not be supplied here). For \code{type = "gaussian"},
+extra arguments are ignored.}
 }
 \value{
-A \code{RasterLayer}/\code{SpatRaster} with same extent as \code{x}, with randomly generated values.
+A \code{SpatRaster} (or \code{RasterLayer}, matching \code{x}) with the same
+extent, resolution, and CRS as \code{x}, filled with randomly-generated values.
 }
 \description{
-This is a wrapper for the \code{nlm_mpd} function in the \code{NLMR} package.
-The main addition is that it makes sure that the output raster conforms
-in extent with the input raster \code{x}, since \code{nlm_mpd} can output a smaller raster.
+Generates a \code{SpatRaster} of randomly-varying values on the same grid as a
+template raster \code{x}. The default \code{type = "gaussian"} uses a built-in
+Gaussian-smoothed random field that has no extra dependencies. The other
+\code{type} values are thin wrappers around functions of the same name in the
+\href{https://github.com/ropensci/NLMR}{\code{NLMR}} package; those require \code{NLMR} to
+be installed.
+}
+\details{
+The built-in \code{"gaussian"} generator fills a padded grid with i.i.d. normal
+noise, then smooths it with a square mean kernel of size \code{2 * smooth + 1}.
+The result is a roughly Gaussian random field that looks qualitatively
+similar to \code{NLMR::nlm_gaussianfield} for typical \code{smooth} values, but with
+no dependency on \code{NLMR}/\code{RandomFields}. It is suitable for sample modules,
+demos, and tests; for publication-quality neutral landscapes, prefer one of
+the \code{NLMR} types (the original midpoint-displacement algorithm
+\code{"nlm_mpd"} was the historical default of this function).
 }
 \examples{
 \donttest{
+  library(terra)
+  nx <- ny <- 100L
+  r <- rast(nrows = ny, ncols = nx,
+            xmin = -nx/2, xmax = nx/2,
+            ymin = -ny/2, ymax = ny/2)
+
+  ## Built-in default (no NLMR needed):
+  map_default <- neutralLandscapeMap(r)
+  if (interactive()) plot(map_default)
+
+  ## Tweak smoothness:
+  map_rough  <- neutralLandscapeMap(r, smooth = 1)
+  map_smooth <- neutralLandscapeMap(r, smooth = 8)
+
+  ## NLMR variants (require NLMR installed):
   if (requireNamespace("NLMR", quietly = TRUE) &&
       requireNamespace("raster", quietly = TRUE)) {
-    library(terra)
-    nx <- ny <- 100L
-    r <- rast(nrows = ny, ncols = nx,
-              xmin = -nx/2, xmax = nx/2,
-              ymin = -ny/2, ymax = ny/2)
-    ## or with raster package:
-    # r <- raster::raster(nrows = ny, ncols = nx,
-    #                     xmn = -nx/2, xmx = nx/2,
-    #                     ymn = -ny/2, ymx = ny/2)
-    map1 <- neutralLandscapeMap(r,
-                                type = "nlm_mpd",
-                                roughness = 0.65,
-                                rand_dev = 200,
-                                rescale = FALSE,
-                                verbose = FALSE)
-    if (interactive()) plot(map1)
+    map_mpd <- neutralLandscapeMap(r,
+                                   type = "nlm_mpd",
+                                   roughness = 0.65,
+                                   rand_dev = 200,
+                                   rescale = FALSE,
+                                   verbose = FALSE)
+    if (interactive()) plot(map_mpd)
   }
 }
 }
 \seealso{
-\code{nlm_mpd}
+\code{NLMR::nlm_mpd}, \code{NLMR::nlm_gaussianfield}
 }
