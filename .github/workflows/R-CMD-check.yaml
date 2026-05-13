@@ -53,15 +53,35 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: false
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - id: deps
+        continue-on-error: true
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
             any::rcmdcheck
             NLMR=?ignore
 
+      # Fallback path when pak resolution fails (e.g. pak stable 0.9.5's
+      # `if (any(sel)) ... missing value` regression in pkgplan_solve).
+      # Bypass pak entirely and use `remotes` against CRAN +
+      # PredictiveEcology r-universe instead.
+      - name: Install R deps (remotes fallback)
+        if: steps.deps.outcome == 'failure'
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 60
+          retry_on: error
+          shell: bash
+          command: |
+            Rscript -e 'install.packages(c("remotes", "rcmdcheck"), repos = c("https://cloud.r-project.org"))' \
+                    -e 'remotes::install_deps(dependencies = TRUE, repos = c("https://predictiveecology.r-universe.dev/", "https://cloud.r-project.org"))'
+
       - name: Install additional package dependencies
         run: |
-          pak::pkg_install("remotes")
+          if (!requireNamespace("remotes", quietly = TRUE))
+            install.packages("remotes", repos = "https://cloud.r-project.org")
           remotes::install_github("ropensci/NLMR")
         shell: Rscript {0}
 
