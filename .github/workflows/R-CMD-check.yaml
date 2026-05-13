@@ -119,9 +119,12 @@ jobs:
             any::rcmdcheck
             NLMR=?ignore
 
-      # Retry fallback: catches transient pak resolution / GitHub-API
-      # / binary-fetch errors. 3 attempts × 30 min × 60 s backoff.
-      - name: Install R deps (retry fallback)
+      # Fallback path when pak resolution fails (e.g. pak stable 0.9.5's
+      # `if (any(sel)) ... missing value` regression in pkgplan_solve).
+      # Bypass pak entirely and use `remotes` against CRAN +
+      # PredictiveEcology r-universe instead. nick-fields/retry only
+      # accepts a standard shell, so wrap Rscript via bash.
+      - name: Install R deps (remotes fallback)
         if: steps.deps.outcome == 'failure'
         uses: nick-fields/retry@v3
         with:
@@ -129,15 +132,15 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 60
           retry_on: error
-          shell: 'Rscript {0}'
+          shell: bash
           command: |
-            install.packages("pak", repos = "https://r-lib.github.io/p/pak/stable/")
-            pak::local_install_dev_deps(ask = FALSE, dependencies = TRUE)
-            pak::pkg_install(c("any::rcmdcheck"), ask = FALSE)
+            Rscript -e 'install.packages(c("remotes", "rcmdcheck"), repos = c("https://cloud.r-project.org"))' \
+                    -e 'remotes::install_deps(dependencies = TRUE, repos = c("https://predictiveecology.r-universe.dev/", "https://cloud.r-project.org"))'
 
       - name: Install additional package dependencies
         run: |
-          pak::pkg_install("remotes")
+          if (!requireNamespace("remotes", quietly = TRUE))
+            install.packages("remotes", repos = "https://cloud.r-project.org")
           remotes::install_github("ropensci/NLMR")
         shell: Rscript {0}
 
