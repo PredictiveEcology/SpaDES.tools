@@ -26,14 +26,21 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - uses: PredictiveEcology/actions/install-spatial-deps@v0.2
-
+      # Install spatial system deps inline (same as R-CMD-check.yaml).
+      # The external `PredictiveEcology/actions/install-spatial-deps@v0.2`
+      # action installs libgdal from ubuntugis-unstable PPA (`libgdal.so.37`),
+      # which replaces stock Noble's `libgdal.so.34`. cache-version: 2's
+      # `terra` binary was built against `.34`, so at runtime it fails to
+      # load (covr install: "libgdal.so.34: cannot open shared object file").
+      # Ubuntu 24.04's default repos already ship a recent enough
+      # GDAL/GEOS/PROJ for terra, so the PPA is no longer needed.
       # libuv1-dev (-> fs) and libmagick++-dev (-> magick) are needed when
       # the remotes fallback source-installs Suggests-chain deps that the
       # pak/rspm binary path would have skipped compiling.
-      - name: Install extra system dependencies for source builds (Linux)
+      - name: Install spatial system dependencies (Linux)
         run: |
-          sudo apt-get install -y libuv1-dev libmagick++-dev
+          sudo apt-get update -y
+          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev libsqlite3-dev libuv1-dev libmagick++-dev
         shell: bash
 
       - uses: r-lib/actions/setup-r@v2
