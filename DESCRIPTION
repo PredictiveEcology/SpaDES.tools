@@ -70,6 +70,7 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-CA
 Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.0.0
 Collate: 
     'RcppExports.R'
     'heading.R'
@@ -95,4 +96,3 @@ Collate:
     'spread3.R'
     'studyArea.R'
     'zzz.R'
-Config/roxygen2/version: 8.0.0

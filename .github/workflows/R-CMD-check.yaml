@@ -10,6 +10,9 @@ on:
 
 name: R-CMD-check
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -41,9 +44,58 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: r-lib/actions/setup-pandoc@v2
+      # setup-pandoc occasionally fails with HTTP 5xx (hit us today on
+      # ubuntu oldrel-1). Three attempts with continue-on-error.
+      - id: pandoc1
+        continue-on-error: true
+        uses: r-lib/actions/setup-pandoc@v2
+      - if: steps.pandoc1.outcome == 'failure'
+        id: pandoc2
+        continue-on-error: true
+        uses: r-lib/actions/setup-pandoc@v2
+      - if: steps.pandoc1.outcome == 'failure' && steps.pandoc2.outcome == 'failure'
+        uses: r-lib/actions/setup-pandoc@v2
 
-      - uses: PredictiveEcology/actions/install-spatial-deps@v0.2
+      # Install spatial system deps inline. Replaces
+      # PredictiveEcology/actions/install-spatial-deps@v0.2, which has been
+      # failing on Ubuntu runners because `add-apt-repository ppa:ubuntugis/
+      # ubuntugis-unstable` times out reaching launchpad. Ubuntu 24.04's
+      # default repos already ship a recent enough GDAL/GEOS/PROJ for terra,
+      # so the PPA is no longer needed.
+      - name: Install spatial system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -y
+          # libuv1-dev (-> fs) and libmagick++-dev (-> magick) are needed
+          # when the remotes fallback source-installs Suggests-chain deps
+          # that the pak/rspm binary path would have skipped compiling.
+          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev libsqlite3-dev libuv1-dev libmagick++-dev
+        shell: bash
+
+      - name: Install spatial system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install pkg-config
+          brew install gdal
+        shell: bash
+
+      # On macOS the Homebrew GDAL/PROJ install does not always leave
+      # `proj.db` on PROJ's default search path. Without it, every
+      # `terra::project()` / `terra::crs()` call emits
+      #   PROJ: proj_create_from_name: Cannot find proj.db (GDAL error 1)
+      # and reprojections fail. Point PROJ at Homebrew's data dir explicitly.
+      - name: Configure PROJ data path (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          PROJ_PREFIX="$(brew --prefix proj 2>/dev/null || true)"
+          PROJ_DATA="$PROJ_PREFIX/share/proj"
+          if [ ! -d "$PROJ_DATA" ]; then PROJ_DATA="/usr/local/share/proj"; fi
+          if [ ! -d "$PROJ_DATA" ]; then PROJ_DATA="/opt/homebrew/share/proj"; fi
+          echo "PROJ_DATA=$PROJ_DATA" >> "$GITHUB_ENV"
+          echo "PROJ_LIB=$PROJ_DATA"  >> "$GITHUB_ENV"
+          echo "Using PROJ_DATA=$PROJ_DATA"
+          ls -1 "$PROJ_DATA" | head -5 || true
+        shell: bash
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -57,6 +109,15 @@ jobs:
         continue-on-error: true
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          # Pin pak stable; devel-pak occasionally regresses on resolve.
+          pak-version: stable
+          # Bump when the stock-Noble libgdal/proj soversion changes (or
+          # when a stale binary cache otherwise refuses to load). Previous
+          # cache had a `terra` binary built against libgdal.so.37 from the
+          # old ubuntugis-unstable PPA; runners now ship libgdal.so.34 from
+          # stock Noble, so the cache must be invalidated to force a fresh
+          # source build. Same fix already used in SpaDES.core / reproducible.
+          cache-version: 2
           extra-packages: |
             any::rcmdcheck
             NLMR=?ignore
@@ -64,7 +125,8 @@ jobs:
       # Fallback path when pak resolution fails (e.g. pak stable 0.9.5's
       # `if (any(sel)) ... missing value` regression in pkgplan_solve).
       # Bypass pak entirely and use `remotes` against CRAN +
-      # PredictiveEcology r-universe instead.
+      # PredictiveEcology r-universe instead. nick-fields/retry only
+      # accepts a standard shell, so wrap Rscript via bash.
       - name: Install R deps (remotes fallback)
         if: steps.deps.outcome == 'failure'
         uses: nick-fields/retry@v3

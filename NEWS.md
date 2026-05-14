@@ -1,6 +1,25 @@
-# SpaDES.tools 2.1.1.9001
+# SpaDES.tools 2.1.2
 
 ## Enhancements
+* `spread()` and `spread2()` are now faster: the per-iteration `adj()` call
+  has been replaced with surgical Rcpp helpers (`adjPairsMatrix()` for
+  `spread()`, `adjPairsWithId()` for `spread2()`) that compute neighbour
+  pairs and apply edge filtering in C++. Output is value-identical to the
+  previous implementation across a multi-seed verification battery (the
+  `pixels`/`initialPixels` columns of `spread2()`'s data.table are now
+  integer rather than numeric, but values are unchanged).
+  Measured speedups: `spread2` ~1.4×, `spread` ~1.6–2.3× depending on
+  `spreadProb` and scenario.
+* `spread()`'s no-flags branch (no `id`/`returnIndices`/`circle`/
+  `relativeSpreadProb`/`neighProbs` set, non-matrix path) also now goes
+  through `adjPairsMatrix()` so the inner loop no longer calls `adj()`.
+* New seeded determinism tests for `spread()` and `spread2()`: each runs a
+  parameter grid twice with the same seed and asserts bit-identical output.
+* New drop-in equivalence tests (`test-spread-snapshots.R`): assert that
+  `spread()` / `spread2()` output matches RDS snapshots captured from the
+  pre-Rcpp baseline across 30 seeded scenarios (15 `spread` × 3 seeds and
+  16 `spread2` × 3 seeds). Snapshots and the regeneration script live in
+  `tests/testthat/_spread_snapshots/`.
 * `rasterizeReduced()`: improved speed (#103). Benchmark on a 2000×2000
   raster with 200 codes: single-column ~5× (0.65 s → 0.13 s), multi-column
   ~3.7× (0.69 s → 0.18 s).
