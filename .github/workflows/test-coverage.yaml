@@ -83,14 +83,14 @@ jobs:
       - id: covr
         name: Test coverage
         continue-on-error: true
-        # Wrap covr in tryCatch so the per-session tempdir's
-        # `test-all.Rout.fail` is dumped to the GHA log _before_ R exits and
-        # the tempdir is cleaned up. Without this, a covr failure surfaces
-        # only as an opaque "Package installation did not succeed" with the
-        # actual failing test names and tracebacks lost.
+        # quiet = FALSE so covr's internal install-and-test output reaches
+        # the GHA log. Without it, "Package installation did not succeed"
+        # surfaces with no install diagnostics. The tryCatch also dumps
+        # any test-all.Rout.fail files (R CMD check artifacts) when they
+        # exist, before the per-session tempdir is cleaned up.
         run: |
           res <- tryCatch(
-            covr::codecov(token = Sys.getenv("CODECOV_TOKEN")),
+            covr::codecov(token = Sys.getenv("CODECOV_TOKEN"), quiet = FALSE),
             error = function(e) e
           )
           if (inherits(res, "error")) {
