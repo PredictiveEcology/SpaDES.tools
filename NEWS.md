@@ -20,6 +20,9 @@
   pre-Rcpp baseline across 30 seeded scenarios (15 `spread` × 3 seeds and
   16 `spread2` × 3 seeds). Snapshots and the regeneration script live in
   `tests/testthat/_spread_snapshots/`.
+* `rasterizeReduced()`: improved speed (#103). Benchmark on a 2000×2000
+  raster with 200 codes: single-column ~5× (0.65 s → 0.13 s), multi-column
+  ~3.7× (0.69 s → 0.18 s).
 * `neutralLandscapeMap()` gains a built-in default generator
   (`type = "gaussian"`) that fills a padded grid with i.i.d. normal noise
   and smooths it with a square mean kernel. It produces a roughly Gaussian
