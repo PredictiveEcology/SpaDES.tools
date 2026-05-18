@@ -45,7 +45,6 @@ jobs:
 
       - uses: r-lib/actions/setup-r@v2
         with:
-          extra-repositories: 'https://predictiveecology.r-universe.dev/'
           Ncpus: 2
           use-public-rspm: false
 
@@ -60,13 +59,12 @@ jobs:
           cache-version: 2
           extra-packages: |
             any::covr
-            NLMR=?ignore
 
       # Fallback path when pak resolution fails (e.g. pak stable 0.9.5's
       # `if (any(sel)) ... missing value` regression in pkgplan_solve).
-      # Bypass pak entirely and use `remotes` against CRAN +
-      # PredictiveEcology r-universe instead. nick-fields/retry only
-      # accepts a standard shell, so wrap Rscript via bash.
+      # Bypass pak entirely and use `remotes` against CRAN instead.
+      # nick-fields/retry only accepts a standard shell, so wrap Rscript
+      # via bash.
       - name: Install R deps (remotes fallback)
         if: steps.deps.outcome == 'failure'
         uses: nick-fields/retry@v3
@@ -78,14 +76,7 @@ jobs:
           shell: bash
           command: |
             Rscript -e 'install.packages(c("remotes", "covr"), repos = c("https://cloud.r-project.org"))' \
-                    -e 'remotes::install_deps(dependencies = TRUE, repos = c("https://predictiveecology.r-universe.dev/", "https://cloud.r-project.org"))'
-
-      - name: Install additional package dependencies
-        run: |
-          if (!requireNamespace("remotes", quietly = TRUE))
-            install.packages("remotes", repos = "https://cloud.r-project.org")
-          remotes::install_github("ropensci/NLMR")
-        shell: Rscript {0}
+                    -e 'remotes::install_deps(dependencies = TRUE, repos = c("https://cloud.r-project.org"))'
 
       - id: covr
         name: Test coverage

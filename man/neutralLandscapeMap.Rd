@@ -7,10 +7,7 @@
 neutralLandscapeMap(
   x,
   pad = 10L,
-  type = c("gaussian", "nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient",
-    "nlm_edgegradient", "nlm_fbm", "nlm_mosaicfield", "nlm_mosaicgibbs",
-    "nlm_mosaictess", "nlm_neigh", "nlm_percolation", "nlm_planargradient", "nlm_random",
-    "nlm_randomrectangularcluster"),
+  type = "gaussian",
   smooth = 3L,
   rescale = TRUE,
   ...
@@ -21,24 +18,17 @@ neutralLandscapeMap(
 the grid and CRS.}
 
 \item{pad}{Integer. Number of cells by which to pad \code{x} internally;
-padding is cropped from the result. For \code{NLMR} types this
-ensures the output matches \code{x}'s dimensions even when the
-\code{NLMR} algorithm trims the grid.}
+the padding is cropped from the result.}
 
-\item{type}{\code{"gaussian"} (default; built-in, no extra packages needed)
-or one of the supported \code{NLMR} function names. See Details.}
+\item{type}{Character. Only \code{"gaussian"} (the default) is supported.}
 
-\item{smooth}{Used only when \code{type = "gaussian"}. Half-width (in cells) of
-the smoothing kernel; larger values produce smoother
-landscapes with longer-range autocorrelation.}
+\item{smooth}{Half-width (in cells) of the smoothing kernel; larger
+values produce smoother landscapes with longer-range
+autocorrelation.}
 
-\item{rescale}{Used only when \code{type = "gaussian"}. If \code{TRUE} (default),
-rescale output values to \verb{[0, 1]}.}
+\item{rescale}{If \code{TRUE} (default), rescale output values to \verb{[0, 1]}.}
 
-\item{...}{For \code{NLMR} types, further arguments passed to the underlying
-\code{NLMR} function (\code{ncol}, \code{nrow}, \code{resolution} are taken from
-\code{x} and should not be supplied here). For \code{type = "gaussian"},
-extra arguments are ignored.}
+\item{...}{Currently ignored; accepted for backwards compatibility.}
 }
 \value{
 A \code{SpatRaster} (or \code{RasterLayer}, matching \code{x}) with the same
@@ -46,21 +36,14 @@ extent, resolution, and CRS as \code{x}, filled with randomly-generated values.
 }
 \description{
 Generates a \code{SpatRaster} of randomly-varying values on the same grid as a
-template raster \code{x}. The default \code{type = "gaussian"} uses a built-in
-Gaussian-smoothed random field that has no extra dependencies. The other
-\code{type} values are thin wrappers around functions of the same name in the
-\href{https://github.com/ropensci/NLMR}{\code{NLMR}} package; those require \code{NLMR} to
-be installed.
+template raster \code{x}, using a built-in Gaussian-smoothed random field with
+no extra package dependencies.
 }
 \details{
-The built-in \code{"gaussian"} generator fills a padded grid with i.i.d. normal
-noise, then smooths it with a square mean kernel of size \code{2 * smooth + 1}.
-The result is a roughly Gaussian random field that looks qualitatively
-similar to \code{NLMR::nlm_gaussianfield} for typical \code{smooth} values, but with
-no dependency on \code{NLMR}/\code{RandomFields}. It is suitable for sample modules,
-demos, and tests; for publication-quality neutral landscapes, prefer one of
-the \code{NLMR} types (the original midpoint-displacement algorithm
-\code{"nlm_mpd"} was the historical default of this function).
+The \code{"gaussian"} generator fills a padded grid with i.i.d. normal noise,
+then smooths it with a square mean kernel of size \code{2 * smooth + 1}. The
+result is a roughly Gaussian random field, suitable for sample modules,
+demos, and tests.
 }
 \examples{
 \donttest{
@@ -70,27 +53,11 @@ the \code{NLMR} types (the original midpoint-displacement algorithm
             xmin = -nx/2, xmax = nx/2,
             ymin = -ny/2, ymax = ny/2)
 
-  ## Built-in default (no NLMR needed):
   map_default <- neutralLandscapeMap(r)
   if (interactive()) plot(map_default)
 
   ## Tweak smoothness:
   map_rough  <- neutralLandscapeMap(r, smooth = 1)
   map_smooth <- neutralLandscapeMap(r, smooth = 8)
-
-  ## NLMR variants (require NLMR installed):
-  if (requireNamespace("NLMR", quietly = TRUE) &&
-      requireNamespace("raster", quietly = TRUE)) {
-    map_mpd <- neutralLandscapeMap(r,
-                                   type = "nlm_mpd",
-                                   roughness = 0.65,
-                                   rand_dev = 200,
-                                   rescale = FALSE,
-                                   verbose = FALSE)
-    if (interactive()) plot(map_mpd)
-  }
 }
-}
-\seealso{
-\code{NLMR::nlm_mpd}, \code{NLMR::nlm_gaussianfield}
 }

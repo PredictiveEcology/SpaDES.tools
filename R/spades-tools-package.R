@@ -71,7 +71,7 @@
 #'   [randomPolygons()] \tab Creates a random polygon with specified number of classes.\cr
 #' }
 #'
-#' See the \pkg{NLMR} package for tools to generate random landscapes (rasters).
+#' See [neutralLandscapeMap()] for tools to generate random landscapes (rasters).
 #'
 #' @section 6 SELES-type approach to simulation:
 #'

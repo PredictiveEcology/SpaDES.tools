@@ -23,14 +23,17 @@
 * `rasterizeReduced()`: improved speed (#103). Benchmark on a 2000×2000
   raster with 200 codes: single-column ~5× (0.65 s → 0.13 s), multi-column
   ~3.7× (0.69 s → 0.18 s).
-* `neutralLandscapeMap()` gains a built-in default generator
-  (`type = "gaussian"`) that fills a padded grid with i.i.d. normal noise
-  and smooths it with a square mean kernel. It produces a roughly Gaussian
-  random field similar in look to `NLMR::nlm_gaussianfield`, but with no
-  dependency on `NLMR` or `RandomFields`. Use the new `smooth` argument to
-  control autocorrelation length. The `NLMR` types still work when `NLMR`
-  is installed; if it is not, the function now suggests `type = "gaussian"`
-  instead of erroring. Step toward removing the `NLMR` dependency
+* `neutralLandscapeMap()` now uses a built-in generator
+  (`type = "gaussian"`, the only supported `type`) that fills a padded grid
+  with i.i.d. normal noise and smooths it with a square mean kernel,
+  producing a roughly Gaussian random field. Use the new `smooth` argument
+  to control autocorrelation length.
+* **Breaking:** the `NLMR`-backed `type` values (`"nlm_mpd"`,
+  `"nlm_gaussianfield"`, etc.) have been removed from
+  `neutralLandscapeMap()`, and the `NLMR` dependency has been dropped
+  entirely (removed from `Suggests`, `Remotes`, and
+  `Additional_repositories`). The built-in `"gaussian"` generator replaces
+  this functionality with no external dependency
   (PredictiveEcology/SpaDES.core#334).
 
 # SpaDES.tools 2.1.1

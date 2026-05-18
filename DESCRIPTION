@@ -2,12 +2,12 @@ Type: Package
 Package: SpaDES.tools
 Title: Additional Tools for Developing Spatially Explicit Discrete Event
     Simulation (SpaDES) Models
-Version: 2.1.1.9001
-Date: 2026-05-10
+Version: 2.1.2
+Date: 2026-05-16
 Authors@R: c(
-    person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = "aut",
+    person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6914-8316")),
-    person("Alex M", "Chubaty", , "achubaty@for-cast.ca", role = c("aut", "cre"),
+    person("Alex M", "Chubaty", , "achubaty@for-cast.ca", role = "aut",
            comment = c(ORCID = "0000-0001-7146-8135")),
     person("Yong", "Luo", , "Yong.Luo@gov.bc.ca", role = "ctb"),
     person("Ceres", "Barros", , "ceres.barros@ubc.ca", role = "ctb",
@@ -21,9 +21,7 @@ Description: Provides GIS and map utilities, plus additional modeling
     agent based models in 'SpaDES'.  Included are various methods for
     spatial spreading, spatial agents, GIS operations, random map
     generation, and others.  See '?SpaDES.tools' for an categorized
-    overview of these additional tools.  The suggested package 'NLMR' can
-    be installed from the following repository:
-    (<https://PredictiveEcology.r-universe.dev>).
+    overview of these additional tools.
 License: GPL-3
 URL: https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
@@ -50,7 +48,6 @@ Suggests:
     dqrng,
     fastmatch,
     knitr,
-    NLMR (>= 1.1.1),
     quickPlot (>= 1.0.2),
     raster (>= 2.5-8),
     rmarkdown,
@@ -60,11 +57,8 @@ Suggests:
     testthat (>= 3.0.0),
     tools,
     withr
-LinkingTo: 
+LinkingTo:
     Rcpp
-Remotes:
-    ropensci/NLMR
-Additional_repositories: https://predictiveecology.r-universe.dev/
 ByteCompile: yes
 Config/testthat/edition: 3
 Encoding: UTF-8

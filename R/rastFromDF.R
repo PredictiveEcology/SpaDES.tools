@@ -74,8 +74,6 @@
 #' r
 #' terra::plot(r)  # remaining cells are NA
 #' }
-utils::globalVariables(c("..cols", "..nams"))
-
 rastFromDF <- function(df, rasTemplate, cols = NULL, cellIDcol = NULL) {
   if (!is.data.table(df))
     df <- data.table::as.data.table(df)
@@ -95,4 +93,6 @@ rastFromDF <- function(df, rasTemplate, cols = NULL, cellIDcol = NULL) {
   terra::values(ras) <- full[, ..nams]
   ras
 }
+
+utils::globalVariables(c("..cols", "..nams"))
 

@@ -85,7 +85,7 @@ List adjPairsWithId(IntegerVector cells, IntegerVector id,
 //' names "from" and "to". Equivalent to adj(..., pairs = TRUE) but without
 //' the data.table allocation/coercion overhead.
 //'
-//' @inheritParams adjPairsShuffled
+//' @inheritParams adjPairsWithId
 //'
 //' @return A 2-column integer matrix with columns named `from` and `to`.
 //' @keywords internal

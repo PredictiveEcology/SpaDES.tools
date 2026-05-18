@@ -78,7 +78,7 @@ These dummy maps can later be replaced with actual data maps.
 \code{\link[=randomPolygons]{randomPolygons()}} \tab Creates a random polygon with specified number of classes.\cr
 }
 
-See the \pkg{NLMR} package for tools to generate random landscapes (rasters).
+See \code{\link[=neutralLandscapeMap]{neutralLandscapeMap()}} for tools to generate random landscapes (rasters).
 }
 
 \section{6 SELES-type approach to simulation}{
@@ -117,12 +117,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Alex M Chubaty \email{achubaty@for-cast.ca} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
+\strong{Maintainer}: Eliot J B McIntire \email{eliot.mcintire@nrcan-rncan.gc.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
 
 Authors:
 \itemize{
-  \item Alex M Chubaty \email{achubaty@for-cast.ca} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
   \item Eliot J B McIntire \email{eliot.mcintire@nrcan-rncan.gc.ca} (\href{https://orcid.org/0000-0002-6914-8316}{ORCID})
+  \item Alex M Chubaty \email{achubaty@for-cast.ca} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
 }
 
 Other contributors:

@@ -40,8 +40,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   .Defunct(msg = paste(
     "Random landscape generation functionality has been removed",
     "because the RandomFields packages is no longer maintained.\n",
-    "See neutralLandscapeMap() or use the NLMR package for tools to generate various",
-    "random/neutral landscapes."
+    "See neutralLandscapeMap() for tools to generate random/neutral landscapes."
   ))
 }
 
@@ -585,53 +584,37 @@ long2UTM <- function(long) {
 #' Produce a neutral (random) landscape raster
 #'
 #' Generates a `SpatRaster` of randomly-varying values on the same grid as a
-#' template raster `x`. The default `type = "gaussian"` uses a built-in
-#' Gaussian-smoothed random field that has no extra dependencies. The other
-#' `type` values are thin wrappers around functions of the same name in the
-#' [`NLMR`](https://github.com/ropensci/NLMR) package; those require `NLMR` to
-#' be installed.
+#' template raster `x`, using a built-in Gaussian-smoothed random field with
+#' no extra package dependencies.
 #'
 #' @param x        A `SpatRaster` (or `RasterLayer`) to use as a template for
 #'                 the grid and CRS.
 #'
 #' @param pad      Integer. Number of cells by which to pad `x` internally;
-#'                 padding is cropped from the result. For `NLMR` types this
-#'                 ensures the output matches `x`'s dimensions even when the
-#'                 `NLMR` algorithm trims the grid.
+#'                 the padding is cropped from the result.
 #'
-#' @param type     `"gaussian"` (default; built-in, no extra packages needed)
-#'                 or one of the supported `NLMR` function names. See Details.
+#' @param type     Character. Only `"gaussian"` (the default) is supported.
 #'
-#' @param smooth   Used only when `type = "gaussian"`. Half-width (in cells) of
-#'                 the smoothing kernel; larger values produce smoother
-#'                 landscapes with longer-range autocorrelation.
+#' @param smooth   Half-width (in cells) of the smoothing kernel; larger
+#'                 values produce smoother landscapes with longer-range
+#'                 autocorrelation.
 #'
-#' @param rescale  Used only when `type = "gaussian"`. If `TRUE` (default),
-#'                 rescale output values to `[0, 1]`.
+#' @param rescale  If `TRUE` (default), rescale output values to `[0, 1]`.
 #'
-#' @param ...      For `NLMR` types, further arguments passed to the underlying
-#'                 `NLMR` function (`ncol`, `nrow`, `resolution` are taken from
-#'                 `x` and should not be supplied here). For `type = "gaussian"`,
-#'                 extra arguments are ignored.
+#' @param ...      Currently ignored; accepted for backwards compatibility.
 #'
 #' @details
-#' The built-in `"gaussian"` generator fills a padded grid with i.i.d. normal
-#' noise, then smooths it with a square mean kernel of size `2 * smooth + 1`.
-#' The result is a roughly Gaussian random field that looks qualitatively
-#' similar to `NLMR::nlm_gaussianfield` for typical `smooth` values, but with
-#' no dependency on `NLMR`/`RandomFields`. It is suitable for sample modules,
-#' demos, and tests; for publication-quality neutral landscapes, prefer one of
-#' the `NLMR` types (the original midpoint-displacement algorithm
-#' `"nlm_mpd"` was the historical default of this function).
+#' The `"gaussian"` generator fills a padded grid with i.i.d. normal noise,
+#' then smooths it with a square mean kernel of size `2 * smooth + 1`. The
+#' result is a roughly Gaussian random field, suitable for sample modules,
+#' demos, and tests.
 #'
-#' @importFrom terra res ncol nrow ext extend focal rast values<- ncell values crop
+#' @importFrom terra res ncol nrow ext focal rast values<- ncell values crop
 #' @export
 #' @rdname neutralLandscapeMap
 #'
 #' @return A `SpatRaster` (or `RasterLayer`, matching `x`) with the same
 #'   extent, resolution, and CRS as `x`, filled with randomly-generated values.
-#'
-#' @seealso `NLMR::nlm_mpd`, `NLMR::nlm_gaussianfield`
 #'
 #' @examples
 #' \donttest{
@@ -641,74 +624,22 @@ long2UTM <- function(long) {
 #'             xmin = -nx/2, xmax = nx/2,
 #'             ymin = -ny/2, ymax = ny/2)
 #'
-#'   ## Built-in default (no NLMR needed):
 #'   map_default <- neutralLandscapeMap(r)
 #'   if (interactive()) plot(map_default)
 #'
 #'   ## Tweak smoothness:
 #'   map_rough  <- neutralLandscapeMap(r, smooth = 1)
 #'   map_smooth <- neutralLandscapeMap(r, smooth = 8)
-#'
-#'   ## NLMR variants (require NLMR installed):
-#'   if (requireNamespace("NLMR", quietly = TRUE) &&
-#'       requireNamespace("raster", quietly = TRUE)) {
-#'     map_mpd <- neutralLandscapeMap(r,
-#'                                    type = "nlm_mpd",
-#'                                    roughness = 0.65,
-#'                                    rand_dev = 200,
-#'                                    rescale = FALSE,
-#'                                    verbose = FALSE)
-#'     if (interactive()) plot(map_mpd)
-#'   }
 #' }
-neutralLandscapeMap <- function(x, pad = 10L,
-                                type = c("gaussian",
-                                         "nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient",
-                                         "nlm_edgegradient", "nlm_fbm", "nlm_mosaicfield",
-                                         "nlm_mosaicgibbs", "nlm_mosaictess", "nlm_neigh",
-                                         "nlm_percolation", "nlm_planargradient", "nlm_random",
-                                         "nlm_randomrectangularcluster"),
+neutralLandscapeMap <- function(x, pad = 10L, type = "gaussian",
                                 smooth = 3L, rescale = TRUE,
                                 ...) {
-  type <- match.arg(type)
-
-  if (identical(type, "gaussian")) {
-    return(.gaussianRandomField(x, pad = pad, smooth = smooth, rescale = rescale))
-  }
-
-  if (!requireNamespace("NLMR", quietly = TRUE)) {
-    stop("Package 'NLMR' is required for type = '", type, "'. ",
-         "Install it from <https://predictiveecology.r-universe.dev>, ",
-         "or use type = 'gaussian' for a built-in alternative.",
-         call. = FALSE)
-  }
-  .requireNamespace("raster")
-  typeFun <- getFromNamespace(type, ns = "NLMR")
-
-  dummyVals <- typeFun(
-    ncol = ncol(x) + pad, ## pad the raster so any lost cols won't affect crop etc.
-    nrow = nrow(x) + pad, ## pad the raster so any lost rows won't affect crop etc.
-    resolution = unique(res(x)),
-    ...
-  )
-
-  ## NOTE: dummyVals doesn't match dimensions etc. of x:
-  ## - no CRS and its extent doesn't match x's (but the resolution does);
-  ## - we can't reproject or use x to define the extent;
-  ## - need to add rows/cols by multiplying the final number by res;
-  ## - crop to ensure the extra rows/cols are removed
-  dummyExt <- c(0, ncol(x) * unique(res(x)), 0, nrow(x) * unique(res(x)))
-  dummyVals <- extend(dummyVals, dummyExt, values = NA)
-  dummyVals <- crop(dummyVals, dummyExt)
-
-  dummyLandscape <- x
-  dummyLandscape[] <- as.vector(dummyVals[])
-
-  dummyLandscape
+  type <- match.arg(type, "gaussian")
+  .gaussianRandomField(x, pad = pad, smooth = smooth, rescale = rescale)
 }
 
 ## Built-in random-landscape generator: i.i.d. normal noise on a padded grid,
-## smoothed by repeated mean focals. No NLMR/RandomFields dependency.
+## smoothed by repeated mean focals. No external dependency.
 .gaussianRandomField <- function(x, pad = 10L, smooth = 3L, rescale = TRUE) {
   nc <- ncol(x) + 2L * as.integer(pad)
   nr <- nrow(x) + 2L * as.integer(pad)

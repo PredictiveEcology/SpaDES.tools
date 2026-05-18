@@ -96,7 +96,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
   }
 
   if (length(newRasterCols) > 1) {
-    ras <- lapply(setNames(newRasterCols, newRasterCols), fillRas)
+    ras <- lapply(stats::setNames(newRasterCols, newRasterCols), fillRas)
   } else {
     ras <- fillRas(newRasterCols)
   }
