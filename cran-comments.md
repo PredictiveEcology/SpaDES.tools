@@ -9,10 +9,6 @@ is verified against pre-Rcpp snapshots), and a new built-in generator for
 dropped entirely (removed from `Suggests`, `Remotes`, and
 `Additional_repositories`). See `NEWS.md` for a full list of changes.
 
-This release also changes the maintainer, from Alex M Chubaty
-<achubaty@for-cast.ca> to Eliot J B McIntire
-<eliot.mcintire@nrcan-rncan.gc.ca> (both are existing package authors).
-
 ## Test environments
 
 ### Previous R versions
@@ -37,18 +33,7 @@ This release also changes the maintainer, from Alex M Chubaty
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs.
-
-There was 1 NOTE
-
-1. New maintainer:
-
-        Eliot J B McIntire <eliot.mcintire@nrcan-rncan.gc.ca>
-      Old maintainer(s):
-        Alex M Chubaty <achubaty@for-cast.ca>
-
-   This maintainer change is intentional; both individuals are existing
-   authors of the package.
+There were no ERRORs, WARNINGs, or NOTEs.
 
 ## Downstream dependencies
 

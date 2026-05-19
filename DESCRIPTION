@@ -5,9 +5,9 @@ Title: Additional Tools for Developing Spatially Explicit Discrete Event
 Version: 2.1.2
 Date: 2026-05-16
 Authors@R: c(
-    person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = c("aut", "cre"),
+    person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = "aut",
            comment = c(ORCID = "0000-0002-6914-8316")),
-    person("Alex M", "Chubaty", , "achubaty@for-cast.ca", role = "aut",
+    person("Alex M", "Chubaty", , "achubaty@for-cast.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7146-8135")),
     person("Yong", "Luo", , "Yong.Luo@gov.bc.ca", role = "ctb"),
     person("Ceres", "Barros", , "ceres.barros@ubc.ca", role = "ctb",
