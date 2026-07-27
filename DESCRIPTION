@@ -57,6 +57,8 @@ Suggests:
     testthat (>= 3.0.0),
     tools,
     withr
+Remotes:
+    PredictiveEcology/reproducible@development
 LinkingTo:
     Rcpp
 ByteCompile: yes
