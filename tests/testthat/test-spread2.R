@@ -788,6 +788,47 @@ test_that("spread2 is bit-identical across reruns with same seed (seeded grid)",
   }
 })
 
+test_that("spread2 accepts a numeric spreadProbRel, equivalent to a raster", {
+  testInit(c("terra", "withr"))
+
+  ras <- terra::rast(terra::ext(0, 80, 0, 80), resolution = 1, vals = 1)
+  withr::with_seed(11L,  spRel  <- terra::rast(ras, vals = stats::runif(terra::ncell(ras))))
+  withr::with_seed(101L, starts <- sort(sample.int(terra::ncell(ras), 5L)))
+  spRelVec <- terra::values(spRel, mat = FALSE)
+
+  ## `spreadProbRel` weights the choice among neighbours, so `neighProbs` is what
+  ## actually exercises it; the last scenario checks the no-op case is also unchanged.
+  scenarios <- list(
+    list(name = "neighProbs",      args = list(start = starts, spreadProb = 0.225,
+                                               neighProbs = c(0.7, 0.3), asRaster = FALSE)),
+    list(name = "neighProbs_iter", args = list(start = starts, spreadProb = 1,
+                                               neighProbs = c(0.7, 0.3), iterations = 1L,
+                                               asRaster = FALSE)),
+    list(name = "no_neighProbs",   args = list(start = starts, spreadProb = 0.225,
+                                               asRaster = FALSE))
+  )
+
+  for (sc in scenarios) {
+    for (sd in c(1L, 17L, 1234L)) {
+      set.seed(sd)
+      outRas <- do.call(spread2, c(list(landscape = ras, spreadProbRel = spRel), sc$args))
+      set.seed(sd)
+      outVec <- do.call(spread2, c(list(landscape = ras, spreadProbRel = spRelVec), sc$args))
+      expect_equal(outVec, outRas)
+    }
+  }
+
+  ## the default (scalar NA) must keep behaving as "no relative weighting"
+  set.seed(1L)
+  outDefault <- spread2(ras, start = starts, spreadProb = 0.225,
+                        neighProbs = c(0.7, 0.3), asRaster = FALSE)
+  set.seed(1L)
+  outExplicitNA <- spread2(ras, start = starts, spreadProb = 0.225,
+                           neighProbs = c(0.7, 0.3), spreadProbRel = NA_real_,
+                           asRaster = FALSE)
+  expect_equal(outExplicitNA, outDefault)
+})
+
 test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
