@@ -100,7 +100,8 @@ that will be made per event ID, before abandoning, therefore completing
 the \code{spread2} for that event with a size that is smaller than
 \code{exactSize}. Default 10 times.}
 
-\item{spreadProbRel}{Optional \code{RasterLayer} indicating a surface of relative
+\item{spreadProbRel}{Optional \code{RasterLayer}, \code{SpatRaster}, or numeric vector of
+length \code{ncell(landscape)}, indicating a surface of relative
 probabilities useful when using \code{neighProbs} (which
 provides a mechanism for selecting a specific number of
 cells at each iteration).

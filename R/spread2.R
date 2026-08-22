@@ -122,7 +122,8 @@ utils::globalVariables(c(
 #'                    Default is `NA`, which is the same as 0, i.e. a cell only burns
 #'                    for one time step.
 #'
-#' @param spreadProbRel Optional `RasterLayer` indicating a surface of relative
+#' @param spreadProbRel Optional `RasterLayer`, `SpatRaster`, or numeric vector of
+#'                      length `ncell(landscape)`, indicating a surface of relative
 #'                      probabilities useful when using `neighProbs` (which
 #'                      provides a mechanism for selecting a specific number of
 #'                      cells at each iteration).
@@ -393,6 +394,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     )
     assert(
       checkMultiClass(spreadProbRel, c("RasterLayer", "SpatRaster")),
+      checkNumeric(spreadProbRel, min.len = 1, max.len = ncells),
       checkScalarNA(spreadProbRel) ## needs to be checked second; will fail if SpatRaster
     )
     assert(
@@ -824,7 +826,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
       if (NROW(dtPotential)) {
         if (is(spreadProbRel, "RasterLayer") || is(spreadProbRel, "SpatRaster")) {
+          ## NOTE: `spreadProbRel[]` materialises the *whole* raster on every iteration,
+          ## only to subset a handful of cells from it. Callers that iterate (e.g. via
+          ## `iterations = 1L` in a loop) should pass a numeric vector instead -- see the
+          ## `spreadProbRel` documentation.
           set(dtPotential, NULL, "spreadProbRel", spreadProbRel[][dtPotential$to])
+        } else if (length(spreadProbRel) > 1) {
+          set(dtPotential, NULL, "spreadProbRel", spreadProbRel[dtPotential$to])
         } else {
           set(dtPotential, NULL, "spreadProbRel", 1)
         }
