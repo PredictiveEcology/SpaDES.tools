@@ -272,6 +272,36 @@ test_that("adj delegation carries id and target through unchanged", {
                        id = ids, target = target, sort = TRUE))
 })
 
+test_that("adj delegates match.adjacent to terra::adjacent too", {
+  testInit(c("terra", "data.table"))
+
+  ## match.adjacent exists to reproduce raster::adjacent's ordering, and
+  ## terra::adjacent is that function's successor -- so it is not a case terra
+  ## cannot serve, it is the case terra defines. It differs from terra's own
+  ## column order by a fixed permutation.
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  set.seed(4)
+  cells <- sort(unique(c(1L, numCol, numCell - numCol + 1L, numCell,
+                         sample(numCell, 300))))
+
+  for (dirs in list(8, 4, "bishop")) {
+    for (srt in c(FALSE, TRUE)) {
+      for (prs in c(TRUE, FALSE)) {
+        expect_identical(
+          adj(x = ras, cells = cells, directions = dirs, sort = srt,
+              pairs = prs, match.adjacent = TRUE),
+          adj(numCol = numCol, numCell = numCell, cells = cells,
+              directions = dirs, sort = srt, pairs = prs, match.adjacent = TRUE),
+          info = paste("directions", dirs, "sort", srt, "pairs", prs)
+        )
+      }
+    }
+  }
+})
+
 test_that("adj keeps the R implementation where terra cannot follow", {
   testInit(c("terra", "data.table"))
 
@@ -281,13 +311,17 @@ test_that("adj keeps the R implementation where terra cannot follow", {
   set.seed(3)
   cells <- sample(numCell, 100)
 
-  ## torus, match.adjacent and include have no terra equivalent, so passing `x`
-  ## must still produce what the R path produces.
+  ## torus wrapping and adj()'s `include` position have no terra equivalent,
+  ## so passing `x` must still produce what the R path produces.
   expect_identical(adj(x = ras, cells = cells, torus = TRUE),
                    adj(numCol = numCol, numCell = numCell, cells = cells, torus = TRUE))
-  expect_identical(adj(x = ras, cells = cells, match.adjacent = TRUE),
-                   adj(numCol = numCol, numCell = numCell, cells = cells,
-                       match.adjacent = TRUE))
   expect_identical(adj(x = ras, cells = cells, include = TRUE),
                    adj(numCol = numCol, numCell = numCell, cells = cells, include = TRUE))
+
+  ## numNeighs draws from the unfiltered neighbour set, so it must keep the R
+  ## path or the RNG stream would change
+  set.seed(5); viaX <- adj(x = ras, cells = cells, numNeighs = 3)
+  set.seed(5); viaNums <- adj(numCol = numCol, numCell = numCell, cells = cells,
+                              numNeighs = 3)
+  expect_identical(viaX, viaNums)
 })
