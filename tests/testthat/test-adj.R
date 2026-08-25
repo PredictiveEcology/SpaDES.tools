@@ -311,12 +311,10 @@ test_that("adj keeps the R implementation where terra cannot follow", {
   set.seed(3)
   cells <- sample(numCell, 100)
 
-  ## torus wrapping and adj()'s `include` position have no terra equivalent,
-  ## so passing `x` must still produce what the R path produces.
+  ## torus wrapping has no terra equivalent, so passing `x` must still
+  ## produce what the R path produces.
   expect_identical(adj(x = ras, cells = cells, torus = TRUE),
                    adj(numCol = numCol, numCell = numCell, cells = cells, torus = TRUE))
-  expect_identical(adj(x = ras, cells = cells, include = TRUE),
-                   adj(numCol = numCol, numCell = numCell, cells = cells, include = TRUE))
 
   ## numNeighs draws from the unfiltered neighbour set, so it must keep the R
   ## path or the RNG stream would change
@@ -324,4 +322,37 @@ test_that("adj keeps the R implementation where terra cannot follow", {
   set.seed(5); viaNums <- adj(numCol = numCol, numCell = numCell, cells = cells,
                               numNeighs = 3)
   expect_identical(viaX, viaNums)
+})
+
+test_that("adj delegates include = TRUE, splicing the focal cell in place", {
+  testInit(c("terra", "data.table"))
+
+  ## terra's own `include` puts the focal cell elsewhere, so the delegated
+  ## path leaves it off and splices the cell in at adj()'s position: the
+  ## middle of the 3x3 reading order, or first under match.adjacent.
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  set.seed(6)
+  cells <- sort(unique(c(1L, numCol, numCell - numCol + 1L, numCell,
+                         sample(numCell, 300))))
+
+  for (dirs in list(8, 4, "bishop")) {
+    for (ma in c(FALSE, TRUE)) {
+      for (srt in c(FALSE, TRUE)) {
+        expect_identical(
+          adj(x = ras, cells = cells, directions = dirs, include = TRUE,
+              match.adjacent = ma, sort = srt),
+          adj(numCol = numCol, numCell = numCell, cells = cells,
+              directions = dirs, include = TRUE, match.adjacent = ma, sort = srt),
+          info = paste("directions", dirs, "match.adjacent", ma, "sort", srt)
+        )
+      }
+    }
+  }
+
+  ## the focal cell really is present for every input cell
+  got <- adj(x = ras, cells = cells, include = TRUE, pairs = TRUE)
+  expect_true(all(cells %in% got[, "to"]))
 })

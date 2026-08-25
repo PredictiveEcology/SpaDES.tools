@@ -131,7 +131,7 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 
   if (.adjCanUseTerra(x, directions, include, match.adjacent, torus, numNeighs)) {
     return(.adjViaTerra(x, cells, directions, sort, pairs, target, id, returnDT,
-                        match.adjacent = match.adjacent))
+                        match.adjacent = match.adjacent, include = include))
   }
 
   if (is.character(directions)) {
@@ -378,13 +378,17 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
 ## terra defines. It differs only by a fixed permutation of the neighbour
 ## columns (see .adjTerraPerm), which is cheaper than re-deriving it.
 ##
-## What terra cannot do: torus wrapping; numNeighs sub-sampling, which draws
-## from the unfiltered neighbour set, so delegating would change which
-## neighbours are picked and therefore the RNG stream; and adj()'s `include`,
-## which places the focal cell mid-vector where terra does not. Those keep
-## the R implementation below.
+## `include` is served too: terra's own `include` puts the focal cell
+## somewhere else, so it is left off and the cell spliced in as one more
+## column at the position adj() uses -- the middle of the 3x3 reading order,
+## or first when match.adjacent (see .adjIncludeAt).
+##
+## What terra cannot do: torus wrapping, and numNeighs sub-sampling, which
+## draws from the unfiltered neighbour set, so delegating would change which
+## neighbours are picked and therefore the RNG stream. Those keep the R
+## implementation below.
 .adjCanUseTerra <- function(x, directions, include, match.adjacent, torus, numNeighs) {
-  !isTRUE(torus) && is.null(numNeighs) && !isTRUE(include) &&
+  !isTRUE(torus) && is.null(numNeighs) &&
     inherits(x, "SpatRaster") &&
     (identical(as.character(directions), "8") ||
        identical(as.character(directions), "4") ||
@@ -403,13 +407,26 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
          stop("directions must be 4 or 8 or 'bishop'"))
 }
 
+## Where adj(include = TRUE) puts the focal cell among the neighbour columns:
+## the middle of the 3x3 reading order (topl, top, topr, lef, SELF, rig, ...),
+## or first under match.adjacent.
+.adjIncludeAt <- function(nDirs, match.adjacent) {
+  if (isTRUE(match.adjacent)) 1L else as.integer(nDirs / 2L + 1L)
+}
+
 ## The delegated path. Returns exactly what the R implementation below returns
 ## for the same arguments -- verified pair-for-pair, order included, in
 ## test-adj.R.
 .adjViaTerra <- function(x, cells, directions, sort, pairs, target, id, returnDT,
-                         match.adjacent = FALSE) {
+                         match.adjacent = FALSE, include = FALSE) {
   m <- terra::adjacent(x, cells = cells, directions = directions)
   if (isTRUE(match.adjacent)) m <- m[, .adjTerraPerm(directions), drop = FALSE]
+  if (isTRUE(include)) {
+    at <- .adjIncludeAt(ncol(m), match.adjacent)
+    before <- if (at > 1L) m[, seq_len(at - 1L), drop = FALSE] else NULL
+    after <- if (at <= ncol(m)) m[, seq.int(at, ncol(m)), drop = FALSE] else NULL
+    m <- cbind(before, cells, after)
+  }
   toCells <- as.integer(m)
   keep <- !is.na(toCells)
   toCells <- toCells[keep]
