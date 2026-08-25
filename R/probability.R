@@ -39,8 +39,6 @@ dwrpnorm2 <- function(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc) {
   len <- max(length(theta), length(mu), length(rho))
   if (length(mu) != len)
     mu <- rep(mu, len)
-  if (length(var) != len)
-    var <- rep(var, len)
   if (length(theta) != len)
     theta <- rep(theta, len)
 

@@ -193,8 +193,15 @@ randomPolygon.default <- function(x, hectares, area) {
   }
 }
 
+## Deprecated sp entry point. Delegates to the SpatVector implementation
+## rather than duplicating its geometry: the body this replaced was a
+## line-for-line reimplementation of .randomPolygonSpatPoint() in sp classes.
+## Note this path scales `hectares` by 1e4, which rndmPolygonSpatialPolygons()
+## and rndmPolygonMatrix() do not -- passing `area` explicitly preserves that
+## difference rather than inheriting the SpatVector one.
 rndmPolygonSpatialPoints <- function(x, hectares, area) {
   .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
+  .requireNamespace("sf")
   .requireNamespace("sp")
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
@@ -202,55 +209,18 @@ rndmPolygonSpatialPoints <- function(x, hectares, area) {
       area <- hectares * 1e4
   }
 
-  units <- gsub(".*units=(.) .*", "\\1", crs(x))
+  terra::vect(x) |>
+    rndmPolygonSpatVector(area = area) |>
+    .asSpatialPolygons()
+}
 
-  areaM2 <- area * 1.304 # rescale so mean area is close to hectares
-  radius <- sqrt(areaM2 / pi)
-  if (!identical(units, "m")) {
-    origCRS <- raster::crs(x)
-    crsInUTM <- utmCRS(x)
-    if (is.na(crsInUTM))
-      stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
-    x <- sp::spTransform(x, CRSobj = crsInUTM)
-    message("The CRS provided is not in meters; ",
-            "converting internally to UTM so area will be approximately correct.")
-  }
-
-  meanX <- mean(sp::coordinates(x)[, 1]) - radius
-  meanY <- mean(sp::coordinates(x)[, 2]) - radius
-
-  minX <- meanX - radius
-  maxX <- meanX + radius
-  minY <- meanY - radius
-  maxY <- meanY + radius
-
-  # Add random noise to polygon
-  xAdd <- round(runif(1, radius * 0.8, radius * 1.2))
-  yAdd <- round(runif(1, radius * 0.8, radius * 1.2))
-  nPoints <- 20
-  betaPar <- 0.6
-  X <- c(jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX)),
-         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX, decreasing = TRUE)))
-  Y <- c(jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (maxY - meanY) + meanY)),
-         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxY - minY) + minY, decreasing = TRUE)),
-         jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (meanY - minY) + minY)))
-
-  Sr1 <- sp::Polygon(cbind(X + xAdd, Y + yAdd))
-  Srs1 <- sp::Polygons(list(Sr1), "s1")
-  outPolygon <- sp::SpatialPolygons(list(Srs1), 1L)
-  terra::crs(outPolygon) <- terra::crs(x)
-  wasSpatial <- is(outPolygon, "Spatial")
-  if (exists("origCRS", inherits = FALSE))  {
-    if (requireNamespace("sf", quietly = TRUE)) {
-      outPolygon <- sf::st_as_sf(outPolygon)
-      outPolygon <- sf::st_transform(outPolygon, origCRS)
-      outPolygon <- as(outPolygon, "Spatial")
-    } else {
-      ## TODO: this should use reproducible:::suppressWarningsSpecific
-      outPolygon <- suppressWarnings(sp::spTransform(outPolygon, origCRS))
-    }
-  }
-  return(outPolygon)
+## Convert a SpatVector of polygons back to sp, for the deprecated sp entry
+## points. Goes via sf because terra's own as(, "Spatial") needs `raster`
+## attached; sf is already required by these paths.
+.asSpatialPolygons <- function(x) {
+  sf::st_as_sf(x) |>
+    as("Spatial") |>
+    sp::geometry()
 }
 
 #' @importFrom terra geomtype is.related spatSample
@@ -293,25 +263,22 @@ rndmPolygonMatrix <- function(x, hectares, area) {
   randomPolygon(x, area = area)
 }
 
+## Deprecated sp entry point; see rndmPolygonSpatialPoints() above. The body
+## this replaced reimplemented rndmPolygonSpatVector()'s rejection loop using
+## sp::spsample()/sf::st_contains() instead of spatSample()/is.related().
 rndmPolygonSpatialPolygons <- function(x, hectares, area) {
   .Deprecated("User should convert to using SpatVector rather than SpatialPoints")
   .requireNamespace("sf")
   .requireNamespace("sp")
-
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
       area <- hectares
   }
-  need <- TRUE
-  while (need) {
-    sp1 <- sp::spsample(x, 1, "random")
-    sp2 <- randomPolygon(sp1, area)
-    contain <- sf::st_contains(sf::st_as_sf(sp2), sf::st_as_sf(sp1))
-    if (isTRUE(contain))
-      need <- FALSE
-  }
-  sp2
+
+  terra::vect(x) |>
+    rndmPolygonSpatVector(area = area) |>
+    .asSpatialPolygons()
 }
 
 rndmPolygonSf <- function(x, hectares, area) {
