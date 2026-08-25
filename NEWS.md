@@ -1,5 +1,6 @@
-# SpaDES.tools (development version)
+# SpaDES.tools 2.1.3
 
+## Enhancements
 * `spread2()` now accepts a numeric vector for `spreadProbRel`, not just a raster. A raster `spreadProbRel` is re-materialised in full on every iteration in order to subset a handful of cells from it, which dominates runtime for callers that step one iteration at a time (`iterations = 1L` in a loop); passing a pre-materialised vector avoids this. Rasters and the scalar `NA` default are unaffected, and results are unchanged.
 
 # SpaDES.tools 2.1.2
