@@ -1,112 +1,17 @@
+# Thin caller — shared logic lives in PredictiveEcology/actions (reusable workflow).
 on:
   push:
-    branches:
-      - main
-      - development
+    branches: [main, development]
   pull_request:
-    branches:
-      - main
-      - development
+    branches: [main, development]
 
 name: test-coverage
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   test-coverage:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      GOOGLEDRIVE_AUTH: ${{ secrets.GOOGLEDRIVE_AUTH }}
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      # Install spatial system deps inline (same as R-CMD-check.yaml).
-      # The external `PredictiveEcology/actions/install-spatial-deps@v0.2`
-      # action installs libgdal from ubuntugis-unstable PPA (`libgdal.so.37`),
-      # which replaces stock Noble's `libgdal.so.34`. cache-version: 2's
-      # `terra` binary was built against `.34`, so at runtime it fails to
-      # load (covr install: "libgdal.so.34: cannot open shared object file").
-      # Ubuntu 24.04's default repos already ship a recent enough
-      # GDAL/GEOS/PROJ for terra, so the PPA is no longer needed.
-      # libuv1-dev (-> fs) and libmagick++-dev (-> magick) are needed when
-      # the remotes fallback source-installs Suggests-chain deps that the
-      # pak/rspm binary path would have skipped compiling.
-      - name: Install spatial system dependencies (Linux)
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev libsqlite3-dev libuv1-dev libmagick++-dev
-        shell: bash
-
-      - uses: r-lib/actions/setup-r@v2
-        with:
-          Ncpus: 2
-          use-public-rspm: false
-
-      - id: deps
-        continue-on-error: true
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          # Pin pak stable; devel-pak occasionally regresses on resolve.
-          pak-version: stable
-          # Bump alongside R-CMD-check's cache-version when stale binaries
-          # need to be invalidated.
-          cache-version: 2
-          extra-packages: |
-            any::covr
-
-      # Fallback path when pak resolution fails (e.g. pak stable 0.9.5's
-      # `if (any(sel)) ... missing value` regression in pkgplan_solve).
-      # Bypass pak entirely and use `remotes` against CRAN instead.
-      # nick-fields/retry only accepts a standard shell, so wrap Rscript
-      # via bash.
-      - name: Install R deps (remotes fallback)
-        if: steps.deps.outcome == 'failure'
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 30
-          max_attempts: 3
-          retry_wait_seconds: 60
-          retry_on: error
-          shell: bash
-          command: |
-            Rscript -e 'install.packages(c("remotes", "covr"), repos = c("https://cloud.r-project.org"))' \
-                    -e 'remotes::install_deps(dependencies = TRUE, repos = c("https://cloud.r-project.org"))'
-
-      - id: covr
-        name: Test coverage
-        continue-on-error: true
-        # quiet = FALSE so covr's internal install-and-test output reaches
-        # the GHA log. Without it, "Package installation did not succeed"
-        # surfaces with no install diagnostics. The tryCatch also dumps
-        # any test-all.Rout.fail files (R CMD check artifacts) when they
-        # exist, before the per-session tempdir is cleaned up.
-        run: |
-          res <- tryCatch(
-            covr::codecov(token = Sys.getenv("CODECOV_TOKEN"), quiet = FALSE),
-            error = function(e) e
-          )
-          if (inherits(res, "error")) {
-            files <- list.files(
-              tempdir(), pattern = "test-all\\.Rout\\.fail$",
-              recursive = TRUE, full.names = TRUE
-            )
-            for (f in files) {
-              cat("==========================================\n")
-              cat("=== ", f, " ===\n", sep = "")
-              cat("==========================================\n")
-              cat(readLines(f, warn = FALSE), sep = "\n")
-              cat("\n")
-            }
-            stop(res)
-          }
-        shell: Rscript {0}
-
-      - if: steps.covr.outcome == 'failure'
-        name: Re-fail the job
-        run: exit 1
+    uses: PredictiveEcology/actions/.github/workflows/test-coverage.yaml@main
+    secrets: inherit
