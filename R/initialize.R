@@ -376,10 +376,12 @@ rndmPolygonSf <- function(x, hectares, area) {
 #'   expect_true(all(unname(table(ras[rasAgents])) == patchDT$num.in.pop))
 #'
 #' # Use numPerPatchMap
+#' # Remap in one pass: rewriting in place would collide, because a patch
+#' # rewritten to a value that is also a later patch's id gets overwritten
+#' # again on that iteration.
 #' rasPatches <- ras
-#' for (i in 1:Ntypes) {
-#'   rasPatches[rasPatches==i] <- patchDT$num.in.pop[i]
-#' }
+#' terra::values(rasPatches) <-
+#'   patchDT$num.in.pop[match(terra::values(ras)[, 1], patchDT$pops)]
 #' if (interactive()) {
 #'   terra::plot(c(ras, rasPatches))
 #' }
