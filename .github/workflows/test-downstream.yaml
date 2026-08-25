@@ -1,0 +1,31 @@
+# Thin caller — shared logic lives in PredictiveEcology/actions (reusable workflow).
+#
+# Checks SpaDES.core against THIS branch. SpaDES.core pins
+# PredictiveEcology/SpaDES.tools@development in its Remotes:, and
+# SpaDES.tools is only in its Suggests: — so without the reusable
+# workflow's unpinning and its RemoteSha assertion, this check would
+# resolve SpaDES.tools from GitHub (or fail to install it entirely, which
+# is only a NOTE) and pass while testing none of the change.
+# See PredictiveEcology/actions#19.
+#
+# SpaDES.project is deliberately not listed: it has no SpaDES.tools
+# dependency, so checking it here would cost CI time for no signal.
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+
+name: test-downstream
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-downstream:
+    uses: PredictiveEcology/actions/.github/workflows/test-downstream.yaml@main
+    with:
+      downstream: >-
+        [{"repo": "PredictiveEcology/SpaDES.core", "ref": "development"}]
+      check-args: 'c("--no-manual", "--as-cran", "--run-dontrun", "--run-donttest")'
