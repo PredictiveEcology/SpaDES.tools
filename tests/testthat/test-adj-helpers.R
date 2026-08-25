@@ -182,6 +182,12 @@ test_that("adjPairsWithId handles empty cells gracefully", {
 ## recorded from the pre-Rcpp baseline. If a future change reorders
 ## row emission, this fails here even on a tiny single-cell raster —
 ## faster than waiting for the snapshot battery.
+##
+## Compare [-1] only: .Random.seed[1] packs the RNG kinds, and R-devel
+## added a further field above sample.kind (10403 -> 110403 for the
+## defaults), so the header word differs from snapshots taken under
+## R <= 4.5 while the generator state is unchanged. It is the state
+## that this test is about.
 
 test_that("spread() consumes RNG identically to baseline (one iteration)", {
   ## testInit() chdir's into a tempdir, so capture the path first.
@@ -214,7 +220,7 @@ test_that("spread() consumes RNG identically to baseline (one iteration)", {
   set.seed(7L)
   invisible(spread(ras, loci = 55L, spreadProb = 0.30,
                    iterations = 1L, returnIndices = 1L))
-  expect_identical(.Random.seed, readRDS(rngFile))
+  expect_identical(.Random.seed[-1], readRDS(rngFile)[-1])
 })
 
 test_that("spread2() consumes RNG identically to baseline (one iteration)", {
@@ -228,5 +234,5 @@ test_that("spread2() consumes RNG identically to baseline (one iteration)", {
   set.seed(7L)
   invisible(spread2(ras, start = 55L, spreadProb = 0.30,
                     iterations = 1L, asRaster = FALSE))
-  expect_identical(.Random.seed, readRDS(rngFile))
+  expect_identical(.Random.seed[-1], readRDS(rngFile)[-1])
 })
