@@ -24,3 +24,4 @@ tests/manualTests/*
 ^CRAN-SUBMISSION$
 ^\.claude$
 ^data_area1_updated\.rds$
+^TODO.*\.md$
