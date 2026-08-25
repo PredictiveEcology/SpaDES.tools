@@ -129,6 +129,10 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     numCell <- as.integer(ncell(x))
   }
 
+  if (.adjCanUseTerra(x, directions, include, match.adjacent, torus, numNeighs)) {
+    return(.adjViaTerra(x, cells, directions, sort, pairs, target, id, returnDT))
+  }
+
   if (is.character(directions)) {
     if (directions == "bishop")  {
       dirs <- 4
@@ -360,6 +364,60 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
         return(as.matrix(adj))
     }
   }
+}
+
+## Can terra::adjacent stand in for the neighbour arithmetic below?
+##
+## It emits the same pairs in the same (column-major) order and does the edge
+## filtering itself, about 4x faster than doing both here. What it cannot do:
+## torus wrapping; numNeighs sub-sampling (which samples from the unfiltered
+## neighbour set, so delegating would change which neighbours are drawn and
+## therefore the RNG stream); match.adjacent's alternate column order; or
+## adj()'s `include`, which places the focal cell mid-vector where terra does
+## not. Each of those keeps the R implementation.
+.adjCanUseTerra <- function(x, directions, include, match.adjacent, torus, numNeighs) {
+  !isTRUE(torus) && is.null(numNeighs) && !isTRUE(match.adjacent) && !isTRUE(include) &&
+    inherits(x, "SpatRaster") &&
+    (identical(as.character(directions), "8") ||
+       identical(as.character(directions), "4") ||
+       identical(directions, "bishop"))
+}
+
+## The delegated path. Returns exactly what the R implementation below returns
+## for the same arguments -- verified pair-for-pair, order included, in
+## test-adj.R.
+.adjViaTerra <- function(x, cells, directions, sort, pairs, target, id, returnDT) {
+  m <- terra::adjacent(x, cells = cells, directions = directions)
+  toCells <- as.integer(m)
+  keep <- !is.na(toCells)
+  toCells <- toCells[keep]
+  fromCells <- rep.int(cells, times = ncol(m))[keep]
+  idCol <- if (!is.null(id)) rep.int(id, times = ncol(m))[keep] else NULL
+
+  if (!is.null(target)) {
+    inTarget <- toCells %in% target
+    toCells <- toCells[inTarget]
+    fromCells <- fromCells[inTarget]
+    if (!is.null(idCol)) idCol <- idCol[inTarget]
+  }
+
+  if (sort) {
+    ord <- if (pairs) order(fromCells) else order(toCells)
+    toCells <- toCells[ord]
+    fromCells <- fromCells[ord]
+    if (!is.null(idCol)) idCol <- idCol[ord]
+  }
+
+  if (returnDT) {
+    out <- data.table(from = fromCells, to = toCells)
+    if (!is.null(idCol)) set(out, NULL, "id", idCol)
+    if (!pairs) set(out, NULL, "from", NULL)
+    return(out)
+  }
+
+  out <- if (pairs) cbind(from = fromCells, to = toCells) else cbind(to = toCells)
+  if (!is.null(idCol)) out <- cbind(out, id = idCol)
+  out
 }
 
 ##############################################################
@@ -758,6 +816,14 @@ cir <- function(landscape, coords, loci,
 #' Generally useful for model development purposes. Primarily used internally
 #' in e.g., `crw` if `torus = TRUE`.
 #'
+#' This function was named `wrap()` until version 2.1.3. It was renamed
+#' because `terra::wrap()` means something entirely different -- it
+#' serialises a `SpatRaster` or `SpatVector` so it can be saved or sent to
+#' a parallel worker. Since this package imports terra, both were routinely
+#' on the search path and whichever was attached last silently masked the
+#' other, so a call to `wrap()` could do either thing depending on load
+#' order. `wrap()` remains as a deprecated alias.
+#'
 #' If `withHeading` used, then `X` must be an `sf` or `SpatVector` object
 #' that contains two columns, `x1` and `y1`, with the immediately
 #' previous agent locations.
@@ -774,6 +840,7 @@ cir <- function(landscape, coords, loci,
 #'
 #' @author Eliot McIntire
 #' @export
+#' @rdname wrapTorus
 #'
 #' @examples
 #' origDTThreads <- data.table::setDTthreads(2L)
@@ -809,14 +876,14 @@ cir <- function(landscape, coords, loci,
 #'   if (interactive()) terra::plot(agent[, 1], add = TRUE, col = 1:10)
 #' }
 #' terra::crds(agent) # many are "off" the map, i.e., beyond the extent of hab
-#' agent <- SpaDES.tools::wrap(agent, bounds = terra::ext(hab))
+#' agent <- SpaDES.tools::wrapTorus(agent, bounds = terra::ext(hab))
 #' terra::plot(agent, add = TRUE, col = 1:10) # now inside the extent of hab
 #'
 #' # clean up
 #' data.table::setDTthreads(origDTThreads)
 #' options(Ncpus = origNcpus)
 #'
-wrap <- function(X, bounds, withHeading = FALSE) {
+wrapTorus <- function(X, bounds, withHeading = FALSE) {
   classX <- is(X)
 
   # if (is(X, "matrix")) {
@@ -888,6 +955,21 @@ wrap <- function(X, bounds, withHeading = FALSE) {
   } else if ("SpatVector" %in% classX) {
     return(X)
   }
+}
+
+#' @details
+#' `wrap()` is deprecated in favour of [wrapTorus()]; see the note above on
+#' why it was renamed.
+#'
+#' @export
+#' @rdname wrapTorus
+wrap <- function(X, bounds, withHeading = FALSE) {
+  .Deprecated("wrapTorus",
+              msg = paste0("SpaDES.tools::wrap() is deprecated; use wrapTorus().\n",
+                           "  It was renamed because terra::wrap() is an unrelated ",
+                           "function (it serialises\n  a SpatRaster/SpatVector), and ",
+                           "whichever package was attached last masked the other."))
+  wrapTorus(X = X, bounds = bounds, withHeading = withHeading)
 }
 
 # setMethod(

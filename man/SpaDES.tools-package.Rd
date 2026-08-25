@@ -27,7 +27,7 @@ distance surfaces\cr
 \code{\link[=rings]{rings()}} \tab Identify rings around focal cells (e.g., buffers and donuts)\cr
 \code{\link[=spokes]{spokes()}} \tab TO DO: need description\cr
 \code{\link[=spread]{spread()}} \tab Contagious cellular automata\cr
-\code{\link[=wrap]{wrap()}} \tab Create a torus from a grid\cr
+\code{\link[=wrapTorus]{wrapTorus()}} \tab Create a torus from a grid\cr
 }
 }
 

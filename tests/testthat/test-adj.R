@@ -215,3 +215,79 @@ test_that("adj.R: torus does not work as expected", {
     }
   }
 })
+
+test_that("adj delegates to terra::adjacent without changing its output", {
+  testInit(c("terra", "data.table"))
+
+  ## Passing `x` lets adj() delegate to terra::adjacent; passing numCol/numCell
+  ## instead leaves x NULL, which forces the R implementation. The two must
+  ## agree exactly -- including row order, which spread()/spread2() rely on for
+  ## RNG reproducibility.
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  ## as.integer to match what adj() does internally when given `x`:
+  ## terra::ncol()/ncell() return doubles, and the R path's arithmetic
+  ## inherits that storage type, so passing them raw would compare an
+  ## integer result against a double one.
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  set.seed(1)
+  cells <- sort(unique(c(1L, numCol, numCell - numCol + 1L, numCell,
+                         sample(numCell, 400))))
+
+  for (dirs in list(8, 4, "bishop")) {
+    for (srt in c(FALSE, TRUE)) {
+      for (prs in c(TRUE, FALSE)) {
+        viaTerra <- adj(x = ras, cells = cells, directions = dirs,
+                        sort = srt, pairs = prs)
+        viaR <- adj(numCol = numCol, numCell = numCell, cells = cells,
+                    directions = dirs, sort = srt, pairs = prs)
+        expect_identical(viaTerra, viaR,
+                         info = paste("directions", dirs, "sort", srt, "pairs", prs))
+      }
+    }
+  }
+})
+
+test_that("adj delegation carries id and target through unchanged", {
+  testInit(c("terra", "data.table"))
+
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), res = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  set.seed(2)
+  cells <- sample(numCell, 200)
+  ids <- seq_along(cells)
+  target <- sample(numCell, 500)
+
+  expect_identical(adj(x = ras, cells = cells, id = ids),
+                   adj(numCol = numCol, numCell = numCell, cells = cells, id = ids))
+
+  expect_identical(adj(x = ras, cells = cells, target = target),
+                   adj(numCol = numCol, numCell = numCell, cells = cells, target = target))
+
+  expect_identical(adj(x = ras, cells = cells, id = ids, target = target, sort = TRUE),
+                   adj(numCol = numCol, numCell = numCell, cells = cells,
+                       id = ids, target = target, sort = TRUE))
+})
+
+test_that("adj keeps the R implementation where terra cannot follow", {
+  testInit(c("terra", "data.table"))
+
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), res = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+  set.seed(3)
+  cells <- sample(numCell, 100)
+
+  ## torus, match.adjacent and include have no terra equivalent, so passing `x`
+  ## must still produce what the R path produces.
+  expect_identical(adj(x = ras, cells = cells, torus = TRUE),
+                   adj(numCol = numCol, numCell = numCell, cells = cells, torus = TRUE))
+  expect_identical(adj(x = ras, cells = cells, match.adjacent = TRUE),
+                   adj(numCol = numCol, numCell = numCell, cells = cells,
+                       match.adjacent = TRUE))
+  expect_identical(adj(x = ras, cells = cells, include = TRUE),
+                   adj(numCol = numCol, numCell = numCell, cells = cells, include = TRUE))
+})

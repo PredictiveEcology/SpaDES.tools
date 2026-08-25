@@ -27,7 +27,7 @@
 #'   [rings()] \tab Identify rings around focal cells (e.g., buffers and donuts)\cr
 #'   [spokes()] \tab TO DO: need description\cr
 #'   [spread()] \tab Contagious cellular automata\cr
-#'   [wrap()] \tab Create a torus from a grid\cr
+#'   [wrapTorus()] \tab Create a torus from a grid\cr
 #' }
 #'
 #' @section 2 Spatial agent methods:
