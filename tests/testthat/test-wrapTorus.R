@@ -45,13 +45,23 @@ test_that("wrap() is deprecated in favour of wrapTorus()", {
   expect_equal(got, wrapTorus(outside, bounds = terra::ext(hab)))
 })
 
-test_that("the reason for the rename still holds: terra::wrap masks ours", {
+test_that("the reason for the rename still holds: terra exports a rival wrap()", {
   testInit("terra")
 
-  ## If this ever stops being true, the deprecation note should be revisited.
-  ## terra::wrap() serialises a SpatRaster/SpatVector; ours wraps a torus.
-  expect_true(identical(wrap, terra::wrap))
-  expect_false(identical(SpaDES.tools::wrapTorus, terra::wrap))
+  ## The rename exists because terra also exports `wrap` -- an unrelated
+  ## function that serialises a SpatRaster/SpatVector. Two different objects
+  ## sharing a name is what lets load order decide which one a bare `wrap()`
+  ## call reaches. If terra ever drops it, revisit the deprecation note.
+  ##
+  ## Asserted via getExportedValue() rather than by evaluating a bare `wrap`:
+  ## under R CMD check the test environment's parent is the package namespace,
+  ## so a bare `wrap` never consults the search path at all, and the answer
+  ## would depend on how the tests were run rather than on anything real.
+  expect_true("wrap" %in% getNamespaceExports("terra"))
+  expect_false(identical(getExportedValue("terra", "wrap"),
+                         getExportedValue("SpaDES.tools", "wrap")))
+  expect_false(identical(getExportedValue("terra", "wrap"),
+                         getExportedValue("SpaDES.tools", "wrapTorus")))
 })
 
 test_that("crw(torus = TRUE) does not emit the wrap deprecation", {
