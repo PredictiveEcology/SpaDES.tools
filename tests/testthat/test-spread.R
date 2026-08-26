@@ -1140,7 +1140,7 @@ test_that("simple cir does not work correctly", {
   withr::deferred_run()
 })
 
-test_that("wrap does not work correctly", {
+test_that("wrapTorus does not work correctly", {
   testInit(c("terra", "withr"))
 
   xrange <- yrange <- c(-50, 50)
@@ -1159,10 +1159,10 @@ test_that("wrap does not work correctly", {
     y = stats::runif(n, yrange[1] - 10, yrange[1])
   )
 
-  expect_false(all(SpaDES.tools::wrap(starts, bounds = ext(hab)) == starts))
-  expect_false(all(SpaDES.tools::wrap(starts, bounds = hab) == starts))
+  expect_false(all(SpaDES.tools::wrapTorus(starts, bounds = ext(hab)) == starts))
+  expect_false(all(SpaDES.tools::wrapTorus(starts, bounds = hab) == starts))
   expect_error(
-    SpaDES.tools::wrap(starts, bounds = starts),
+    SpaDES.tools::wrapTorus(starts, bounds = starts),
     "Unable to determine extent of object of type 'matrix'."
   )
 
@@ -1170,18 +1170,18 @@ test_that("wrap does not work correctly", {
   if (requireNamespace("sf", quietly = TRUE)) {
     sf <- sf::st_as_sf(data.frame(starts, x1, y1), coords = xycolNames)
     expect_true(all(
-      coords(SpaDES.tools::wrap(sf, bounds = hab)) == SpaDES.tools::wrap(starts, hab)
+      coords(SpaDES.tools::wrapTorus(sf, bounds = hab)) == SpaDES.tools::wrapTorus(starts, hab)
     ))
     expect_true(all(
-      coords(SpaDES.tools::wrap(sf, bounds = hab, withHeading = FALSE)) ==
-        SpaDES.tools::wrap(starts, hab)
+      coords(SpaDES.tools::wrapTorus(sf, bounds = hab, withHeading = FALSE)) ==
+        SpaDES.tools::wrapTorus(starts, hab)
     ))
     expect_true(all(
-      coords(SpaDES.tools::wrap(sf, bounds = terra::ext(hab), withHeading = FALSE)) ==
-        SpaDES.tools::wrap(starts, hab)
+      coords(SpaDES.tools::wrapTorus(sf, bounds = terra::ext(hab), withHeading = FALSE)) ==
+        SpaDES.tools::wrapTorus(starts, hab)
     ))
     expect_error(
-      SpaDES.tools::wrap(sf, bounds = starts, withHeading = FALSE),
+      SpaDES.tools::wrapTorus(sf, bounds = starts, withHeading = FALSE),
       "Unable to determine extent of object of type 'matrix'."
     )
   }
@@ -1192,7 +1192,7 @@ test_that("wrap does not work correctly", {
   )
   spdf <- terra::vect(data.frame(starts, x1, y1), geom = xycolNames) #
   expect_false(all(abs(terra::ext(spdf)[]) <= 50))
-  out <- SpaDES.tools::wrap(spdf, bounds = terra::ext(hab))
+  out <- SpaDES.tools::wrapTorus(spdf, bounds = terra::ext(hab))
   expect_true(all(abs(terra::ext(out)[]) <= 50))
 
   withr::deferred_run()

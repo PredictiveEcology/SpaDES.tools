@@ -72,7 +72,7 @@ move <- function(hypothesis = "crw", ...) {
 #' @export
 #' @importFrom stats rnorm
 #' @rdname crw
-#' @seealso [wrap()]
+#' @seealso [wrapTorus()]
 #' @examples
 #' origDTThreads <- data.table::setDTthreads(2L)
 #' origNcpus <- options(Ncpus = 2L)
@@ -227,7 +227,7 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
         agent <- terra::vect(agent[, xycolNames], atts = agent[, x1y1colNames])
     }
   if (torus) {
-    return(wrap(X = agent, bounds = extent, withHeading = TRUE))
+    return(wrapTorus(X = agent, bounds = extent, withHeading = TRUE))
   } else {
     return(agent)
   }

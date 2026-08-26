@@ -124,7 +124,7 @@ Journal of Applied Ecology 44:725-736.
 \seealso{
 \code{\link[terra:distance]{terra::distance()}}
 
-\code{\link[=wrap]{wrap()}}
+\code{\link[=wrapTorus]{wrapTorus()}}
 }
 \author{
 Eliot McIntire
