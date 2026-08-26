@@ -70,3 +70,48 @@ test_that("initiateAgents follows the supplied probabilities", {
 
   expect_gt(stats::cor(dt$mapValue, dt$selection, use = "complete.obs"), 0.5)
 })
+
+test_that("agentLocation converts zeros to NA for rasters and passes sp classes through", {
+  testInit("raster")  ## raster attaches sp itself; attaching both breaks teardown
+
+  ## Raster* input: zeros become NA
+  r <- raster::raster(matrix(c(0, 1, 2, 0), nrow = 2))
+  got <- agentLocation(r)
+  expect_s4_class(got, "RasterLayer")
+  expect_identical(sum(is.na(raster::getValues(got))), 2L)
+  expect_setequal(stats::na.omit(raster::getValues(got)), c(1, 2))
+
+  ## SpatialPoints and SpatialPolygons pass through untouched
+  pts <- sp::SpatialPoints(cbind(1:3, 1:3))
+  expect_identical(agentLocation(pts), pts)
+
+  sq <- sp::Polygons(list(sp::Polygon(cbind(c(0, 1, 1, 0, 0), c(0, 0, 1, 1, 0)))), "a")
+  poly <- sp::SpatialPolygons(list(sq))
+  expect_identical(agentLocation(poly), poly)
+
+  ## anything else is refused
+  expect_error(agentLocation(1:10), "only raster, Spatialpoints or SpatialPolygons")
+})
+
+test_that("numAgents returns N and validates it", {
+  expect_identical(numAgents(10, probInit = NULL), 10)
+  expect_error(numAgents(c(1, 2), probInit = NULL))
+  expect_error(numAgents("ten", probInit = NULL))
+})
+
+## transitions() is deliberately untested: its documentation says "THIS IS NOT
+## YET FULLY IMPLEMENTED", and `sp::coordinates(agent)[i, ] <- NA` errors on
+## any Spatial object whose coordinates are already set -- which is all of
+## them. A test could only pin the error, which would entrench it.
+
+test_that("patchSize counts cells per patch", {
+  testInit("terra")
+
+  ras <- terra::rast(terra::ext(0, 4, 0, 4), res = 1)
+  terra::values(ras) <- c(rep(1, 6), rep(2, 10))
+
+  got <- patchSize(ras)
+  expect_true(is.data.frame(got) || is.matrix(got))
+  counts <- as.data.frame(got)
+  expect_setequal(counts$count, c(6, 10))
+})
