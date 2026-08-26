@@ -10,17 +10,18 @@
 
 Spatial building blocks for landscape simulation models.
 
-`SpaDES.tools` provides the spatial operations that landscape and agent-based
-models need repeatedly and that no general-purpose GIS package supplies:
-contagious spread across a raster, neighbourhoods and distance surfaces,
-correlated random walks, and random landscape generation. Most functions work
-directly on `terra` objects and are written to be called thousands of times
-inside a simulation loop, so they favour cell indices and `data.table` output
-over repeated raster allocation.
+`SpaDES.tools` provides several spatial operations that landscape and
+agent-based models need repeatedly and that do not generally exist in
+general-purpose GIS packages: contagious spread across a raster, some helpers
+for neighbourhoods and distance calculations, correlated random walks, and
+random landscape generation. Most functions work directly on `terra` objects
+and are written to be called thousands of times inside a simulation loop, so
+they favour cell indices and `data.table` output over repeated raster
+allocation.
 
-It is one of the [`SpaDES`](https://github.com/PredictiveEcology/SpaDES)
-packages, but does not depend on the rest of them — you can use it on its own,
-without `SpaDES.core` or a discrete event simulation.
+It is one of the [`SpaDES` packages](https://SpaDES.PredictiveEcology.org), but
+does not depend on the rest of them — you can use it on its own, without
+`SpaDES.core` or a discrete event simulation.
 
 **Website:** <https://SpaDES-tools.PredictiveEcology.org>
 
