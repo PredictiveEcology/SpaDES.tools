@@ -73,7 +73,9 @@ rings <- function(landscape, loci = NA_real_, id = FALSE, minRadius = 2, maxRadi
       if (returnDistances)
         outRas[out$indices] <- out$dists
       else
-        outRas[out$indices] <- out$dists
+        ## was `out$dists` in both arms; ids here mirrors the allowOverlap
+        ## branch above, which writes summed ids when returnDistances is FALSE
+        outRas[out$indices] <- out$id
     }
     if (isTRUE(origClass == "SpatRaster"))
       outRas1 <- terra::rast(landscape)

@@ -14,10 +14,13 @@
 #' @rdname crw
 #'
 move <- function(hypothesis = "crw", ...) {
-     if (hypothesis == "crw") move <- "crw"
-     if (is.null(hypothesis)) stop("Must specify a movement hypothesis")
-     get(move)(...)
- }
+  ## The NULL check has to come first: `NULL == "crw"` raises "argument is of
+  ## length zero", so this stop() was unreachable. Dispatch on `hypothesis`
+  ## directly rather than through a local named `move`, which shadowed this
+  ## function and made an unrecognised hypothesis fail obscurely.
+  if (is.null(hypothesis)) stop("Must specify a movement hypothesis")
+  get(hypothesis)(...)
+}
 
 ################################################################################
 #' Simple Correlated Random Walk
@@ -140,12 +143,13 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
   xycolNames <- colnames(crds)
 
   if (!is.matrix(agent)) {
-    if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent,
-                    FUN.VALUE = logical(1)))) {
-      if (is(agent, "SpatVector"))
-        if (!identical("points", geomtype(agent)))
-          stop("crs can only take SpatialPoints* or SpatVector points geometry")
-    }
+    ## Reject a non-points SpatVector. The previous form nested this inside
+    ## `if (!any(inherits(agent, c("SpatialPoints", "SpatVector"))))`, so it
+    ## only ran when `agent` was neither class and the inner `is(agent,
+    ## "SpatVector")` could never be TRUE -- a polygon SpatVector was accepted.
+    if (inherits(agent, "SpatVector") &&
+        !identical("points", terra::geomtype(agent)))
+      stop("crw can only take SpatialPoints* or SpatVector points geometry")
 
     if (isTRUE(returnMatrix) ) {
       agent <- if (NCOL(agent)) {
