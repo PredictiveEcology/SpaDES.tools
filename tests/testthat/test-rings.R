@@ -151,10 +151,12 @@ test_that("rings fills non-ring cells with 0 when returnDistances is FALSE", {
 
   idx <- rings(emptyRas, loci = 5050, minRadius = 3, maxRadius = 6,
                returnIndices = TRUE)
-  ## NOTE: with allowOverlap = FALSE both returnDistances branches assign
-  ## out$dists, so the ring cells carry distances either way. Asserting the
-  ## CELLS rather than their values, so this does not cement that.
   expect_setequal(which(v > 0), idx$indices)
+
+  ## ring cells carry the ring id, not the distance -- which is what
+  ## returnDistances = FALSE means, and what the allowOverlap branch does
+  expect_setequal(unique(v[v > 0]), unique(idx$id))
+  expect_equal(v[idx$indices], idx$id, ignore_attr = TRUE)
 })
 
 test_that("rings summarises overlapping rings into one raster", {

@@ -211,3 +211,22 @@ test_that("crw requires a logical lonlat", {
   expect_error(crw(starts, stepLength = 5, stddev = 10, lonlat = NULL), "lonlat")
   expect_error(crw(starts, stepLength = 5, stddev = 10, lonlat = "yes"), "lonlat")
 })
+
+test_that("move() rejects a NULL hypothesis", {
+  testInit("terra")
+
+  ## the guard used to sit after `hypothesis == "crw"`, which raises
+  ## "argument is of length zero" for NULL, so it never ran
+  expect_error(move(NULL), "Must specify a movement hypothesis")
+})
+
+test_that("crw rejects a SpatVector that is not points", {
+  testInit("terra")
+
+  poly <- terra::vect("POLYGON ((0 0, 10 0, 10 10, 0 10, 0 0))")
+  expect_error(crw(poly, stepLength = 5, stddev = 10), "points geometry")
+
+  ## and still accepts the points case
+  pts <- terra::vect(cbind(x = c(1, 2), y = c(3, 4)))
+  expect_s4_class(crw(pts, stepLength = 5, stddev = 10), "SpatVector")
+})
