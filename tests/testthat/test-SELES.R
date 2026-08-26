@@ -99,10 +99,12 @@ test_that("numAgents returns N and validates it", {
   expect_error(numAgents("ten", probInit = NULL))
 })
 
-## transitions() is deliberately untested: its documentation says "THIS IS NOT
-## YET FULLY IMPLEMENTED", and `sp::coordinates(agent)[i, ] <- NA` errors on
-## any Spatial object whose coordinates are already set -- which is all of
-## them. A test could only pin the error, which would entrench it.
+test_that("transitions is defunct", {
+  ## Never fully implemented: its body assigned into sp::coordinates(), which
+  ## errors on any Spatial* object whose coordinates are already set, so no
+  ## caller can have depended on it. Now signals an error explicitly.
+  expect_error(transitions(p = 1, agent = NULL), "defunct")
+})
 
 test_that("patchSize counts cells per patch", {
   testInit("terra")

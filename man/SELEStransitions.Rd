@@ -2,7 +2,7 @@
 % Please edit documentation in R/SELES.R
 \name{transitions}
 \alias{transitions}
-\title{\code{SELES} - Transitioning to next time step}
+\title{\code{SELES} - Transitioning to next time step (defunct)}
 \usage{
 transitions(p, agent)
 }
@@ -12,17 +12,23 @@ transitions(p, agent)
 \item{agent}{\verb{SpatialPoints*} object.}
 }
 \value{
-Returns new \verb{SpatialPoints*} object with potentially fewer agents.
+None. Signals an error.
 }
 \description{
-Describes the probability of an agent successfully persisting until next
-time step. THIS IS NOT YET FULLY IMPLEMENTED.
+This function was never fully implemented and is now defunct: calling it
+signals an error.
 
-A \code{SELES}-like function to maintain conceptual backwards compatibility
-with that simulation tool. This is intended to ease transitions from
-\href{http://www.gowlland.ca/}{SELES}.
+It was intended to describe the probability of an agent successfully
+persisting until the next time step, as a \code{SELES}-like function
+maintaining conceptual backwards compatibility with
+\href{http://www.gowlland.ca/}{SELES}. The implementation it carried could
+not work -- it assigned into \code{sp::coordinates(agent)}, which errors on
+any \verb{Spatial*} object whose coordinates are already set, i.e. all of
+them -- so no caller can have depended on its behaviour.
 
-You must know how to use SELES for these to be useful.
+\strong{There is no replacement.} If you have a use for this, please contact
+the package maintainer; it can be implemented properly if there is
+interest.
 }
 \author{
 Eliot McIntire

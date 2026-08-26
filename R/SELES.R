@@ -1,21 +1,27 @@
 ################################################################################
-#' `SELES` - Transitioning to next time step
+#' `SELES` - Transitioning to next time step (defunct)
 #'
 #' @description
-#' Describes the probability of an agent successfully persisting until next
-#' time step. THIS IS NOT YET FULLY IMPLEMENTED.
+#' This function was never fully implemented and is now defunct: calling it
+#' signals an error.
 #'
-#' A `SELES`-like function to maintain conceptual backwards compatibility
-#' with that simulation tool. This is intended to ease transitions from
-#' [SELES](http://www.gowlland.ca/).
+#' It was intended to describe the probability of an agent successfully
+#' persisting until the next time step, as a `SELES`-like function
+#' maintaining conceptual backwards compatibility with
+#' [SELES](http://www.gowlland.ca/). The implementation it carried could
+#' not work -- it assigned into `sp::coordinates(agent)`, which errors on
+#' any `Spatial*` object whose coordinates are already set, i.e. all of
+#' them -- so no caller can have depended on its behaviour.
 #'
-#' You must know how to use SELES for these to be useful.
+#' **There is no replacement.** If you have a use for this, please contact
+#' the package maintainer; it can be implemented properly if there is
+#' interest.
 #'
 #' @param p realized probability of persisting (i.e., either 0 or 1).
 #'
 #' @param agent `SpatialPoints*` object.
 #'
-#' @return Returns new `SpatialPoints*` object with potentially fewer agents.
+#' @return None. Signals an error.
 #'
 #' @export
 #' @include heading.R
@@ -23,9 +29,10 @@
 #'
 #' @author Eliot McIntire
 transitions <- function(p, agent) {
-  .requireNamespace("sp")
-  sp::coordinates(agent)[which(p == 0), ] <- NA
-  return(agent)
+  .Defunct(msg = paste0(
+    "transitions() was never fully implemented and is defunct.\n",
+    "  There is no replacement. Please contact the package maintainer if ",
+    "you have a use for it."))
 }
 
 ##############################################################
