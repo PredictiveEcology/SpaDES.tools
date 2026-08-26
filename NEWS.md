@@ -1,7 +1,70 @@
 # SpaDES.tools 2.1.3
 
+## Deprecated and defunct
+* `wrap()` is deprecated in favour of `wrapTorus()`, which does the same thing
+  under a name that does not collide with `terra::wrap()` (an unrelated
+  function that serialises a `SpatRaster` for saving). `wrap()` still works and
+  redirects.
+* `transitions()` is defunct. It was never fully implemented and there is no
+  replacement; please contact the maintainer if you have a use for it.
+* `rndmPolygonSpatialPoints()` and `rndmPolygonSpatialPolygons()` (already
+  deprecated) now redirect to their `SpatVector` equivalents and convert the
+  result back to `sp`, instead of carrying their own copies of the geometry
+  code.
+* Passing a `SpatialPoints*` object to `crw()` now warns. It is converted to a
+  `SpatVector` on entry and converted back on return.
+
 ## Enhancements
 * `spread2()` now accepts a numeric vector for `spreadProbRel`, not just a raster. A raster `spreadProbRel` is re-materialised in full on every iteration in order to subset a handful of cells from it, which dominates runtime for callers that step one iteration at a time (`iterations = 1L` in a loop); passing a pre-materialised vector avoids this. Rasters and the scalar `NA` default are unaffected, and results are unchanged.
+* `adj()` now delegates to `terra::adjacent()` for the 4-neighbour,
+  8-neighbour and bishop cases, including `match.adjacent` and `include`. This
+  removes a large amount of duplicated neighbour-finding code. The `torus`
+  case keeps its own integer arithmetic, which measured roughly 3x faster than
+  routing it through `wrapTorus()`.
+* `crw()` handles `sp` input by converting it once on entry and converting
+  back on return, rather than through a separate code path. See the bug fixes
+  below for what that path had been doing.
+
+## Behaviour changes
+* `rings(returnDistances = FALSE)` now writes the ring `id` into the returned
+  raster. Both branches previously wrote distances, so the argument changed
+  only the background value (`0` rather than `NA`) and not the ring cells.
+  Writing ids matches the `allowOverlap = TRUE` branch, which writes summed
+  ids in the same situation, and matches the example in `?rings`, which fills
+  the raster with `rngs$id` by hand.
+
+## Bug fixes
+* `heading()` returned `0` instead of `180` for a due-south bearing. The
+  quadrant corrections keyed off the sign of the x offset, which is zero due
+  south, so neither correction applied; it now uses `atan2()`, which resolves
+  all four quadrants directly.
+* `dwrpnorm2()` failed for any `mu` longer than 1, with "argument is not
+  numeric or logical". A leftover line recycled a variable named `var`, which
+  resolved to `stats::var` -- the function, not a value.
+* `randomStudyArea(seed = )` did not restore the caller's random number
+  stream. It called `set.seed()` on the saved state vector, which takes a
+  single number, so the stream was reseeded from that vector's first element
+  rather than restored.
+* `crw()` given a `SpatialPoints*` object silently dropped the `x1`/`y1`
+  columns it documents (returning a `SpatialPointsDataFrame` with no columns),
+  and returned a plain matrix rather than an `sp` object when that result was
+  passed back in. Both are in the example in `?crw`.
+* `move()` checked for a `NULL` hypothesis after comparing it, so the check
+  could never run: the comparison raised "argument is of length zero" first.
+* `crw()` accepted a `SpatVector` of polygons and treated its vertices as
+  agent positions. The guard meant to reject non-point geometries was nested
+  inside a condition that could only be true when the object was not a
+  `SpatVector` at all.
+* `numPerPatchMap` example in `specificNumPerPatch()` remapped values in
+  place, so later values could collide with ones already rewritten.
+
+## Documentation and testing
+* The README, which is the home page of the package website, has been
+  rewritten: what the package is for with runnable examples, accurate
+  installation requirements (including the GDAL/GEOS/PROJ system libraries
+  that `terra` needs), and per-branch build and coverage badges.
+* Test coverage raised from 66.7% to 83.5%, which is where most of the bug
+  fixes above came from.
 
 # SpaDES.tools 2.1.2
 
