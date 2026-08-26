@@ -39,19 +39,28 @@ library(terra)
 landscape <- rast(nrows = 100, ncols = 100, xmin = 0, xmax = 100, ymin = 0, ymax = 100)
 landscape[] <- 1
 
-## two fires, each stopping once it has burned 500 pixels
-set.seed(1)
-fires <- spread2(landscape, start = c(3000, 6000), spreadProb = 0.5,
-                 maxSize = 500, asRaster = TRUE)
+## one fire, spreading until it goes out on its own
+set.seed(2)
+fires <- spread2(landscape, start = 5050, spreadProb = 0.24, asRaster = TRUE)
 plot(fires)
 ```
 
 `spreadProb` can be a single number or a raster of per-cell probabilities, which
-is how landscape heterogeneity enters the model. Note that spread on a lattice
-is a percolation process: below a spread probability of roughly 0.2 (for
-8-neighbour spread) events almost always die out immediately, and just above it
-they almost always run away. `maxSize`, `iterations` and `exactSize` are how you
-keep events to a realistic size.
+is how landscape heterogeneity enters the model.
+
+Spread on a lattice is a percolation process, so this one number matters more
+than its size suggests. Roughly, for 8-neighbour spread:
+
+- **below about 0.2**, events die within a handful of cells;
+- **between about 0.2 and 0.28**, events are self-stopping but with a real
+  chance of getting well past a few cells -- at `0.24` on the 100 x 100 grid
+  above, the median event burns a few hundred cells and the largest run to
+  several thousand;
+- **above about 0.3**, events almost always percolate and fill the grid.
+
+That self-stopping band is usually where you want to be, and it is narrow.
+`maxSize`, `exactSize` and `iterations` are there for when you need to pin the
+size distribution down rather than let it emerge.
 
 ### Neighbourhoods, rings and distances
 
