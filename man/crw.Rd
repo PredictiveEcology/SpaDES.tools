@@ -24,7 +24,10 @@ hypothesis/method to test/use. Currently defaults to
 
 \item{...}{arguments passed to the function in \code{hypothesis}}
 
-\item{agent}{A \code{SpatVector} points geometry or a \verb{SpatialPoints*} (deprecated) object.
+\item{agent}{A \code{SpatVector} points geometry, a two-column matrix of
+coordinates, or a \verb{SpatialPoints*} object (deprecated; it
+is converted to a \code{SpatVector} on entry and converted back
+on return, so it needs \code{sf} and \code{sp}).
 If is has attributes, e.g., \code{SpatialPointsDataFrame},
 2 of the columns must
 be \code{x1} and \code{y1}, indicating the previous location.
@@ -97,8 +100,8 @@ system.time({
   for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10)
 })
 
-# as sp
-if (requireNamespace("sp")) {
+# as sp (deprecated: converted to a SpatVector internally and back on return)
+if (requireNamespace("sp") && requireNamespace("sf")) {
   agent <- sp::SpatialPoints(starts)
   spdf <- crw(agent, stepLength = 5, stddev = 10)
   spdfNew <- crw(spdf, stepLength = 5, stddev = 10)
