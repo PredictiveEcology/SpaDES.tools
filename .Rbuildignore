@@ -25,3 +25,4 @@ tests/manualTests/*
 ^\.claude$
 ^data_area1_updated\.rds$
 ^TODO.*\.md$
+^dev$

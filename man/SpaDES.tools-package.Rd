@@ -17,15 +17,15 @@ Contagion can be modelled using discrete approaches or continuous approaches.
 Several functions assist with these:
 
 \tabular{ll}{
-\code{\link[=adj]{adj()}} \tab An optimized (i.e., faster) version of
-\code{\link[terra:adjacent]{terra::adjacent()}}\cr
+\code{\link[=adj]{adj()}} \tab Fast neighbour finding, delegating to
+\code{\link[terra:adjacent]{terra::adjacent()}}, with a faster torus option\cr
 \code{\link[=cir]{cir()}} \tab Identify pixels in a circle around a
-\verb{SpatialPoints*} object\cr
+\code{SpatVector} object\cr
 \code{\link[=directionFromEachPoint]{directionFromEachPoint()}} \tab Fast calculation of direction and
 distance surfaces\cr
 \code{\link[=distanceFromEachPoint]{distanceFromEachPoint()}} \tab Fast calculation of distance surfaces\cr
 \code{\link[=rings]{rings()}} \tab Identify rings around focal cells (e.g., buffers and donuts)\cr
-\code{\link[=spokes]{spokes()}} \tab TO DO: need description\cr
+\code{\link[=spokes]{spokes()}} \tab Identify pixels along rays radiating out from focal cells\cr
 \code{\link[=spread]{spread()}} \tab Contagious cellular automata\cr
 \code{\link[=wrapTorus]{wrapTorus()}} \tab Create a torus from a grid\cr
 }
@@ -38,7 +38,7 @@ Agents have several methods and functions specific to them:
 
 \tabular{ll}{
 \code{\link[=crw]{crw()}} \tab Simple correlated random walk function\cr
-\code{\link[=heading]{heading()}} \tab Determines the heading between \verb{SpatialPoints*}\cr
+\code{\link[=heading]{heading()}} \tab Determines the heading between points\cr
 \code{quickPlot::makeLines()} \tab Makes \code{SpatialLines} object for, e.g., drawing arrows\cr
 \code{\link[=move]{move()}} \tab A meta function that can currently only take "crw"\cr
 \code{\link[=specificNumPerPatch]{specificNumPerPatch()}} \tab Initiate a specific number of agents per patch\cr
@@ -48,9 +48,8 @@ Agents have several methods and functions specific to them:
 \section{3 GIS operations}{
 
 
-In addition to the vast amount of GIS operations available in R (mostly from
-contributed packages such as \code{sp}, \code{raster}, \code{maps}, \code{maptools}
-and many others), we provide the following GIS-related functions:
+In addition to the GIS operations available in R (chiefly from \code{terra} and
+\code{sf}), we provide the following GIS-related functions:
 \tabular{ll}{
 \code{quickPlot::equalExtent()} \tab Assess whether a list of extents are all equal\cr
 }
@@ -89,10 +88,9 @@ They are intended to make translations from \href{http://www.gowlland.ca/}{SELES
 You must know how to use SELES for these to be useful:
 \tabular{ll}{
 \code{\link[=agentLocation]{agentLocation()}} \tab Agent location\cr
-\code{\link[=initiateAgents]{initiateAgents()}} \tab Initiate agents into a \code{SpatialPointsDataFrame}\cr
+\code{\link[=initiateAgents]{initiateAgents()}} \tab Initiate agents into a \code{SpatVector}\cr
 \code{\link[=numAgents]{numAgents()}} \tab Number of agents\cr
 \code{\link[=probInit]{probInit()}} \tab Probability of initiating an agent or event\cr
-\code{\link[=transitions]{transitions()}} \tab Transition probability\cr
 }
 }
 
