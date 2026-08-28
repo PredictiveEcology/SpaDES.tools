@@ -9,6 +9,19 @@
 # package does that usethis cannot know about, reconstructed from the 2.0.8,
 # 2.0.9 and 2.1.1 release cycles.
 #
+# NOTE on placement: usethis injects these at the END of "Prepare for release"
+# and offers no hook for the "Wait for CRAN..." block. Post-acceptance steps
+# therefore cannot live here -- they would read as preparation. Add these three
+# by hand to the "Wait for CRAN..." block of the generated issue, under
+# usethis' own `use_github_release()` / `use_dev_version()` bullets:
+#
+#   * the GitHub release body must be the current NEWS.md section verbatim --
+#     that is this repo's convention (see the v2.0.9 and v2.1.1 releases)
+#   * confirm the `Update CITATION.cff` workflow ran on main and committed the
+#     refreshed CITATION.cff
+#   * tell whoever is driving SpaDES.core -- it is queued behind this package
+#     (reproducible -> SpaDES.tools -> SpaDES.core -> SpaDES)
+#
 # Not exported, and deliberately undocumented: it exists for the maintainer's
 # tooling, not for users.
 release_bullets <- function() {
@@ -27,11 +40,6 @@ release_bullets <- function() {
     "Reverse dependencies: run `revdep/check.R` (revdepcheck, with the PredictiveEcology r-universe added to `repos` so the ecosystem packages resolve), then paste `revdep_report_cran()` output into `cran-comments.md`. usethis does NOT generate this bullet: it skips revdeps for a patch release, and skips them again when the package is off CRAN or has no CRAN revdeps -- both true here -- so it has to live in this list. Record the result even when it is a no-op against CRAN; say so rather than omitting the section",
 
     # -- branch mechanics ---------------------------------------------------
-    "Merge `development` -> `main` (a merge commit, never a force-push; `main` is protected), and re-run checks on `main`",
-
-    # -- post-acceptance, beyond usethis' own bullets ------------------------
-    "After acceptance: tag from `main` and confirm `usethis::use_github_release()` used the current `NEWS.md` section verbatim as the release body -- that is this repo's convention",
-    "After acceptance: confirm the `Update CITATION.cff` workflow ran on `main` and committed the refreshed `CITATION.cff`",
-    "After acceptance: tell whoever is driving SpaDES.core -- it is queued behind this package in the dependency order (reproducible -> SpaDES.tools -> SpaDES.core -> SpaDES)"
+    "Merge `development` -> `main` (a merge commit, never a force-push; `main` is protected), and re-run checks on `main`"
   )
 }
