@@ -11,6 +11,8 @@
 <url><loc>https://spades-tools.predictiveecology.org/reference/SELEStransitions.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/SpaDES.tools-package.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/adj.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/reference/adjPairsMatrix.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/reference/adjPairsWithId.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/cir.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/cirSpecialQuick.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/crw.html</loc></url>
@@ -33,6 +35,7 @@
 <url><loc>https://spades-tools.predictiveecology.org/reference/pkgEnv.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/randomPolygons.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/randomStudyArea.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/reference/rastFromDF.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/rasterizeReduced.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/rcpp-extras.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/resample.html</loc></url>
@@ -46,6 +49,6 @@
 <url><loc>https://spades-tools.predictiveecology.org/reference/spread2.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/spread3.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/testEquivalentMetadata.html</loc></url>
-<url><loc>https://spades-tools.predictiveecology.org/reference/wrap.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/reference/wrapTorus.html</loc></url>
 </urlset>
 

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.3</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Alternative point distance (and direction) calculations</h1>
-    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/R/distanceFromEachPoint.R" class="external-link"><code>R/distanceFromEachPoint.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/R/distanceFromEachPoint.R" class="external-link"><code>R/distanceFromEachPoint.R</code></a></small>
     <div class="hidden name"><code>distances.Rd</code></div>
     </div>
 
@@ -96,6 +96,14 @@ Using this will keep memory use down.</p></dd>
 <dd><p>other columns to use as 'from'</p></dd>
 
 </dl></div>
+    <div id="value">
+    <h2>Value</h2>
+    <p>A matrix with one row per <code>from</code>-<code>to</code> pair, carrying the columns of
+<code>from</code> plus <code>"dists"</code>, the distance between <code>from</code> and <code>to</code>.
+<code>angles = TRUE</code> adds an <code>"angles"</code> column, <code>otherFromCols</code> adds the
+named columns of <code>from</code>, and a non-<code>NA</code> <code>maxDistance</code> adds
+<code>"keptIndex"</code>, the index of each retained pair in the unfiltered set.</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

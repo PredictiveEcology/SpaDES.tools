@@ -23,7 +23,7 @@ robust, and more difficult to use iteratively.'><!-- mathjax --><script src="htt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.3</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ robust, and more difficult to use iteratively.'><!-- mathjax --><script src="htt
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Simulate a contagious spread process on a landscape, with <code>data.table</code> internals</h1>
-    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/R/spread2.R" class="external-link"><code>R/spread2.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/R/spread2.R" class="external-link"><code>R/spread2.R</code></a></small>
     <div class="hidden name"><code>spread2.Rd</code></div>
     </div>
 
@@ -192,7 +192,8 @@ the <code>spread2</code> for that event with a size that is smaller than
 
 
 <dt id="arg-spreadprobrel">spreadProbRel<a class="anchor" aria-label="anchor" href="#arg-spreadprobrel"></a></dt>
-<dd><p>Optional <code>RasterLayer</code> indicating a surface of relative
+<dd><p>Optional <code>RasterLayer</code>, <code>SpatRaster</code>, or numeric vector of
+length <code>ncell(landscape)</code>, indicating a surface of relative
 probabilities useful when using <code>neighProbs</code> (which
 provides a mechanism for selecting a specific number of
 cells at each iteration).

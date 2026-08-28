@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.3</span>
       </span>
     </div>
 
@@ -44,9 +44,76 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.3" id="spadestools-213">SpaDES.tools 2.1.3<a class="anchor" aria-label="anchor" href="#spadestools-213"></a></h2>
+<div class="section level3">
+<h3 id="deprecated-and-defunct-2-1-3">Deprecated and defunct<a class="anchor" aria-label="anchor" href="#deprecated-and-defunct-2-1-3"></a></h3>
+<ul><li>
+<code><a href="../reference/wrapTorus.html">wrap()</a></code> is deprecated in favour of <code><a href="../reference/wrapTorus.html">wrapTorus()</a></code>, which does the same thing under a name that does not collide with <code><a href="https://rspatial.github.io/terra/reference/wrap.html" class="external-link">terra::wrap()</a></code> (an unrelated function that serialises a <code>SpatRaster</code> for saving). <code><a href="../reference/wrapTorus.html">wrap()</a></code> still works and redirects.</li>
+<li>
+<code><a href="../reference/SELEStransitions.html">transitions()</a></code> is defunct. It was never fully implemented and there is no replacement; please contact the maintainer if you have a use for it.</li>
+<li>
+<code>rndmPolygonSpatialPoints()</code> and <code>rndmPolygonSpatialPolygons()</code> (already deprecated) now redirect to their <code>SpatVector</code> equivalents and convert the result back to <code>sp</code>, instead of carrying their own copies of the geometry code.</li>
+<li>Passing a <code>SpatialPoints*</code> object to <code><a href="../reference/crw.html">crw()</a></code> now warns. It is converted to a <code>SpatVector</code> on entry and converted back on return.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="enhancements-2-1-3">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-2-1-3"></a></h3>
+<ul><li>
+<code><a href="../reference/spread2.html">spread2()</a></code> now accepts a numeric vector for <code>spreadProbRel</code>, not just a raster. A raster <code>spreadProbRel</code> is re-materialised in full on every iteration in order to subset a handful of cells from it, which dominates runtime for callers that step one iteration at a time (<code>iterations = 1L</code> in a loop); passing a pre-materialised vector avoids this. Rasters and the scalar <code>NA</code> default are unaffected, and results are unchanged.</li>
+<li>
+<code><a href="../reference/adj.html">adj()</a></code> now delegates to <code><a href="https://rspatial.github.io/terra/reference/adjacent.html" class="external-link">terra::adjacent()</a></code> for the 4-neighbour, 8-neighbour and bishop cases, including <code>match.adjacent</code> and <code>include</code>. This removes a large amount of duplicated neighbour-finding code. The <code>torus</code> case keeps its own integer arithmetic, which measured roughly 3x faster than routing it through <code><a href="../reference/wrapTorus.html">wrapTorus()</a></code>.</li>
+<li>
+<code><a href="../reference/crw.html">crw()</a></code> handles <code>sp</code> input by converting it once on entry and converting back on return, rather than through a separate code path. See the bug fixes below for what that path had been doing.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="behaviour-changes-2-1-3">Behaviour changes<a class="anchor" aria-label="anchor" href="#behaviour-changes-2-1-3"></a></h3>
+<ul><li>
+<code>rings(returnDistances = FALSE)</code> now writes the ring <code>id</code> into the returned raster. Both branches previously wrote distances, so the argument changed only the background value (<code>0</code> rather than <code>NA</code>) and not the ring cells. Writing ids matches the <code>allowOverlap = TRUE</code> branch, which writes summed ids in the same situation, and matches the example in <code><a href="../reference/rings.html">?rings</a></code>, which fills the raster with <code>rngs$id</code> by hand.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-2-1-3">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-1-3"></a></h3>
+<ul><li>
+<code><a href="../reference/heading.html">heading()</a></code> returned <code>0</code> instead of <code>180</code> for a due-south bearing. The quadrant corrections keyed off the sign of the x offset, which is zero due south, so neither correction applied; it now uses <code><a href="https://rspatial.github.io/terra/reference/atan2.html" class="external-link">atan2()</a></code>, which resolves all four quadrants directly.</li>
+<li>
+<code><a href="../reference/dwrpnorm2.html">dwrpnorm2()</a></code> failed for any <code>mu</code> longer than 1, with “argument is not numeric or logical”. A leftover line recycled a variable named <code>var</code>, which resolved to <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">stats::var</a></code> – the function, not a value.</li>
+<li>
+<code>randomStudyArea(seed = )</code> did not restore the caller’s random number stream. It called <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> on the saved state vector, which takes a single number, so the stream was reseeded from that vector’s first element rather than restored.</li>
+<li>
+<code><a href="../reference/crw.html">crw()</a></code> given a <code>SpatialPoints*</code> object silently dropped the <code>x1</code>/<code>y1</code> columns it documents (returning a <code>SpatialPointsDataFrame</code> with no columns), and returned a plain matrix rather than an <code>sp</code> object when that result was passed back in. Both are in the example in <code><a href="../reference/crw.html">?crw</a></code>.</li>
+<li>
+<code><a href="../reference/crw.html">move()</a></code> checked for a <code>NULL</code> hypothesis after comparing it, so the check could never run: the comparison raised “argument is of length zero” first.</li>
+<li>
+<code><a href="../reference/crw.html">crw()</a></code> accepted a <code>SpatVector</code> of polygons and treated its vertices as agent positions. The guard meant to reject non-point geometries was nested inside a condition that could only be true when the object was not a <code>SpatVector</code> at all.</li>
+<li>
+<code>numPerPatchMap</code> example in <code><a href="../reference/specnumperpatch-probs.html">specificNumPerPatch()</a></code> remapped values in place, so later values could collide with ones already rewritten.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-and-testing-2-1-3">Documentation and testing<a class="anchor" aria-label="anchor" href="#documentation-and-testing-2-1-3"></a></h3>
+<ul><li>The README, which is the home page of the package website, has been rewritten: what the package is for with runnable examples, accurate installation requirements (including the GDAL/GEOS/PROJ system libraries that <code>terra</code> needs), and per-branch build and coverage badges.</li>
+<li>Test coverage raised from 66.7% to 83.5%, which is where most of the bug fixes above came from.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.2" id="spadestools-212">SpaDES.tools 2.1.2<a class="anchor" aria-label="anchor" href="#spadestools-212"></a></h2>
+<div class="section level3">
+<h3 id="enhancements-2-1-2">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-2-1-2"></a></h3>
+<ul><li>
+<code><a href="../reference/spread.html">spread()</a></code> and <code><a href="../reference/spread2.html">spread2()</a></code> are now faster: the per-iteration <code><a href="../reference/adj.html">adj()</a></code> call has been replaced with surgical Rcpp helpers (<code><a href="../reference/adjPairsMatrix.html">adjPairsMatrix()</a></code> for <code><a href="../reference/spread.html">spread()</a></code>, <code><a href="../reference/adjPairsWithId.html">adjPairsWithId()</a></code> for <code><a href="../reference/spread2.html">spread2()</a></code>) that compute neighbour pairs and apply edge filtering in C++. Output is value-identical to the previous implementation across a multi-seed verification battery (the <code>pixels</code>/<code>initialPixels</code> columns of <code><a href="../reference/spread2.html">spread2()</a></code>’s data.table are now integer rather than numeric, but values are unchanged). Measured speedups: <code>spread2</code> ~1.4×, <code>spread</code> ~1.6–2.3× depending on <code>spreadProb</code> and scenario.</li>
+<li>
+<code><a href="../reference/spread.html">spread()</a></code>’s no-flags branch (no <code>id</code>/<code>returnIndices</code>/<code>circle</code>/ <code>relativeSpreadProb</code>/<code>neighProbs</code> set, non-matrix path) also now goes through <code><a href="../reference/adjPairsMatrix.html">adjPairsMatrix()</a></code> so the inner loop no longer calls <code><a href="../reference/adj.html">adj()</a></code>.</li>
+<li>New seeded determinism tests for <code><a href="../reference/spread.html">spread()</a></code> and <code><a href="../reference/spread2.html">spread2()</a></code>: each runs a parameter grid twice with the same seed and asserts bit-identical output.</li>
+<li>New drop-in equivalence tests (<code>test-spread-snapshots.R</code>): assert that <code><a href="../reference/spread.html">spread()</a></code> / <code><a href="../reference/spread2.html">spread2()</a></code> output matches RDS snapshots captured from the pre-Rcpp baseline across 30 seeded scenarios (15 <code>spread</code> × 3 seeds and 16 <code>spread2</code> × 3 seeds). Snapshots and the regeneration script live in <code>tests/testthat/_spread_snapshots/</code>.</li>
+<li>
+<code><a href="../reference/rasterizeReduced.html">rasterizeReduced()</a></code>: improved speed (<a href="https://github.com/PredictiveEcology/SpaDES.tools/issues/103" class="external-link">#103</a>). Benchmark on a 2000×2000 raster with 200 codes: single-column ~5× (0.65 s → 0.13 s), multi-column ~3.7× (0.69 s → 0.18 s).</li>
+<li>
+<code><a href="../reference/neutralLandscapeMap.html">neutralLandscapeMap()</a></code> now uses a built-in generator (<code>type = "gaussian"</code>, the only supported <code>type</code>) that fills a padded grid with i.i.d. normal noise and smooths it with a square mean kernel, producing a roughly Gaussian random field. Use the new <code>smooth</code> argument to control autocorrelation length.</li>
+<li>
+<strong>Breaking:</strong> the <code>NLMR</code>-backed <code>type</code> values (<code>"nlm_mpd"</code>, <code>"nlm_gaussianfield"</code>, etc.) have been removed from <code><a href="../reference/neutralLandscapeMap.html">neutralLandscapeMap()</a></code>, and the <code>NLMR</code> dependency has been dropped entirely (removed from <code>Suggests</code>, <code>Remotes</code>, and <code>Additional_repositories</code>). The built-in <code>"gaussian"</code> generator replaces this functionality with no external dependency (PredictiveEcology/SpaDES.core#334).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.1.1" id="spadestools-211">SpaDES.tools 2.1.1<small>2026-01-11</small><a class="anchor" aria-label="anchor" href="#spadestools-211"></a></h2>
 <ul><li>
@@ -185,7 +252,7 @@
 <h2 class="page-header" data-toc-text="1.0.1" id="spadestools-101">SpaDES.tools 1.0.1<small>2023-01-05</small><a class="anchor" aria-label="anchor" href="#spadestools-101"></a></h2>
 <div class="section level3">
 <h3 id="enhancements-1-0-1">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-1-0-1"></a></h3>
-<ul><li>a new function, <code>neutralLandscapeMap</code>, replaces the defunct <code>gaussMap</code> in creating a neutral landscape map using the midpoint displacement algorithm available in <code><a href="https://docs.ropensci.org/NLMR/reference/nlm_mpd.html" class="external-link">NLMR::nlm_mpd</a></code>.</li>
+<ul><li>a new function, <code>neutralLandscapeMap</code>, replaces the defunct <code>gaussMap</code> in creating a neutral landscape map using the midpoint displacement algorithm available in <code>NLMR::nlm_mpd</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">

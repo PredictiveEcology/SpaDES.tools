@@ -18,7 +18,7 @@ This version uses just turn angles and step lengths to define the correlated ran
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.3</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ This version uses just turn angles and step lengths to define the correlated ran
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Move</h1>
-    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/R/movement.R" class="external-link"><code>R/movement.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/R/movement.R" class="external-link"><code>R/movement.R</code></a></small>
     <div class="hidden name"><code>crw.Rd</code></div>
     </div>
 
@@ -83,7 +83,10 @@ hypothesis/method to test/use. Currently defaults to
 
 
 <dt id="arg-agent">agent<a class="anchor" aria-label="anchor" href="#arg-agent"></a></dt>
-<dd><p>A <code>SpatVector</code> points geometry or a <code>SpatialPoints*</code> (deprecated) object.
+<dd><p>A <code>SpatVector</code> points geometry, a two-column matrix of
+coordinates, or a <code>SpatialPoints*</code> object (deprecated; it
+is converted to a <code>SpatVector</code> on entry and converted back
+on return, so it needs <code>sf</code> and <code>sp</code>).
 If is has attributes, e.g., <code>SpatialPointsDataFrame</code>,
 2 of the columns must
 be <code>x1</code> and <code>y1</code>, indicating the previous location.
@@ -147,7 +150,7 @@ Journal of Applied Ecology 44:725-736.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">terra::distance()</a></code></p>
-<p><code><a href="wrap.html">wrap()</a></code></p></div>
+<p><code><a href="wrapTorus.html">wrapTorus()</a></code></p></div>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -185,24 +188,24 @@ Journal of Applied Ecology 44:725-736.</p>
 <span class="r-in"><span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">reps</span><span class="op">)</span> <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span>, returnMatrix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.008   0.000   0.008 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.006   0.000   0.006 </span>
 <span class="r-in"><span><span class="va">agent</span> <span class="op">&lt;-</span> <span class="va">agentOrig</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">reps</span><span class="op">)</span> <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.764   0.000   0.764 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.875   0.000   0.876 </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># as sp</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sp"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># as sp (deprecated: converted to a SpatVector internally and back on return)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sp"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sf"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">sp</span><span class="fu">::</span><span class="fu"><a href="https://edzer.github.io/sp/reference/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="va">starts</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">spdf</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">spdfNew</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">spdf</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">spdf</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">spdfNew</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> agent does not have columns named x1 and y1, which represent the 'previous' locations. Assigning random values to those columns.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> agent does not have columns named x1 and y1, which represent the 'previous' locations. Assigning random values to those columns.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Passing a SpatialPoints* object to crw() is deprecated; use a terra SpatVector instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Passing a SpatialPoints* object to crw() is deprecated; use a terra SpatVector instead.</span>
 <span class="r-plt img"><img src="crw-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># clean up</span></span></span>

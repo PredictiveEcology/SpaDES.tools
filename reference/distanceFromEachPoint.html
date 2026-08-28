@@ -27,7 +27,7 @@ from and to points."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SpaDES.tools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.3</span>
       </span>
     </div>
 
@@ -54,7 +54,7 @@ from and to points."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate distances and directions between many points and many grid cells</h1>
-    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/R/distanceFromEachPoint.R" class="external-link"><code>R/distanceFromEachPoint.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/R/distanceFromEachPoint.R" class="external-link"><code>R/distanceFromEachPoint.R</code></a></small>
     <div class="hidden name"><code>distanceFromEachPoint.Rd</code></div>
     </div>
 
@@ -225,6 +225,7 @@ many <code>to</code> points or all cells are used <code>to = NULL</code> (which 
 <span class="r-in"><span><span class="co">#  of the origin cell</span></span></span>
 <span class="r-in"><span><span class="va">ras</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">34</span>, <span class="fl">0</span>, <span class="fl">34</span><span class="op">)</span>, res <span class="op">=</span> <span class="fl">1</span>, val <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rp</span> <span class="op">&lt;-</span> <span class="fu"><a href="randomPolygons.html">randomPolygons</a></span><span class="op">(</span><span class="va">ras</span>, numTypes <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">^</span> <span class="fl">2</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> duplicate initial loci are provided</span>
 <span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">15</span></span></span>
 <span class="r-in"><span><span class="va">cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">ras</span><span class="op">)</span>, <span class="va">n</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/xyCellFrom.html" class="external-link">xyFromCell</a></span><span class="op">(</span><span class="va">ras</span>, <span class="va">cells</span><span class="op">)</span></span></span>
