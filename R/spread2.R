@@ -394,7 +394,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     )
     assert(
       checkMultiClass(spreadProbRel, c("RasterLayer", "SpatRaster")),
-      checkNumeric(spreadProbRel, min.len = 1, max.len = ncells),
+      ## exact length: `min.len = 1` used to admit any shorter vector, which then
+      ## indexed past its end for every neighbour, giving NA and a spread event
+      ## that died on its first iteration with no error and no warning.
+      checkNumeric(spreadProbRel, len = ncells),
       checkScalarNA(spreadProbRel) ## needs to be checked second; will fail if SpatRaster
     )
     assert(

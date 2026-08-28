@@ -829,6 +829,50 @@ test_that("spread2 accepts a numeric spreadProbRel, equivalent to a raster", {
   expect_equal(outExplicitNA, outDefault)
 })
 
+test_that("spread2 rejects a numeric spreadProbRel of the wrong length", {
+  testInit(c("terra", "withr"))
+
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1, vals = 1)
+  n <- terra::ncell(ras)
+  starts <- c(105L, 210L, 315L)
+
+  ## A short vector used to be accepted: every neighbour indexed past its end,
+  ## so spreadProbRel came back NA for every candidate cell and the event died
+  ## on iteration one, returning only the start cells with no error or warning.
+  expect_error(
+    spread2(ras, start = starts, spreadProb = 0.3, neighProbs = c(0.7, 0.3),
+            spreadProbRel = stats::runif(5), asRaster = FALSE),
+    "Assertion failed"
+  )
+
+  ## a length-1 numeric was silently treated as "not supplied" rather than
+  ## rejected, so a caller passing a scalar got no relative weighting at all
+  expect_error(
+    spread2(ras, start = starts, spreadProb = 0.3, neighProbs = c(0.7, 0.3),
+            spreadProbRel = 0.5, asRaster = FALSE),
+    "Assertion failed"
+  )
+
+  ## too long, and non-numeric, were already rejected -- keep it that way
+  expect_error(
+    spread2(ras, start = starts, spreadProb = 0.3, spreadProbRel = stats::runif(n + 5),
+            asRaster = FALSE),
+    "Assertion failed"
+  )
+  expect_error(
+    spread2(ras, start = starts, spreadProb = 0.3, spreadProbRel = rep("a", n),
+            asRaster = FALSE),
+    "Assertion failed"
+  )
+
+  ## the exact length still works
+  expect_s3_class(
+    spread2(ras, start = starts, spreadProb = 0.3, neighProbs = c(0.7, 0.3),
+            spreadProbRel = stats::runif(n), asRaster = FALSE),
+    "data.table"
+  )
+})
+
 test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
