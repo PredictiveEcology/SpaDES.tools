@@ -1,3 +1,9 @@
+codecov:
+  ## This repo's default branch is `main`; without this Codecov fell back to
+  ## `master`, which does not exist here, so the repo total was computed from
+  ## nothing and read far below the real figure.
+  branch: main
+
 comment: false
 
 coverage:
