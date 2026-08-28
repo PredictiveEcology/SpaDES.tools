@@ -2,7 +2,7 @@ Type: Package
 Package: SpaDES.tools
 Title: Additional Tools for Developing Spatially Explicit Discrete Event
     Simulation (SpaDES) Models
-Version: 2.1.3
+Version: 2.1.3.9000
 Date: 2026-08-28
 Authors@R: c(
     person("Eliot J B", "McIntire", , "eliot.mcintire@nrcan-rncan.gc.ca", role = "aut",
