@@ -50,7 +50,5 @@ None on CRAN at present. The two that existed, SpaDES.core and SpaDES, were
 removed on 2026-07-13 for the same reason as this package, and are being
 resubmitted.
 
-We ran revdepcheck on 2026-05-16 against the 10 packages in the wider SpaDES
-family (SpaDES.core, SpaDES, LandR, NetLogoR, map, scfmutils,
-SpaDES.experiment, fireSenseUtils, LandWebUtils, usefulFuns) and found no new
-problems.
+We ran revdepcheck comparing this version against the last CRAN version (2.1.1)
+and saw no new problems.
