@@ -16,26 +16,34 @@ on:
 
 name: Update CITATION.cff
 
-# Default deny at the file level; the job below re-grants what it needs.
+# Default deny at the file level; each job re-grants only what it needs.
 permissions: {}
 
+# Split into two jobs on purpose. Generating CITATION.cff means installing and
+# running third-party R code -- setup-r-dependencies builds V8 and the package's
+# own dependency tree from source, and a source install runs that package's own
+# configure script. Committing the result needs a write-scoped token. Those two
+# things must not happen in the same job, or every one of those build scripts
+# runs alongside a token that can push to this repository.
+#
+# So: `build` has contents: read and produces an artifact; `commit` has
+# contents: write and runs nothing but git.
 jobs:
-  update-citation-cff:
+  build:
     runs-on: ubuntu-latest
-    # `contents: write` is required: the last step commits and pushes
-    # CITATION.cff back to the branch.
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v5
         with:
-          # Do not leave a write-scoped credential in .git/config while the
-          # steps below build V8 and the rest of the tree from source --
-          # a source install runs the package's own configure script, which
-          # could read it back out. The push below supplies its own token.
+          # Even a read-scoped token is worth keeping out of .git/config, where
+          # any later step could read it back with
+          # `git config --get http.https://github.com/.extraheader`.
           persist-credentials: false
 
-      - uses: PredictiveEcology/actions/install-spatial-deps@v0.2
+      # Pinned to the SHA behind v0.2: a tag can be force-moved, and this action
+      # runs before anything else in the job.
+      - uses: PredictiveEcology/actions/install-spatial-deps@50d9a4d2b92e363a902fb98fee4f4a6f6d0938af
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -44,9 +52,9 @@ jobs:
           use-public-rspm: false
 
       - uses: r-lib/actions/setup-r-dependencies@v2
-        # Scoped here rather than job-level: this is the only step that needs
-        # to authenticate to GitHub, and a job-level env put the token in
-        # reach of every package build script that runs.
+        # Scoped to this step rather than the job: it is the only one that needs
+        # to authenticate to GitHub, and a job-level env put the token in reach
+        # of every package build script that runs.
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -55,6 +63,7 @@ jobs:
             any::V8
 
       - name: Update CITATION.cff
+        shell: Rscript {0}
         run: |
 
           library(cffr)
@@ -68,7 +77,28 @@ jobs:
           # Create your CITATION.cff file
           cff_write(keys = mykeys)
 
-        shell: Rscript {0}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: citation-cff
+          path: CITATION.cff
+          if-no-files-found: error
+          retention-days: 1
+
+  commit:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # The push below supplies its own token, so there is no reason to
+          # leave a write-scoped credential on disk.
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: citation-cff
 
       - name: Commit results
         env:
@@ -77,6 +107,8 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CITATION.cff
+          # `git commit` exits non-zero when there is nothing staged, which is
+          # the normal no-change case -- exit cleanly rather than pushing.
           git commit -m 'Update CITATION.cff' || exit 0
           git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
             "HEAD:${GITHUB_REF_NAME}"
