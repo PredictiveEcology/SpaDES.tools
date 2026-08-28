@@ -1,6 +1,5 @@
 test_that("neutralLandscapeMap produces consistent rasters", {
-  testInit(c("NLMR"))
-  skip_if_not_installed("NLMR", "1.1.1")
+  testInit()
   rastDF <- needTerraAndRaster()
 
   # inputs for x
@@ -52,7 +51,7 @@ test_that("neutralLandscapeMap produces consistent rasters", {
       }
 
       rlist[[i]] <- suppressWarnings({
-        neutralLandscapeMap(r, roughness = 0.65, rand_dev = 100, rescale = FALSE, verbose = FALSE)
+        neutralLandscapeMap(r, rescale = FALSE)
       })
 
       expect_equal(ncol(rlist[[i]]), nx[i])   ## not identical (ncol/nrow can output numeric with terra)

@@ -21,6 +21,11 @@ until successive estimates are within acc of each other.}
 
 \item{tol}{same as \code{acc}.}
 }
+\value{
+A numeric vector of densities, of length
+\code{max(length(theta), length(mu), length(rho))}; \code{theta} and \code{mu} are
+recycled to that length.
+}
 \description{
 This is a modified version of \code{dwrpnorm} in the \code{CircStats} package
 to allow for multiple angles at once (i.e., vectorized on \code{theta} and \code{mu}).

@@ -53,12 +53,12 @@ heading <- function(from, to) {
   to <- coords(to)
   ys <- to[, 2] - from[, 2]
   xs <- to[, 1] - from[, 1]
-  heading <- deg2(atan(xs / ys)) ## 0/0 produces NaN; correct this below
-  heading[xs == 0 & ys == 0] <- 0
-  ys <- (ys < 0)
-  heading[(ys) & (xs) < 0] <- heading[(ys) & (xs) < 0] - 180
-  heading[(ys) & (xs) > 0] <- heading[(ys) & (xs) > 0] + 180
-  return(heading %% 360)
+  ## atan2() resolves all four quadrants directly, including xs == 0. The
+  ## previous atan(xs / ys) version patched quadrants by the sign of xs, so
+  ## `xs == 0 & ys < 0` -- due south -- matched neither correction and came
+  ## back as 0 instead of 180. atan2 also gives 0 for a zero-length move,
+  ## which is what the explicit 0/0 special case did.
+  return(deg2(atan2(xs, ys)) %% 360)
 }
 
 coords <- function(crds) {

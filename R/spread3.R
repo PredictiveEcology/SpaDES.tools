@@ -377,6 +377,10 @@ middlePixel <- function(ras) {
 #'
 #' @param ... 2 or more of the same type of object to test for equivalent metadata.
 #'
+#' @return Invisible `NULL`. Called for its side effect: it signals an error if
+#'         the objects' metadata are not equivalent, and returns silently if
+#'         they are.
+#'
 #' @export
 testEquivalentMetadata <- function(...) {
   UseMethod("testEquivalentMetadata")

@@ -72,7 +72,7 @@ over the values in any buffered regions.
 This is useful for reducing edge effects when performing raster operations involving
 contagious processes.
 
-This function is parallel-aware using the same mechanism as used in \pkg{raster}:
+This function is parallel-aware using the same mechanism as used in \code{raster}:
 NOTE: This may not work as expected as we transition away from \code{raster}.
 Specifically, if you start a cluster using \code{raster::beginCluster()},
 then this function will automatically use that cluster.

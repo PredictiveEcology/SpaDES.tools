@@ -17,17 +17,17 @@
 #' Several functions assist with these:
 #'
 #' \tabular{ll}{
-#'   [adj()] \tab An optimized (i.e., faster) version of
-#'                          [terra::adjacent()]\cr
+#'   [adj()] \tab Fast neighbour finding, delegating to
+#'                          [terra::adjacent()], with a faster torus option\cr
 #'   [cir()] \tab Identify pixels in a circle around a
-#'                          `SpatialPoints*` object\cr
+#'                          `SpatVector` object\cr
 #'   [directionFromEachPoint()] \tab Fast calculation of direction and
 #'                                             distance surfaces\cr
 #'   [distanceFromEachPoint()] \tab Fast calculation of distance surfaces\cr
 #'   [rings()] \tab Identify rings around focal cells (e.g., buffers and donuts)\cr
-#'   [spokes()] \tab TO DO: need description\cr
+#'   [spokes()] \tab Identify pixels along rays radiating out from focal cells\cr
 #'   [spread()] \tab Contagious cellular automata\cr
-#'   [wrap()] \tab Create a torus from a grid\cr
+#'   [wrapTorus()] \tab Create a torus from a grid\cr
 #' }
 #'
 #' @section 2 Spatial agent methods:
@@ -36,7 +36,7 @@
 #'
 #' \tabular{ll}{
 #'   [crw()] \tab Simple correlated random walk function\cr
-#'   [heading()] \tab Determines the heading between `SpatialPoints*`\cr
+#'   [heading()] \tab Determines the heading between points\cr
 #'   `quickPlot::makeLines()` \tab Makes `SpatialLines` object for, e.g., drawing arrows\cr
 #'   [move()] \tab A meta function that can currently only take "crw"\cr
 #'   [specificNumPerPatch()] \tab Initiate a specific number of agents per patch\cr
@@ -44,9 +44,8 @@
 #'
 #' @section 3 GIS operations:
 #'
-#' In addition to the vast amount of GIS operations available in R (mostly from
-#' contributed packages such as `sp`, `raster`, `maps`, `maptools`
-#' and many others), we provide the following GIS-related functions:
+#' In addition to the GIS operations available in R (chiefly from `terra` and
+#' `sf`), we provide the following GIS-related functions:
 #' \tabular{ll}{
 #'   `quickPlot::equalExtent()` \tab Assess whether a list of extents are all equal\cr
 #' }
@@ -71,7 +70,7 @@
 #'   [randomPolygons()] \tab Creates a random polygon with specified number of classes.\cr
 #' }
 #'
-#' See the \pkg{NLMR} package for tools to generate random landscapes (rasters).
+#' See [neutralLandscapeMap()] for tools to generate random landscapes (rasters).
 #'
 #' @section 6 SELES-type approach to simulation:
 #'
@@ -80,20 +79,17 @@
 #' You must know how to use SELES for these to be useful:
 #' \tabular{ll}{
 #'   [agentLocation()] \tab Agent location\cr
-#'   [initiateAgents()] \tab Initiate agents into a `SpatialPointsDataFrame`\cr
+#'   [initiateAgents()] \tab Initiate agents into a `SpatVector`\cr
 #'   [numAgents()] \tab Number of agents\cr
 #'   [probInit()] \tab Probability of initiating an agent or event\cr
-#'   [transitions()] \tab Transition probability\cr
 #' }
 #'
 #' @section 7 Package options:
 #'
 #' `SpaDES` packages use the following [options()] to configure behaviour:
 #'
-#' \itemize{
-#'   \item `spades.lowMemory`: If true, some functions will use more memory
-#'     efficient (but slower) algorithms. Default `FALSE`.
-#' }
+#' - `spades.lowMemory`: If true, some functions will use more memory
+#'   efficient (but slower) algorithms. Default `FALSE`.
 #'
 "_PACKAGE"
 

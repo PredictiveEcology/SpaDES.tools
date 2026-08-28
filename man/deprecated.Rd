@@ -13,6 +13,10 @@ fastCrop(x, y, ...)
 
 \item{...}{other}
 }
+\value{
+None. Called for its side effect of signalling the deprecation
+condition; use \code{\link[terra:crop]{terra::crop()}} instead.
+}
 \description{
 \code{fastCrop} is deprecated.
 }

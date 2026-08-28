@@ -12,6 +12,10 @@
 #'            until successive estimates are within acc of each other.
 #' @param tol same as `acc`.
 #'
+#' @return A numeric vector of densities, of length
+#'         `max(length(theta), length(mu), length(rho))`; `theta` and `mu` are
+#'         recycled to that length.
+#'
 #' @author Eliot McIntire
 #' @export
 #' @rdname dwrpnorm2
@@ -39,8 +43,6 @@ dwrpnorm2 <- function(theta, mu, rho, sd = 1, acc = 1e-05, tol = acc) {
   len <- max(length(theta), length(mu), length(rho))
   if (length(mu) != len)
     mu <- rep(mu, len)
-  if (length(var) != len)
-    var <- rep(var, len)
   if (length(theta) != len)
     theta <- rep(theta, len)
 

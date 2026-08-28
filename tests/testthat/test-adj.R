@@ -215,3 +215,144 @@ test_that("adj.R: torus does not work as expected", {
     }
   }
 })
+
+test_that("adj delegates to terra::adjacent without changing its output", {
+  testInit(c("terra", "data.table"))
+
+  ## Passing `x` lets adj() delegate to terra::adjacent; passing numCol/numCell
+  ## instead leaves x NULL, which forces the R implementation. The two must
+  ## agree exactly -- including row order, which spread()/spread2() rely on for
+  ## RNG reproducibility.
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  ## as.integer to match what adj() does internally when given `x`:
+  ## terra::ncol()/ncell() return doubles, and the R path's arithmetic
+  ## inherits that storage type, so passing them raw would compare an
+  ## integer result against a double one.
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  set.seed(1)
+  cells <- sort(unique(c(1L, numCol, numCell - numCol + 1L, numCell,
+                         sample(numCell, 400))))
+
+  for (dirs in list(8, 4, "bishop")) {
+    for (srt in c(FALSE, TRUE)) {
+      for (prs in c(TRUE, FALSE)) {
+        viaTerra <- adj(x = ras, cells = cells, directions = dirs,
+                        sort = srt, pairs = prs)
+        viaR <- adj(numCol = numCol, numCell = numCell, cells = cells,
+                    directions = dirs, sort = srt, pairs = prs)
+        expect_identical(viaTerra, viaR,
+                         info = paste("directions", dirs, "sort", srt, "pairs", prs))
+      }
+    }
+  }
+})
+
+test_that("adj delegation carries id and target through unchanged", {
+  testInit(c("terra", "data.table"))
+
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), res = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  set.seed(2)
+  cells <- sample(numCell, 200)
+  ids <- seq_along(cells)
+  target <- sample(numCell, 500)
+
+  expect_identical(adj(x = ras, cells = cells, id = ids),
+                   adj(numCol = numCol, numCell = numCell, cells = cells, id = ids))
+
+  expect_identical(adj(x = ras, cells = cells, target = target),
+                   adj(numCol = numCol, numCell = numCell, cells = cells, target = target))
+
+  expect_identical(adj(x = ras, cells = cells, id = ids, target = target, sort = TRUE),
+                   adj(numCol = numCol, numCell = numCell, cells = cells,
+                       id = ids, target = target, sort = TRUE))
+})
+
+test_that("adj delegates match.adjacent to terra::adjacent too", {
+  testInit(c("terra", "data.table"))
+
+  ## match.adjacent exists to reproduce raster::adjacent's ordering, and
+  ## terra::adjacent is that function's successor -- so it is not a case terra
+  ## cannot serve, it is the case terra defines. It differs from terra's own
+  ## column order by a fixed permutation.
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  set.seed(4)
+  cells <- sort(unique(c(1L, numCol, numCell - numCol + 1L, numCell,
+                         sample(numCell, 300))))
+
+  for (dirs in list(8, 4, "bishop")) {
+    for (srt in c(FALSE, TRUE)) {
+      for (prs in c(TRUE, FALSE)) {
+        expect_identical(
+          adj(x = ras, cells = cells, directions = dirs, sort = srt,
+              pairs = prs, match.adjacent = TRUE),
+          adj(numCol = numCol, numCell = numCell, cells = cells,
+              directions = dirs, sort = srt, pairs = prs, match.adjacent = TRUE),
+          info = paste("directions", dirs, "sort", srt, "pairs", prs)
+        )
+      }
+    }
+  }
+})
+
+test_that("adj keeps the R implementation where terra cannot follow", {
+  testInit(c("terra", "data.table"))
+
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), res = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+  set.seed(3)
+  cells <- sample(numCell, 100)
+
+  ## torus wrapping has no terra equivalent, so passing `x` must still
+  ## produce what the R path produces.
+  expect_identical(adj(x = ras, cells = cells, torus = TRUE),
+                   adj(numCol = numCol, numCell = numCell, cells = cells, torus = TRUE))
+
+  ## numNeighs draws from the unfiltered neighbour set, so it must keep the R
+  ## path or the RNG stream would change
+  set.seed(5); viaX <- adj(x = ras, cells = cells, numNeighs = 3)
+  set.seed(5); viaNums <- adj(numCol = numCol, numCell = numCell, cells = cells,
+                              numNeighs = 3)
+  expect_identical(viaX, viaNums)
+})
+
+test_that("adj delegates include = TRUE, splicing the focal cell in place", {
+  testInit(c("terra", "data.table"))
+
+  ## terra's own `include` puts the focal cell elsewhere, so the delegated
+  ## path leaves it off and splices the cell in at adj()'s position: the
+  ## middle of the 3x3 reading order, or first under match.adjacent.
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  set.seed(6)
+  cells <- sort(unique(c(1L, numCol, numCell - numCol + 1L, numCell,
+                         sample(numCell, 300))))
+
+  for (dirs in list(8, 4, "bishop")) {
+    for (ma in c(FALSE, TRUE)) {
+      for (srt in c(FALSE, TRUE)) {
+        expect_identical(
+          adj(x = ras, cells = cells, directions = dirs, include = TRUE,
+              match.adjacent = ma, sort = srt),
+          adj(numCol = numCol, numCell = numCell, cells = cells,
+              directions = dirs, include = TRUE, match.adjacent = ma, sort = srt),
+          info = paste("directions", dirs, "match.adjacent", ma, "sort", srt)
+        )
+      }
+    }
+  }
+
+  ## the focal cell really is present for every input cell
+  got <- adj(x = ras, cells = cells, include = TRUE, pairs = TRUE)
+  expect_true(all(cells %in% got[, "to"]))
+})

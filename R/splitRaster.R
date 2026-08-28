@@ -4,7 +4,7 @@
 #' Split rasters can be recombined using `do.call(merge, y)` or `mergeRaster(y)`,
 #' where `y <- splitRaster(x)`.
 #'
-#' This function is parallel-aware using the same mechanism as used in \pkg{raster}:
+#' This function is parallel-aware using the same mechanism as used in `raster`:
 #' NOTE: This may not work as expected as we transition away from `raster`.
 #' Specifically, if you start a cluster using `raster::beginCluster()`,
 #' then this function will automatically use that cluster.

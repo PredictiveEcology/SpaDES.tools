@@ -1,48 +1,47 @@
 # Platform
 
-|field    |value                                                                       |
-|:--------|:---------------------------------------------------------------------------|
-|version  |R version 4.5.1 (2025-06-13)                                                |
-|os       |macOS Tahoe 26.0.1                                                          |
-|system   |aarch64, darwin20                                                           |
-|ui       |RStudio                                                                     |
-|language |(EN)                                                                        |
-|collate  |en_US.UTF-8                                                                 |
-|ctype    |en_US.UTF-8                                                                 |
-|tz       |America/Edmonton                                                            |
-|date     |2025-10-10                                                                  |
-|rstudio  |2025.09.1+401 Cucumberleaf Sunflower (desktop)                              |
-|pandoc   |3.8.1 @ /opt/homebrew/bin/pandoc                                            |
-|quarto   |1.7.32 @ /Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto |
+|field    |value                        |
+|:--------|:----------------------------|
+|version  |R version 4.5.3 (2026-03-11) |
+|os       |Ubuntu 24.04.4 LTS           |
+|system   |x86_64, linux-gnu            |
+|ui       |X11                          |
+|language |(EN)                         |
+|collate  |en_US.UTF-8                  |
+|ctype    |en_US.UTF-8                  |
+|tz       |America/Los_Angeles          |
+|date     |2026-05-16                   |
+|pandoc   |3.1.3 @ /usr/bin/pandoc      |
+|quarto   |NA                           |
 
 # Dependencies
 
 |package      |old        |new        |Δ  |
 |:------------|:----------|:----------|:--|
-|SpaDES.tools |2.0.8      |2.0.8      |NA |
-|backports    |1.5.0      |1.5.0      |NA |
-|checkmate    |2.3.3      |2.3.3      |NA |
-|cli          |3.6.5      |3.6.5      |NA |
-|cpp11        |0.5.2      |0.5.2      |NA |
-|crayon       |1.5.3      |1.5.3      |NA |
-|data.table   |1.17.8     |1.17.8     |NA |
-|digest       |0.6.37     |0.6.37     |NA |
-|filelock     |1.0.3      |1.0.3      |NA |
-|fpCompare    |0.2.4      |0.2.4      |NA |
-|fs           |1.6.6      |1.6.6      |NA |
-|lobstr       |1.1.2      |1.1.2      |NA |
-|prettyunits  |1.2.0      |1.2.0      |NA |
-|Rcpp         |1.1.0      |1.1.0      |NA |
-|reproducible |2.1.2.9000 |2.1.2.9000 |NA |
-|rlang        |1.1.6      |1.1.6      |NA |
-|terra        |1.8-70     |1.8-70     |NA |
-|withr        |3.0.2      |3.0.2      |NA |
+|SpaDES.tools |2.1.1.9001 |2.1.2      |*  |
+|backports    |1.5.1      |1.5.1      |   |
+|checkmate    |2.3.4      |2.3.4      |   |
+|cli          |3.6.6      |3.6.6      |   |
+|cpp11        |0.5.5      |0.5.5      |   |
+|crayon       |1.5.3      |1.5.3      |   |
+|data.table   |1.18.4     |1.18.4     |   |
+|digest       |0.6.39     |0.6.39     |   |
+|filelock     |1.0.3      |1.0.3      |   |
+|fpCompare    |0.2.4      |0.2.4      |   |
+|fs           |2.1.0      |2.1.0      |   |
+|lobstr       |1.2.1      |1.2.1      |   |
+|prettyunits  |1.2.0      |1.2.0      |   |
+|Rcpp         |1.1.1-1.1  |1.1.1-1.1  |   |
+|reproducible |3.1.0.9000 |3.1.0.9000 |   |
+|rlang        |1.2.0      |1.2.0      |   |
+|terra        |1.9-27     |1.9-27     |   |
 
 # Revdeps
 
-## New problems (1)
+## Failed to check (2)
 
-|package           |version    |error    |warning |note |
-|:-----------------|:----------|:--------|:-------|:----|
-|[SpaDES.experiment](problems.md#spadesexperiment)|0.0.2.9005 |1 __+1__ |1       |     |
+|package        |version    |error |warning |note |
+|:--------------|:----------|:-----|:-------|:----|
+|fireSenseUtils |0.2.0      |1     |        |     |
+|LandWebUtils   |1.0.3.9010 |1     |        |     |
 

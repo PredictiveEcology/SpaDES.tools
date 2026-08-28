@@ -33,7 +33,10 @@ randomStudyArea <- function(center = NULL, size = 1e4, seed = NULL) {
     set.seed(seed)
   studyArea <- randomPolygon(x = center, area = size)
   if (!is.null(seed))
-    set.seed(prevSeed)
+    ## restore the stream, not a new one: set.seed() takes a scalar seed, so
+    ## set.seed(prevSeed) silently reseeded from prevSeed[1] -- the RNG kind
+    ## header word -- rather than putting back the state we saved.
+    assign(".Random.seed", prevSeed, envir = .GlobalEnv)
 
   dfData <- if (is.null(rownames(studyArea))) {
     data.frame("field" = as.character(seq_along(length(studyArea))))

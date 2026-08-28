@@ -4,6 +4,9 @@
 #' @param y Raster to crop with
 #' @param ... other
 #'
+#' @return None. Called for its side effect of signalling the deprecation
+#'         condition; use [terra::crop()] instead.
+#'
 #' @export
 #' @seealso `velox::VeloxRaster_crop`
 #'

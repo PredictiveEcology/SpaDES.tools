@@ -40,8 +40,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
   .Defunct(msg = paste(
     "Random landscape generation functionality has been removed",
     "because the RandomFields packages is no longer maintained.\n",
-    "See neutralLandscapeMap() or use the NLMR package for tools to generate various",
-    "random/neutral landscapes."
+    "See neutralLandscapeMap() for tools to generate random/neutral landscapes."
   ))
 }
 
@@ -194,8 +193,15 @@ randomPolygon.default <- function(x, hectares, area) {
   }
 }
 
+## Deprecated sp entry point. Delegates to the SpatVector implementation
+## rather than duplicating its geometry: the body this replaced was a
+## line-for-line reimplementation of .randomPolygonSpatPoint() in sp classes.
+## Note this path scales `hectares` by 1e4, which rndmPolygonSpatialPolygons()
+## and rndmPolygonMatrix() do not -- passing `area` explicitly preserves that
+## difference rather than inheriting the SpatVector one.
 rndmPolygonSpatialPoints <- function(x, hectares, area) {
   .Deprecated("User should convert to using SpatVector rather that SpatialPoints")
+  .requireNamespace("sf")
   .requireNamespace("sp")
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
@@ -203,55 +209,18 @@ rndmPolygonSpatialPoints <- function(x, hectares, area) {
       area <- hectares * 1e4
   }
 
-  units <- gsub(".*units=(.) .*", "\\1", crs(x))
+  terra::vect(x) |>
+    rndmPolygonSpatVector(area = area) |>
+    .asSpatialPolygons()
+}
 
-  areaM2 <- area * 1.304 # rescale so mean area is close to hectares
-  radius <- sqrt(areaM2 / pi)
-  if (!identical(units, "m")) {
-    origCRS <- raster::crs(x)
-    crsInUTM <- utmCRS(x)
-    if (is.na(crsInUTM))
-      stop("Can't calculate areas with no CRS provided. Please give a CRS to x. See example.")
-    x <- sp::spTransform(x, CRSobj = crsInUTM)
-    message("The CRS provided is not in meters; ",
-            "converting internally to UTM so area will be approximately correct.")
-  }
-
-  meanX <- mean(sp::coordinates(x)[, 1]) - radius
-  meanY <- mean(sp::coordinates(x)[, 2]) - radius
-
-  minX <- meanX - radius
-  maxX <- meanX + radius
-  minY <- meanY - radius
-  maxY <- meanY + radius
-
-  # Add random noise to polygon
-  xAdd <- round(runif(1, radius * 0.8, radius * 1.2))
-  yAdd <- round(runif(1, radius * 0.8, radius * 1.2))
-  nPoints <- 20
-  betaPar <- 0.6
-  X <- c(jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX)),
-         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX, decreasing = TRUE)))
-  Y <- c(jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (maxY - meanY) + meanY)),
-         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxY - minY) + minY, decreasing = TRUE)),
-         jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (meanY - minY) + minY)))
-
-  Sr1 <- sp::Polygon(cbind(X + xAdd, Y + yAdd))
-  Srs1 <- sp::Polygons(list(Sr1), "s1")
-  outPolygon <- sp::SpatialPolygons(list(Srs1), 1L)
-  terra::crs(outPolygon) <- terra::crs(x)
-  wasSpatial <- is(outPolygon, "Spatial")
-  if (exists("origCRS", inherits = FALSE))  {
-    if (requireNamespace("sf", quietly = TRUE)) {
-      outPolygon <- sf::st_as_sf(outPolygon)
-      outPolygon <- sf::st_transform(outPolygon, origCRS)
-      outPolygon <- as(outPolygon, "Spatial")
-    } else {
-      ## TODO: this should use reproducible:::suppressWarningsSpecific
-      outPolygon <- suppressWarnings(sp::spTransform(outPolygon, origCRS))
-    }
-  }
-  return(outPolygon)
+## Convert a SpatVector of polygons back to sp, for the deprecated sp entry
+## points. Goes via sf because terra's own as(, "Spatial") needs `raster`
+## attached; sf is already required by these paths.
+.asSpatialPolygons <- function(x) {
+  sf::st_as_sf(x) |>
+    as("Spatial") |>
+    sp::geometry()
 }
 
 #' @importFrom terra geomtype is.related spatSample
@@ -294,25 +263,22 @@ rndmPolygonMatrix <- function(x, hectares, area) {
   randomPolygon(x, area = area)
 }
 
+## Deprecated sp entry point; see rndmPolygonSpatialPoints() above. The body
+## this replaced reimplemented rndmPolygonSpatVector()'s rejection loop using
+## sp::spsample()/sf::st_contains() instead of spatSample()/is.related().
 rndmPolygonSpatialPolygons <- function(x, hectares, area) {
   .Deprecated("User should convert to using SpatVector rather than SpatialPoints")
   .requireNamespace("sf")
   .requireNamespace("sp")
-
   if (!missing(hectares)) {
     message("hectares argument is deprecated; please use area")
     if (missing(area))
       area <- hectares
   }
-  need <- TRUE
-  while (need) {
-    sp1 <- sp::spsample(x, 1, "random")
-    sp2 <- randomPolygon(sp1, area)
-    contain <- sf::st_contains(sf::st_as_sf(sp2), sf::st_as_sf(sp1))
-    if (isTRUE(contain))
-      need <- FALSE
-  }
-  sp2
+
+  terra::vect(x) |>
+    rndmPolygonSpatVector(area = area) |>
+    .asSpatialPolygons()
 }
 
 rndmPolygonSf <- function(x, hectares, area) {
@@ -410,10 +376,12 @@ rndmPolygonSf <- function(x, hectares, area) {
 #'   expect_true(all(unname(table(ras[rasAgents])) == patchDT$num.in.pop))
 #'
 #' # Use numPerPatchMap
+#' # Remap in one pass: rewriting in place would collide, because a patch
+#' # rewritten to a value that is also a later patch's id gets overwritten
+#' # again on that iteration.
 #' rasPatches <- ras
-#' for (i in 1:Ntypes) {
-#'   rasPatches[rasPatches==i] <- patchDT$num.in.pop[i]
-#' }
+#' terra::values(rasPatches) <-
+#'   patchDT$num.in.pop[match(terra::values(ras)[, 1], patchDT$pops)]
 #' if (interactive()) {
 #'   terra::plot(c(ras, rasPatches))
 #' }
@@ -476,8 +444,8 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 # #' initialize mobileAgent
 # #'
 # #' @param agentlocation The initial positions of the agents
-# #'                      (currently only \code{RasterLayer} or
-# #'                      \code{SpatialPolygonsDataFrame}) accepted.
+# #'                      (currently only `RasterLayer` or
+# #'                      `SpatialPolygonsDataFrame`) accepted.
 # #'
 # #' @param numagents The number of agents to initialize.
 # #'
@@ -582,95 +550,83 @@ long2UTM <- function(long) {
   (floor((long + 180) / 6) %% 60) + 1
 }
 
-#' Produce a neutral landscape using a midpoint displacement algorithm
+#' Produce a neutral (random) landscape raster
 #'
-#' This is a wrapper for the `nlm_mpd` function in the `NLMR` package.
-#' The main addition is that it makes sure that the output raster conforms
-#' in extent with the input raster `x`, since `nlm_mpd` can output a smaller raster.
+#' Generates a `SpatRaster` of randomly-varying values on the same grid as a
+#' template raster `x`, using a built-in Gaussian-smoothed random field with
+#' no extra package dependencies.
 #'
-#' @param x        A `RasterLayer`/`SpatRaster` to use as a template.
+#' @param x        A `SpatRaster` (or `RasterLayer`) to use as a template for
+#'                 the grid and CRS.
 #'
-#' @param pad      Integer. Number of cells by which to pad `x` internally to ensure
-#'                 `nlm_mpd` produces a raster corresponding to the dimensions of `x`.
+#' @param pad      Integer. Number of cells by which to pad `x` internally;
+#'                 the padding is cropped from the result.
 #'
-#' @param type     One of the supported `NLMR` functions.
+#' @param type     Character. Only `"gaussian"` (the default) is supported.
 #'
-#' @param ...      Further arguments passed to `NLMR` function specified in `type`
-#'  (except `ncol`, `nrow` and `resolution`, which are extracted from `x`).
+#' @param smooth   Half-width (in cells) of the smoothing kernel; larger
+#'                 values produce smoother landscapes with longer-range
+#'                 autocorrelation.
 #'
-#' @importFrom terra res ncol nrow ext extend focal
+#' @param rescale  If `TRUE` (default), rescale output values to `[0, 1]`.
+#'
+#' @param ...      Currently ignored; accepted for backwards compatibility.
+#'
+#' @details
+#' The `"gaussian"` generator fills a padded grid with i.i.d. normal noise,
+#' then smooths it with a square mean kernel of size `2 * smooth + 1`. The
+#' result is a roughly Gaussian random field, suitable for sample modules,
+#' demos, and tests.
+#'
+#' @importFrom terra res ncol nrow ext focal rast values<- ncell values crop
 #' @export
 #' @rdname neutralLandscapeMap
 #'
-#' @return A `RasterLayer`/`SpatRaster` with same extent as `x`, with randomly generated values.
-#'
-#' @seealso `nlm_mpd`
+#' @return A `SpatRaster` (or `RasterLayer`, matching `x`) with the same
+#'   extent, resolution, and CRS as `x`, filled with randomly-generated values.
 #'
 #' @examples
 #' \donttest{
-#'   if (requireNamespace("NLMR", quietly = TRUE) &&
-#'       requireNamespace("raster", quietly = TRUE)) {
-#'     library(terra)
-#'     nx <- ny <- 100L
-#'     r <- rast(nrows = ny, ncols = nx,
-#'               xmin = -nx/2, xmax = nx/2,
-#'               ymin = -ny/2, ymax = ny/2)
-#'     ## or with raster package:
-#'     # r <- raster::raster(nrows = ny, ncols = nx,
-#'     #                     xmn = -nx/2, xmx = nx/2,
-#'     #                     ymn = -ny/2, ymx = ny/2)
-#'     map1 <- neutralLandscapeMap(r,
-#'                                 type = "nlm_mpd",
-#'                                 roughness = 0.65,
-#'                                 rand_dev = 200,
-#'                                 rescale = FALSE,
-#'                                 verbose = FALSE)
-#'     if (interactive()) plot(map1)
-#'   }
+#'   library(terra)
+#'   nx <- ny <- 100L
+#'   r <- rast(nrows = ny, ncols = nx,
+#'             xmin = -nx/2, xmax = nx/2,
+#'             ymin = -ny/2, ymax = ny/2)
+#'
+#'   map_default <- neutralLandscapeMap(r)
+#'   if (interactive()) plot(map_default)
+#'
+#'   ## Tweak smoothness:
+#'   map_rough  <- neutralLandscapeMap(r, smooth = 1)
+#'   map_smooth <- neutralLandscapeMap(r, smooth = 8)
 #' }
-neutralLandscapeMap <- function(x, pad = 10L,
-                                type = c("nlm_mpd", "nlm_gaussianfield", "nlm_distancegradient",
-                                         "nlm_edgegradient", "nlm_fbm", "nlm_mosaicfield",
-                                         "nlm_mosaicgibbs", "nlm_mosaictess", "nlm_neigh",
-                                         "nlm_percolation", "nlm_planargradient", "nlm_random",
-                                         "nlm_randomrectangularcluster"),
+neutralLandscapeMap <- function(x, pad = 10L, type = "gaussian",
+                                smooth = 3L, rescale = TRUE,
                                 ...) {
-  if (requireNamespace("NLMR", quietly = TRUE)) {
-    .requireNamespace("raster")
-    type <- match.arg(type)
-    typeFun <- getFromNamespace(type, ns = "NLMR")
+  type <- match.arg(type, "gaussian")
+  .gaussianRandomField(x, pad = pad, smooth = smooth, rescale = rescale)
+}
 
-    dummyVals <- typeFun(
-      ncol = ncol(x) + pad, ## pad the raster so any lost cols won't affect crop etc.
-      nrow = nrow(x) + pad, ## pad the raster so any lost rows won't affect crop etc.
-      resolution = unique(res(x)),
-      ...
-    )
-
-    ## NOTE: dummyVals doesn't match dimensions etc. of x:
-    ## - no CRS and its extent doesn't match x's (but the resolution does);
-    ## - we can't reproject or use x to define the extent;
-    ## - need to add rows/cols by multiplying the final number by res;
-    ## - crop to ensure the extra rows/cols are removed
-    dummyExt <- c(0, ncol(x) * unique(res(x)), 0, nrow(x) * unique(res(x)))
-    dummyVals <- extend(dummyVals, dummyExt, values = NA)
-    dummyVals <- crop(dummyVals, dummyExt)
-
-    # ## now replace added NAs
-    # maxIts <- max(nMissingColsRows) + 1L
-    # it <- 1L
-    # while (any(is.na(dummyVals[])) & (it < maxIts)) {
-    #   dummyVals <- focal(dummyVals, w = matrix(1, 3, 3),
-    #                              fun = mean, NAonly = TRUE, na.rm = TRUE)
-    #   it <- it + 1L
-    # }
-
-    dummyLandscape <- x
-    dummyLandscape[] <- as.vector(dummyVals[])
-
-    return(dummyLandscape)
-  } else {
-    stop("Package 'NLMR' not available. Please install it using:\n",
-         "  install.packages('NLMR', repos = 'https://predictiveecology.r-universe.dev')")
+## Built-in random-landscape generator: i.i.d. normal noise on a padded grid,
+## smoothed by repeated mean focals. No external dependency.
+.gaussianRandomField <- function(x, pad = 10L, smooth = 3L, rescale = TRUE) {
+  nc <- ncol(x) + 2L * as.integer(pad)
+  nr <- nrow(x) + 2L * as.integer(pad)
+  r <- terra::rast(ncols = nc, nrows = nr,
+                   xmin = 0, xmax = nc, ymin = 0, ymax = nr)
+  terra::values(r) <- stats::rnorm(terra::ncell(r))
+  k <- 2L * as.integer(smooth) + 1L
+  if (k >= 3L) {
+    r <- terra::focal(r, w = matrix(1, k, k), fun = "mean", na.rm = TRUE)
   }
+  cropExt <- terra::ext(pad, pad + ncol(x), pad, pad + nrow(x))
+  rc <- terra::crop(r, cropExt)
+  v <- as.vector(terra::values(rc))
+  if (isTRUE(rescale)) {
+    rng <- range(v, na.rm = TRUE)
+    if (diff(rng) > 0) v <- (v - rng[1]) / diff(rng)
+  }
+  out <- x
+  terra::values(out) <- v
+  out
 }

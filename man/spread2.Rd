@@ -37,7 +37,7 @@ locations for spreading events to start and \code{spread2} into. Required.}
 \code{data.table} that is the output of a previous \code{spread2}.
 If a vector, they should be cell indices (pixels) on the \code{landscape}.
 If user has x and y coordinates, these can be converted with
-\code{\link[terra:xyCellFrom]{cellFromXY()}}.}
+\code{\link[terra:cellFromXY]{cellFromXY()}}.}
 
 \item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
 a \code{RasterLayer} that is the identical dimensions as
@@ -100,7 +100,8 @@ that will be made per event ID, before abandoning, therefore completing
 the \code{spread2} for that event with a size that is smaller than
 \code{exactSize}. Default 10 times.}
 
-\item{spreadProbRel}{Optional \code{RasterLayer} indicating a surface of relative
+\item{spreadProbRel}{Optional \code{RasterLayer}, \code{SpatRaster}, or numeric vector of
+length \code{ncell(landscape)}, indicating a surface of relative
 probabilities useful when using \code{neighProbs} (which
 provides a mechanism for selecting a specific number of
 cells at each iteration).

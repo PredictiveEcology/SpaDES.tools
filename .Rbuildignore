@@ -22,3 +22,7 @@ tests/manualTests/*
 ^[.]?air[.]toml$
 ^\.vscode$
 ^CRAN-SUBMISSION$
+^\.claude$
+^data_area1_updated\.rds$
+^TODO.*\.md$
+^dev$

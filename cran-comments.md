@@ -1,46 +1,56 @@
-## Release information
+## Why this submission
 
-This is a minor update to deal with changes to an exported function from reproducible.
-See `NEWS.md` for a full list of changes.
+SpaDES.tools was removed from CRAN on 2026-07-13 because a package it depends
+on, reproducible, had been removed. Nothing was wrong with SpaDES.tools
+itself. reproducible returned to CRAN on 2026-08-25, so SpaDES.tools can be
+restored.
+
+The last version on CRAN was 2.1.1. This submission is 2.1.3, which also
+carries the changes prepared for 2.1.2 (never submitted). See NEWS.md.
 
 ## Test environments
 
-### Previous R versions
-* Ubuntu 24.04                 (GitHub), R 4.3.3, 4.4.3
-* Windows                      (GitHub), R 4.3.3, 4.4.3
-* Windows                 (win-builder), R 4.3.3, 4.4.3
+Checked with `R CMD check --as-cran --no-manual`. All passed.
 
-### Current R versions
-* macOS 15.7.3                 (GitHub), R 4.5.2
-* macOS 26.2                    (local), R 4.5.2
-* Ubuntu 24.04                 (GitHub), R 4.5.2
-* Ubuntu 24.04                  (local), R 4.5.2
-* Windows                      (GitHub), R 4.5.2
-* Windows                       (local), R 4.5.2
-* Windows                 (win-builder), R 4.5.2
+* Ubuntu 26.04, R 4.6.1 (local)
+* Ubuntu 24.04.4, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
+* Windows Server 2025, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
+* macOS 26.5.2, R 4.6.1
+* win-builder, R 4.5.3 (oldrelease), R 4.6.1 (release), R-devel (4.7.0)
+* mac-builder, macOS 26.6 arm64, R 4.6.1 Patched (2026-07-27 r90311)
 
-### Development R version
-* macOS 26.2              (mac-builder), R-devel (2025-12-22 r89219)
-* Ubuntu 24.04                 (GitHub), R-devel (2026-01-08 r89292)
-* Ubuntu 24.04                  (local), R-devel (2026-01-08 r89292)
-* Windows                      (GitHub), R-devel (2026-01-08 r89292 ucrt)
-* Windows                 (win-builder), R-devel (2026-01-08 r89292 ucrt)
+Two of those (Ubuntu and Windows, R 4.6.1) were checked with only the required
+packages installed, not the suggested ones.
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs.
+No ERRORs. No WARNINGs. One NOTE, for the reason given above:
 
-There was 1 NOTE
+    New submission
 
-1. The suggested package `NLMR` is available in a additional repository, for which we provide instructions for installation:
+    Package was archived on CRAN
 
-    The Description field contains
-        "https://PredictiveEcology.r-universe.dev" 
+    CRAN repository db overrides:
+      X-CRAN-Comment: Archived on 2026-07-13 as requires archived package
+        'reproducible'
 
+## Memory and undefined-behaviour checks
 
-## Downstream dependencies
+This release adds compiled code (Rcpp helpers in `spread()`/`spread2()`), so it
+was additionally checked in the r-hub containers:
 
-We checked 1 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+* gcc ASAN + UBSAN (`-fsanitize=address,undefined,bounds-strict`): clean
+* valgrind: clean -- no invalid reads/writes, no uninitialised values,
+  `definitely lost: 0 bytes`
+* rchk: no protection-stack or unprotected-variable findings in this package
 
- * We saw 0 new problems
- * We failed to check 0 packages
+## Reverse dependencies
+
+None on CRAN at present. The two that existed, SpaDES.core and SpaDES, were
+removed on 2026-07-13 for the same reason as this package, and are being
+resubmitted.
+
+We ran revdepcheck on 2026-05-16 against the 10 packages in the wider SpaDES
+family (SpaDES.core, SpaDES, LandR, NetLogoR, map, scfmutils,
+SpaDES.experiment, fireSenseUtils, LandWebUtils, usefulFuns) and found no new
+problems.

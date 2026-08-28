@@ -9,6 +9,11 @@ testEquivalentMetadata(...)
 \arguments{
 \item{...}{2 or more of the same type of object to test for equivalent metadata.}
 }
+\value{
+Invisible \code{NULL}. Called for its side effect: it signals an error if
+the objects' metadata are not equivalent, and returns silently if
+they are.
+}
 \description{
 Currently, only Raster class has a useful method. Defaults to
 \code{all(sapply(list(...)[-1], function(x) identical(list(...)[1], x)))}

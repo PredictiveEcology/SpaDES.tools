@@ -122,7 +122,8 @@ utils::globalVariables(c(
 #'                    Default is `NA`, which is the same as 0, i.e. a cell only burns
 #'                    for one time step.
 #'
-#' @param spreadProbRel Optional `RasterLayer` indicating a surface of relative
+#' @param spreadProbRel Optional `RasterLayer`, `SpatRaster`, or numeric vector of
+#'                      length `ncell(landscape)`, indicating a surface of relative
 #'                      probabilities useful when using `neighProbs` (which
 #'                      provides a mechanism for selecting a specific number of
 #'                      cells at each iteration).
@@ -393,6 +394,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     )
     assert(
       checkMultiClass(spreadProbRel, c("RasterLayer", "SpatRaster")),
+      ## exact length: `min.len = 1` used to admit any shorter vector, which then
+      ## indexed past its end for every neighbour, giving NA and a spread event
+      ## that died on its first iteration with no error and no warning.
+      checkNumeric(spreadProbRel, len = ncells),
       checkScalarNA(spreadProbRel) ## needs to be checked second; will fail if SpatRaster
     )
     assert(
@@ -644,14 +649,18 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
     } else {
       # adj
       ## Spread to immediate neighbours
-      dtPotential <- adj(
-        numCell = ncells,
-        numCol = numCols,
-        directions = directions,
-        id = dt$initialPixels[whActive],
-        cells = dt$pixels[whActive], cutoff.for.data.table = 5e2,
-        returnDT = TRUE
+      ## C++ neighbour expansion + edge filter (replaces adj() with
+      ## returnDT=TRUE). Rows are emitted in the same direction-major
+      ## order as adj(), so the R-side sample.int shuffle below produces
+      ## identical seeded output to the original implementation.
+      dtPotential <- adjPairsWithId(
+        cells = as.integer(dt$pixels[whActive]),
+        id = as.integer(dt$initialPixels[whActive]),
+        numCol = as.integer(numCols),
+        numCell = as.integer(ncells),
+        directions = as.integer(directions)
       )
+      data.table::setDT(dtPotential)
 
       # only iterate if it is not a Retry situation
       its <- its + 1
@@ -820,7 +829,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
       if (NROW(dtPotential)) {
         if (is(spreadProbRel, "RasterLayer") || is(spreadProbRel, "SpatRaster")) {
+          ## NOTE: `spreadProbRel[]` materialises the *whole* raster on every iteration,
+          ## only to subset a handful of cells from it. Callers that iterate (e.g. via
+          ## `iterations = 1L` in a loop) should pass a numeric vector instead -- see the
+          ## `spreadProbRel` documentation.
           set(dtPotential, NULL, "spreadProbRel", spreadProbRel[][dtPotential$to])
+        } else if (length(spreadProbRel) > 1) {
+          set(dtPotential, NULL, "spreadProbRel", spreadProbRel[dtPotential$to])
         } else {
           set(dtPotential, NULL, "spreadProbRel", 1)
         }

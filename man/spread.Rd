@@ -43,7 +43,7 @@ This can also be used as part of \code{stopRule}.}
 \item{loci}{A vector of locations in \code{landscape}.
 These should be cell indices.
 If user has x and y coordinates, these can be converted
-with \code{\link[terra:xyCellFrom]{cellFromXY()}}.}
+with \code{\link[terra:cellFromXY]{cellFromXY()}}.}
 
 \item{spreadProb}{Numeric, \code{RasterLayer}, or \code{SpatRaster}.
 If numeric of length 1, then this is the global probability
@@ -384,7 +384,7 @@ terra::plot(hab, type = "classes", legend = FALSE)
 fires[fires == 0] <- NA
 terra::plot(fires, add = TRUE, col = "red", type = "continuous", legend = FALSE)
 
-# Instead, to give a colour to the zero values, use \code{zero.color=}
+# Instead, to give a colour to the zero values, use `zero.color=`
 coltab(fires) <- NULL
 # need to specify "type" to get correct legend
 terra::plot(fires,  col = c(colorRampPalette(c("blue", "green"))(100)),

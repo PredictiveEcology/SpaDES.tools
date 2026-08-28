@@ -10,7 +10,7 @@ using namespace Rcpp;
 //' @param N Integer Vector
 //' @export
 //' @return
-//' A vector of uniform random numbers as per \code{runif}
+//' A vector of uniform random numbers as per `runif`
 //'
 //' @rdname rcpp-extras
 // [[Rcpp::export]]

@@ -24,7 +24,7 @@ This can also be used as part of \code{stopRule}.}
 \item{loci}{A vector of locations in \code{landscape}.
 These should be cell indices.
 If user has x and y coordinates, these can be converted
-with \code{\link[terra:xyCellFrom]{cellFromXY()}}.}
+with \code{\link[terra:cellFromXY]{cellFromXY()}}.}
 
 \item{id}{Logical. If \code{TRUE}, returns a raster of events ids.
 If \code{FALSE}, returns a raster of iteration numbers,

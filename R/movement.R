@@ -14,10 +14,13 @@
 #' @rdname crw
 #'
 move <- function(hypothesis = "crw", ...) {
-     if (hypothesis == "crw") move <- "crw"
-     if (is.null(hypothesis)) stop("Must specify a movement hypothesis")
-     get(move)(...)
- }
+  ## The NULL check has to come first: `NULL == "crw"` raises "argument is of
+  ## length zero", so this stop() was unreachable. Dispatch on `hypothesis`
+  ## directly rather than through a local named `move`, which shadowed this
+  ## function and made an unrecognised hypothesis fail obscurely.
+  if (is.null(hypothesis)) stop("Must specify a movement hypothesis")
+  get(hypothesis)(...)
+}
 
 ################################################################################
 #' Simple Correlated Random Walk
@@ -28,7 +31,10 @@ move <- function(hypothesis = "crw", ...) {
 #' was presented in Turchin 1998, but it was also used with bias modifications
 #' in McIntire, Schultz, Crone 2007.
 #'
-#' @param agent       A `SpatVector` points geometry or a `SpatialPoints*` (deprecated) object.
+#' @param agent       A `SpatVector` points geometry, a two-column matrix of
+#'                    coordinates, or a `SpatialPoints*` object (deprecated; it
+#'                    is converted to a `SpatVector` on entry and converted back
+#'                    on return, so it needs `sf` and `sp`).
 #'                    If is has attributes, e.g., `SpatialPointsDataFrame`,
 #'                    2 of the columns must
 #'                    be `x1` and `y1`, indicating the previous location.
@@ -72,7 +78,7 @@ move <- function(hypothesis = "crw", ...) {
 #' @export
 #' @importFrom stats rnorm
 #' @rdname crw
-#' @seealso [wrap()]
+#' @seealso [wrapTorus()]
 #' @examples
 #' origDTThreads <- data.table::setDTthreads(2L)
 #' origNcpus <- options(Ncpus = 2L)
@@ -105,8 +111,8 @@ move <- function(hypothesis = "crw", ...) {
 #'   for (i in 1:reps) agent <- crw(agent, stepLength = 5, stddev = 10)
 #' })
 #'
-#' # as sp
-#' if (requireNamespace("sp")) {
+#' # as sp (deprecated: converted to a SpatVector internally and back on return)
+#' if (requireNamespace("sp") && requireNamespace("sf")) {
 #'   agent <- sp::SpatialPoints(starts)
 #'   spdf <- crw(agent, stepLength = 5, stddev = 10)
 #'   spdfNew <- crw(spdf, stepLength = 5, stddev = 10)
@@ -120,16 +126,30 @@ move <- function(hypothesis = "crw", ...) {
 #'
 crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE,
                 returnMatrix = FALSE) {
+  ## `sp` input is deprecated. Convert it to a SpatVector once, here, and
+  ## convert back on the way out, rather than carrying a parallel SpatialPoints
+  ## code path through the whole function.
+  wasSpatialPoints <- inherits(agent, "SpatialPoints")
+  if (wasSpatialPoints) {
+    .Deprecated(msg = paste0(
+      "Passing a SpatialPoints* object to crw() is deprecated; ",
+      "use a terra SpatVector instead."))
+    .requireNamespace("sf")
+    .requireNamespace("sp")
+    agent <- terra::vect(agent)
+  }
+
   crds <- coords(agent)
   xycolNames <- colnames(crds)
 
   if (!is.matrix(agent)) {
-    if (!any(vapply(c("SpatialPoints", "SpatVector"), inherits, x = agent,
-                    FUN.VALUE = logical(1)))) {
-      if (is(agent, "SpatVector"))
-        if (!identical("points", geomtype(agent)))
-          stop("crs can only take SpatialPoints* or SpatVector points geometry")
-    }
+    ## Reject a non-points SpatVector. The previous form nested this inside
+    ## `if (!any(inherits(agent, c("SpatialPoints", "SpatVector"))))`, so it
+    ## only ran when `agent` was neither class and the inner `is(agent,
+    ## "SpatVector")` could never be TRUE -- a polygon SpatVector was accepted.
+    if (inherits(agent, "SpatVector") &&
+        !identical("points", terra::geomtype(agent)))
+      stop("crw can only take SpatialPoints* or SpatVector points geometry")
 
     if (isTRUE(returnMatrix) ) {
       agent <- if (NCOL(agent)) {
@@ -146,10 +166,8 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
 
   if (is.matrix(agent)) {
     hasNames <- colnames(agent) %in% x1y1colNames
-    otherCols <- setdiff(colnames(agent), xycolNames)
   } else {
     hasNames <- names(agent) %in% x1y1colNames
-    otherCols <- setdiff(names(agent), xycolNames)
   }
 
   needRandomX1Y1 <- if (sum(hasNames) < 2 ) TRUE else FALSE
@@ -170,27 +188,6 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
       cbind(x1 = agent$x1, y1 = agent$y1)
     }
 
-  }
-  if (inherits(agent, "SpatialPoints"))  {
-    message("agent does not have columns named x1 and y1, which represent the 'previous' ",
-            "locations. Assigning random values to those columns.")
-    agent1 <- cbind(coords(agent), prevCoords)
-    agent1 <- crw(agent1, extent = extent, stepLength = stepLength,
-                  stddev = stddev, lonlat = lonlat, torus = torus)
-
-    if (returnMatrix %in% FALSE)
-      if (!inherits(agent1, origClass)) {
-        if (grepl(pattern = "SpatialPoints", origClass)) {
-          if ("SpatialPoints" %in% origClass) {
-            df <- as.data.frame(agent1[, otherCols])
-            agent1 <- sp::SpatialPointsDataFrame(agent1[, xycolNames], data = df)
-          } else {
-            coords(agent) <- agent1[, xycolNames]
-            agent@data[, otherCols] <- agent1[, otherCols]
-          }
-        }
-      }
-    return(agent1)
   }
   if (is.null(lonlat) || !is.logical(lonlat)) {
     stop("you must provide a 'lonlat' argument (TRUE/FALSE)")
@@ -227,8 +224,21 @@ crw <- function(agent, extent, stepLength, stddev, lonlat = FALSE, torus = FALSE
         agent <- terra::vect(agent[, xycolNames], atts = agent[, x1y1colNames])
     }
   if (torus) {
-    return(wrap(X = agent, bounds = extent, withHeading = TRUE))
-  } else {
-    return(agent)
+    agent <- wrapTorus(X = agent, bounds = extent, withHeading = TRUE)
   }
+
+  ## back to the class we were handed. returnMatrix is honoured first: it means
+  ## "skip the class round-trip entirely", for iterative calls.
+  if (wasSpatialPoints && isFALSE(returnMatrix)) {
+    agent <- .asSpatialPoints(agent)
+  }
+
+  agent
+}
+
+## SpatVector points -> sp, keeping attributes (so x1/y1 survive as columns of
+## a SpatialPointsDataFrame). Mirrors .asSpatialPolygons() in initialize.R.
+.asSpatialPoints <- function(x) {
+  sf::st_as_sf(x) |>
+    as("Spatial")
 }

@@ -367,9 +367,13 @@ spread <- function(
       stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
   }
-  if (requireNamespace("dqrng", quietly = TRUE)) {
+  if (.useDqrng()) {
     dqrng::dqset.seed(sample.int(1e9, 2)) ## set dqrng seed from base state
-    samInt <- dqrng::dqsample.int
+    ## n<=1 short-circuit: dqsample.int(1) advances the xoroshiro state
+    ## inconsistently (depends on the internal bit-buffer position from the
+    ## previous call), so otherwise two same-seed spread() runs can diverge
+    ## on the next dqsample call.
+    samInt <- function(n) if (n <= 1L) seq_len(n) else dqrng::dqsample.int(n)
   } else {
     samInt <- sample.int
   }
@@ -479,6 +483,7 @@ spread <- function(
   }
 
   ncells <- as.integer(terra::ncell(landscape))
+  numCols <- as.integer(terra::ncol(landscape))
 
   #browser(expr = exists("aaaaa"))
   allowOverlapOrReturnDistances <- allowOverlap | returnDistances
@@ -711,11 +716,22 @@ spread <- function(
       potentials <- cbind(potentials, active = 1)
     } else {
       if (id || returnIndices > 0 || circle || relativeSpreadProb || !is.null(neighProbs)) {
-        potentials <- adj(landscape, loci, directions, pairs = TRUE)
+        ## C++ neighbour expansion + edge filter (replaces adj(..., pairs = TRUE))
+        potentials <- adjPairsMatrix(
+          cells = as.integer(loci),
+          numCol = numCols, numCell = ncells,
+          directions = as.integer(directions)
+        )
       } else {
-        ## must pad the first column of potentials
-        newAdj <- adj(landscape, loci, directions, pairs = FALSE)
-        potentials <- cbind(NA_integer_, newAdj)
+        ## C++ neighbour expansion + edge filter; the original code padded
+        ## the from column with NA via cbind(NA_integer_, adj(..., pairs=FALSE)),
+        ## so reproduce that here — downstream uses only potentials[, 2L]
+        potentials <- adjPairsMatrix(
+          cells = as.integer(loci),
+          numCol = numCols, numCell = ncells,
+          directions = as.integer(directions)
+        )
+        potentials[, "from"] <- NA_integer_
       }
     }
 
@@ -1281,7 +1297,7 @@ spread <- function(
   } ## end of while loop
 
   ## Reset the base R seed so it is deterministic
-  if (requireNamespace("dqrng", quietly = TRUE)) {
+  if (.useDqrng()) {
     set.seed(dqrng::dqsample.int(1e9, 1) + sample.int(1e9, 1))
   }
 

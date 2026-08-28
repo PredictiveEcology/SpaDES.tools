@@ -63,3 +63,15 @@ extnt <- function(x, ...) {
 
 deg2 <- function(radian) (radian * 180)/pi
 rad2 <- function (degree) (degree * pi)/180
+
+## Should spread() take its dqrng fast path?
+##
+## This exists so tests can turn the fast path off. dqrng's xoroshiro state is
+## separate from R's, and spread()'s mid-function reseeding does not fully
+## neutralize it, so the seeded-determinism and baseline-equivalence tests need
+## the base R sample.int branch. testthat::local_mocked_bindings() can rebind a
+## function in this package's namespace but not base::requireNamespace, which
+## those tests otherwise had to patch by hand with unlockBinding().
+.useDqrng <- function() {
+  requireNamespace("dqrng", quietly = TRUE)
+}
