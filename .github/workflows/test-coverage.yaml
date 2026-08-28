@@ -11,7 +11,22 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Default deny at the file level: a job added later cannot silently inherit
+# the org-wide `write` default. Each job re-grants what it needs.
+permissions: {}
+
 jobs:
   test-coverage:
-    uses: PredictiveEcology/actions/.github/workflows/test-coverage.yaml@main
-    secrets: inherit
+    permissions:
+      contents: read
+    # Pinned to a SHA, not a tag: the newest tag (v0.5 = 62d556f) predates
+    # e74180e, which fixed the no-suggests leg, so pinning to it would bring
+    # that bug back. c2b2459 is main at the time of pinning.
+    uses: PredictiveEcology/actions/.github/workflows/test-coverage.yaml@c2b2459
+    # Name the one secret this needs rather than inheriting all of them. The
+    # reusable workflow also declares GOOGLEDRIVE_AUTH, which is deliberately
+    # NOT passed: SpaDES.tools has no Drive-backed tests, and inheriting it
+    # put an org-level personal Drive OAuth token into a job that runs the
+    # whole test suite and prints the account identity into a public log.
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

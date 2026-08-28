@@ -22,9 +22,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Default deny at the file level: a job added later cannot silently inherit
+# the org-wide `write` default. Each job re-grants what it needs.
+permissions: {}
+
 jobs:
   test-downstream:
-    uses: PredictiveEcology/actions/.github/workflows/test-downstream.yaml@main
+    permissions:
+      contents: read
+    # No `secrets:` block: the reusable workflow declares only the optional
+    # GOOGLEDRIVE_AUTH. Not passing it means any Drive-backed test in the
+    # downstream package skips rather than runs. That is the intended
+    # trade-off -- this check exists to catch API breakage in SpaDES.tools,
+    # not to exercise the downstream's cloud storage.
+    # Pinned to a SHA, not a tag: the newest tag (v0.5 = 62d556f) predates
+    # e74180e, which fixed the no-suggests leg, so pinning to it would bring
+    # that bug back. c2b2459 is main at the time of pinning.
+    uses: PredictiveEcology/actions/.github/workflows/test-downstream.yaml@c2b2459
     with:
       downstream: >-
         [{"repo": "PredictiveEcology/SpaDES.core", "ref": "development"}]

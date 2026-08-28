@@ -23,10 +23,19 @@ on:
         description: 'Unique ID. You can leave this empty now.'
         type: string
 
+# Least privilege: every job here only reads the repo. RHUB_TOKEN stays
+# scoped to the individual steps that need it.
+permissions:
+  contents: read
+
 jobs:
 
   setup:
     runs-on: ubuntu-latest
+    # This job does not check out (see the note in its first step), so it needs
+    # no token scope whatsoever. It is also the job that passes a free-text
+    # dispatch input into r-hub's own shell, so zeroing it is worth the line.
+    permissions: {}
     outputs:
       containers: ${{ steps.rhub-setup.outputs.containers }}
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
