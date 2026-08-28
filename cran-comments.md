@@ -16,6 +16,8 @@ Checked with `R CMD check --as-cran --no-manual`. All passed.
 * Ubuntu 24.04.4, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
 * Windows Server 2025, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
 * macOS 26.5.2, R 4.6.1
+* win-builder, R 4.5.3 (oldrelease), R 4.6.1 (release), R-devel (4.7.0)
+* mac-builder, macOS 26.6 arm64, R 4.6.1 Patched (2026-07-27 r90311)
 
 Two of those (Ubuntu and Windows, R 4.6.1) were checked with only the required
 packages installed, not the suggested ones.
@@ -31,6 +33,16 @@ No ERRORs. No WARNINGs. One NOTE, for the reason given above:
     CRAN repository db overrides:
       X-CRAN-Comment: Archived on 2026-07-13 as requires archived package
         'reproducible'
+
+## Memory and undefined-behaviour checks
+
+This release adds compiled code (Rcpp helpers in `spread()`/`spread2()`), so it
+was additionally checked in the r-hub containers:
+
+* gcc ASAN + UBSAN (`-fsanitize=address,undefined,bounds-strict`): clean
+* valgrind: clean -- no invalid reads/writes, no uninitialised values,
+  `definitely lost: 0 bytes`
+* rchk: no protection-stack or unprotected-variable findings in this package
 
 ## Reverse dependencies
 
