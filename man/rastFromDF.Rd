@@ -65,7 +65,6 @@ columns. Layer names follow the column names.
 }
 }
 \examples{
-\dontrun{
 library(terra)
 library(data.table)
 
@@ -83,5 +82,4 @@ df <- data.table(
 r <- rastFromDF(df, tmpl)
 r
 terra::plot(r)  # remaining cells are NA
-}
 }

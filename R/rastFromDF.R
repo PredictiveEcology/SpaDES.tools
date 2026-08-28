@@ -55,7 +55,6 @@
 #'
 #' @export
 #' @examples
-#' \dontrun{
 #' library(terra)
 #' library(data.table)
 #'
@@ -73,16 +72,19 @@
 #' r <- rastFromDF(df, tmpl)
 #' r
 #' terra::plot(r)  # remaining cells are NA
-#' }
 rastFromDF <- function(df, rasTemplate, cols = NULL, cellIDcol = NULL) {
-  if (!is.data.table(df))
+  if (!is.data.table(df)) {
     df <- data.table::as.data.table(df)
-  if (!is.null(cols))
+  }
+  if (!is.null(cols)) {
     df <- df[, ..cols]
-  if (is.null(cellIDcol))
+  }
+  if (is.null(cellIDcol)) {
     cellIDcol <- grep("pixel|cell", value = TRUE, colnames(df))[1]
-  if (length(cellIDcol) == 0)
+  }
+  if (length(cellIDcol) == 0) {
     stop("The data.frame/data.table must have a column named pixel* or cellID or cell*")
+  }
   nr <- terra::ncell(rasTemplate)
   # Complete full table of cell numbers
   full <- list(seq_len(nr)) |> stats::setNames(cellIDcol) |> data.table::setDT()
@@ -95,4 +97,3 @@ rastFromDF <- function(df, rasTemplate, cols = NULL, cellIDcol = NULL) {
 }
 
 utils::globalVariables(c("..cols", "..nams"))
-
