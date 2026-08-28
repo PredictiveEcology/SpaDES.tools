@@ -34,8 +34,11 @@ test_that("spread2 tests", {
     for (jjj in 1:20) {
       sams <- sample(innerCells, 2)
       out <- spread2(a, start = sams, spreadProb = 0.225, asRaster = FALSE)
-      expect_true(length(unique(out$initialPixels)) == 2)
-      expect_true(all(out$active == 0))
+      expect_length(unique(out$initialPixels), 2L)
+      ## was `all(out$active == 0)`, but spread2() returns no `active`
+      ## column -- NULL == 0 is logical(0) and all() of that is TRUE, so the
+      ## assertion was vacuous. `state` is the column that records this.
+      expect_equal(unique(out$state), "inactive")
     }
 
     # Test numeric vector passed to spreadProb
@@ -48,7 +51,7 @@ test_that("spread2 tests", {
     out1 <- spread2(a, start = sams, spreadProb = sps, asRaster = FALSE)
     set.seed(123)
     out2 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
-    expect_true(identical(out1, out2))
+    expect_identical(out1, out2)
 
     # Test warning for raster on disk
     spsRas[] <- sps
@@ -56,7 +59,7 @@ test_that("spread2 tests", {
     warn <- capture_warnings({
       out1 <- spread2(a, start = sams, spreadProb = spsRas, asRaster = FALSE)
     })
-    expect_true(grepl("spreadProb is a raster layer stored on disk", warn))
+    expect_match(warn, "spreadProb is a raster layer stored on disk", fixed = TRUE, all = FALSE)
 
     if (interactive()) message("testing maxSize")
     maxSizes <- 2:3
@@ -65,7 +68,7 @@ test_that("spread2 tests", {
       set.seed(seed)
       sams <- sample(innerCells, 2)
       out <- spread2(a, start = sams, spreadProb = 0.225, maxSize = maxSizes, asRaster = FALSE)
-      expect_true(all(out[, .N, by = "initialPixels"]$N <= maxSizes[order(sams)]))
+      expect_lte(max(out[, .N, by = "initialPixels"]$N - maxSizes[order(sams)]), 0)
     }
 
     if (interactive()) message("testing exactSize")
@@ -79,9 +82,9 @@ test_that("spread2 tests", {
       if (any(attrib)) {
         frequ <- out[, .N, by = "initialPixels"]$N
         expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
-        expect_true(all(frequ[!attrib] == floor(exactSizes[order(sams)][!attrib])))
+        expect_equal(as.vector(frequ[!attrib]), as.vector(floor(exactSizes[order(sams)][!attrib])))
       } else {
-        expect_true(all(out[, .N, by = "initialPixels"]$N == floor(exactSizes[order(sams)])))
+        expect_equal(out[, .N, by = "initialPixels"]$N, floor(exactSizes[order(sams)]))
       }
     }
 
@@ -94,9 +97,9 @@ test_that("spread2 tests", {
       if (any(attrib)) {
         frequ <- out[, .N, by = "initialPixels"]$N
         expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
-        expect_true(all(frequ[!attrib] == floor(exactSizes[order(sams)][!attrib])))
+        expect_equal(as.vector(frequ[!attrib]), as.vector(floor(exactSizes[order(sams)][!attrib])))
       } else {
-        expect_true(all(out[, .N, by = "initialPixels"]$N == floor(exactSizes[order(sams)])))
+        expect_equal(out[, .N, by = "initialPixels"]$N, floor(exactSizes[order(sams)]))
       }
     }
 
@@ -108,8 +111,11 @@ test_that("spread2 tests", {
       set.seed(seed)
       sams <- sample(innerCells, 3)
       out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
-      expect_true(all(out[, .N, by = "initialPixels"]$N < exactSizes))
-      expect_true(all(out$numRetries == 11)) # current max
+      expect_lt(max(out[, .N, by = "initialPixels"]$N - exactSizes), 0)
+      ## was `all(out$numRetries == 11)`, but numRetries is not a column of the
+      ## returned table -- it lives in the spreadState attribute, so that
+      ## assertion was vacuous (NULL == 11 is logical(0)).
+      expect_equal(unique(attr(out, "spreadState")$clusterDT$numRetries), 11) # current max
     }
 
     if (interactive()) message("test circle = TRUE")
@@ -125,22 +131,22 @@ test_that("spread2 tests", {
                            circle = TRUE, asRaster = FALSE, plot.it = TRUE))
       out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, asRaster = FALSE)
       expect_true(is.numeric(out$distance))
-      expect_true(NROW(out) == ncell(a))
+      expect_equal(NROW(out), ncell(a))
     }
 
     # test circle
     sams <- sort(sample(innerCells, 3)) # sorted -- makes comparisons later easier
     out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, asRaster = FALSE,
                    returnDistances = TRUE)
-    expect_true(NROW(out) == ncell(a))
-    expect_true(all(out$state == "inactive"))
-    expect_true(all(out$distance <= (sqrt(2) * ncol(a))))
+    expect_equal(NROW(out), ncell(a))
+    expect_equal(unique(out$state), "inactive")
+    expect_lte(max(out$distance), sqrt(2) * ncol(a))
 
     out <- spread2(a, start = sams, spreadProb = 1, circle = TRUE, allowOverlap = TRUE,
                    asRaster = FALSE, returnDistances = TRUE)
-    expect_true(NROW(out) == ncell(a) * length(sams))
-    expect_true(all(out$state == "inactive"))
-    expect_true(all(out$distance <= (sqrt(2) * ncol(a))))
+    expect_equal(NROW(out), ncell(a) * length(sams))
+    expect_equal(unique(out$state), "inactive")
+    expect_lte(max(out$distance), sqrt(2) * ncol(a))
 
     setkey(out, initialPixels, distance)
 
@@ -200,8 +206,8 @@ test_that("spread2 tests", {
     set.seed(321)
     out <- spread2(a, spreadProb = 1, spreadProbRel = sp, start = sams,
                    neighProbs = c(0.7, 0.3), maxSize = maxSizes, asRaster = FALSE)
-    expect_true(uniqueN(out) == maxSizes * length(sams))
-    expect_true(NROW(out) == maxSizes * length(sams))
+    expect_equal(uniqueN(out), maxSizes * length(sams))
+    expect_equal(NROW(out), maxSizes * length(sams))
 
     if (interactive()) message("check variable lengths of neighProbs")
     set.seed(29937)
@@ -213,7 +219,7 @@ test_that("spread2 tests", {
         a, spreadProb = 1, spreadProbRel = sp, iterations = 1,start = sams,
         neighProbs = alwaysN, asRaster = FALSE
       )
-      expect_true(NROW(out) == (length(alwaysN) * 2 + length(sams)))
+      expect_equal(NROW(out), length(alwaysN) * 2 + length(sams))
     }
 
     if (interactive()) {
@@ -245,7 +251,7 @@ test_that("spread2 tests", {
     })
 
     #if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
-    expect_true(cht$p.value > 0.05)
+    expect_gt(cht$p.value, 0.05)
     #} else {
     #  expect_false(cht$p.value > 0.05) ## TODO: is this valid/correct test?
     #}
@@ -304,7 +310,7 @@ test_that("spread2 tests", {
       stillActive <- any(attr(out1, "pixel")$state == "activeSource")
       out1 <- spread2(a, iterations = 1, start = out1, asRaster = TRUE)
     }
-    expect_true(identical(out, attr(out1, "pixel")))
+    expect_identical(out, attr(out1, "pixel"))
 
     if (interactive())
       message("testing iterative with maxSize")
@@ -337,14 +343,14 @@ test_that("spread2 tests", {
       out2 <- spread2(a, start = out2, spreadProb = 0.225, iterations = 1,
                       exactSize = exactSizes, asRaster = FALSE)
     }
-    expect_true(is.data.table(out))
-    expect_true(is.data.table(out2))
-    expect_true(all(attr(out2, "spreadState")$clusterDT$numRetries == 0))
-    expect_true(all(attr(out, "spreadState")$clusterDT$numRetries > 10))
+    expect_s3_class(out, "data.table")
+    expect_s3_class(out2, "data.table")
+    expect_equal(unique(attr(out2, "spreadState")$clusterDT$numRetries), 0)
+    expect_gt(min(attr(out, "spreadState")$clusterDT$numRetries), 10)
 
     # because loses info on how many retries, it will always be smaller
-    expect_true(all(attr(out, "spreadState")$clusterDT$numRetries >
-                      attr(out2, "spreadState")$clusterDT$numRetries))
+    expect_gt(min(attr(out, "spreadState")$clusterDT$numRetries -
+                    attr(out2, "spreadState")$clusterDT$numRetries), 0)
 
     sams <- c(25, 75)
     set.seed(234)
@@ -468,7 +474,7 @@ test_that("spread2 tests -- asymmetry", {
 
     whBig <- which(lenAngles > 50)
     pred <- (1:n)[whBig] * 20
-    expect_true(abs(coef(lm(avgAngles[whBig] ~ pred))[[2]] - 1) < 0.1)
+    expect_lt(abs(coef(lm(avgAngles[whBig] ~ pred))[[2]] - 1), 0.1)
 
     # test that the events spread to the middle
     # Create a raster with one point at the centre
@@ -502,7 +508,7 @@ test_that("spread2 tests -- asymmetry", {
       # Plot(circs2, addTo = "circs", col = "#1211AA33")
     }
     #test whether it stopped before hitting the whole map
-    expect_true(sum(circs[], na.rm = TRUE) < ncell(circs))
+    expect_lt(sum(circs[], na.rm = TRUE), ncell(circs))
 
     if (as.numeric_version(paste0(R.version$major, ".", R.version$minor)) < "3.6.0") {
       #test that it reached the centre, but not circs2 that did not have directionality
@@ -530,7 +536,7 @@ test_that("spread2 tests -- asymmetry", {
     }
 
     ttestOut <- t.test(sizes$a, mu = 994)
-    expect_true(ttestOut$p.value > 0.05)
+    expect_gt(ttestOut$p.value, 0.05)
 
     next # the following isn't tested
     if (!interactive()) next
@@ -635,8 +641,8 @@ test_that("spread2 returnFrom", {
       expect_silent(out <- spread2(a, start = sams, 0.215, asRaster = FALSE,
                                    returnFrom = TRUE))
       out <- spread2(a, start = sams, 0.215, asRaster = FALSE, returnFrom = TRUE)
-      expect_true("from" %in% colnames(out))
-      expect_true(sum(is.na(out$from)) == length(sams))
+      expect_in("from", colnames(out))
+      expect_equal(sum(is.na(out$from)), length(sams))
     }
   }
 })
@@ -663,8 +669,8 @@ test_that("spread2 tests", {
                      asymmetryAngle = 120, iterations = 10, asRaster = FALSE,
                      returnDistances = TRUE, allowOverlap = TRUE)
     })
-    expect_true("effectiveDistance" %in% colnames(out))
-    expect_true(all(out$state == "activeSource"))
+    expect_in("effectiveDistance", colnames(out))
+    expect_equal(unique(out$state), "activeSource")
     expect_true(all(out$distance[out$distance > 0] <= out$effectiveDistance[out$distance > 0]))
 
   }
@@ -692,8 +698,8 @@ test_that("spread2 works with terra", {
       out <- spread2(a, start = sams, 1, iterations = 1, asRaster = FALSE)
     })
     # TODO: add more tests once asymmetry, circle, etc works
-    expect_true(all(out[pixels %in% sams]$state == "inactive"))
-    expect_true(any("activeSource" %in% out$state))
+    expect_equal(unique(out[pixels %in% sams]$state), "inactive")
+    expect_in("activeSource", out$state)
 
   }
 })
@@ -719,7 +725,7 @@ test_that("spread2 tests -- persistence", {
     wPersist <- spread2(landscape = landscape, start = start, asRaster = FALSE,
                         spreadProb = 0.23, persistProb = 0.8, iterations = 10, directions = 8L, plot.it = FALSE)
 
-    expect_true(sum(noPersist$state == "activeSource") < sum(wPersist$state == "activeSource"))
+    expect_lt(sum(noPersist$state == "activeSource"), sum(wPersist$state == "activeSource"))
 
     ## test the effect of persistence as a raster layer
     M <- matrix(0.8, nrow = 50, ncol = 50)
@@ -736,7 +742,7 @@ test_that("spread2 tests -- persistence", {
                            spreadProb = 0.23, persistProb = persistRas, iterations = 10,
                            directions = 8L, asRaster = TRUE, plot.it = FALSE)
 
-    expect_true(sum(wRasPersist[] == 1, na.rm = TRUE) > sum(wRasPersist[] == 2, na.rm = TRUE))
+    expect_gt(sum(wRasPersist[] == 1, na.rm = TRUE), sum(wRasPersist[] == 2, na.rm = TRUE))
   }
 })
 
