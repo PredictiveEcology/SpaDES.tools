@@ -214,7 +214,8 @@ test_that("spread() consumes RNG identically to baseline (one iteration)", {
   }
 
   rngFile <- file.path(snapDir, "rng_state__spread.rds")
-  skip_if_not(file.exists(rngFile), "RNG-state snapshot missing")
+  ## fail rather than skip -- see the note in test-spread-snapshots.R
+  expect_true(file.exists(rngFile))
 
   ras <- terra::rast(terra::ext(0, 10, 0, 10), resolution = 1, vals = 1)
   set.seed(7L)
@@ -228,7 +229,8 @@ test_that("spread2() consumes RNG identically to baseline (one iteration)", {
   testInit(c("terra", "withr"))
 
   rngFile <- file.path(snapDir, "rng_state__spread2.rds")
-  skip_if_not(file.exists(rngFile), "RNG-state snapshot missing")
+  ## fail rather than skip -- see the note in test-spread-snapshots.R
+  expect_true(file.exists(rngFile))
 
   ras <- terra::rast(terra::ext(0, 10, 0, 10), resolution = 1, vals = 1)
   set.seed(7L)

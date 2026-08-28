@@ -50,7 +50,10 @@ test_that("spread() output matches pre-Rcpp baseline (seeded grid)", {
     })
   }
 
-  skip_if(!dir.exists(snapDir), "snapshot dir missing")
+  ## Fail rather than skip: the snapshots ship in the tarball, so a missing
+  ## directory means the baseline was lost, not that this environment cannot
+  ## run the test. Skipping here would pass green while asserting nothing.
+  expect_true(dir.exists(snapDir))
 
   ras <- terra::rast(terra::ext(0, 80, 0, 80), resolution = 1, vals = 1)
   withr::with_seed(7L,   spsRas <- terra::rast(ras, vals = stats::runif(terra::ncell(ras), 0.10, 0.40)))
@@ -87,7 +90,7 @@ test_that("spread() output matches pre-Rcpp baseline (seeded grid)", {
   for (sc in scenarios) {
     for (sd in c(1L, 17L, 1234L)) {
       f <- file.path(snapDir, sprintf("spread__%s__seed%d.rds", sc$name, sd))
-      skip_if_not(file.exists(f), sprintf("missing snapshot: %s", basename(f)))
+      expect_true(file.exists(f), info = sprintf("missing snapshot: %s", basename(f)))
       set.seed(sd)
       out <- cmpForm(do.call(spread, c(list(landscape = ras), sc$args)))
       cmpToBaseline(out, readRDS(f),
@@ -100,7 +103,10 @@ test_that("spread2() output matches pre-Rcpp baseline (seeded grid)", {
   snapDir <- normalizePath(testthat::test_path("_spread_snapshots"), mustWork = FALSE)
   testInit(c("terra", "withr"))
 
-  skip_if(!dir.exists(snapDir), "snapshot dir missing")
+  ## Fail rather than skip: the snapshots ship in the tarball, so a missing
+  ## directory means the baseline was lost, not that this environment cannot
+  ## run the test. Skipping here would pass green while asserting nothing.
+  expect_true(dir.exists(snapDir))
   ## The baseline snapshots were captured with {bit} installed, so
   ## spread2()'s spreadState$notAvailable attribute is a <booltype/bit>
   ## integer vector. Without {bit}, spread2() falls back to a plain
@@ -141,7 +147,7 @@ test_that("spread2() output matches pre-Rcpp baseline (seeded grid)", {
   for (sc in scenarios) {
     for (sd in c(1L, 17L, 1234L)) {
       f <- file.path(snapDir, sprintf("spread2__%s__seed%d.rds", sc$name, sd))
-      skip_if_not(file.exists(f), sprintf("missing snapshot: %s", basename(f)))
+      expect_true(file.exists(f), info = sprintf("missing snapshot: %s", basename(f)))
       set.seed(sd)
       out <- cmpForm(do.call(spread2, c(list(landscape = ras), sc$args)))
       cmpToBaseline(out, readRDS(f),
