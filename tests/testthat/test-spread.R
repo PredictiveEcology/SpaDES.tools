@@ -1229,6 +1229,14 @@ test_that("cir angles arg doesn't work", {
 
 test_that("multi-core version of distanceFromEachPoints does not work correctly", {
   ## Only raster -- beginCluster is a mechanism only in raster AFAIK (Eliot)
+  ##
+  ## Both skips are deliberate, and skip_on_cran() is the important one: this
+  ## test starts PSOCK clusters, which is a known source of intermittent,
+  ## platform-specific failures on CRAN's machines -- and a failure there
+  ## arrives by email days after acceptance, with no log to read. skip_on_ci()
+  ## is the weaker of the two; it keeps the cluster off the runners. That
+  ## leaves this running locally and under covr (which sets NOT_CRAN).
+  skip_on_cran()
   skip_on_ci()
 
   testInit(c("raster", "parallel", "DEoptim", "withr"))
@@ -1263,7 +1271,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
     )
   })
   stopCluster(cl1)
-  expect_true(all.equal(dfep, dfepCluster))
+  expect_equal(dfep, dfepCluster)
 
   ## using raster package cluster
   system.time({
@@ -1277,7 +1285,7 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
     )
   })
   raster::endCluster()
-  expect_true(all.equal(dfep, dfepCluster2))
+  expect_equal(dfep, dfepCluster2)
 
   withr::deferred_run()
 })
