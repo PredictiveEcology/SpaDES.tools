@@ -78,6 +78,7 @@ Collate:
     'numerical-comparisons.R'
     'probability.R'
     'rastFromDF.R'
+    'release-bullets.R'
     'resample.R'
     'rings.R'
     'spades-tools-deprecated.R'
