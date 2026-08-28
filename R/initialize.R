@@ -444,8 +444,8 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
 # #' initialize mobileAgent
 # #'
 # #' @param agentlocation The initial positions of the agents
-# #'                      (currently only \code{RasterLayer} or
-# #'                      \code{SpatialPolygonsDataFrame}) accepted.
+# #'                      (currently only `RasterLayer` or
+# #'                      `SpatialPolygonsDataFrame`) accepted.
 # #'
 # #' @param numagents The number of agents to initialize.
 # #'

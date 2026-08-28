@@ -46,12 +46,12 @@ adjPairsMatrix <- function(cells, numCol, numCell, directions) {
 #' @title
 #' Rcpp duplicated on integers using Rcpp Sugar
 #' @description
-#' \code{.duplicatedInt} does same as \code{duplicated} in R, but only on integers, and faster.
+#' `.duplicatedInt` does same as `duplicated` in R, but only on integers, and faster.
 #' It uses Rcpp sugar
 #'
 #' @param x Integer Vector
 #' @return
-#' A logical vector, as per \code{duplicated}
+#' A logical vector, as per `duplicated`
 #'
 #' @rdname duplicated
 duplicatedInt <- function(x) {
@@ -66,7 +66,7 @@ duplicatedInt <- function(x) {
 #' @param N Integer Vector
 #' @export
 #' @return
-#' A vector of uniform random numbers as per \code{runif}
+#' A vector of uniform random numbers as per `runif`
 #'
 #' @rdname rcpp-extras
 runifC <- function(N) {

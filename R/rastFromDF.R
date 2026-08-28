@@ -1,57 +1,53 @@
 #' Build a multi-layer SpatRaster from a sparse cell/value table
 #'
 #' @description
-#' Efficiently constructs a multi-layer \code{terra::SpatRaster} from a
-#' \code{data.frame}/\code{data.table} that contains one column of raster cell
+#' Efficiently constructs a multi-layer [terra::SpatRaster] from a
+#' `data.frame`/`data.table` that contains one column of raster cell
 #' identifiers and one or more columns of values. The function performs a
 #' complete join against all cell indices in the template raster (so every cell
-#' is present exactly once), fills missing cells with \code{NA}, and assigns all
+#' is present exactly once), fills missing cells with `NA`, and assigns all
 #' layers in a single block write for speed.
 #'
 #' @details
-#' This function is designed as a fast “inverse” of \code{terra::as.data.frame()}
+#' This function is designed as a fast "inverse" of [terra::as.data.frame()]
 #' for rasters to be made from "sparse" data.frame/data.table objects with the
 #' following workflow:
-#' \enumerate{
-#'   \item Identify the pixel/cell ID column in \code{df} by searching for a
-#'         column name that matches \code{"pixel|cell"} (e.g., \code{"cell"},
-#'         \code{"cellID"}, \code{"pixelID"}).
-#'   \item Create a complete index of all cell numbers for \code{rasTemplate}
-#'         using \code{terra::ncell()} and join with \code{df}, so any
-#'         non-provided cells become \code{NA}.
-#'   \item Create a multi-layer raster with the same geometry as
-#'         \code{rasTemplate} via \code{terra::rast()}, one layer per value
-#'         column, and write all values at once using \code{terra::values()}.
-#' }
 #'
-#' \strong{Notes and gotchas}
-#' \itemize{
-#'   \item The ID column must be a 1-based integer cell index consistent with
-#'         \code{rasTemplate}'s grid.
-#'   \item If the input has duplicate cell IDs, the data.table join semantics
-#'         will replicate rows; the final \code{terra::values()} call expects
-#'         exactly one row per cell. Deduplicate beforehand if necessary.
-#'   \item The argument \code{cols} (a character vector) can be used to select a
-#'         subset of columns to create in the returned SpatVector.
-#'   \item The number of layers created equals the number of selected value
-#'         columns. Layer names follow the column names.
-#' }
+#' 1. Identify the pixel/cell ID column in `df` by searching for a column name
+#'    that matches `"pixel|cell"` (e.g., `"cell"`, `"cellID"`, `"pixelID"`).
+#' 2. Create a complete index of all cell numbers for `rasTemplate` using
+#'    [terra::ncell()] and join with `df`, so any non-provided cells become
+#'    `NA`.
+#' 3. Create a multi-layer raster with the same geometry as `rasTemplate` via
+#'    [terra::rast()], one layer per value column, and write all values at once
+#'    using [terra::values()].
 #'
-#' @param df A \code{data.frame} or \code{data.table} containing one column for
-#'   raster cell indices (name matching \code{"pixel|cell"}; e.g., \code{cell},
-#'   \code{cellID}, \code{pixelID}) and one or more columns of values to become
-#'   raster layers.
-#' @param rasTemplate A \code{terra::SpatRaster} whose geometry (extent,
-#'   resolution, rows/cols, CRS) defines the output grid.
-#' @param cols \code{NULL} or a character vector of column names in \code{df}
-#'   to use as layers (order preserved). If \code{NULL}, the function uses all
-#'   columns except the detected cell/pixel ID column.
+#' **Notes and gotchas**
+#'
+#' - The ID column must be a 1-based integer cell index consistent with
+#'   `rasTemplate`'s grid.
+#' - If the input has duplicate cell IDs, the data.table join semantics will
+#'   replicate rows; the final [terra::values()] call expects exactly one row
+#'   per cell. Deduplicate beforehand if necessary.
+#' - The argument `cols` (a character vector) can be used to select a subset of
+#'   columns to create in the returned SpatVector.
+#' - The number of layers created equals the number of selected value columns.
+#'   Layer names follow the column names.
+#'
+#' @param df A `data.frame` or `data.table` containing one column for raster
+#'   cell indices (name matching `"pixel|cell"`; e.g., `cell`, `cellID`,
+#'   `pixelID`) and one or more columns of values to become raster layers.
+#' @param rasTemplate A [terra::SpatRaster] whose geometry (extent, resolution,
+#'   rows/cols, CRS) defines the output grid.
+#' @param cols `NULL` or a character vector of column names in `df` to use as
+#'   layers (order preserved). If `NULL`, the function uses all columns except
+#'   the detected cell/pixel ID column.
 #' @param cellIDcol A single string with the column name of the cellID/pixelID.
 #'   Default is `NULL`, which will use the first column that matches a grep on `"pixel|cell"`.
 #'
-#' @return A \code{terra::SpatRaster} with one layer per selected value column.
-#'   Cells not present in \code{df} are filled with \code{NA}. The raster shares
-#'   the geometry of \code{rasTemplate}.
+#' @return A [terra::SpatRaster] with one layer per selected value column.
+#'   Cells not present in `df` are filled with `NA`. The raster shares the
+#'   geometry of `rasTemplate`.
 #'
 #' @export
 #' @examples

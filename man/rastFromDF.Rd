@@ -7,28 +7,27 @@
 rastFromDF(df, rasTemplate, cols = NULL, cellIDcol = NULL)
 }
 \arguments{
-\item{df}{A \code{data.frame} or \code{data.table} containing one column for
-raster cell indices (name matching \code{"pixel|cell"}; e.g., \code{cell},
-\code{cellID}, \code{pixelID}) and one or more columns of values to become
-raster layers.}
+\item{df}{A \code{data.frame} or \code{data.table} containing one column for raster
+cell indices (name matching \code{"pixel|cell"}; e.g., \code{cell}, \code{cellID},
+\code{pixelID}) and one or more columns of values to become raster layers.}
 
-\item{rasTemplate}{A \code{terra::SpatRaster} whose geometry (extent,
-resolution, rows/cols, CRS) defines the output grid.}
+\item{rasTemplate}{A \link[terra:SpatRaster]{terra::SpatRaster} whose geometry (extent, resolution,
+rows/cols, CRS) defines the output grid.}
 
-\item{cols}{\code{NULL} or a character vector of column names in \code{df}
-to use as layers (order preserved). If \code{NULL}, the function uses all
-columns except the detected cell/pixel ID column.}
+\item{cols}{\code{NULL} or a character vector of column names in \code{df} to use as
+layers (order preserved). If \code{NULL}, the function uses all columns except
+the detected cell/pixel ID column.}
 
 \item{cellIDcol}{A single string with the column name of the cellID/pixelID.
 Default is \code{NULL}, which will use the first column that matches a grep on \code{"pixel|cell"}.}
 }
 \value{
-A \code{terra::SpatRaster} with one layer per selected value column.
-Cells not present in \code{df} are filled with \code{NA}. The raster shares
-the geometry of \code{rasTemplate}.
+A \link[terra:SpatRaster]{terra::SpatRaster} with one layer per selected value column.
+Cells not present in \code{df} are filled with \code{NA}. The raster shares the
+geometry of \code{rasTemplate}.
 }
 \description{
-Efficiently constructs a multi-layer \code{terra::SpatRaster} from a
+Efficiently constructs a multi-layer \link[terra:SpatRaster]{terra::SpatRaster} from a
 \code{data.frame}/\code{data.table} that contains one column of raster cell
 identifiers and one or more columns of values. The function performs a
 complete join against all cell indices in the template raster (so every cell
@@ -36,32 +35,31 @@ is present exactly once), fills missing cells with \code{NA}, and assigns all
 layers in a single block write for speed.
 }
 \details{
-This function is designed as a fast “inverse” of \code{terra::as.data.frame()}
+This function is designed as a fast "inverse" of \code{\link[terra:as.data.frame]{terra::as.data.frame()}}
 for rasters to be made from "sparse" data.frame/data.table objects with the
 following workflow:
 \enumerate{
-\item Identify the pixel/cell ID column in \code{df} by searching for a
-column name that matches \code{"pixel|cell"} (e.g., \code{"cell"},
-\code{"cellID"}, \code{"pixelID"}).
-\item Create a complete index of all cell numbers for \code{rasTemplate}
-using \code{terra::ncell()} and join with \code{df}, so any
-non-provided cells become \code{NA}.
-\item Create a multi-layer raster with the same geometry as
-\code{rasTemplate} via \code{terra::rast()}, one layer per value
-column, and write all values at once using \code{terra::values()}.
+\item Identify the pixel/cell ID column in \code{df} by searching for a column name
+that matches \code{"pixel|cell"} (e.g., \code{"cell"}, \code{"cellID"}, \code{"pixelID"}).
+\item Create a complete index of all cell numbers for \code{rasTemplate} using
+\code{\link[terra:ncell]{terra::ncell()}} and join with \code{df}, so any non-provided cells become
+\code{NA}.
+\item Create a multi-layer raster with the same geometry as \code{rasTemplate} via
+\code{\link[terra:rast]{terra::rast()}}, one layer per value column, and write all values at once
+using \code{\link[terra:values]{terra::values()}}.
 }
 
 \strong{Notes and gotchas}
 \itemize{
 \item The ID column must be a 1-based integer cell index consistent with
 \code{rasTemplate}'s grid.
-\item If the input has duplicate cell IDs, the data.table join semantics
-will replicate rows; the final \code{terra::values()} call expects
-exactly one row per cell. Deduplicate beforehand if necessary.
-\item The argument \code{cols} (a character vector) can be used to select a
-subset of columns to create in the returned SpatVector.
-\item The number of layers created equals the number of selected value
-columns. Layer names follow the column names.
+\item If the input has duplicate cell IDs, the data.table join semantics will
+replicate rows; the final \code{\link[terra:values]{terra::values()}} call expects exactly one row
+per cell. Deduplicate beforehand if necessary.
+\item The argument \code{cols} (a character vector) can be used to select a subset of
+columns to create in the returned SpatVector.
+\item The number of layers created equals the number of selected value columns.
+Layer names follow the column names.
 }
 }
 \examples{

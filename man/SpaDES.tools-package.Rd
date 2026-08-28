@@ -98,7 +98,6 @@ You must know how to use SELES for these to be useful:
 
 
 \code{SpaDES} packages use the following \code{\link[=options]{options()}} to configure behaviour:
-
 \itemize{
 \item \code{spades.lowMemory}: If true, some functions will use more memory
 efficient (but slower) algorithms. Default \code{FALSE}.

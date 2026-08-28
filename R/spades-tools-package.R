@@ -88,10 +88,8 @@
 #'
 #' `SpaDES` packages use the following [options()] to configure behaviour:
 #'
-#' \itemize{
-#'   \item `spades.lowMemory`: If true, some functions will use more memory
-#'     efficient (but slower) algorithms. Default `FALSE`.
-#' }
+#' - `spades.lowMemory`: If true, some functions will use more memory
+#'   efficient (but slower) algorithms. Default `FALSE`.
 #'
 "_PACKAGE"
 

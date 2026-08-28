@@ -384,7 +384,7 @@ terra::plot(hab, type = "classes", legend = FALSE)
 fires[fires == 0] <- NA
 terra::plot(fires, add = TRUE, col = "red", type = "continuous", legend = FALSE)
 
-# Instead, to give a colour to the zero values, use \code{zero.color=}
+# Instead, to give a colour to the zero values, use `zero.color=`
 coltab(fires) <- NULL
 # need to specify "type" to get correct legend
 terra::plot(fires,  col = c(colorRampPalette(c("blue", "green"))(100)),
