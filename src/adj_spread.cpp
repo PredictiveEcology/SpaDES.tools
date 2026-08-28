@@ -1,5 +1,37 @@
 #include <Rcpp.h>
+#include <limits>
 using namespace Rcpp;
+
+// Argument checks shared by both helpers below.
+//
+// These are cheap, constant-time checks on the grid description, not on the
+// cells themselves. That is deliberate: both functions run inside the
+// spread()/spread2() iteration loop, so an O(n) sweep over `cells` would cost
+// real time on the hot path. Out-of-range cell numbers are harmless here --
+// the `t < 1 || t > numCell` filter in the emit loops drops whatever they
+// produce -- whereas the checks below guard against undefined behaviour:
+//
+//   * numCol < 1        -> `c % numCol` is integer division by zero (SIGFPE)
+//   * numCell < 1       -> no cell can ever pass the bounds filter
+//   * numCol > numCell  -> not a grid
+//   * numCell too large -> `c + rowOffset * numCol + colOffset` can overflow
+//   * directions not 4/8 -> silently emitted nothing, so spread() returned a
+//                           degenerate result rather than erroring, despite
+//                           ?spread documenting "Can only be 4 or 8"
+//
+// NA_INTEGER arrives as INT_MIN and is caught by the `< 1` comparisons.
+static inline void checkGrid(int numCol, int numCell, int directions) {
+  if (directions != 4 && directions != 8)
+    stop("`directions` must be 4 or 8, not %d.", directions);
+  if (numCol < 1)
+    stop("`numCol` must be a positive integer, not %d.", numCol);
+  if (numCell < 1)
+    stop("`numCell` must be a positive integer, not %d.", numCell);
+  if (numCol > numCell)
+    stop("`numCol` (%d) cannot exceed `numCell` (%d).", numCol, numCell);
+  if (numCell > std::numeric_limits<int>::max() - numCol - 1)
+    stop("`numCell` (%d) is too large; neighbour arithmetic would overflow.", numCell);
+}
 
 //' Adjacent-pairs with id, used by spread2 hot loop
 //'
@@ -25,8 +57,16 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List adjPairsWithId(IntegerVector cells, IntegerVector id,
                     int numCol, int numCell, int directions) {
+  checkGrid(numCol, numCell, directions);
+
   const R_xlen_t n = cells.size();
-  if (n == 0 || (directions != 4 && directions != 8)) {
+  // `id` is indexed in lockstep with `cells`; a shorter `id` read past its end
+  // and returned uninitialised memory as event ids, silently.
+  if (id.size() != n)
+    stop("`id` must be the same length as `cells` (%d vs %d).",
+         (int) id.size(), (int) n);
+
+  if (n == 0) {
     IntegerVector empty(0);
     return List::create(Named("from") = empty,
                         Named("to")   = empty,
@@ -92,8 +132,10 @@ List adjPairsWithId(IntegerVector cells, IntegerVector id,
 //' @rdname adjPairsMatrix
 // [[Rcpp::export]]
 IntegerMatrix adjPairsMatrix(IntegerVector cells, int numCol, int numCell, int directions) {
+  checkGrid(numCol, numCell, directions);
+
   const R_xlen_t n = cells.size();
-  if (n == 0 || (directions != 4 && directions != 8)) {
+  if (n == 0) {
     IntegerMatrix empty(0, 2);
     colnames(empty) = CharacterVector::create("from", "to");
     return empty;

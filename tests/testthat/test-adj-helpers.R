@@ -236,3 +236,57 @@ test_that("spread2() consumes RNG identically to baseline (one iteration)", {
                     iterations = 1L, asRaster = FALSE))
   expect_identical(.Random.seed[-1], readRDS(rngFile)[-1])
 })
+
+# Input validation ------------------------------------------------------
+
+test_that("the Rcpp helpers reject a malformed grid instead of crashing", {
+  ## numCol = 0 made `c %% numCol` an integer division by zero, which took the
+  ## whole R session down with SIGFPE rather than raising a condition.
+  expect_error(adjPairsMatrix(cells = 1:3, numCol = 0L, numCell = 100L, directions = 8L),
+               "numCol")
+  expect_error(adjPairsWithId(cells = 1:3, id = 1:3, numCol = 0L, numCell = 100L,
+                              directions = 8L), "numCol")
+
+  expect_error(adjPairsMatrix(cells = 1:3, numCol = -1L, numCell = 100L, directions = 8L),
+               "numCol")
+  expect_error(adjPairsMatrix(cells = 1:3, numCol = 10L, numCell = 0L, directions = 8L),
+               "numCell")
+  expect_error(adjPairsMatrix(cells = 1:3, numCol = 200L, numCell = 100L, directions = 8L),
+               "cannot exceed")
+  expect_error(adjPairsMatrix(cells = 1:3, numCol = NA_integer_, numCell = 100L,
+                              directions = 8L), "numCol")
+})
+
+test_that("the Rcpp helpers reject a directions other than 4 or 8", {
+  ## This used to return an empty result, so spread() produced a degenerate
+  ## answer with no error -- despite ?spread documenting "Can only be 4 or 8".
+  for (dirs in list(16L, 0L, 5L, NA_integer_)) {
+    expect_error(adjPairsMatrix(cells = 1:3, numCol = 10L, numCell = 100L,
+                                directions = dirs), "directions")
+    expect_error(adjPairsWithId(cells = 1:3, id = 1:3, numCol = 10L, numCell = 100L,
+                                directions = dirs), "directions")
+  }
+})
+
+test_that("adjPairsWithId requires id to match cells in length", {
+  ## A short `id` was indexed past its end, so emitted rows carried whatever
+  ## happened to sit in memory as their event id.
+  expect_error(adjPairsWithId(cells = 40:49, id = c(1L, 2L), numCol = 10L,
+                              numCell = 100L, directions = 8L),
+               "same length")
+  expect_error(adjPairsWithId(cells = 1:2, id = 1:5, numCol = 10L, numCell = 100L,
+                              directions = 8L), "same length")
+
+  ## the matched-length case, including empty, still works. Assert the
+  ## contract rather than a row count: cells 40:49 straddle a row boundary, so
+  ## the wrap filter legitimately drops some of the 10 x 8 candidate pairs.
+  ok <- adjPairsWithId(cells = 40:49, id = 1:10, numCol = 10L,
+                       numCell = 100L, directions = 8L)
+  expect_length(ok$to, length(ok$from))
+  expect_length(ok$id, length(ok$from))
+  expect_gt(length(ok$id), 0L)
+  expect_true(all(ok$id %in% 1:10))
+
+  expect_length(adjPairsWithId(cells = integer(0), id = integer(0), numCol = 10L,
+                               numCell = 100L, directions = 8L)$id, 0L)
+})
