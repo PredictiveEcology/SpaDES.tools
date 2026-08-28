@@ -23,7 +23,7 @@ release_bullets <- function() {
     # -- the check matrix this package reports in cran-comments -------------
     "win-builder x3: `devtools::check_win_release()`, `check_win_oldrelease()`, `check_win_devel()`",
     "mac-builder x2: `devtools::check_mac_release()` and `devtools::check_mac_devel()`. These have failed with HTTP 502 in the past; that is a mac.r-project.org outage, not a devtools bug (r-lib/devtools#2612, closed same-day as server-side), so there is no open issue to watch -- just retry. If it is genuinely down, say so in cran-comments rather than omitting the rows",
-    "Update `cran-comments.md` **checkinfo**: the Test environments block is grouped Previous / Current / Development R versions, with the platform and the source (GitHub / local / win-builder / mac-builder) for each. Fill in the actual R versions checked, not placeholders",
+    "Update `cran-comments.md` Test environments: one line per platform, listing the R versions checked, plus a line naming which legs ran without the suggested packages. This is the simplified form deliberately adopted for 2.1.3 -- the older grouped Previous/Current/Development table meant hand-extracting exact R-devel build strings (e.g. `R-devel (2026-06-21 r90185)`) out of the CI logs for every leg, which is not worth the effort. Give the exact devel string where you already have it and leave it plain `R-devel` where you do not",
     "Record the reverse-dependency result in `cran-comments.md`, even when it is a no-op -- say so rather than omitting the section",
 
     # -- branch mechanics ---------------------------------------------------
