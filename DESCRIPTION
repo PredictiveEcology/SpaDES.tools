@@ -20,7 +20,7 @@ Description: Provides GIS and map utilities, plus additional modeling
     tools for developing cellular automata, dynamic raster models, and
     agent based models in 'SpaDES'.  Included are various methods for
     spatial spreading, spatial agents, GIS operations, random map
-    generation, and others.  See '?SpaDES.tools' for an categorized
+    generation, and others.  See '?SpaDES.tools' for a categorized
     overview of these additional tools.
 License: GPL-3
 URL: https://spades-tools.predictiveecology.org,
