@@ -12,6 +12,10 @@
 #'            until successive estimates are within acc of each other.
 #' @param tol same as `acc`.
 #'
+#' @return A numeric vector of densities, of length
+#'         `max(length(theta), length(mu), length(rho))`; `theta` and `mu` are
+#'         recycled to that length.
+#'
 #' @author Eliot McIntire
 #' @export
 #' @rdname dwrpnorm2

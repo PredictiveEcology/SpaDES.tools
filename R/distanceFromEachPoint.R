@@ -287,6 +287,12 @@ distanceFromEachPoint <- function(from, to = NULL, landscape, angles = NA_real_,
 #'
 #' @param otherFromCols other columns to use as 'from'
 #'
+#' @return A matrix with one row per `from`-`to` pair, carrying the columns of
+#'         `from` plus `"dists"`, the distance between `from` and `to`.
+#'         `angles = TRUE` adds an `"angles"` column, `otherFromCols` adds the
+#'         named columns of `from`, and a non-`NA` `maxDistance` adds
+#'         `"keptIndex"`, the index of each retained pair in the unfiltered set.
+#'
 #' @aliases pointDistance
 #' @export
 #' @name .pointDistance

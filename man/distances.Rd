@@ -34,6 +34,13 @@ Using this will keep memory use down.}
 
 \item{otherFromCols}{other columns to use as 'from'}
 }
+\value{
+A matrix with one row per \code{from}-\code{to} pair, carrying the columns of
+\code{from} plus \code{"dists"}, the distance between \code{from} and \code{to}.
+\code{angles = TRUE} adds an \code{"angles"} column, \code{otherFromCols} adds the
+named columns of \code{from}, and a non-\code{NA} \code{maxDistance} adds
+\code{"keptIndex"}, the index of each retained pair in the unfiltered set.
+}
 \description{
 These have been written with speed in mind.
 }
