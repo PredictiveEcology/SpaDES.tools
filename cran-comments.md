@@ -12,9 +12,9 @@ carries the changes prepared for 2.1.2 (never submitted). See NEWS.md.
 
 Checked with `R CMD check --as-cran --no-manual`. All passed.
 
-* Ubuntu 24.04.4, R 4.5.3 (local)
-* Ubuntu 24.04.4, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (2026-06-21 r90185)
-* Windows Server 2025, R 4.6.1, R 4.5.3, R 4.4.3, R-devel
+* Ubuntu 26.04, R 4.6.1 (local)
+* Ubuntu 24.04.4, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
+* Windows Server 2025, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
 * macOS 26.5.2, R 4.6.1
 
 Two of those (Ubuntu and Windows, R 4.6.1) were checked with only the required
