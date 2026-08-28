@@ -9,10 +9,14 @@
 ##   R CMD INSTALL --no-docs --no-multiarch .
 ##   Rscript tests/testthat/_spread_snapshots/_generate.R <output_dir>
 ##
-## All scenarios are seeded; the dqrng path is bypassed via a
-## requireNamespace shim because dqrng's RNG state carries non-
-## determinism across spread()'s internal reseeding (already documented
-## in ?spread).
+## All scenarios are seeded; the dqrng path is bypassed because dqrng's RNG
+## state carries non-determinism across spread()'s internal reseeding (already
+## documented in ?spread).
+##
+## NOTE: this script bypasses it by patching base::requireNamespace, NOT by
+## mocking SpaDES.tools:::.useDqrng() the way test-spread-snapshots.R now does.
+## That is deliberate and must stay: this runs against the 1add983 baseline,
+## which predates .useDqrng() and has no such binding to mock.
 
 local({
   args <- commandArgs(trailingOnly = TRUE)
@@ -26,8 +30,8 @@ local({
     library(withr)
   })
 
-  ## Force base R sample.int branch in spread() — same shim used by the
-  ## existing seeded-grid test in test-spread.R.
+  ## Force base R sample.int branch in spread(). See the NOTE at the top: the
+  ## baseline has no .useDqrng() to mock, so this patches base directly.
   if (requireNamespace("dqrng", quietly = TRUE)) {
     rN_orig <- base::requireNamespace
     rN_mock <- function(package, ...) {

@@ -1301,23 +1301,8 @@ test_that("spread is bit-identical across reruns with same seed (seeded grid)", 
   ## carries across calls in ways spread()'s mid-function reseeding does not
   ## fully neutralize. To make THIS test bit-identical regardless of whether
   ## dqrng is installed, force spread() onto its base R sample.int branch by
-  ## monkey-patching base::requireNamespace to lie about dqrng for this test.
-  if (requireNamespace("dqrng", quietly = TRUE)) {
-    rN_orig <- base::requireNamespace
-    rN_mock <- function(package, ...) {
-      if (identical(package, "dqrng")) return(FALSE)
-      rN_orig(package, ...)
-    }
-    base_env <- asNamespace("base")
-    unlockBinding("requireNamespace", base_env)
-    assign("requireNamespace", rN_mock, envir = base_env)
-    lockBinding("requireNamespace", base_env)
-    withr::defer({
-      unlockBinding("requireNamespace", base_env)
-      assign("requireNamespace", rN_orig, envir = base_env)
-      lockBinding("requireNamespace", base_env)
-    })
-  }
+  ## mocking the internal .useDqrng() gate.
+  local_mocked_bindings(.useDqrng = function() FALSE)
 
   ras <- terra::rast(terra::ext(0, 80, 0, 80), resolution = 1, vals = 1)
   withr::with_seed(7L,   spsRas   <- terra::rast(ras, vals = stats::runif(terra::ncell(ras), 0.10, 0.40)))

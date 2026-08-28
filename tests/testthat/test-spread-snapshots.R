@@ -29,26 +29,11 @@ test_that("spread() output matches pre-Rcpp baseline (seeded grid)", {
   snapDir <- normalizePath(testthat::test_path("_spread_snapshots"), mustWork = FALSE)
   testInit(c("terra", "withr"))
 
-  ## Force the base R sample.int branch — same shim as the existing
-  ## bit-identical-with-self test. dqrng's RNG state carries non-determinism
-  ## across spread()'s internal reseeding, so we compare on the deterministic
-  ## branch.
-  if (requireNamespace("dqrng", quietly = TRUE)) {
-    rN_orig <- base::requireNamespace
-    rN_mock <- function(package, ...) {
-      if (identical(package, "dqrng")) return(FALSE)
-      rN_orig(package, ...)
-    }
-    base_env <- asNamespace("base")
-    unlockBinding("requireNamespace", base_env)
-    assign("requireNamespace", rN_mock, envir = base_env)
-    lockBinding("requireNamespace", base_env)
-    withr::defer({
-      unlockBinding("requireNamespace", base_env)
-      assign("requireNamespace", rN_orig, envir = base_env)
-      lockBinding("requireNamespace", base_env)
-    })
-  }
+  ## Force the base R sample.int branch by mocking the internal .useDqrng()
+  ## gate — same shim as the bit-identical-with-self test in test-spread.R.
+  ## dqrng's RNG state carries non-determinism across spread()'s internal
+  ## reseeding, so the baselines were captured on the deterministic branch.
+  local_mocked_bindings(.useDqrng = function() FALSE)
 
   ## Fail rather than skip: the snapshots ship in the tarball, so a missing
   ## directory means the baseline was lost, not that this environment cannot

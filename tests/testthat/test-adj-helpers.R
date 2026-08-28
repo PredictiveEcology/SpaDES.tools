@@ -194,24 +194,9 @@ test_that("spread() consumes RNG identically to baseline (one iteration)", {
   snapDir <- normalizePath(testthat::test_path("_spread_snapshots"), mustWork = FALSE)
   testInit(c("terra", "withr"))
 
-  ## Force base R sample.int (dqrng has its own state which we can't
-  ## intercept via .Random.seed)
-  if (requireNamespace("dqrng", quietly = TRUE)) {
-    rN_orig <- base::requireNamespace
-    rN_mock <- function(package, ...) {
-      if (identical(package, "dqrng")) return(FALSE)
-      rN_orig(package, ...)
-    }
-    base_env <- asNamespace("base")
-    unlockBinding("requireNamespace", base_env)
-    assign("requireNamespace", rN_mock, envir = base_env)
-    lockBinding("requireNamespace", base_env)
-    withr::defer({
-      unlockBinding("requireNamespace", base_env)
-      assign("requireNamespace", rN_orig, envir = base_env)
-      lockBinding("requireNamespace", base_env)
-    })
-  }
+  ## Force base R sample.int by mocking the internal .useDqrng() gate;
+  ## dqrng keeps its own state, which .Random.seed cannot capture.
+  local_mocked_bindings(.useDqrng = function() FALSE)
 
   rngFile <- file.path(snapDir, "rng_state__spread.rds")
   ## fail rather than skip -- see the note in test-spread-snapshots.R

@@ -367,7 +367,7 @@ spread <- function(
       stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
   }
-  if (requireNamespace("dqrng", quietly = TRUE)) {
+  if (.useDqrng()) {
     dqrng::dqset.seed(sample.int(1e9, 2)) ## set dqrng seed from base state
     ## n<=1 short-circuit: dqsample.int(1) advances the xoroshiro state
     ## inconsistently (depends on the internal bit-buffer position from the
@@ -1297,7 +1297,7 @@ spread <- function(
   } ## end of while loop
 
   ## Reset the base R seed so it is deterministic
-  if (requireNamespace("dqrng", quietly = TRUE)) {
+  if (.useDqrng()) {
     set.seed(dqrng::dqsample.int(1e9, 1) + sample.int(1e9, 1))
   }
 
