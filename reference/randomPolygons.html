@@ -46,7 +46,7 @@ equal to area (expecting area in hectares), #' and a centre at approximately x."
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Produce a <code>SpatRaster</code> of random polygons</h1>
-    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/R/initialize.R" class="external-link"><code>R/initialize.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/R/initialize.R" class="external-link"><code>R/initialize.R</code></a></small>
     <div class="hidden name"><code>randomPolygons.Rd</code></div>
     </div>
 
@@ -113,7 +113,7 @@ centred approximately at the coordinates requested, in the projection of <code>x
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">origNcpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span></span>
@@ -134,7 +134,7 @@ centred approximately at the coordinates requested, in the projection of <code>x
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># clean up</span></span></span>
-<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="va">origNcpus</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">latLong</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="st">"+proj=longlat +datum=WGS84 +no_defs"</span><span class="op">)</span></span></span>
@@ -181,7 +181,7 @@ centred approximately at the coordinates requested, in the projection of <code>x
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

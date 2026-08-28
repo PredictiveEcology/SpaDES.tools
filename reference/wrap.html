@@ -45,7 +45,7 @@ in e.g., crw if torus = TRUE."><!-- mathjax --><script src="https://cdnjs.cloudf
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Wrap coordinates or pixels in a torus-like fashion</h1>
-    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/R/neighbourhood.R" class="external-link"><code>R/neighbourhood.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/R/neighbourhood.R" class="external-link"><code>R/neighbourhood.R</code></a></small>
     <div class="hidden name"><code>wrap.Rd</code></div>
     </div>
 
@@ -93,7 +93,7 @@ previous agent locations.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">origNcpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">xrange</span> <span class="op">&lt;-</span> <span class="va">yrange</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">50</span>, <span class="fl">50</span><span class="op">)</span></span></span>
@@ -126,23 +126,23 @@ previous agent locations.</p>
 <span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">agent</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crds.html" class="external-link">crds</a></span><span class="op">(</span><span class="va">agent</span><span class="op">)</span> <span class="co"># many are "off" the map, i.e., beyond the extent of hab</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               x         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -72.30760 -25.73176</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -22.94533 -22.09094</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  49.06816 -40.57450</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]  40.68249 -20.71148</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] -20.91130 -16.42135</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -42.74352 -43.82055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] -41.18622 -10.59485</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -32.32124 -15.21391</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] -25.03427 -45.58835</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -42.38495  50.08976</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                x          y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  -7.359131  47.350120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -36.349039  -4.654296</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] -39.489929 -15.540533</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]  31.315504  52.929017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  46.081860 -18.054884</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -19.956107  22.787570</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] -66.934582 -30.752109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -68.224197  18.961591</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  24.542212 -62.033998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -40.338536  42.934977</span>
 <span class="r-in"><span><span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">SpaDES.tools</span><span class="fu">::</span><span class="fu">wrap</span><span class="op">(</span><span class="va">agent</span>, bounds <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="va">hab</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">agent</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="co"># now inside the extent of hab</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in graphics::plot.xy(list(x = g[, 3], y = g[, 4]), type = "p", pch = pch,     col = col, cex = cex, ...):</span> plot.new has not been called yet</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># clean up</span></span></span>
-<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="va">origNcpus</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -159,7 +159,7 @@ previous agent locations.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

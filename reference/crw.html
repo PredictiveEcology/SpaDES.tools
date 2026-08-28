@@ -45,7 +45,7 @@ This version uses just turn angles and step lengths to define the correlated ran
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Move</h1>
-    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/R/movement.R" class="external-link"><code>R/movement.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/R/movement.R" class="external-link"><code>R/movement.R</code></a></small>
     <div class="hidden name"><code>crw.Rd</code></div>
     </div>
 
@@ -156,7 +156,7 @@ Journal of Applied Ecology 44:725-736.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">origNcpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># using just matrix</span></span></span>
@@ -185,13 +185,13 @@ Journal of Applied Ecology 44:725-736.</p>
 <span class="r-in"><span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">reps</span><span class="op">)</span> <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span>, returnMatrix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.009   0.000   0.008 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.008   0.000   0.008 </span>
 <span class="r-in"><span><span class="va">agent</span> <span class="op">&lt;-</span> <span class="va">agentOrig</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">reps</span><span class="op">)</span> <span class="va">agent</span> <span class="op">&lt;-</span> <span class="fu">crw</span><span class="op">(</span><span class="va">agent</span>, stepLength <span class="op">=</span> <span class="fl">5</span>, stddev <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.849   0.000   0.849 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.764   0.000   0.764 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># as sp</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sp"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -206,7 +206,7 @@ Journal of Applied Ecology 44:725-736.</p>
 <span class="r-plt img"><img src="crw-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># clean up</span></span></span>
-<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="va">origNcpus</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -223,7 +223,7 @@ Journal of Applied Ecology 44:725-736.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

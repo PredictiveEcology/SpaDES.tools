@@ -47,7 +47,7 @@ They are "rounded" to pixel centres.'><!-- mathjax --><script src="https://cdnjs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>An alternative spread function, conceived for insects</h1>
-    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/main/R/spread3.R" class="external-link"><code>R/spread3.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/SpaDES.tools/blob/v2.1.1/R/spread3.R" class="external-link"><code>R/spread3.R</code></a></small>
     <div class="hidden name"><code>spread3.Rd</code></div>
     </div>
 
@@ -166,7 +166,7 @@ problems)</p></dd>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">origDTThreads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">origNcpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="va">maxDim</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span></span>
@@ -210,129 +210,129 @@ problems)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29942.6974241127</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29845.4477324621</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29844.9762566839</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29684.9978043702</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29685.3802485319</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28993.812488292</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 29011.6874320189</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 5</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28721.1746386755</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28738.7043861212</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28374.5983612171</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28390.2095263323</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 7</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 28013.5289421565</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 27499.1360749765</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 27582.9799199363</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 26606.2258994556</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 9</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 27077.3418762575</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 25877.0356570589</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 10</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 25084.8618566818</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 25375.2295609656</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 11</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 24119.344444795</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 24770.6994268542</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 12</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 23480.4988565299</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 24194.6347369196</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 13</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 22795.550955758</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 23494.7064422054</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 14</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 22077.3432159583</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 22829.6665195045</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 15</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 21439.5982980354</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 21861.0967716493</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 16</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 20758.7939387006</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 21117.7376380452</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 17</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 20069.0175900734</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 20070.0945202608</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 18</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 19344.4758877966</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 18946.9787466031</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 19</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 18445.5380718394</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 18077.9637351511</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 20</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 17449.1183471901</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 16884.0179906487</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 21</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 16598.3916918859</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 15804.2381815924</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 22</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 15792.2064907562</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 14880.9809887794</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 23</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 15101.8188374184</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 13799.901161894</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 24</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 14308.031009656</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 12956.7343588249</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 25</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 13519.9980177877</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 12214.5852104103</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 26</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 12732.4944140066</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 11329.8197657753</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 27</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 11848.5250495133</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 10632.044157983</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 28</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 11168.333497928</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 9920.91528468153</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 29</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 10522.2269672876</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 9258.39007676729</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 30</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 9798.30085625318</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 8637.25826783464</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 31</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 8821.87769414231</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 7975.86058020982</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 32</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 8088.06218790952</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 7420.90295069017</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 33</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 7436.56895952712</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 6881.67182789445</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 34</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 6822.12286934147</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 6400.70194654077</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 35</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 6252.98755623768</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 5845.83912622311</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 36</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 5723.22042941179</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 5400.16540393561</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 37</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 5241.41963777852</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 5015.24335692709</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 38</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 4823.62593888653</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 4618.26575086753</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 39</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 4402.74229009439</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 4237.60716804517</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 40</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 4012.11976775426</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 3827.36918125638</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 41</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 3667.66001554555</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 3476.61827631714</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 42</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 3285.66271181194</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 3138.94216473754</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 43</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2966.28464160372</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2862.38664117625</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 44</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2662.98103494232</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2563.92759377828</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 45</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2400.59535781913</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2294.12689211881</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 46</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2171.96351007555</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 2087.17205405477</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 47</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1931.97684779711</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1834.3348834748</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 48</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1725.82242539007</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1664.34159685505</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 49</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1496.94405054564</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1439.17020145494</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 50</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1287.78294591888</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1128.02925662406</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 51</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 1142.14645025229</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 998.262361459414</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 52</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 978.596743131969</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 850.687521593722</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 53</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 858.306418743261</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 719.772092270625</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 54</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 670.567042123505</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 591.002012774563</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 55</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 600.840508414726</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 526.895299153967</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 56</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 472.722004965212</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 419.700192629597</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 422.465123908484</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 372.959977379308</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 58</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 354.608271800084</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 309.013970986235</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 59</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 265.010094370132</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 244.361662343633</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 60</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 198.784707895395</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 179.370246150411</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 61</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 175.108859796463</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 140.255807667946</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 62</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 120.988482342059</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 104.798536501852</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 63</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 32.1482342818288</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number still dispersing 36.249374064126</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="fu">plotDispersalKernel</span><span class="op">(</span><span class="va">out</span>, <span class="va">advectionMag</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="spread3-1.png" alt="" width="700" height="433"></span>
@@ -438,7 +438,7 @@ problems)</p></dd>
 <span class="r-in"><span>  <span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># clean up</span></span></span>
-<span class="r-in"><span>  <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">origDTThreads</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>Ncpus <span class="op">=</span> <span class="va">origNcpus</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
@@ -455,7 +455,7 @@ problems)</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
