@@ -30,7 +30,7 @@ spread2(
 )
 }
 \arguments{
-\item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
+\item{landscape}{Required. A \code{SpatRaster} or \code{RasterLayer} object. This defines the possible
 locations for spreading events to start and \code{spread2} into. Required.}
 
 \item{start}{Required. Either a vector of pixel numbers to initiate spreading, or a
@@ -40,8 +40,8 @@ If user has x and y coordinates, these can be converted with
 \code{\link[terra:cellFromXY]{cellFromXY()}}.}
 
 \item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
-a \code{RasterLayer} that is the identical dimensions as
-\code{landscape}.
+a \code{SpatRaster} or \code{RasterLayer} that is the identical dimensions
+as \code{landscape}.
 If numeric of length 1, then this is the global (absolute)
 probability of spreading into each cell from a neighbour.
 If a numeric of length \code{ncell(landscape)} or a raster,
@@ -53,7 +53,7 @@ re-scaled so that the mean relative probability of potential
 neighbours is equal to the mean of \code{spreadProb} of
 the potential neighbours.}
 
-\item{persistProb}{Numeric of length 1 or \code{RasterLayer}.
+\item{persistProb}{Numeric of length 1, or a \code{SpatRaster} or \code{RasterLayer}.
 If numeric of length 1, then this is the global (absolute)
 probability of cell continuing to burn per time step.
 If a raster, then this must be the cell-specific (absolute)
@@ -124,7 +124,7 @@ Default is \code{FALSE}.
 Using \code{circle = TRUE} can be dramatically slower for large problems.
 Note, this will likely create unexpected results if \code{spreadProb < 1}.}
 
-\item{asymmetry}{A numeric or \code{RasterLayer} indicating the ratio of the
+\item{asymmetry}{A numeric, \code{SpatRaster} or \code{RasterLayer} indicating the ratio of the
 asymmetry to be used. i.e., 1 is no asymmetry; 2 means that the
 angles in the direction of the \code{asymmetryAngle} are 2x the
 \code{spreadProb}
@@ -132,7 +132,7 @@ of the angles opposite tot he \code{asymmetryAngle}  Default is
 NA, indicating no asymmetry. See details. This is still experimental.
 Use with caution.}
 
-\item{asymmetryAngle}{A numeric or \code{RasterLayer} indicating the angle in degrees
+\item{asymmetryAngle}{A numeric, \code{SpatRaster} or \code{RasterLayer} indicating the angle in degrees
 (0 is "up", as in North on a map),
 that describes which way the \code{asymmetry} is.}
 
@@ -158,8 +158,9 @@ This is likely most useful in repeated iteration cases i.e., if this call
 is using the previous output from this same function.}
 }
 \value{
-Either a \code{data.table} (\code{asRaster=FALSE}) or a \code{RasterLayer}
-(\code{asRaster=TRUE}, the default).
+Either a \code{data.table} (\code{asRaster=FALSE}) or a raster of the same class as
+\code{landscape} -- a \code{SpatRaster}, or a \code{RasterLayer} if that is what was passed
+in (\code{asRaster=TRUE}, the default).
 The \code{data.table} will have one attribute named \code{spreadState}, which
 is a list containing a \code{data.table} of current cluster-level information
 about the spread events.
@@ -167,7 +168,7 @@ If \code{asRaster=TRUE}, then the \code{data.table} (with its \code{spreadState}
 attribute) will be attached to the \code{Raster} as an attribute named \code{pixel} as it
 provides pixel-level information about the spread events.
 
-The \code{RasterLayer} represents every cell in which a successful \code{spread2} event occurred.
+That raster represents every cell in which a successful \code{spread2} event occurred.
 For the case of, say, a fire this would represent every cell that burned.
 If \code{allowOverlap} is \code{TRUE}, the return will always be a \code{data.table}.
 
@@ -311,8 +312,9 @@ on during a spreading event. This will override an event that
 stops probabilistically via \code{spreadProb}, but forcing
 its last set of active cells to try again to find neighbours.
 It will try \code{maxRetriesPerID} times per event, before giving up.
-During those \code{maxRetriesPerID} times, it will try to "jump" up to
-4 cells outwards from each of the active cells, every 5 retries.\cr
+During those \code{maxRetriesPerID} times, on every 10th retry it will
+try to "jump" up to 20 cells outwards from each of the active
+cells.\cr
 \code{iterations} \tab This is a hard cap on the number of internal iterations to
 complete before returning the current state of the system
 as a \code{data.table}.\cr
@@ -326,7 +328,7 @@ This function can be used iteratively, with relatively little overhead compared 
 it non-iteratively. In general, this function can be called with arguments set as user
 needs, and with specifying e.g., \code{iterations = 1}. This means that the function will spread
 outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
-\code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
+raster that can be passed immediately back as the start argument into a subsequent
 call to \code{spread2}. This means that every argument can be updated at each iteration.
 
 When using this function iteratively, there are several things to keep in mind.
@@ -338,7 +340,7 @@ To get the same order, the easiest thing to do is sort the initial \code{start}
 objects by their pixel location, increasing.
 Then, of course, sorting any vectorized arguments (e.g., \code{maxSize}) accordingly.
 
-\strong{NOTE}: the \code{data.table} or \code{RasterLayer} should not be altered
+\strong{NOTE}: the returned \code{data.table} or raster should not be altered
 when passed back into \code{spread2}.
 }
 
