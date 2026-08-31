@@ -898,3 +898,71 @@ test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
     )
   }
 })
+
+test_that("spread2 jumps to cells beyond the reach of ordinary spreading", {
+  testInit(c("terra", "data.table"))
+
+  ## When a cluster stalls below exactSize, spread2() retries, and on every 10th
+  ## retry it jumps -- via cir() -- to cells up to 20 away, merging those
+  ## candidates with the adjacent ones. Nothing else in the suite reaches that
+  ## path. An impassable ring isolates it: ordinary spreading cannot cross a
+  ## spreadProb of 0, so anything beyond the ring got there by jumping.
+  ras <- terra::rast(terra::ext(0, 41, 0, 41), resolution = 1)
+  ras[] <- 0
+  centre <- terra::cellFromXY(ras, cbind(20.5, 20.5))
+  rc <- terra::rowColFromCell(ras, seq_len(terra::ncell(ras)))
+  centreRC <- terra::rowColFromCell(ras, centre)
+  ringDist <- pmax(abs(rc[, 1] - centreRC[1]), abs(rc[, 2] - centreRC[2])) # Chebyshev
+
+  spreadProb <- terra::rast(ras)
+  spreadProb[] <- 1
+  spreadProb[ringDist >= 5 & ringDist <= 8] <- 0 # 4 cells thick, jumps reach 20
+
+  set.seed(1)
+  out <- spread2(ras, start = centre, spreadProb = spreadProb, exactSize = 150,
+                 maxRetriesPerID = 30, asRaster = FALSE, iterations = 300)
+
+  expect_s3_class(out, "data.table")
+  expect_identical(nrow(out), 150L)
+  expect_equal(unique(out$initialPixels), centre)
+
+  dists <- ringDist[out$pixels]
+  expect_identical(sum(dists <= 4), 81L)              # the 9x9 core fills
+  expect_identical(sum(dists >= 5 & dists <= 8), 0L)  # the ring stays empty
+  expect_gt(sum(dists >= 9), 0L)                      # only a jump reaches here
+
+  ## the jump fires on the 10th retry, so the counter has to have got that far
+  expect_gte(attr(out, "spreadState")$clusterDT$numRetries, 9L)
+
+  ## the control: capped below the 10th retry, no jump happens, and the cluster
+  ## cannot leave the core no matter what exactSize asks for
+  set.seed(1)
+  noJump <- spread2(ras, start = centre, spreadProb = spreadProb, exactSize = 150,
+                    maxRetriesPerID = 5, asRaster = FALSE, iterations = 300)
+  expect_identical(nrow(noJump), 81L)
+  expect_identical(sum(ringDist[noJump$pixels] >= 5), 0L)
+})
+
+test_that("spread2 retries up to maxRetriesPerID, reproducibly", {
+  testInit(c("terra", "data.table"))
+
+  ## clusters that cannot reach exactSize at all, so they retry until capped
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), resolution = 1)
+  ras[] <- 0
+  runIt <- function(seed, maxRetries) {
+    set.seed(seed)
+    spread2(ras, start = c(300L, 900L), spreadProb = 0.02, exactSize = c(600, 600),
+            maxRetriesPerID = maxRetries, asRaster = FALSE, iterations = 500)
+  }
+
+  out <- runIt(7, 12)
+  numRetries <- attr(out, "spreadState")$clusterDT$numRetries
+
+  ## retrying stops on the first attempt past the cap, and gets far enough to
+  ## have jumped on the way
+  expect_true(all(numRetries <= 13L))
+  expect_gt(max(numRetries), 9L)
+
+  ## the jump draws from the random number stream, so one seed, one answer
+  expect_identical(as.data.frame(out), as.data.frame(runIt(7, 12)))
+})

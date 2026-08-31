@@ -635,11 +635,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       )
 
       if (exists("dtPotentialJump")) {
-        if (is.data.table(dtPotential)) {
-          dtPotential <- rbindlist(list(dtPotential, as.data.table(dtPotentialJump)))
-        } else {
-          dtPotential <- rbind(dtPotential, dtPotentialJump)
-        }
+        dtPotential <- rbindlist(list(dtPotential, as.data.table(dtPotentialJump)))
         rm("dtPotentialJump")
       }
 
@@ -671,9 +667,6 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # randomize row order so duplicates are not always in same place
     i <- sample.int(NROW(dtPotential))
-    if (!is.data.table(dtPotential)) {
-      dtPotential <- as.data.table(dtPotential)
-    }
     for (x in colnames(dtPotential)) set(dtPotential, NULL, x, dtPotential[[x]][i])
 
     # Step 3 -- if required -- calculate distances, if required ... attach to dt
