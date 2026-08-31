@@ -24,7 +24,7 @@ jobs:
     # that bug back. That SHA is main at the time of pinning.
     # NOTE: must be the FULL 40-character SHA -- GitHub cannot resolve a
     # short SHA in `uses:`, and the workflow fails to start with no jobs.
-    uses: PredictiveEcology/actions/.github/workflows/test-coverage.yaml@c2b2459ef08efc54c001b8272ecd493c6eff81b6
+    uses: PredictiveEcology/actions/.github/workflows/test-coverage.yaml@main
     # Name the one secret this needs rather than inheriting all of them. The
     # reusable workflow also declares GOOGLEDRIVE_AUTH, which is deliberately
     # NOT passed: SpaDES.tools has no Drive-backed tests, and inheriting it
