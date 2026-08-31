@@ -1057,7 +1057,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           set(clusterDT, NULL, "indClDT", seq_len(NROW(clusterDT)))
           whNeedRetryClusterDT <- clusterDT[dt[whTooSmall]]$indClDT
           set(clusterDT, NULL, "indClDT", NULL)
-          tooManyRetries <- clusterDT[whNeedRetryClusterDT, numRetries > maxRetriesPerID]
+          ## >= not >: numRetries counts retries already made, so stopping at
+          ## the cap makes maxRetriesPerID the maximum rather than one short of it
+          tooManyRetries <- clusterDT[whNeedRetryClusterDT, numRetries >= maxRetriesPerID]
           if (sum(tooManyRetries) > 0) {
             whNeedRetryClusterDT <- whNeedRetryClusterDT[!tooManyRetries]
             whTooSmall <- whTooSmall[!tooManyRetries]
