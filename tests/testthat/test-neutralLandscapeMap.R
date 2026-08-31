@@ -6,7 +6,7 @@ test_that("neutralLandscapeMap produces consistent rasters", {
   aOrig <- terra::rast(system.file("extdata", "a.tif", package = "SpaDES.tools"))
   bOrig <- terra::rast(aOrig)
 
-  bSimple <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
+  bSimple <- terra::rast(terra::ext(0, 10, 0, 10), resolution = 1)
 
   spRas <- terra::rast(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
 

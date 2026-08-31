@@ -9,7 +9,7 @@ test_that("splitRaster and mergeRaster work on small in-memory rasters", {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
-    extFun <- eval(parse(text = rastDF$ext[ii]))
+    extFun <- eval(parse(text = rastDF$extent[ii]))
     readStk <- eval(parse(text = rastDF$stack[ii]))
 
     testFile <- system.file(rastDF$testFile[ii], package = pkg)

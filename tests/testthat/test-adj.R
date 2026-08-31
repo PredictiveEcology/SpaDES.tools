@@ -5,8 +5,8 @@ test_that("adj.R results not identical to adjacent", {
   for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     a <- switch(pkg,
-                raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1),
-                terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1))
+                raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), resolution = 1),
+                terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), resolution = 1))
     a[] <- NA
 
     sam <- sample(seq_along(as.vector(a[])), 4)
@@ -129,8 +129,8 @@ test_that("errors in adj are not correct", {
     pkg <- rastDF$pkg[ii]
 
     a <- switch(pkg,
-                raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1),
-                terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1))
+                raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), resolution = 1),
+                terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), resolution = 1))
     a[] <- NA
 
     sam <- sample(seq_along(as.vector(a[])), 4)
@@ -145,8 +145,8 @@ test_that("adj.R: torus does not work as expected", {
   for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     a <- switch(pkg,
-                raster = raster::raster(raster::extent(0, 4, 0, 4), res = 1),
-                terra = terra::rast(terra::ext(0, 4, 0, 4), res = 1))
+                raster = raster::raster(raster::extent(0, 4, 0, 4), resolution = 1),
+                terra = terra::rast(terra::ext(0, 4, 0, 4), resolution = 1))
     a[] <- NA
     # test data.table and matrix
     for (i in c(100, 1)) {
@@ -223,7 +223,7 @@ test_that("adj delegates to terra::adjacent without changing its output", {
   ## instead leaves x NULL, which forces the R implementation. The two must
   ## agree exactly -- including row order, which spread()/spread2() rely on for
   ## RNG reproducibility.
-  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), resolution = 1)
   ## as.integer to match what adj() does internally when given `x`:
   ## terra::ncol()/ncell() return doubles, and the R path's arithmetic
   ## inherits that storage type, so passing them raw would compare an
@@ -252,7 +252,7 @@ test_that("adj delegates to terra::adjacent without changing its output", {
 test_that("adj delegation carries id and target through unchanged", {
   testInit(c("terra", "data.table"))
 
-  ras <- terra::rast(terra::ext(0, 40, 0, 40), res = 1)
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), resolution = 1)
   numCol <- as.integer(terra::ncol(ras))
   numCell <- as.integer(terra::ncell(ras))
 
@@ -279,7 +279,7 @@ test_that("adj delegates match.adjacent to terra::adjacent too", {
   ## terra::adjacent is that function's successor -- so it is not a case terra
   ## cannot serve, it is the case terra defines. It differs from terra's own
   ## column order by a fixed permutation.
-  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), resolution = 1)
   numCol <- as.integer(terra::ncol(ras))
   numCell <- as.integer(terra::ncell(ras))
 
@@ -305,7 +305,7 @@ test_that("adj delegates match.adjacent to terra::adjacent too", {
 test_that("adj keeps the R implementation where terra cannot follow", {
   testInit(c("terra", "data.table"))
 
-  ras <- terra::rast(terra::ext(0, 40, 0, 40), res = 1)
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), resolution = 1)
   numCol <- as.integer(terra::ncol(ras))
   numCell <- as.integer(terra::ncell(ras))
   set.seed(3)
@@ -330,7 +330,7 @@ test_that("adj delegates include = TRUE, splicing the focal cell in place", {
   ## terra's own `include` puts the focal cell elsewhere, so the delegated
   ## path leaves it off and splices the cell in at adj()'s position: the
   ## middle of the 3x3 reading order, or first under match.adjacent.
-  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), resolution = 1)
   numCol <- as.integer(terra::ncol(ras))
   numCell <- as.integer(terra::ncell(ras))
 

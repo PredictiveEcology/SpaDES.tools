@@ -1,7 +1,7 @@
 test_that("rasterizeReduced expands a lookup table back onto a raster", {
   testInit(c("terra", "data.table"))
 
-  ras <- terra::rast(terra::ext(0, 4, 0, 4), res = 1)
+  ras <- terra::rast(terra::ext(0, 4, 0, 4), resolution = 1)
   terra::values(ras) <- rep(1:4, each = 4)
   tbl <- data.table::data.table(pixelGroup = 1:4, val = c(10, 20, 30, 40))
 
@@ -41,7 +41,7 @@ test_that("middlePixel returns an approximately central cell", {
   ## nrow/ncol, not the exact geometric centre -- so assert centrality rather
   ## than an exact coordinate.
   for (dim in c(5, 10, 21, 40)) {
-    ras <- terra::rast(terra::ext(0, dim, 0, dim), res = 1)
+    ras <- terra::rast(terra::ext(0, dim, 0, dim), resolution = 1)
     mid <- middlePixel(ras)
 
     expect_true(mid >= 1 && mid <= terra::ncell(ras))

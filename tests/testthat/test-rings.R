@@ -2,7 +2,7 @@ test_that("rings returns annuli between minRadius and maxRadius", {
   testInit(c("terra", "data.table"))
 
   set.seed(1462)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), resolution = 1)
   emptyRas[] <- 0
   loci <- (terra::ncell(emptyRas) / 2 - terra::ncol(emptyRas)) / 2 + c(-3, 3)
 
@@ -27,7 +27,7 @@ test_that("rings respects minRadius = 0 and grows with maxRadius", {
   testInit(c("terra", "data.table"))
 
   set.seed(1462)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), resolution = 1)
   emptyRas[] <- 0
   loci <- 5050
 
@@ -46,7 +46,7 @@ test_that("rings can write its result into a raster", {
   testInit(c("terra", "data.table"))
 
   set.seed(1462)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), resolution = 1)
   emptyRas[] <- 0
   loci <- (terra::ncell(emptyRas) / 2 - terra::ncol(emptyRas)) / 2 + c(-3, 3)
 
@@ -68,7 +68,7 @@ test_that("rings accepts a different radius per locus", {
   testInit(c("terra", "data.table"))
 
   set.seed(1462)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), resolution = 1)
   emptyRas[] <- 0
   loci <- (terra::ncell(emptyRas) / 2 - terra::ncol(emptyRas)) / 2 + c(-3, 3)
 
@@ -96,7 +96,7 @@ test_that("rings warns when radii are neither length 1 nor length(loci)", {
   testInit(c("terra", "data.table"))
 
   set.seed(1462)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), resolution = 1)
   emptyRas[] <- 0
   loci <- c(4000, 6000)
 
@@ -116,7 +116,7 @@ test_that("rings returns a distance raster when returnIndices is FALSE", {
   testInit(c("terra", "data.table"))
 
   set.seed(1462)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), resolution = 1)
   emptyRas[] <- 0
 
   ras <- rings(emptyRas, loci = 5050, minRadius = 3, maxRadius = 6,
@@ -137,7 +137,7 @@ test_that("rings fills non-ring cells with 0 when returnDistances is FALSE", {
   testInit(c("terra", "data.table"))
 
   set.seed(1462)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), resolution = 1)
   emptyRas[] <- 0
 
   ras <- rings(emptyRas, loci = 5050, minRadius = 3, maxRadius = 6,
@@ -163,7 +163,7 @@ test_that("rings summarises overlapping rings into one raster", {
   testInit(c("terra", "data.table"))
 
   set.seed(1462)
-  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), res = 1)
+  emptyRas <- terra::rast(terra::ext(0, 1e2, 0, 1e2), resolution = 1)
   emptyRas[] <- 0
   ## deliberately close together, so the two discs overlap
   loci <- c(5050, 5055)
@@ -197,7 +197,7 @@ test_that("rings returns a RasterLayer when given one", {
   testInit(c("terra", "data.table", "raster"))
 
   set.seed(1462)
-  ras <- raster::raster(raster::extent(0, 1e2, 0, 1e2), res = 1)
+  ras <- raster::raster(raster::extent(0, 1e2, 0, 1e2), resolution = 1)
   ras[] <- 0
 
   out <- rings(ras, loci = 5050, minRadius = 3, maxRadius = 6,

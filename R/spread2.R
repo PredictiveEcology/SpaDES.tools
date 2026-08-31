@@ -760,7 +760,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
             set(dt, NULL, "state", "successful")
           } else {
             unDTPotAssym <- unique(dtPotentialAsymmetry$from)
-            if (length(unDTPotAssym) == length(unique(dt$pixel))) {
+            if (length(unDTPotAssym) == length(unique(dt$pixels))) {
               set(dt, NULL, "state", "successful")
             } else {
               dt[pixels %in% unDTPotAssym, state := "successful"]

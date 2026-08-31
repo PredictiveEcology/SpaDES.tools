@@ -1,7 +1,7 @@
 test_that("distanceFromEachPoint returns every from-to pair, not the nearest", {
   testInit("terra")
 
-  ras <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
   set.seed(2)
   n <- 3L
   coords <- cbind(x = round(stats::runif(n, 0, 20)) + 0.5,
@@ -29,7 +29,7 @@ test_that("distanceFromEachPoint returns every from-to pair, not the nearest", {
 test_that("distanceFromEachPoint returns angles when asked", {
   testInit("terra")
 
-  ras <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
   coords <- cbind(x = 10.5, y = 10.5)
 
   out <- distanceFromEachPoint(coords, landscape = ras, angles = TRUE)
@@ -56,7 +56,7 @@ test_that("distanceFromEachPoint returns angles when asked", {
 test_that("maxDistance trims the returned surface", {
   testInit("terra")
 
-  ras <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
   set.seed(2)
   coords <- cbind(x = round(stats::runif(3, 0, 20)) + 0.5,
                   y = round(stats::runif(3, 0, 20)) + 0.5)
@@ -73,7 +73,7 @@ test_that("maxDistance trims the returned surface", {
 test_that("cumulativeFn accumulates across from-points into one surface", {
   testInit("terra")
 
-  ras <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
   set.seed(2)
   coords <- cbind(x = round(stats::runif(3, 0, 20)) + 0.5,
                   y = round(stats::runif(3, 0, 20)) + 0.5)
@@ -88,7 +88,7 @@ test_that("cumulativeFn accumulates across from-points into one surface", {
 test_that("directionFromEachPoint gives all pairs, or matched pairs by id", {
   testInit("terra")
 
-  ras <- terra::rast(terra::ext(0, 20, 0, 20), res = 1)
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
   set.seed(2)
   n <- 3L
   coords <- cbind(x = round(stats::runif(n, 0, 20)) + 0.5,

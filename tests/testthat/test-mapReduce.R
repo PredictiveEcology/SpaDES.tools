@@ -6,9 +6,9 @@ test_that("mapReduce: file does not work correctly 1", {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
-    extFun <- eval(parse(text = rastDF$ext[ii]))
+    extFun <- eval(parse(text = rastDF$extent[ii]))
 
-    ras <- read(extFun(0, 15, 0, 15), res = 1)
+    ras <- read(extFun(0, 15, 0, 15), resolution = 1)
     ras[] <- NA
 
     set.seed(123)

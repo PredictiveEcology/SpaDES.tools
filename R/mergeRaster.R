@@ -57,7 +57,7 @@ setMethod(
       if (!((max(origins[1, ]) - min(origins[1, ])) %==% 0) |
           !((max(origins[1, ]) - min(origins[2, ])) %==% 0)) {
         x <- lapply(x[-1], function(r) {
-          template <- terra::project(x = r, y = x[[1]], align = TRUE)
+          template <- terra::project(x = r, y = x[[1]], align_only = TRUE)
           terra::project(x = r, y = template)
         }) |>
           rev() |>

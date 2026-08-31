@@ -126,7 +126,7 @@ library(terra)
 origDTThreads <- data.table::setDTthreads(2L)
 origNcpus <- options(Ncpus = 2L)
 
-a <- rast(ext(0, 1000, 0, 1000), res = 1)
+a <- rast(ext(0, 1000, 0, 1000), resolution = 1)
 sam <- sample(1:ncell(a), 1e4)
 numCol <- ncol(a)
 numCell <- ncell(a)

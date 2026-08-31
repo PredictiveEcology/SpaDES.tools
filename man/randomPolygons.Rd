@@ -8,7 +8,7 @@
 \title{Produce a \code{SpatRaster} of  random polygons}
 \usage{
 randomPolygons(
-  ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
+  ras = rast(ext(0, 15, 0, 15), resolution = 1, vals = 0),
   numTypes = 2,
   ...
 )

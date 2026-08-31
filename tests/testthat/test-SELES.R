@@ -109,7 +109,7 @@ test_that("transitions is defunct", {
 test_that("patchSize counts cells per patch", {
   testInit("terra")
 
-  ras <- terra::rast(terra::ext(0, 4, 0, 4), res = 1)
+  ras <- terra::rast(terra::ext(0, 4, 0, 4), resolution = 1)
   terra::values(ras) <- c(rep(1, 6), rep(2, 10))
 
   got <- patchSize(ras)

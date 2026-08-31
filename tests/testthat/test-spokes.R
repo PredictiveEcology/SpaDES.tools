@@ -2,7 +2,7 @@ test_that("spokes casts rays at the requested angles from each starting point", 
   testInit(c("terra", "data.table"))
 
   set.seed(1234)
-  ras <- terra::rast(terra::ext(0, 10, 0, 10), res = 1, val = 0)
+  ras <- terra::rast(terra::ext(0, 10, 0, 10), resolution = 1, vals = 0)
   rp <- randomPolygons(ras, numTypes = 10)
 
   angles <- seq(0, pi * 2, length.out = 17)
@@ -45,7 +45,7 @@ test_that("spokes honours minRadius and is reproducible", {
   testInit(c("terra", "data.table"))
 
   set.seed(1234)
-  ras <- terra::rast(terra::ext(0, 10, 0, 10), res = 1, val = 0)
+  ras <- terra::rast(terra::ext(0, 10, 0, 10), resolution = 1, vals = 0)
   rp <- randomPolygons(ras, numTypes = 10)
   angles <- seq(0, pi * 2, length.out = 9)[-9]
   coords <- terra::vect(terra::xyFromCell(rp, 55L))

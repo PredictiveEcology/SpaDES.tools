@@ -627,7 +627,7 @@ spread <- function(
   } else if (is.numeric(spreadProb)) {
     ## Translate numeric spreadProb into a Raster, if there is a mask
     if (is(mask, "Raster")) {
-      spreadProb <- terra::rast(terra::ext(landscape), res = res(landscape), vals = spreadProb)
+      spreadProb <- terra::rast(terra::ext(landscape), resolution = res(landscape), vals = spreadProb)
     }
   }
 
@@ -637,7 +637,7 @@ spread <- function(
     if (is(mask, "Raster")) {
       spreadProbLater <- terra::rast(
         terra::ext(landscape),
-        res = res(landscape),
+        resolution = res(landscape),
         vals = spreadProbLater
       )
     }

@@ -6,7 +6,7 @@ test_that("spread2 tests", {
   aOrig <- terra::rast(system.file("extdata", "a.tif", package = "SpaDES.tools"))
   bOrig <- terra::rast(aOrig)
 
-  bSimple <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
+  bSimple <- terra::rast(terra::ext(0, 10, 0, 10), resolution = 1)
 
   spRas <- terra::rast(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
 
@@ -78,7 +78,7 @@ test_that("spread2 tests", {
       out <- spread2(
         a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE
       )
-      attrib <- attr(out, "spreadState")$cluster$numRetries > 10
+      attrib <- attr(out, "spreadState")$clusterDT$numRetries > 10
       if (any(attrib)) {
         frequ <- out[, .N, by = "initialPixels"]$N
         expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
@@ -189,7 +189,7 @@ test_that("spread2 tests", {
     ## TODO: need better test for hov this scales
     #if (interactive()) message("Scales with number of starts, not maxSize of raster")
     #set.seed(21)
-    #b <- terra::rast(terra::ext(0, 33000, 0, 33000), res = 1)
+    #b <- terra::rast(terra::ext(0, 33000, 0, 33000), resolution = 1)
     #sams <- sample(ncell(b), 2)
     #st1 <- system.time({
     #  out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
@@ -393,7 +393,7 @@ test_that("spread2 tests -- asymmetry", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -586,7 +586,7 @@ test_that("spread2 tests -- asymmetry", {
     ####### Calibration curve
     skip("Calibration curves")
     # n <- 500
-    # ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
+    # ras <- terra::rast(terra::ext(0, 1000, 0, 1000), resolution = 1)
     # sp <- runif(n, 0.15, 0.25)
     # sizes <- integer()
     # for (qwe in 1:n) {
@@ -623,7 +623,7 @@ test_that("spread2 returnFrom", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -651,7 +651,7 @@ test_that("spread2 tests", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -681,7 +681,7 @@ test_that("spread2 works with terra", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -708,7 +708,7 @@ test_that("spread2 tests -- persistence", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -883,7 +883,7 @@ test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))

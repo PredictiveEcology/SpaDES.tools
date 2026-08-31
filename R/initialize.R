@@ -104,7 +104,7 @@ gaussMap <- function(x, scale = 10, var = 1, speedup = 1, method = "RMexp",
 #' data.table::setDTthreads(origDTThreads)
 #' options(Ncpus = origNcpus)
 #'
-randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), res = 1, vals = 0),
+randomPolygons <- function(ras = rast(ext(0, 15, 0, 15), resolution = 1, vals = 0),
                            numTypes = 2, ...) {
   args <- list(...)
   if (any(c("p", "A", "speedup", "minpatch") %in% names(args))) {
@@ -428,7 +428,7 @@ specificNumPerPatch <- function(patches, numPerPatchTable = NULL, numPerPatchMap
   dt3 <- dt2[, list(cells = resample(wh, unique(num.in.pop))), by = "pops"]
   dt3$ids <- rownames(dt3)
 
-  al <- terra::rast(terra::ext(patches), res = res(patches), vals = 0)
+  al <- terra::rast(terra::ext(patches), resolution = res(patches), vals = 0)
   al[dt3$cells] <- 1
 
   if (isRaster) {
