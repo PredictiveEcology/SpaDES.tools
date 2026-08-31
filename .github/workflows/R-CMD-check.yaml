@@ -32,7 +32,7 @@ jobs:
     # that bug back. That SHA is main at the time of pinning.
     # NOTE: must be the FULL 40-character SHA -- GitHub cannot resolve a
     # short SHA in `uses:`, and the workflow fails to start with no jobs.
-    uses: PredictiveEcology/actions/.github/workflows/R-CMD-check.yaml@c2b2459ef08efc54c001b8272ecd493c6eff81b6
+    uses: PredictiveEcology/actions/.github/workflows/R-CMD-check.yaml@main
     with:
       # Extra legs SpaDES.tools tested pre-migration, on top of the reusable base
       # (release + oldrel-1 + ubuntu nosuggests): windows nosuggests, and
