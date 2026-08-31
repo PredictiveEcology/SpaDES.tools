@@ -356,3 +356,112 @@ test_that("adj delegates include = TRUE, splicing the focal cell in place", {
   got <- adj(x = ras, cells = cells, include = TRUE, pairs = TRUE)
   expect_true(all(cells %in% got[, "to"]))
 })
+
+test_that("adj honours returnDT regardless of which internals ran", {
+  testInit(c("terra", "data.table"))
+
+  ## returnDT = TRUE used to be honoured only above cutoff.for.data.table; below
+  ## it the matrix branch ignored the argument and returned a matrix, so the
+  ## return type depended on how many cells you asked about. See #121.
+  ## The once-per-session notice about that has its own test below.
+  assign("warnedAdjReturnDT", TRUE, envir = .pkgEnv)
+
+  ras <- terra::rast(terra::ext(0, 50, 0, 50), resolution = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  ## contiguous cells, so that "to" has plenty of duplicates: match.adjacent
+  ## without pairs reduces to the unique cells, and the reduction has to happen
+  ## on every path
+  cells <- 600:660
+
+  for (dirs in list(8, 4, "bishop")) {
+    for (prs in c(TRUE, FALSE)) {
+      for (ma in c(TRUE, FALSE)) {
+        for (ids in list(NULL, seq_along(cells))) {
+          for (tor in c(FALSE, TRUE)) {
+            for (srt in c(FALSE, TRUE)) {
+              info <- paste("directions", dirs, "pairs", prs, "match.adjacent", ma,
+                            "id", !is.null(ids), "torus", tor, "sort", srt)
+              args <- list(cells = cells, directions = dirs, pairs = prs, sort = srt,
+                           match.adjacent = ma, id = ids, torus = tor)
+
+              ## the matrix branch and the data.table branch, same call
+              viaMat <- do.call(adj, c(args, list(numCol = numCol, numCell = numCell,
+                                                  returnDT = TRUE,
+                                                  cutoff.for.data.table = 1e6)))
+              viaDT <- do.call(adj, c(args, list(numCol = numCol, numCell = numCell,
+                                                 returnDT = TRUE,
+                                                 cutoff.for.data.table = 1L)))
+              expect_s3_class(viaMat, "data.table")
+              expect_s3_class(viaDT, "data.table")
+              expect_identical(viaMat, viaDT, info = info)
+
+              ## and the terra-delegated path, which torus never reaches
+              if (!tor) {
+                viaTerra <- do.call(adj, c(args, list(x = ras, returnDT = TRUE)))
+                expect_s3_class(viaTerra, "data.table")
+                expect_identical(viaTerra, viaDT, info = info)
+              }
+
+              ## returnDT = FALSE: a matrix, except match.adjacent without pairs,
+              ## which is documented to give a bare vector of unique "to" cells
+              matMat <- do.call(adj, c(args, list(numCol = numCol, numCell = numCell,
+                                                  cutoff.for.data.table = 1e6)))
+              matDT <- do.call(adj, c(args, list(numCol = numCol, numCell = numCell,
+                                                 cutoff.for.data.table = 1L)))
+              if (!prs && ma) {
+                expect_null(dim(matMat), info = info)
+              } else {
+                expect_true(is.matrix(matMat), info = info)
+              }
+              ## integer, on both branches: the torus branch used to promote its
+              ## result to double via sign()
+              expect_identical(typeof(matMat), "integer", info = info)
+              expect_identical(matMat, matDT, info = info)
+            }
+          }
+        }
+      }
+    }
+  }
+})
+
+test_that("adj warns once per session about the returnDT change", {
+  testInit("terra")
+
+  withr::defer(assign("warnedAdjReturnDT", TRUE, envir = .pkgEnv))
+
+  ## The notice is skipped for callers inside SpaDES.tools, and under R CMD check
+  ## the test environment itself sits inside the namespace -- so calls that stand
+  ## in for a user's have to come from outside it.
+  asUser <- function(...) adj(...)
+  environment(asUser) <- new.env(parent = globalenv())
+
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
+  cells <- 1:50
+  fresh <- function() assign("warnedAdjReturnDT", NULL, envir = .pkgEnv)
+
+  ## below the cutoff is where the return type changed
+  fresh()
+  expect_warning(asUser(x = ras, cells = cells, returnDT = TRUE,
+                        cutoff.for.data.table = 1e6), "once per session")
+
+  ## once, not once per call
+  expect_no_warning(asUser(x = ras, cells = cells, returnDT = TRUE,
+                           cutoff.for.data.table = 1e6))
+
+  ## above the cutoff the type never changed, and returnDT = FALSE is unaffected
+  fresh()
+  expect_no_warning(asUser(x = ras, cells = cells, returnDT = TRUE,
+                           cutoff.for.data.table = 1L))
+  expect_no_warning(asUser(x = ras, cells = cells, cutoff.for.data.table = 1e6))
+
+  ## calls from inside the package stay silent: spread2() asks for a data.table
+  ## and gets one, so there is nothing for its caller to act on
+  fresh()
+  asPackage <- function(...) adj(...)
+  environment(asPackage) <- asNamespace("SpaDES.tools")
+  expect_no_warning(asPackage(x = ras, cells = cells, returnDT = TRUE,
+                              cutoff.for.data.table = 1e6))
+})

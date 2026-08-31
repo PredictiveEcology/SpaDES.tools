@@ -60,9 +60,11 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #'                       Default `FALSE`, which is faster.
 #'
 #' @param cutoff.for.data.table numeric. If the number of cells is above this value,
-#'                              the function uses data.table which is faster with
-#'                              large numbers of cells. Default is 5000, which appears
+#'                              the function uses data.table internally, which is faster
+#'                              with large numbers of cells. Default is 2000, which appears
 #'                              to be the turning point where data.table becomes faster.
+#'                              This selects the internal strategy only; it does not
+#'                              affect the class of the returned object (see `returnDT`).
 #'
 #' @param torus Logical. Should the spread event wrap around to the other side of the raster?
 #'                       Default is `FALSE`.
@@ -72,27 +74,25 @@ utils::globalVariables(c("angles", "indices", "to", "x", "y", "rasterVal"))
 #' @param numNeighs A numeric scalar, indicating how many neighbours to return. Must be
 #'                  less than or equal to `directions`; which neighbours are random
 #'                  with equal probabilities.
-#' @param returnDT A logical. If TRUE, then the function will return the result
-#'                 as a `data.table`, if the internals used `data.table`,
-#'                 i.e., if number of cells is greater than `cutoff.for.data.table`.
-#'                 User should be warned that this will therefore cause the output
-#'                 format to change depending `cutoff.for.data.table`.
-#'                 This will be faster for situations where `cutoff.for.data.table = TRUE`.
+#' @param returnDT A logical. If `TRUE`, the result is returned as a `data.table`,
+#'                 whichever internal strategy was used to build it. Up to version
+#'                 2.1.2 this was honoured only when `length(cells)` was greater
+#'                 than `cutoff.for.data.table`; below that the argument was
+#'                 ignored and a matrix was returned. The first call per session
+#'                 that lands in that window warns.
 #'
-#' @return Either a matrix (if more than 1 column, i.e., `pairs = TRUE`,
-#' and/or `id` is provided), a vector (if only one column), or a `data.table`
-#' (if `cutoff.for.data.table` is less than `length(cells)` *and*
-#' `returnDT` is `TRUE`.
-#' To get a consistent output, say a matrix, it would be wise to test the output
-#' for its class.
+#' @return If `returnDT` is `TRUE`, a `data.table`; otherwise a matrix, except
+#' for `pairs = FALSE` combined with `match.adjacent = TRUE`, which returns a
+#' bare vector of the unique `to` cells.
+#' The columns will be one or more of `id`, `from`, `to`: `to` always;
+#' `from` if `pairs` is `TRUE`; `id` if `id` was supplied.
 #' The variable output is done to minimize coercion to maintain speed.
-#' The columns will be one or more of `id`, `from`, `to`.
 #'
 #' @seealso [terra::adjacent()]
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom data.table := data.table key set setcolorder setkeyv
+#' @importFrom data.table := as.data.table data.table key set setcolorder setkeyv
 #' @importFrom terra ncell ncol nrow
 #' @importFrom stats na.omit
 #' @rdname adj
@@ -128,6 +128,11 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     numCol <- as.integer(ncol(x))
     numCell <- as.integer(ncell(x))
   }
+
+  ## the window in which the return type used to depend on the internal strategy;
+  ## checked before delegating, as the delegated path is subject to it too
+  if (isTRUE(returnDT) && length(cells) < cutoff.for.data.table)
+    .adjWarnReturnDT(parent.frame())
 
   if (.adjCanUseTerra(x, directions, include, match.adjacent, torus, numNeighs)) {
     return(.adjViaTerra(x, cells, directions, sort, pairs, target, id, returnDT,
@@ -221,6 +226,15 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
   }
 
   if (useMatrix) {
+    ## returnDT promises a data.table whatever the internals used; this branch
+    ## works in matrices, so its results are converted at the return sites
+    asOut <- if (isTRUE(returnDT)) {
+      dtKey <- .adjDTKey(sort, pairs, match.adjacent, torus)
+      function(obj) .adjMatToDT(obj, dtKey)
+    } else {
+      identity
+    }
+
     # Remove all cells that are not target cells, if target is a vector of cells
     if (!is.null(target)) {
       adj <- adj[na.omit(adj[, "to"] %in% target), , drop = FALSE]
@@ -243,10 +257,10 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     keepCols <- if (is.null(id)) "to" else c("to", "id")
     if (!torus) {
       if (pairs) {
-        return(adj[
+        return(asOut(adj[
           !((adj[, "to"] <= 0 | adj[, "to"] > numCell)  | # top or bottom of raster
               ((adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1)) # right & left edge cells, with neighbours wrapped
-          , , drop = FALSE])
+          , , drop = FALSE]))
       } else {
         adj <- adj[
           !((((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]) | # top or bottom of raster
@@ -255,24 +269,27 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
         if (match.adjacent) {
           adj <- unique(adj[, "to"])
         }
-        return(adj)
+        return(asOut(adj))
       }
     } else {
       whLefRig <- (adj[, "from"] %% numCol + adj[, "to"] %% numCol) == 1
       adj[whLefRig, "to"] <- adj[whLefRig, "to"] +
         numCol * (adj[whLefRig, "from"] - adj[whLefRig, "to"])
       whBotTop <- ((adj[, "to"] - 1) %% numCell + 1) != adj[, "to"]
+      ## as.integer keeps this an integer matrix: sign() returns a double, and a
+      ## double written into an integer matrix promotes the whole thing.
+      ## The data.table branch below coerces here for the same reason.
       adj[whBotTop, "to"] <- adj[whBotTop, "to"] +
-        sign(adj[whBotTop, "from"] - adj[whBotTop, "to"]) * numCell
+        as.integer(sign(adj[whBotTop, "from"] - adj[whBotTop, "to"]) * numCell)
       if (pairs) {
-        return(adj)
+        return(asOut(adj))
       } else {
         if (match.adjacent) {
           adj <- unique(adj[, "to", drop = TRUE])
         } else {
           adj <- adj[, keepCols, drop = FALSE]
         }
-        return(adj)
+        return(asOut(adj))
       }
     }
   } else {
@@ -367,6 +384,51 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
   }
 }
 
+## returnDT = TRUE means a data.table however the result was built. The matrix
+## branch of adj() reaches its returns holding either a matrix of "from"/"to"
+## (and "id") columns, or -- for match.adjacent without pairs -- a bare vector
+## of "to" cells, which is the single column the data.table branch produces in
+## that case.
+.adjMatToDT <- function(obj, key = NULL) {
+  out <- if (is.null(dim(obj))) data.table(to = obj) else as.data.table(obj)
+  if (!is.null(key)) setkeyv(out, key)
+  out[]
+}
+
+## Which key the data.table branch leaves on a sorted result. It keys as a side
+## effect of sorting with setkeyv(); torus then rewrites "to" with set(), which
+## drops whichever key columns are no longer in order -- "from" survives as the
+## leading column, "to" does not. The matrix and delegated branches sort with
+## order() and carry no key at all, so they set the same one here to agree.
+.adjDTKey <- function(sort, pairs, match.adjacent, torus) {
+  if (!isTRUE(sort)) return(NULL)
+  if (!isTRUE(pairs)) return(if (isTRUE(torus)) NULL else "to")
+  if (isTRUE(match.adjacent) && !isTRUE(torus)) c("from", "to") else "from"
+}
+
+## Up to SpaDES.tools 2.1.2, returnDT was honoured only above
+## cutoff.for.data.table; below it the matrix branch ignored the argument and
+## returned a matrix regardless. adj() now returns a data.table whenever one is
+## asked for, so calls in that window get a different class than they used to.
+##
+## Warned once per session rather than once per call: adj() runs inside the
+## spread2() iteration loop, where a per-call warning would fire thousands of
+## times in a single simulation. That same loop is why the notice is skipped
+## for calls originating inside this package -- spread2() asks for a
+## data.table and gets one, so there is nothing for its caller to act on.
+.adjWarnReturnDT <- function(callerEnv = parent.frame()) {
+  if (identical(topenv(callerEnv), asNamespace("SpaDES.tools")))
+    return(invisible(FALSE))
+  if (isTRUE(.pkgEnv$warnedAdjReturnDT)) return(invisible(FALSE))
+  .pkgEnv$warnedAdjReturnDT <- TRUE
+  warning("adj(returnDT = TRUE) now returns a data.table when `length(cells)` ",
+          "is below `cutoff.for.data.table`; SpaDES.tools <= 2.1.2 returned a ",
+          "matrix here. `cutoff.for.data.table` now selects the internal ",
+          "strategy only, not the return type. Warned once per session.",
+          call. = FALSE)
+  invisible(TRUE)
+}
+
 ## Can terra::adjacent stand in for the neighbour arithmetic below?
 ##
 ## It emits the same pairs in the same (column-major) order and does the edge
@@ -452,14 +514,23 @@ adj <- function(x = NULL, cells, directions = 8, sort = FALSE, pairs = TRUE,
     if (!is.null(idCol)) idCol <- idCol[ord]
   }
 
+  ## match.adjacent without pairs reduces to the unique "to" cells and carries no
+  ## id, in both branches of adj() above; returnDT has to reduce it the same way
+  ## rather than handing back the unreduced pairs.
+  if (!pairs && isTRUE(match.adjacent)) {
+    toCells <- unique(toCells)
+    if (!returnDT) return(toCells)
+    return(.adjMatToDT(toCells, .adjDTKey(sort, pairs, match.adjacent, torus = FALSE)))
+  }
+
   if (returnDT) {
     out <- data.table(from = fromCells, to = toCells)
     if (!is.null(idCol)) set(out, NULL, "id", idCol)
     if (!pairs) set(out, NULL, "from", NULL)
-    return(out)
+    dtKey <- .adjDTKey(sort, pairs, match.adjacent, torus = FALSE)
+    if (!is.null(dtKey)) setkeyv(out, dtKey)
+    return(out[])
   }
-
-  if (!pairs && isTRUE(match.adjacent)) return(unique(toCells))
 
   out <- if (pairs) cbind(from = fromCells, to = toCells) else cbind(to = toCells)
   if (!is.null(idCol)) out <- cbind(out, id = idCol)

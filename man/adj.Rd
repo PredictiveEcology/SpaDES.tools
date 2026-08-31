@@ -56,9 +56,11 @@ Using this with \code{numCol} is a bit faster execution time.}
 Default \code{FALSE}, which is faster.}
 
 \item{cutoff.for.data.table}{numeric. If the number of cells is above this value,
-the function uses data.table which is faster with
-large numbers of cells. Default is 5000, which appears
-to be the turning point where data.table becomes faster.}
+the function uses data.table internally, which is faster
+with large numbers of cells. Default is 2000, which appears
+to be the turning point where data.table becomes faster.
+This selects the internal strategy only; it does not
+affect the class of the returned object (see \code{returnDT}).}
 
 \item{torus}{Logical. Should the spread event wrap around to the other side of the raster?
 Default is \code{FALSE}.}
@@ -69,22 +71,20 @@ Default is \code{FALSE}.}
 less than or equal to \code{directions}; which neighbours are random
 with equal probabilities.}
 
-\item{returnDT}{A logical. If TRUE, then the function will return the result
-as a \code{data.table}, if the internals used \code{data.table},
-i.e., if number of cells is greater than \code{cutoff.for.data.table}.
-User should be warned that this will therefore cause the output
-format to change depending \code{cutoff.for.data.table}.
-This will be faster for situations where \code{cutoff.for.data.table = TRUE}.}
+\item{returnDT}{A logical. If \code{TRUE}, the result is returned as a \code{data.table},
+whichever internal strategy was used to build it. Up to version
+2.1.2 this was honoured only when \code{length(cells)} was greater
+than \code{cutoff.for.data.table}; below that the argument was
+ignored and a matrix was returned. The first call per session
+that lands in that window warns.}
 }
 \value{
-Either a matrix (if more than 1 column, i.e., \code{pairs = TRUE},
-and/or \code{id} is provided), a vector (if only one column), or a \code{data.table}
-(if \code{cutoff.for.data.table} is less than \code{length(cells)} \emph{and}
-\code{returnDT} is \code{TRUE}.
-To get a consistent output, say a matrix, it would be wise to test the output
-for its class.
+If \code{returnDT} is \code{TRUE}, a \code{data.table}; otherwise a matrix, except
+for \code{pairs = FALSE} combined with \code{match.adjacent = TRUE}, which returns a
+bare vector of the unique \code{to} cells.
+The columns will be one or more of \code{id}, \code{from}, \code{to}: \code{to} always;
+\code{from} if \code{pairs} is \code{TRUE}; \code{id} if \code{id} was supplied.
 The variable output is done to minimize coercion to maintain speed.
-The columns will be one or more of \code{id}, \code{from}, \code{to}.
 }
 \description{
 Faster function for determining the cells of the 4, 8 or bishop

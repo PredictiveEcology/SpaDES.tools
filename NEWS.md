@@ -1,5 +1,26 @@
 # SpaDES.tools (development version)
 
+## Behaviour changes
+* `adj(returnDT = TRUE)` now always returns a `data.table`. The argument was
+  previously honoured only when `length(cells)` was greater than
+  `cutoff.for.data.table` (default 2000); below that it was ignored and a matrix
+  came back, so the return type depended on how many cells were asked about.
+  `cutoff.for.data.table` now selects the internal strategy only, and no longer
+  affects the class of the result; the returned `data.table` also carries the
+  same key it would have had from the `data.table` internals. The first call per
+  session that falls in the affected window warns. Calls made from inside this
+  package are unaffected and stay silent (#121).
+* `adj(torus = TRUE)` now returns integer cell numbers below
+  `cutoff.for.data.table`, where it returned doubles before. The wrap-around
+  correction used `sign()`, which returns a double and so promoted the whole
+  matrix; the `data.table` branch had always coerced back to integer.
+
+## Bug fixes
+* `adj(returnDT = TRUE, pairs = FALSE, match.adjacent = TRUE)` returned every
+  `to` cell, plus an `id` column, instead of the unique `to` cells with no `id`
+  that the same call produces for every other combination of arguments. This
+  affected the `terra::adjacent()` path added in 2.1.3, at any `cutoff.for.data.table`.
+
 # SpaDES.tools 2.1.3
 
 ## Deprecated and defunct
