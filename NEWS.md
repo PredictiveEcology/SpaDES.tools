@@ -16,6 +16,11 @@
   matrix; the `data.table` branch had always coerced back to integer.
 
 ## Bug fixes
+* `spread2(maxRetriesPerID = )` now allows exactly that many retries per event.
+  The cap was tested as `numRetries > maxRetriesPerID`, so one more retry than
+  asked for got through -- the default of 10 made 11. This also shifts the
+  boundary of the retry "jump", which fires on every 10th retry: with
+  `maxRetriesPerID = 8` an event used to reach it, and now does not.
 * `adj(returnDT = TRUE, pairs = FALSE, match.adjacent = TRUE)` returned every
   `to` cell, plus an `id` column, instead of the unique `to` cells with no `id`
   that the same call produces for every other combination of arguments. This
