@@ -58,6 +58,28 @@ duplicatedInt <- function(x) {
     .Call(`_SpaDES_tools_duplicatedInt`, x)
 }
 
+#' Are all values in `[0, 1]`, ignoring `NA`?
+#'
+#' @description
+#' The question `spread()` asks of `spreadProb` before it starts. Expressed in R
+#' as `all(inRange(na.omit(x)))` it costs three passes and two copies of the
+#' whole vector -- `na.omit()` allocates one, the comparison another -- which is
+#' work proportional to the size of the landscape on every call, however little
+#' of it burns. This is one pass, no allocation, and it stops at the first value
+#' that fails.
+#'
+#' `NA` and `NaN` are ignored, so an all-`NA` vector and a zero-length vector are
+#' both `TRUE`: there is nothing in them that is out of range. That matches
+#' `all(inRange(na.omit(x)))`, which is `all(logical(0))`.
+#'
+#' @param x Numeric vector.
+#' @return A single logical.
+#' @export
+#' @rdname inRange01
+allInRange01 <- function(x) {
+    .Call(`_SpaDES_tools_allInRange01`, x)
+}
+
 #' @title
 #' Rcpp Sugar version of runif
 #' @description

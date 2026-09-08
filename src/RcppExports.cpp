@@ -50,6 +50,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// allInRange01
+bool allInRange01(NumericVector x);
+RcppExport SEXP _SpaDES_tools_allInRange01(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(allInRange01(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // runifC
 NumericVector runifC(const int N);
 RcppExport SEXP _SpaDES_tools_runifC(SEXP NSEXP) {
@@ -66,6 +77,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SpaDES_tools_adjPairsWithId", (DL_FUNC) &_SpaDES_tools_adjPairsWithId, 5},
     {"_SpaDES_tools_adjPairsMatrix", (DL_FUNC) &_SpaDES_tools_adjPairsMatrix, 4},
     {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
+    {"_SpaDES_tools_allInRange01", (DL_FUNC) &_SpaDES_tools_allInRange01, 1},
     {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
     {NULL, NULL, 0}
 };

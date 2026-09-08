@@ -29,6 +29,7 @@ spread(
   asymmetry = NA_real_,
   asymmetryAngle = NA_real_,
   quick = FALSE,
+  skipChecks = quick,
   neighProbs = NULL,
   exactSizes = FALSE,
   relativeSpreadProb = FALSE,
@@ -158,6 +159,10 @@ as in North on a map), that describes which way the \code{asymmetry} is.}
 checking (such as \code{inRange}) will be skipped.
 This should only be used if there is no concern about checking
 to ensure that inputs are legal.}
+
+\item{skipChecks}{An alias for \code{quick}, the name used by \code{\link[=spread2]{spread2()}} and
+\code{\link[=spread3]{spread3()}}. Supplying either has the same effect; supplying \code{skipChecks}
+used to be silently ignored here.}
 
 \item{neighProbs}{A numeric vector, whose sum is 1.
 It indicates the probabilities an individual spread iteration
