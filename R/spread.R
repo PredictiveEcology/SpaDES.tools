@@ -252,6 +252,9 @@ utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLoc
 #'               This should only be used if there is no concern about checking
 #'               to ensure that inputs are legal.
 #'
+#' @param skipChecks An alias for `quick`, the name used by [spread2()] and
+#'   [spread3()]. Supplying either has the same effect; supplying `skipChecks`
+#'   used to be silently ignored here.
 #' @param neighProbs A numeric vector, whose sum is 1.
 #'                   It indicates the probabilities an individual spread iteration
 #'                   spreading to `1:length(neighProbs)` neighbours.
@@ -357,11 +360,17 @@ spread <- function(
   asymmetry = NA_real_,
   asymmetryAngle = NA_real_,
   quick = FALSE,
+  skipChecks = quick,
   neighProbs = NULL,
   exactSizes = FALSE,
   relativeSpreadProb = FALSE,
   ...
 ) {
+  ## `skipChecks` is what spread2() and spread3() call this, and passing that
+  ## name here used to be silently inert -- it went into `...`, and every call
+  ## paid the full input validation. Accept either name.
+  if (isTRUE(skipChecks)) quick <- TRUE
+
   if (!is.null(neighProbs)) {
     if (isTRUE(allowOverlap)) {
       stop("Can't use neighProbs and allowOverlap = TRUE together")
@@ -471,13 +480,17 @@ spread <- function(
         }
       }
     } else {
-      if (!all(inRange(na.omit(spreadProb)))) {
+      ## allInRange01() rather than all(inRange(na.omit(.))): the latter copies
+      ## the vector twice and scans it three times, which on a per-cell
+      ## spreadProb is work proportional to the landscape on every call, however
+      ## little of it burns. Same answer, one pass, early exit.
+      if (!allInRange01(spreadProb)) {
         relativeSpreadProb <- TRUE
         stop("spreadProb is not a probability")
       }
       if (spreadProbLaterExists) {
         relativeSpreadProb <- TRUE
-        if (!all(inRange(na.omit(spreadProbLater)))) stop("spreadProbLater is not a probability")
+        if (!allInRange01(spreadProbLater)) stop("spreadProbLater is not a probability")
       }
     }
   }

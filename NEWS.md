@@ -1,3 +1,32 @@
+# SpaDES.tools 2.1.3.9002
+
+## Performance
+
+* `spread()`'s check that `spreadProb` is a probability is ~23x cheaper. It was
+  `all(inRange(na.omit(spreadProb)))`, which copies the vector twice and scans it
+  three times; on a per-cell `spreadProb` that is work proportional to the
+  landscape on every call, however little of it burns. `allInRange01()` does it
+  in one pass with no allocation and stops at the first value that fails.
+
+  | `spreadProb` | before | after |
+  | --- | --- | --- |
+  | 1M cells | 0.024 s | 0.001 s |
+  | 9M cells | 0.234 s | 0.010 s |
+
+  The point is the default: leaving the checks on used to cost up to 5.1x the
+  whole call on a 9M-cell landscape, so anyone in a hot loop had to turn them
+  off. Now it costs 1.1x to 1.3x, so beginners keep the safety net and callers
+  in loops no longer pay for it.
+
+* `allInRange01()` is exported, since the same question comes up elsewhere.
+
+## Bug fixes
+
+* `spread()` accepts `skipChecks` as an alias for `quick`. That is the name
+  [spread2()] and [spread3()] use, and passing it to `spread()` previously landed
+  in `...` and was silently ignored -- so a caller who believed they had switched
+  the checks off paid for them on every call.
+
 # SpaDES.tools (development version)
 
 ## Behaviour changes
