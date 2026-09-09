@@ -489,8 +489,19 @@ spread <- function(
         stop("spreadProb is not a probability")
       }
       if (spreadProbLaterExists) {
-        relativeSpreadProb <- TRUE
-        if (!allInRange01(spreadProbLater)) stop("spreadProbLater is not a probability")
+        ## Conditional, as it already is for spreadProb above and in the raster
+        ## branch. Supplying a spreadProbLater used to set relativeSpreadProb
+        ## unconditionally, whatever its values, which routed the call into the
+        ## relative-probability path at `if (!is.null(neighProbs) ||
+        ## relativeSpreadProb)`. That path needs `numNeighs`, which stays NULL
+        ## unless `neighProbs` was supplied, so `resample(aaa[[x]], size =
+        ## numNeighs[x])` got size = NULL and every such call died with
+        ## "invalid 'size' argument". A perfectly ordinary spreadProbLater is not a
+        ## statement about relative probabilities.
+        if (!allInRange01(spreadProbLater)) {
+          relativeSpreadProb <- TRUE
+          stop("spreadProbLater is not a probability")
+        }
       }
     }
   }
