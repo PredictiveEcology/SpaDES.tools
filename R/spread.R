@@ -509,6 +509,24 @@ spread <- function(
   ncells <- as.integer(terra::ncell(landscape))
   numCols <- as.integer(terra::ncol(landscape))
 
+  ## Validate the numeric spreadProb lengths ONCE. This check used to sit inside the
+  ## iteration loop below, where it also re-called terra::ncell(landscape) -- S4
+  ## dispatch plus the accessor, on every iteration of every call. Neither
+  ## `spreadProb` nor `spreadProbLater` can change length in the loop (the loop only
+  ## swaps one for the other at n == 2, and both are checked here), so the repetition
+  ## bought nothing. Profiled on a fireSense objective-function evaluation, which
+  ## calls spread() hundreds of times over ~30 iterations each, terra::ncell showed
+  ## 7.10 s total with standardGeneric at 6.12 s -- under profiling overhead, but it
+  ## is pure repetition either way. The comparison itself is O(1) so it stays on
+  ## regardless of `quick`; what is removed is doing it thousands of times.
+  if (is.numeric(spreadProb) && !(length(spreadProb) == 1L || length(spreadProb) == ncells)) {
+    stop("spreadProb must be length 1 or length terra::ncell(landscape), or a raster")
+  }
+  if (spreadProbLaterExists && is.numeric(spreadProbLater) &&
+      !(length(spreadProbLater) == 1L || length(spreadProbLater) == ncells)) {
+    stop("spreadProbLater must be length 1 or length terra::ncell(landscape), or a raster")
+  }
+
   #browser(expr = exists("aaaaa"))
   allowOverlapOrReturnDistances <- allowOverlap | returnDistances
   useMatrixVersionSpreads <- allowOverlapOrReturnDistances | spreadStateExists
@@ -828,9 +846,9 @@ spread <- function(
 
     ## extract spreadProb values from spreadProb argument
     if (is.numeric(spreadProb)) {
-      if (!(length(spreadProb) == 1 || length(spreadProb) == terra::ncell(landscape))) {
-        stop("spreadProb must be length 1 or length terra::ncell(landscape), or a raster")
-      }
+      ## Lengths are validated once, before the loop -- see the check beside
+      ## `ncells`. It used to be repeated here, re-calling terra::ncell(landscape)
+      ## on every iteration.
       ## Cell-specific values, as the comment below always intended. This branch
       ## used to `rep(spreadProb, NROW(potentials))` unconditionally, which is
       ## right only for a length-1 spreadProb: given a per-cell vector it

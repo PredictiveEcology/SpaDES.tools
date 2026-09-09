@@ -1,5 +1,17 @@
 # SpaDES.tools 2.1.3.9004
 
+## Performance
+
+* `spread()` validates the length of a numeric `spreadProb` (and of
+  `spreadProbLater`) once, before the iteration loop, rather than on every
+  iteration. The in-loop form also re-called `terra::ncell(landscape)` each time,
+  which is S4 dispatch plus the accessor. Neither argument can change length inside
+  the loop, so the repetition bought nothing. In a fireSense objective-function
+  evaluation -- hundreds of `spread()` calls of roughly 30 iterations each --
+  `terra::ncell` showed 7.10 s total with `standardGeneric` at 6.12 s under
+  profiling. The comparison is O(1) so it remains on regardless of `quick`; a wrong
+  length is now reported before any iteration runs rather than when the loop first
+  reaches the numeric branch.
 ## Bug fixes
 
 * `spread()` could not be called with a numeric `spreadProbLater` at all -- any such
