@@ -1,3 +1,19 @@
+# SpaDES.tools 2.1.3.9004
+
+## Bug fixes
+
+* `spread()` could not be called with a numeric `spreadProbLater` at all -- any such
+  call died with `invalid 'size' argument`. Supplying a `spreadProbLater` set
+  `relativeSpreadProb <- TRUE` unconditionally, whatever its values, which routed the
+  call into the relative-probability path guarded by
+  `if (!is.null(neighProbs) || relativeSpreadProb)`. That path indexes `numNeighs`,
+  which stays `NULL` unless `neighProbs` was supplied, so
+  `resample(aaa[[x]], size = numNeighs[x])` received `size = NULL`. The flag is now
+  set only when the values are actually outside [0, 1], as it already was for
+  `spreadProb` and in the raster branch of the same validation -- which is why a
+  `spreadProbLater` given as a `SpatRaster` worked while the numeric equivalent did
+  not. An out-of-range `spreadProbLater` is still rejected.
+
 # SpaDES.tools 2.1.3.9003
 
 ## Bug fixes
