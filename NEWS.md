@@ -1,4 +1,4 @@
-# SpaDES.tools 2.1.3.9003
+# SpaDES.tools 2.1.3.9004
 
 ## Performance
 
@@ -12,6 +12,30 @@
   profiling. The comparison is O(1) so it remains on regardless of `quick`; a wrong
   length is now reported before any iteration runs rather than when the loop first
   reaches the numeric branch.
+
+# SpaDES.tools 2.1.3.9003
+
+## Bug fixes
+
+* `spread()` could not run at all with a per-cell numeric `spreadProb` *and* a
+  `spreadProbLater`. The first iteration took `rep(spreadProb, NROW(potentials))`,
+  which is right only for a length-1 `spreadProb`; given a per-cell vector it
+  recycled the whole landscape once per candidate cell, and the resulting
+  over-long logical was then used to subscript the candidate matrix:
+  `(subscript) logical subscript too long`. It now indexes the candidate cells,
+  as the raster branch beside it always did and as the comment there
+  ("need cell specific values") always intended.
+
+## Performance
+
+* A gridded `spreadProb` is no longer copied on every iteration. `spreadProb[]`
+  pulls the whole raster into a new vector, and that call sat inside the
+  iteration loop, so a 30-iteration fire on 8.3M cells copied 66 MB thirty times
+  to read a few thousand cells. It is extracted once, before the loop.
+
+* The per-call state vector uses `integer(ncell)`, which is already zero-filled,
+  rather than `rep(0L, ncell)`: 2.0 ms against 7.5 ms at 8.3M cells, once per
+  call.
 
 # SpaDES.tools 2.1.3.9002
 

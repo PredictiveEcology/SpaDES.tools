@@ -59,12 +59,14 @@ test_that("valid spreadProb lengths still spread: length 1 and length ncell", {
   expect_true(NROW(perCellRun) > 1)
 })
 
-## A per-cell spreadProb combined with spreadProbLater is deliberately NOT tested
-## here: it cannot run on development at all. The iteration-one branch does
-## `rep(spreadProb, NROW(potentials))`, which recycles the whole landscape once per
-## candidate cell, and the mismatch surfaces downstream -- as "arguments must have
-## same length" from tapply() at R/spread.R:898 on this branch. That is PR #130's
-## bug and PR #130's test; hoisting the length check neither causes nor fixes it.
+## A per-cell `spreadProb` combined with `spreadProbLater` is deliberately NOT
+## tested here. #130 fixed the first thing that broke it -- the iteration-one
+## `rep(spreadProb, NROW(potentials))` that recycled the whole landscape -- but the
+## combination still does not run: it now fails further down in
+## `resample(aaa[[x]], size = numNeighs[x], prob = rescaledProbs[[x]])` at
+## R/spread.R:929 with "invalid 'size' argument". That is a separate defect, on a
+## path this PR does not touch, and it wants its own investigation rather than
+## being smuggled into a test file about the length check.
 
 test_that("the check stays on under quick = TRUE, being O(1)", {
   skip_if_not_installed("terra")
