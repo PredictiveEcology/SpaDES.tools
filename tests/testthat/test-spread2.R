@@ -78,7 +78,7 @@ test_that("spread2 tests", {
       out <- spread2(
         a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE
       )
-      attrib <- attr(out, "spreadState")$clusterDT$numRetries > 10
+      attrib <- attr(out, "spreadState")$clusterDT$numRetries >= 10
       if (any(attrib)) {
         frequ <- out[, .N, by = "initialPixels"]$N
         expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
@@ -93,7 +93,7 @@ test_that("spread2 tests", {
     for (nnn in 1:20) {
       sams <- sample(innerCells, length(exactSizes))
       out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
-      attrib <- attr(out, "spreadState")$clusterDT$numRetries > 10
+      attrib <- attr(out, "spreadState")$clusterDT$numRetries >= 10
       if (any(attrib)) {
         frequ <- out[, .N, by = "initialPixels"]$N
         expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
@@ -115,7 +115,8 @@ test_that("spread2 tests", {
       ## was `all(out$numRetries == 11)`, but numRetries is not a column of the
       ## returned table -- it lives in the spreadState attribute, so that
       ## assertion was vacuous (NULL == 11 is logical(0)).
-      expect_equal(unique(attr(out, "spreadState")$clusterDT$numRetries), 11) # current max
+      ## the default maxRetriesPerID, which is the actual maximum
+      expect_equal(unique(attr(out, "spreadState")$clusterDT$numRetries), 10)
     }
 
     if (interactive()) message("test circle = TRUE")
@@ -346,7 +347,8 @@ test_that("spread2 tests", {
     expect_s3_class(out, "data.table")
     expect_s3_class(out2, "data.table")
     expect_equal(unique(attr(out2, "spreadState")$clusterDT$numRetries), 0)
-    expect_gt(min(attr(out, "spreadState")$clusterDT$numRetries), 10)
+    ## every event reached the cap, which is now maxRetriesPerID itself
+    expect_gte(min(attr(out, "spreadState")$clusterDT$numRetries), 10)
 
     # because loses info on how many retries, it will always be smaller
     expect_gt(min(attr(out, "spreadState")$clusterDT$numRetries -
@@ -958,9 +960,9 @@ test_that("spread2 retries up to maxRetriesPerID, reproducibly", {
   out <- runIt(7, 12)
   numRetries <- attr(out, "spreadState")$clusterDT$numRetries
 
-  ## retrying stops on the first attempt past the cap, and gets far enough to
-  ## have jumped on the way
-  expect_true(all(numRetries <= 13L))
+  ## retrying stops at the cap -- maxRetriesPerID is the maximum, not one less --
+  ## and gets far enough to have jumped on the way
+  expect_identical(max(numRetries), 12L)
   expect_gt(max(numRetries), 9L)
 
   ## the jump draws from the random number stream, so one seed, one answer
