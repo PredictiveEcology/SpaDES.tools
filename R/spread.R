@@ -544,7 +544,9 @@ spread <- function(
       }
     }
     if (needEmptySpreads) {
-      cellsState <- rep(0L, ncells) ## vector("integer", ncells)
+      ## integer() is already zero-filled, and 3.7x cheaper than rep(0L, n) on a
+      ## landscape-sized vector (7.5 ms vs 2.0 ms at 8.3M cells). One per call.
+      cellsState <- integer(ncells)
       # spreadsDT <- data.table(spreads = vector("integer", ncells))
       # set(spreadsDT, NULL, "spreads", 0L)
       ## put the empty data.table into the SpaDES.tools namespace
@@ -706,6 +708,13 @@ spread <- function(
     assign("numRetries", rep(0, lenInitialLoci), envir = .pkgEnv)
   }
 
+  ## A gridded spreadProb is read a few thousand cells at a time inside the loop,
+  ## so pull it into a plain vector once here rather than on every iteration.
+  isGriddedSpreadProb <- .isGridded(spreadProb)
+  spreadProbVec <- if (isGriddedSpreadProb) .gridValuesVec(spreadProb) else NULL
+  spreadProbLaterVec <- if (isGriddedSpreadProb && .isGridded(spreadProbLater))
+    .gridValuesVec(spreadProbLater) else spreadProbVec
+
   toColumn <- c("to", "indices")
 
   # browser(expr = exists("aaaaa"))
@@ -803,6 +812,7 @@ spread <- function(
 
     if (n == 2) {
       spreadProb <- spreadProbLater
+      if (isGriddedSpreadProb) spreadProbVec <- spreadProbLaterVec
     }
 
     ## extract spreadProb values from spreadProb argument
@@ -810,25 +820,35 @@ spread <- function(
       if (!(length(spreadProb) == 1 || length(spreadProb) == terra::ncell(landscape))) {
         stop("spreadProb must be length 1 or length terra::ncell(landscape), or a raster")
       }
-      if (n == 1 && spreadProbLaterExists) {
-        ## need cell specific values
-        spreadProbs <- rep(spreadProb, NROW(potentials))
-        spreadProb <- spreadProbLater
+      ## Cell-specific values, as the comment below always intended. This branch
+      ## used to `rep(spreadProb, NROW(potentials))` unconditionally, which is
+      ## right only for a length-1 spreadProb: given a per-cell vector it
+      ## recycled the whole landscape once per candidate cell, and the
+      ## length-ncell*NROW logical that came back was then used to subscript a
+      ## NROW-row matrix -- "(subscript) logical subscript too long". So a
+      ## per-cell spreadProb together with spreadProbLater could not run at all.
+      ## The raster branch below has always indexed the cells; this now matches.
+      spreadProbs <- if (length(spreadProb) > 1) {
+        spreadProb[potentials[, 2L]]   ## need cell specific values
       } else {
-        if (length(spreadProb) > 1) {
-          spreadProbs <- spreadProb[potentials[, 2L]]
-        } else {
-          spreadProbs <- rep(spreadProb, NROW(potentials))
-        }
+        rep(spreadProb, NROW(potentials))
+      }
+      if (n == 1 && spreadProbLaterExists) {
+        spreadProb <- spreadProbLater
       }
     } else {
-      ## here for raster spreadProb
+      ## here for raster spreadProb. `spreadProb[]` pulls the whole raster into a
+      ## new vector, and this is inside the iteration loop: a 30-iteration fire
+      ## on 8.3M cells extracted 66 MB thirty times over to read a few thousand
+      ## cells. Extract once, before the loop, and index that (see
+      ## spreadProbVec).
       if (n == 1 && spreadProbLaterExists) {
         ## need cell specific values
-        spreadProbs <- spreadProb[][potentials[, 2L]]
+        spreadProbs <- spreadProbVec[potentials[, 2L]]
         spreadProb <- spreadProbLater
+        spreadProbVec <- spreadProbLaterVec
       } else {
-        spreadProbs <- spreadProb[][potentials[, 2L]]
+        spreadProbs <- spreadProbVec[potentials[, 2L]]
       }
     }
 
@@ -1453,3 +1473,19 @@ spread <- function(
 }
 
 spreadsDTInNamespace <- integer()
+
+## The cell values of a gridded object as a plain vector.
+##
+## `as.vector(x[])` was two allocations for a SpatRaster: `[` returns an ncell x 1
+## matrix, which as.vector() then copies. `terra::values(x, mat = FALSE)` returns the
+## vector directly. Measured on this path, which runs a few hundred times per
+## objective-function evaluation: 8.3M cells in memory 0.139 s -> 0.068 s, 1.7M cells
+## 0.035 s -> 0.007 s, file-backed 1.2-1.3x where I/O dominates. The allocation saved
+## matters as much as the time, since this path profiles as garbage-collection bound.
+##
+## `.isGridded()` also admits raster::Raster objects, for which terra::values()
+## dispatches to raster::getValues() and rejects `mat`, so the class has to be checked
+## rather than assumed. raster::getValues() already returns a vector for one layer.
+.gridValuesVec <- function(x) {
+  if (inherits(x, "SpatRaster")) terra::values(x, mat = FALSE) else as.vector(x[])
+}
