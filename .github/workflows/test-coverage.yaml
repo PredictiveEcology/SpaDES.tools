@@ -26,7 +26,10 @@ jobs:
     # A SHA bought less isolation than it looked: the reusable workflow
     # resolves setup-r-deps@main at run time, so pinning the caller never
     # froze the actions it calls.
-    uses: PredictiveEcology/actions/.github/workflows/test-coverage.yaml@main
+    ## TEMPORARY -- scratch branch, do not merge. Pinned to the actions PR #58
+    ## branch to verify end-to-end that steps.spatial.outputs.abi resolves
+    ## inside a workflow_call job and reaches the dependency cache key.
+    uses: PredictiveEcology/actions/.github/workflows/test-coverage.yaml@fix/abi-cache-key-remaining-workflows
     # Name the one secret this needs rather than inheriting all of them. The
     # reusable workflow also declares GOOGLEDRIVE_AUTH, which is deliberately
     # NOT passed: SpaDES.tools has no Drive-backed tests, and inheriting it
