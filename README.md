@@ -4,7 +4,7 @@
 [![R build status](https://github.com/PredictiveEcology/SpaDES.tools/workflows/R-CMD-check/badge.svg)](https://github.com/PredictiveEcology/SpaDES.tools/actions)
 <!-- badges: end -->
 
-<img align="right" width="80" pad="20" src="https://github.com/PredictiveEcology/SpaDES/raw/master/man/figures/SpaDES.png">
+<img align="right" width="80" pad="20" src="https://github.com/PredictiveEcology/SpaDES/raw/main/man/figures/SpaDES.png">
 
 # SpaDES.tools
 
