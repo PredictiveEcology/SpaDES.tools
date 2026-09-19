@@ -15,7 +15,10 @@ utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLoc
 #' **NOTE:** See also [spread2()], which is more robust and can be
 #' used to build custom functions.
 #' However, under some conditions, this `spread` function is faster.
-#' The two functions can accomplish many of the same things, and key differences are internal.
+#' The two functions can accomplish many of the same things, but their argument
+#' names and, in particular, their **output column names differ**; see the
+#' section "Differences between `spread` and `spread2`" below before converting
+#' code from one to the other.
 #'
 #' For large rasters, a combination of `lowMemory = TRUE` and
 #' `returnIndices = TRUE` or `returnIndices = 2`
@@ -130,6 +133,8 @@ utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLoc
 #'                             ring of cells added. This will exclude the entire ring of cells
 #'                             that caused the `stopRule` to be `TRUE`\cr
 #' }
+#'
+#' @inheritSection spreadVsSpread2 Differences between `spread` and `spread2`
 #'
 #' @seealso [spread2()] for a different implementation of the same algorithm.
 #' It is more robust, meaning, there will be fewer unexplainable errors, and the behaviour
@@ -375,6 +380,18 @@ spread <- function(
     if (isTRUE(allowOverlap)) {
       stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
+    if (isTRUE(returnDistances)) {
+      stop("Can't use neighProbs and returnDistances = TRUE together; ",
+           "this combination is not implemented in spread(). ",
+           "Use spread2(), which supports it.")
+    }
+  }
+  if (!all(is.na(asymmetry)) && (.isGridded(spreadProb) || length(spreadProb) > 1)) {
+    ## the asymmetry adjustment uses the whole `spreadProb` surface where a
+    ## per-neighbour value is needed, so a non-scalar spreadProb is not supported
+    stop("Can't use asymmetry with a raster or vector spreadProb in spread(); ",
+         "this combination is not implemented. Either pass a length-1 ",
+         "spreadProb, or use spread2(), which supports it.")
   }
   if (.useDqrng()) {
     dqrng::dqset.seed(sample.int(1e9, 2)) ## set dqrng seed from base state
@@ -1313,7 +1330,11 @@ spread <- function(
               }
             }
           } else {
-            keepLoci <- spreads[loci] %in% which(tooSmall & inactive)
+            # `spreads` only exists when `useMatrixVersionSpreads`; the vector
+            # branch carries the same per-cell event ids in `cellsState` (cf. the
+            # `tooSmall`/`inactive` calculation above).
+            stateVec <- if (useMatrixVersionSpreads) spreads else cellsState
+            keepLoci <- stateVec[loci] %in% which(tooSmall & inactive)
             events <- c(loci[keepLoci], events)
           }
         }
