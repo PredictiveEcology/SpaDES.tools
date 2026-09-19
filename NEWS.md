@@ -1,3 +1,48 @@
+# SpaDES.tools 2.1.3.9005
+
+## Documentation
+
+* The differences between `spread()` and `spread2()` are now documented in a
+  single shared section, `?spreadVsSpread2`, which is included in the help of
+  both functions via `@inheritSection`. It tabulates the argument
+  correspondences (`loci`/`start`, `persistence`/`persistProb`,
+  `returnIndices`/`asRaster`, `exactSizes`/`exactSize`, and so on) and, most
+  importantly, the returned `data.table` column names, which share *no* names
+  between the two functions: `indices`/`initialLocus`/`active` (a logical) for
+  `spread()` versus `pixels`/`initialPixels`/`state` (a character) for
+  `spread2()`. Reported by Steve Cumming, who hit the column-name incompatibility
+  when converting `scfmEscape` and `scfmSpread` from `spread()` to `spread2()`.
+
+## Bug fixes
+
+* `spread2()` failed with `object 'notAvailable' not found` whenever `neighProbs`
+  was used together with `allowOverlap` greater than 0 (or `NA`). The
+  `notAvailable` bit vector is only created when `canUseAvailable` is `TRUE`,
+  i.e., when overlap is *not* allowed, but the `neighProbs` branch dereferenced
+  it unconditionally. The structurally parallel non-`neighProbs` branch was
+  already guarded. Both the read and the write are now guarded; when overlap is
+  allowed nothing is unavailable, so the guard is a no-op in the previously
+  working case.
+
+* `spread()` failed with `object 'spreads' not found` when `exactSizes = TRUE`
+  and an event got stuck (too small and inactive) unless `allowOverlap`,
+  `returnDistances`, or `spreadState` happened to be in use. The retry branch
+  referenced `spreads`, which only exists under `useMatrixVersionSpreads`; the
+  vector branch carries the same per-cell event ids in `cellsState`, as the
+  adjacent `tooSmall`/`inactive` calculation already accounted for.
+
+## Argument validation
+
+* `spread()` now rejects, up front and with an explanatory message, two argument
+  combinations that it does not implement and that previously failed deep in the
+  algorithm with opaque errors: `neighProbs` together with
+  `returnDistances = TRUE` (previously `subscript out of bounds`), and
+  `asymmetry` together with a raster or vector `spreadProb` (previously
+  `dims [product 9999] do not match the length of object [10000]`, because the
+  asymmetry adjustment uses the whole `spreadProb` surface where a per-neighbour
+  value is required). Both messages point at `spread2()`, which supports these
+  combinations.
+
 # SpaDES.tools 2.1.3.9004
 
 ## Performance
