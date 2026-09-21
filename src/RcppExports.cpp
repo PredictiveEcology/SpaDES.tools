@@ -26,8 +26,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // adjPairsMatrix
-IntegerMatrix adjPairsMatrix(IntegerVector cells, int numCol, int numCell, int directions);
-RcppExport SEXP _SpaDES_tools_adjPairsMatrix(SEXP cellsSEXP, SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP) {
+IntegerMatrix adjPairsMatrix(IntegerVector cells, int numCol, int numCell, int directions, Rcpp::Nullable<IntegerVector> state);
+RcppExport SEXP _SpaDES_tools_adjPairsMatrix(SEXP cellsSEXP, SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP stateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -35,7 +35,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type numCol(numColSEXP);
     Rcpp::traits::input_parameter< int >::type numCell(numCellSEXP);
     Rcpp::traits::input_parameter< int >::type directions(directionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(adjPairsMatrix(cells, numCol, numCell, directions));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<IntegerVector> >::type state(stateSEXP);
+    rcpp_result_gen = Rcpp::wrap(adjPairsMatrix(cells, numCol, numCell, directions, state));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -75,7 +76,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SpaDES_tools_adjPairsWithId", (DL_FUNC) &_SpaDES_tools_adjPairsWithId, 5},
-    {"_SpaDES_tools_adjPairsMatrix", (DL_FUNC) &_SpaDES_tools_adjPairsMatrix, 4},
+    {"_SpaDES_tools_adjPairsMatrix", (DL_FUNC) &_SpaDES_tools_adjPairsMatrix, 5},
     {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
     {"_SpaDES_tools_allInRange01", (DL_FUNC) &_SpaDES_tools_allInRange01, 1},
     {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
