@@ -1,3 +1,14 @@
+# SpaDES.tools 2.1.3.9005
+
+## Bug fixes
+
+* `spread()` no longer uses `dqrng`, so it is reproducible from `set.seed()` alone. `dqrng` keeps its
+  own RNG state, which `.Random.seed` does not capture and `spread()`'s internal reseeding did not
+  neutralize, so a previous `spread()` call in the same process could change the result of the next
+  one. `dqrng` was adopted for speed, but random number generation is now about 1.7% of `spread()`'s
+  time -- `data.table` ordering dominates -- and per burned cell the two paths are indistinguishable.
+  Results change for callers who had `dqrng` installed. `dqrng` moves out of Suggests.
+
 # SpaDES.tools 2.1.3.9004
 
 ## Performance

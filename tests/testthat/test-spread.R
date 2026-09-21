@@ -1,5 +1,5 @@
 test_that("spread produces legal raster", {
-  testInit(c("dqrng", "raster", "terra", "withr"))
+  testInit(c("raster", "terra", "withr"))
   rastDF <- needTerraAndRaster()
 
   for (ii in seq_len(NROW(rastDF))) {
@@ -150,7 +150,7 @@ test_that("spread produces legal raster", {
 })
 
 test_that("allowOverlap -- produces exact result", {
-  testInit(c("dqrng", "terra", "withr"))
+  testInit(c("terra", "withr"))
   rastDF <- needTerraAndRaster()
   N <- 10
   smallExt <- terra::ext(1, N - 1, 1, N - 1)
@@ -1298,17 +1298,6 @@ test_that("multi-core version of distanceFromEachPoints does not work correctly"
 
 test_that("spread is bit-identical across reruns with same seed (seeded grid)", {
   testInit(c("terra", "withr"))
-
-  ## spread() takes a fast path through dqrng::dqsample.int when dqrng is
-  ## installed, but that path carries pre-existing non-determinism: the help
-  ## itself notes that only `dqRNGkind("Xoroshiro128+")` gives reproducibility,
-  ## and even then a residual non-determinism remains for some
-  ## (seed, maxSize, allowOverlap) combinations because dqrng's RNG state
-  ## carries across calls in ways spread()'s mid-function reseeding does not
-  ## fully neutralize. To make THIS test bit-identical regardless of whether
-  ## dqrng is installed, force spread() onto its base R sample.int branch by
-  ## mocking the internal .useDqrng() gate.
-  local_mocked_bindings(.useDqrng = function() FALSE)
 
   ras <- terra::rast(terra::ext(0, 80, 0, 80), resolution = 1, vals = 1)
   withr::with_seed(7L,   spsRas   <- terra::rast(ras, vals = stats::runif(terra::ncell(ras), 0.10, 0.40)))
