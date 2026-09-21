@@ -1,3 +1,22 @@
+# SpaDES.tools 2.1.3.9007
+
+## Performance
+
+* `spread()` drops the neighbours it has already spread to inside `adjPairsMatrix()`, rather than
+  building the whole neighbour matrix and then subsetting it with `cellsState[potentials[, 2L]] ==
+  0L`. The C++ pass that emits the pairs now skips a cell whose state is non-zero, so the gather, the
+  logical vector and the row-subset copy are all gone and the matrix is allocated at its final size.
+  Line profiling put those two steps at 19-29% and 7-21% of self time; paired benchmarking over 7
+  scenarios x 8 alternating rounds gives 7.4% end to end (median), faster in 42 of 53 untied pairs.
+  Results are unchanged: the filter runs in the pass that emits the pairs, so surviving rows keep
+  their order.
+
+## Bug fixes
+
+* `spread(circle = TRUE)` no longer warns when every neighbour of every active cell has already
+  burned. `potentials` can now reach that point with no rows, and recycling a scalar `dists` into a
+  zero-row matrix warns. The values were correct either way.
+
 # SpaDES.tools 2.1.3.9006
 
 ## Performance

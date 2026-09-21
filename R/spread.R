@@ -780,7 +780,11 @@ spread <- function(
     }
 
     if (circle) {
-      potentials <- cbind(potentials, dists = 0)
+      ## an explicit-length 0 column, because `potentials` can now arrive with no
+      ## rows at all -- every neighbour of every active cell may already have been
+      ## spread to, which adjPairsMatrix() filters out. Recycling a scalar into a
+      ## zero-row matrix gives the right answer but warns.
+      potentials <- cbind(potentials, dists = numeric(NROW(potentials)))
     }
 
     ## keep only neighbours that have not been spread to yet
