@@ -320,10 +320,6 @@ utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLoc
 #'
 #' This will generally be more useful when `allowOverlap` is `TRUE`.
 #'
-#' @note `dqrng` version 0.4.0 changed the default RNG. If backwards compatibility is needed,
-#' set `dqrng::dqRNGkind("Xoroshiro128+")` before running `spread` to ensure numerical
-#' reproducibility with previous versions.
-#'
 #' @example inst/examples/example_spread.R
 #'
 #' @author Eliot McIntire and Steve Cumming
@@ -376,16 +372,7 @@ spread <- function(
       stop("Can't use neighProbs and allowOverlap = TRUE together")
     }
   }
-  if (.useDqrng()) {
-    dqrng::dqset.seed(sample.int(1e9, 2)) ## set dqrng seed from base state
-    ## n<=1 short-circuit: dqsample.int(1) advances the xoroshiro state
-    ## inconsistently (depends on the internal bit-buffer position from the
-    ## previous call), so otherwise two same-seed spread() runs can diverge
-    ## on the next dqsample call.
-    samInt <- function(n) if (n <= 1L) seq_len(n) else dqrng::dqsample.int(n)
-  } else {
-    samInt <- sample.int
-  }
+  samInt <- sample.int
 
   if (!is.null(mapID)) {
     warning("mapID is deprecated, use id")
@@ -1357,11 +1344,6 @@ spread <- function(
     ## new loci list for next while loop, concat of persistent and new events
     loci <- c(loci, events)
   } ## end of while loop
-
-  ## Reset the base R seed so it is deterministic
-  if (.useDqrng()) {
-    set.seed(dqrng::dqsample.int(1e9, 1) + sample.int(1e9, 1))
-  }
 
   if (!allowOverlap && !returnDistances) {
     spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
