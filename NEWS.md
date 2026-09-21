@@ -1,3 +1,12 @@
+# SpaDES.tools 2.1.3.9006
+
+## Performance
+
+* `spread()` extracts `initEventID` with a base-R subset instead of `allCells[indices %in%
+  initialLoci, id]`. Same values in the same order, but it skips `[.data.table` dispatch on a logical
+  built over every burned cell. Line profiling put that at 9-15% of self time across fire regimes;
+  paired benchmarking over 9 scenarios x 5 seeds gives ~6% end to end. Results are unchanged.
+
 # SpaDES.tools 2.1.3.9005
 
 ## Bug fixes
