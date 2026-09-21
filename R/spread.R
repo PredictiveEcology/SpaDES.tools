@@ -1405,7 +1405,10 @@ spread <- function(
       if (spreadStateExists) {
         initEventID <- unique(spreadState$id)
       } else {
-        initEventID <- allCells[indices %in% initialLoci, id]
+        ## base-R subset rather than `allCells[i, j]`: same values in the same order, but it skips
+      ## data.table's `[` dispatch, which is a large share of the time here because the logical is
+      ## built over every burned cell. `%in%` hashes `initialLoci`, which is one entry per fire.
+      initEventID <- allCells$id[allCells$indices %in% initialLoci]
       }
       if (!all(is.na(initialLoci))) {
         attr(initialLoci, ".match.hash") <- NULL ## something in data.table put this
