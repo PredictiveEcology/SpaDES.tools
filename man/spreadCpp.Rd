@@ -123,16 +123,24 @@ to the 99th.
 \section{Performance}{
 
 
-Roughly 2-3x faster than \code{\link[=spread]{spread()}} on the same problem: 2.0x median over
-nine scenarios spanning 596 to 188,762 burned cells, and 1.9-3.1x on
-landscapes from 176k to 1.44M cells with 80 fires.
+Roughly 2x faster than \code{\link[=spread]{spread()}} across a range of fire regimes: 1.6-2.4x
+over nine scenarios spanning 596 to 188,762 burned cells and landscapes from
+0.36M to 9M cells, median 2.1x.
 
-Cost grows with the size of the \code{landscape}, not just with how much burns,
-because the per-cell state is allocated once per call and because scattered
-fires on a wide landscape have poorer memory locality. Holding the fires
-fixed, going from 1.44M to 9M cells costs an extra 0.035 s per call. If the
-fires occupy a small part of a large landscape, crop first and map the
-indices back; it is worth about 30\% going from 1.44M to 300k cells.
+\strong{The gain depends on what fraction of the landscape burns, and it can vanish.}
+The per-cell state is allocated once per call and costs the same in both
+implementations, so it is pure overhead that neither avoids; what \code{spreadCpp()}
+makes cheaper is the spreading itself. When almost nothing burns, that
+overhead dominates and there is nothing left to win. Measured on one landscape
+of ~8.4M cells: with 0.13\% of it burned, \code{spreadCpp()} was no faster at all
+(0.95x), where scenarios burning 0.7\% and 4.2\% of their landscapes gave 2.1x
+and 2.4x.
+
+The same allocation makes cost grow with \code{landscape} size even when the fires
+do not: holding the fires fixed, going from 1.44M to 9M cells costs an extra
+0.035 s per call. So if the fires occupy a small part of a large landscape,
+crop first and map the indices back -- that both speeds up the call and
+restores the advantage. Cropping 1.44M to 300k cells is worth about 30\%.
 }
 
 \examples{

@@ -4,8 +4,11 @@
 
 * `spreadCpp()`, a stochastic outward spread written as a plain C++ loop, for the common case: a per-cell
   probability of being spread to, one or more ignitions, an optional per-fire maximum size, and cell
-  indices back. It is 2-3x faster than `spread()` on the same problem (2.0x median over nine scenarios
-  spanning 596 to 188,762 burned cells; 1.9-3.1x on landscapes of 176k to 1.44M cells with 80 fires).
+  indices back. It is roughly 2x faster than `spread()` across fire regimes (1.6-2.4x over nine scenarios
+  spanning 596 to 188,762 burned cells and landscapes of 0.36M to 9M cells, median 2.1x). The gain tracks
+  the fraction of the landscape that burns: the per-call landscape-length state allocation costs the same
+  in both, so where almost nothing burns it dominates and there is nothing to win -- at 0.13% of an 8.4M
+  cell landscape burned, `spreadCpp()` was no faster (0.95x). Crop to the burnable area where possible.
 
   It is **not** a drop-in replacement and does not reproduce `spread()`'s cells for a given seed. It
   follows the same rules -- growth in generations so fires move outwards, one draw per (burning cell,
