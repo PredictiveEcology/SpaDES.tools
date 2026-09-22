@@ -99,3 +99,23 @@ runifC <- function(N) {
     .Call(`_SpaDES_tools_runifC`, N)
 }
 
+#' Stochastic outward spread, in C++
+#'
+#' Internal engine for [spreadCpp()]. See the comments in `src/spread_cpp.cpp`
+#' for the rules it implements and how they differ from [spread()].
+#'
+#' @param numCol Integer; number of raster columns.
+#' @param numCell Integer; total number of raster cells.
+#' @param directions Integer; 4 or 8.
+#' @param loci Integer vector of starting cells, one per fire.
+#' @param spreadProb Numeric, length 1 or `numCell`; probability of being spread to.
+#' @param maxSize Numeric, length 1 or `length(loci)`; maximum cells per fire.
+#' @param iterations Integer; maximum number of generations.
+#'
+#' @return A list of three integer vectors: `id`, `initialLocus`, `indices`.
+#' @keywords internal
+#' @rdname spreadCppEngine
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, iterations) {
+    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, iterations)
+}
+
