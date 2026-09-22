@@ -193,6 +193,49 @@ test_that("iterations caps the number of generations", {
   expect_identical(nrow(out), 49L)
 })
 
+test_that("catch probability is 1-(1-p)^k, checked against theory", {
+  testInit(c("terra", "data.table", "withr"))
+  skip_on_cran()
+  ## The documented rule is one draw per (burning cell, unburned neighbour) pair against the
+  ## TARGET cell's probability, so a cell with k burning neighbours catches with probability
+  ## 1-(1-p)^k in a generation. Checked against the analytic value rather than against spread(),
+  ## because two implementations of the same misunderstanding would agree with each other.
+  ## Seeded, so this is deterministic rather than a flaky statistical test.
+  side <- 31L
+  ras <- mkRas(side)
+  cellOf <- function(r, cc) (r - 1L) * side + cc
+  NREP <- 1500L
+
+  ## k = 1: the 8 neighbours of a lone ignition, one generation
+  ## k = 2: the cell sandwiched between two ignitions two columns apart
+  ## k = 3: the cell below three ignitions sitting side by side
+  probes <- list(
+    list(k = 1L, loci = cellOf(16L, 16L), target = NULL),
+    list(k = 2L, loci = c(cellOf(16L, 15L), cellOf(16L, 17L)), target = cellOf(16L, 16L)),
+    list(k = 3L, loci = c(cellOf(15L, 15L), cellOf(15L, 16L), cellOf(15L, 17L)),
+         target = cellOf(16L, 16L))
+  )
+
+  withr::local_seed(20260921)
+  for (p in c(0.1, 0.5)) {
+    for (pr in probes) {
+      hits <- replicate(NREP, {
+        o <- spreadCpp(ras, loci = pr$loci, spreadProb = p, iterations = 1)
+        if (is.null(pr$target)) nrow(o) - length(pr$loci) else as.integer(pr$target %in% o$indices)
+      })
+      n <- if (is.null(pr$target)) NREP * 8L else NREP
+      obs <- sum(hits) / n
+      expect <- 1 - (1 - p)^pr$k
+      ## 4 binomial standard errors: wide enough never to fire by chance, tight enough that
+      ## drawing once per cell instead of once per pair (which would give p, not 1-(1-p)^k)
+      ## is caught at k = 2 and k = 3.
+      tol <- 4 * sqrt(expect * (1 - expect) / n)
+      expect_lt(abs(obs - expect), tol,
+                label = sprintf("p=%.2f k=%d obs=%.4f expected=%.4f", p, pr$k, obs, expect))
+    }
+  }
+})
+
 test_that("spreadCpp agrees with spread() on how much burns", {
   testInit(c("terra", "data.table", "withr"))
   skip_on_cran()
