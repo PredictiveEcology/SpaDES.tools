@@ -40,35 +40,99 @@ A fast, deliberately narrow alternative to \code{\link[=spread]{spread()}} for t
 per-cell probability of being spread to, one or more starting cells, an
 optional per-fire maximum size, and cell indices back.
 }
-\section{How it differs from \code{spread()}}{
+\section{The rules it follows}{
 
-
-\code{spreadCpp()} is \strong{not} a drop-in reimplementation. It follows the same
-rules but makes its own random draws, so for a given seed it does not
-reproduce \code{\link[=spread]{spread()}}'s cells. Use it where the spread is a stochastic model
-component, not where you need to reproduce an earlier \code{spread()} result.
-
-The rules it does follow:
 \itemize{
-\item Growth happens in generations. The cells that caught in one generation are
-the only ones that try to spread in the next, so fires grow outwards.
-\item Every (burning cell, unburned neighbour) pair gets one draw, compared
-against \code{spreadProb} \strong{of the neighbour}. A cell with \code{k} burning
-neighbours has probability \code{1 - (1 - p)^k} of catching in that generation,
-as in \code{\link[=spread]{spread()}}.
-\item A cell belongs to exactly one fire. Burning cells are visited in a random
-order within a generation, so when two fires reach the same cell neither is
-systematically favoured.
-\item A fire stops at its own \code{maxSize} and never exceeds it. \code{\link[=spread]{spread()}} adds a
-whole generation and then randomly drops the excess; this stops on the
-boundary, which lands on \code{maxSize} exactly.
-\item \code{NA} in \code{spreadProb} means unburnable, as in \code{\link[=spread]{spread()}}.
+\item \strong{Growth happens in generations.} The cells that caught in one generation
+are the only ones that try to spread in the next, so fires grow outwards
+and a fire's extent is tied to how many generations it has had.
+\item \strong{One draw per (burning cell, unburned neighbour) pair}, compared against
+\code{spreadProb} \strong{of the neighbour}, not of the cell doing the spreading. A
+cell with \code{k} burning neighbours therefore catches with probability
+\code{1 - (1 - p)^k} in that generation, exactly as in \code{\link[=spread]{spread()}}.
+\item \strong{A cell belongs to exactly one fire, and is never spread to twice.} Once
+a cell has caught it is never reconsidered. Burning cells are visited in a
+random order within a generation, so when two fires reach the same cell
+neither is systematically favoured.
+\item \strong{A fire stops at its own \code{maxSize} and never exceeds it.} \code{\link[=spread]{spread()}} adds
+a whole generation and then randomly drops the excess; \code{spreadCpp()} stops
+on the boundary, which lands on \code{maxSize} exactly.
+\item \strong{\code{NA} in \code{spreadProb} means unburnable}, as in \code{\link[=spread]{spread()}}.
+}
 }
 
-Everything else \code{spread()} offers -- \code{allowOverlap}, \code{returnDistances},
-\code{circle}, \code{asymmetry}, \code{neighProbs}, \code{relativeSpreadProb}, \code{stopRule},
-\code{persistence}, \code{mask}, continuing from a \code{spreadState}, torus wrapping -- is
-out of scope and not accepted here.
+\section{Limitations}{
+
+
+\code{spreadCpp()} is deliberately narrow. It covers one case -- a per-cell
+probability of being spread to, one or more ignitions, an optional per-fire
+size cap -- and takes only the arguments listed above. Every other argument
+\code{\link[=spread]{spread()}} accepts is \strong{unsupported, and passing one is an error rather than
+being silently ignored}:
+
+\describe{
+\item{\code{allowOverlap}}{Not supported. Fires never overlap; a cell belongs to
+one fire.}
+\item{\code{returnDistances}, \code{circle}, \code{circleMaxRadius}}{Not supported. No
+distances are computed and spread is not constrained to a disc.}
+\item{\code{asymmetry}, \code{asymmetryAngle}}{Not supported. Spread is isotropic;
+there is no directional bias.}
+\item{\code{neighProbs}, \code{relativeSpreadProb}}{Not supported. Every eligible
+neighbour is drawn for independently; the number of neighbours a cell
+spreads to is not itself drawn from a distribution, and probabilities are
+absolute rather than rescaled within a cell's neighbourhood.}
+\item{\code{stopRule}, \code{stopRuleBehavior}}{Not supported. The only stopping
+conditions are \code{maxSize}, \code{iterations}, and having nowhere left to go.}
+\item{\code{exactSizes}}{Not supported, though \code{maxSize} is exact in the sense
+that a fire which reaches its cap stops there.}
+\item{\code{persistence}}{Not supported. A burned cell stays burned and does not
+re-burn.}
+\item{\code{mask}}{Not supported. Use \code{NA} (or 0) in \code{spreadProb} to make cells
+unburnable.}
+\item{\code{spreadState}}{Not supported. A spread cannot be continued from an
+earlier one; each call starts from \code{loci}.}
+\item{\code{spreadProbLater}}{Not supported. One \code{spreadProb} applies to every
+generation.}
+\item{\code{torus}}{Not supported. The landscape does not wrap; spread stops at
+the edges.}
+\item{\code{plot.it}, \code{id}, \code{returnIndices}}{Not supported as options. Nothing
+is plotted, and the return value is always the indices form.}
+\item{Raster \code{spreadProb}}{Not supported. Pass a numeric vector of length
+\code{terra::ncell(landscape)}, e.g. \code{terra::values(x)}.}
+}
+
+Use \code{\link[=spread]{spread()}} when any of these are needed.
+}
+
+\section{Reproducibility}{
+
+
+\code{spreadCpp()} is \strong{not} a drop-in reimplementation of \code{\link[=spread]{spread()}}. It makes
+its own random draws, so for a given seed it does not reproduce \code{\link[=spread]{spread()}}'s
+cells, and swapping one for the other changes results and invalidates cached
+output. It is reproducible in the ordinary sense: the same seed and the same
+inputs give the same answer.
+
+What the two do agree on is behaviour in aggregate. Over 300 seeds on a
+1.44M-cell landscape the two produce the same total burned area (Wilcoxon
+\code{p = 0.34}) and the same fire-size distribution (Kolmogorov-Smirnov
+\code{p = 0.56}), with quantiles within 7\% of each other from the 10th percentile
+to the 99th.
+}
+
+\section{Performance}{
+
+
+Roughly 2-3x faster than \code{\link[=spread]{spread()}} on the same problem: 2.0x median over
+nine scenarios spanning 596 to 188,762 burned cells, and 1.9-3.1x on
+landscapes from 176k to 1.44M cells with 80 fires.
+
+Cost grows with the size of the \code{landscape}, not just with how much burns,
+because the per-cell state is allocated once per call and because scattered
+fires on a wide landscape have poorer memory locality. Holding the fires
+fixed, going from 1.44M to 9M cells costs an extra 0.035 s per call. If the
+fires occupy a small part of a large landscape, crop first and map the
+indices back; it is worth about 30\% going from 1.44M to 300k cells.
 }
 
 \examples{

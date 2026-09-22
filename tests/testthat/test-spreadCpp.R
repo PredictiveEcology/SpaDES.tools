@@ -160,6 +160,27 @@ test_that("more ignitions of the same fire and bad input are handled", {
                "outside the landscape")
 })
 
+test_that("spread()'s unsupported arguments are rejected, not silently ignored", {
+  testInit(c("terra", "data.table", "withr"))
+  ras <- mkRas(30L)
+  ## The documented Limitations section promises an error for each of these. It
+  ## comes from spreadCpp() having no `...`, so a typo or a carried-over argument
+  ## cannot quietly change the model.
+  unsupported <- list(
+    allowOverlap = TRUE, returnDistances = TRUE, circle = TRUE,
+    circleMaxRadius = 10, asymmetry = 2, asymmetryAngle = 90,
+    neighProbs = c(0.7, 0.3), relativeSpreadProb = TRUE,
+    stopRule = function(...) TRUE, stopRuleBehavior = "excludePixel",
+    exactSizes = TRUE, persistence = 0.5, mask = NULL,
+    spreadState = NULL, spreadProbLater = 0.1, torus = TRUE,
+    plot.it = TRUE, id = TRUE, returnIndices = 2L
+  )
+  for (nm in names(unsupported)) {
+    args <- c(list(ras, loci = 400L, spreadProb = 0.2), unsupported[nm])
+    expect_error(do.call(spreadCpp, args), "unused argument", info = nm)
+  }
+})
+
 test_that("iterations caps the number of generations", {
   testInit(c("terra", "data.table", "withr"))
   side <- 51L

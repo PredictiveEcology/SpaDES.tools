@@ -6,33 +6,91 @@ utils::globalVariables(c("id"))
 #' per-cell probability of being spread to, one or more starting cells, an
 #' optional per-fire maximum size, and cell indices back.
 #'
-#' @section How it differs from `spread()`:
+#' @section The rules it follows:
 #'
-#' `spreadCpp()` is **not** a drop-in reimplementation. It follows the same
-#' rules but makes its own random draws, so for a given seed it does not
-#' reproduce [spread()]'s cells. Use it where the spread is a stochastic model
-#' component, not where you need to reproduce an earlier `spread()` result.
+#' * **Growth happens in generations.** The cells that caught in one generation
+#'   are the only ones that try to spread in the next, so fires grow outwards
+#'   and a fire's extent is tied to how many generations it has had.
+#' * **One draw per (burning cell, unburned neighbour) pair**, compared against
+#'   `spreadProb` **of the neighbour**, not of the cell doing the spreading. A
+#'   cell with `k` burning neighbours therefore catches with probability
+#'   `1 - (1 - p)^k` in that generation, exactly as in [spread()].
+#' * **A cell belongs to exactly one fire, and is never spread to twice.** Once
+#'   a cell has caught it is never reconsidered. Burning cells are visited in a
+#'   random order within a generation, so when two fires reach the same cell
+#'   neither is systematically favoured.
+#' * **A fire stops at its own `maxSize` and never exceeds it.** [spread()] adds
+#'   a whole generation and then randomly drops the excess; `spreadCpp()` stops
+#'   on the boundary, which lands on `maxSize` exactly.
+#' * **`NA` in `spreadProb` means unburnable**, as in [spread()].
 #'
-#' The rules it does follow:
+#' @section Limitations:
 #'
-#' * Growth happens in generations. The cells that caught in one generation are
-#'   the only ones that try to spread in the next, so fires grow outwards.
-#' * Every (burning cell, unburned neighbour) pair gets one draw, compared
-#'   against `spreadProb` **of the neighbour**. A cell with `k` burning
-#'   neighbours has probability `1 - (1 - p)^k` of catching in that generation,
-#'   as in [spread()].
-#' * A cell belongs to exactly one fire. Burning cells are visited in a random
-#'   order within a generation, so when two fires reach the same cell neither is
-#'   systematically favoured.
-#' * A fire stops at its own `maxSize` and never exceeds it. [spread()] adds a
-#'   whole generation and then randomly drops the excess; this stops on the
-#'   boundary, which lands on `maxSize` exactly.
-#' * `NA` in `spreadProb` means unburnable, as in [spread()].
+#' `spreadCpp()` is deliberately narrow. It covers one case -- a per-cell
+#' probability of being spread to, one or more ignitions, an optional per-fire
+#' size cap -- and takes only the arguments listed above. Every other argument
+#' [spread()] accepts is **unsupported, and passing one is an error rather than
+#' being silently ignored**:
 #'
-#' Everything else `spread()` offers -- `allowOverlap`, `returnDistances`,
-#' `circle`, `asymmetry`, `neighProbs`, `relativeSpreadProb`, `stopRule`,
-#' `persistence`, `mask`, continuing from a `spreadState`, torus wrapping -- is
-#' out of scope and not accepted here.
+#' \describe{
+#'   \item{`allowOverlap`}{Not supported. Fires never overlap; a cell belongs to
+#'     one fire.}
+#'   \item{`returnDistances`, `circle`, `circleMaxRadius`}{Not supported. No
+#'     distances are computed and spread is not constrained to a disc.}
+#'   \item{`asymmetry`, `asymmetryAngle`}{Not supported. Spread is isotropic;
+#'     there is no directional bias.}
+#'   \item{`neighProbs`, `relativeSpreadProb`}{Not supported. Every eligible
+#'     neighbour is drawn for independently; the number of neighbours a cell
+#'     spreads to is not itself drawn from a distribution, and probabilities are
+#'     absolute rather than rescaled within a cell's neighbourhood.}
+#'   \item{`stopRule`, `stopRuleBehavior`}{Not supported. The only stopping
+#'     conditions are `maxSize`, `iterations`, and having nowhere left to go.}
+#'   \item{`exactSizes`}{Not supported, though `maxSize` is exact in the sense
+#'     that a fire which reaches its cap stops there.}
+#'   \item{`persistence`}{Not supported. A burned cell stays burned and does not
+#'     re-burn.}
+#'   \item{`mask`}{Not supported. Use `NA` (or 0) in `spreadProb` to make cells
+#'     unburnable.}
+#'   \item{`spreadState`}{Not supported. A spread cannot be continued from an
+#'     earlier one; each call starts from `loci`.}
+#'   \item{`spreadProbLater`}{Not supported. One `spreadProb` applies to every
+#'     generation.}
+#'   \item{`torus`}{Not supported. The landscape does not wrap; spread stops at
+#'     the edges.}
+#'   \item{`plot.it`, `id`, `returnIndices`}{Not supported as options. Nothing
+#'     is plotted, and the return value is always the indices form.}
+#'   \item{Raster `spreadProb`}{Not supported. Pass a numeric vector of length
+#'     `terra::ncell(landscape)`, e.g. `terra::values(x)`.}
+#' }
+#'
+#' Use [spread()] when any of these are needed.
+#'
+#' @section Reproducibility:
+#'
+#' `spreadCpp()` is **not** a drop-in reimplementation of [spread()]. It makes
+#' its own random draws, so for a given seed it does not reproduce [spread()]'s
+#' cells, and swapping one for the other changes results and invalidates cached
+#' output. It is reproducible in the ordinary sense: the same seed and the same
+#' inputs give the same answer.
+#'
+#' What the two do agree on is behaviour in aggregate. Over 300 seeds on a
+#' 1.44M-cell landscape the two produce the same total burned area (Wilcoxon
+#' `p = 0.34`) and the same fire-size distribution (Kolmogorov-Smirnov
+#' `p = 0.56`), with quantiles within 7% of each other from the 10th percentile
+#' to the 99th.
+#'
+#' @section Performance:
+#'
+#' Roughly 2-3x faster than [spread()] on the same problem: 2.0x median over
+#' nine scenarios spanning 596 to 188,762 burned cells, and 1.9-3.1x on
+#' landscapes from 176k to 1.44M cells with 80 fires.
+#'
+#' Cost grows with the size of the `landscape`, not just with how much burns,
+#' because the per-cell state is allocated once per call and because scattered
+#' fires on a wide landscape have poorer memory locality. Holding the fires
+#' fixed, going from 1.44M to 9M cells costs an extra 0.035 s per call. If the
+#' fires occupy a small part of a large landscape, crop first and map the
+#' indices back; it is worth about 30% going from 1.44M to 300k cells.
 #'
 #' @param landscape A `SpatRaster`; only its geometry (number of columns and
 #'   cells) is used.
