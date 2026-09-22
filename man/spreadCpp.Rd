@@ -127,6 +127,15 @@ Roughly 2x faster than \code{\link[=spread]{spread()}} across a range of fire re
 over nine scenarios spanning 596 to 188,762 burned cells and landscapes from
 0.36M to 9M cells, median 2.1x.
 
+\strong{The ratio understates the benefit on the expensive calls, so judge it in
+seconds.} Across those nine scenarios the speedup RATIO falls slightly as more
+burns (correlation -0.37 with burned cells) while the seconds saved rise
+steeply (correlation +0.95). The scenario with the lowest ratio, 161,701 burned
+cells at 1.58x, saves 0.048 s per call -- 24 times more than the 2.00x scenario
+at the other end, which saves 0.002 s. On real fire-model fits the same holds:
+two landscapes whose ratios differ by 30\% (1.44x and 1.88x) save almost
+identical wall time per objective evaluation (9.5 s and 9.6 s).
+
 \strong{The gain depends on what fraction of the landscape burns, and it can vanish.}
 The per-cell state is allocated once per call and costs the same in both
 implementations, so it is pure overhead that neither avoids; what \code{spreadCpp()}

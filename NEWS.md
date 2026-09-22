@@ -1,3 +1,12 @@
+# SpaDES.tools 2.1.3.9009
+
+## Documentation
+
+* `spreadCpp()`'s performance section now reports absolute seconds saved alongside the speedup ratio.
+  The ratio understates the benefit exactly where it matters: across nine scenarios it falls slightly as
+  more of the landscape burns (correlation -0.37) while the seconds saved rise steeply (+0.95), so the
+  slowest calls save the most time despite showing the lowest speedup.
+
 # SpaDES.tools 2.1.3.9008
 
 ## New features
@@ -9,6 +18,9 @@
   the fraction of the landscape that burns: the per-call landscape-length state allocation costs the same
   in both, so where almost nothing burns it dominates and there is nothing to win -- at 0.13% of an 8.4M
   cell landscape burned, `spreadCpp()` was no faster (0.95x). Crop to the burnable area where possible.
+  Judge the gain in seconds rather than as a ratio: across those scenarios the ratio falls slightly as
+  more burns (correlation -0.37) while the seconds saved rise steeply (+0.95), so the slowest calls save
+  the most time despite showing the lowest speedup.
 
   It is **not** a drop-in replacement and does not reproduce `spread()`'s cells for a given seed. It
   follows the same rules -- growth in generations so fires move outwards, one draw per (burning cell,
