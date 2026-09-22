@@ -126,13 +126,28 @@ List adjPairsWithId(IntegerVector cells, IntegerVector id,
 //' the data.table allocation/coercion overhead.
 //'
 //' @inheritParams adjPairsWithId
+//' @param state Optional integer vector of length `numCell` giving the state of
+//'   every cell, where 0 means "not yet spread to". When supplied, neighbours
+//'   whose state is non-zero are dropped, in the same pass that builds the
+//'   pairs, so the caller does not have to build and subset a bigger matrix.
 //'
 //' @return A 2-column integer matrix with columns named `from` and `to`.
 //' @keywords internal
 //' @rdname adjPairsMatrix
 // [[Rcpp::export]]
-IntegerMatrix adjPairsMatrix(IntegerVector cells, int numCol, int numCell, int directions) {
+IntegerMatrix adjPairsMatrix(IntegerVector cells, int numCol, int numCell, int directions,
+                             Rcpp::Nullable<IntegerVector> state = R_NilValue) {
   checkGrid(numCol, numCell, directions);
+
+  IntegerVector st;
+  const bool useState = state.isNotNull();
+  if (useState) {
+    st = IntegerVector(state);
+    if (st.size() != numCell) {
+      stop("`state` must have one element per cell");
+    }
+  }
+  const int *stp = useState ? INTEGER(st) : nullptr;
 
   const R_xlen_t n = cells.size();
   if (n == 0) {
@@ -158,6 +173,7 @@ IntegerMatrix adjPairsMatrix(IntegerVector cells, int numCol, int numCell, int d
       if (colOffset ==  1 && colMod == 0) continue;     // would wrap right
       const int t = c + rowOffset * numCol + colOffset;
       if (t < 1 || t > numCell) continue;               // off top/bottom
+      if (stp && stp[t - 1] != 0) continue;             // already spread to
       outFrom.push_back(c);
       outTo.push_back(t);
     }

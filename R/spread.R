@@ -753,12 +753,17 @@ spread <- function(
       spreads[whActive, "active"] <- 0
       potentials <- cbind(potentials, active = 1)
     } else {
+      ## `state = cellsState` also drops the neighbours that have already been
+      ## spread to, in the same C++ pass; doing it there rather than with a
+      ## `cellsState[potentials[, 2L]] == 0L` subset afterwards saves building
+      ## the full matrix and then copying the rows that survive.
       if (id || returnIndices > 0 || circle || relativeSpreadProb || !is.null(neighProbs)) {
         ## C++ neighbour expansion + edge filter (replaces adj(..., pairs = TRUE))
         potentials <- adjPairsMatrix(
           cells = as.integer(loci),
           numCol = numCols, numCell = ncells,
-          directions = as.integer(directions)
+          directions = as.integer(directions),
+          state = cellsState
         )
       } else {
         ## C++ neighbour expansion + edge filter; the original code padded
@@ -767,14 +772,19 @@ spread <- function(
         potentials <- adjPairsMatrix(
           cells = as.integer(loci),
           numCol = numCols, numCell = ncells,
-          directions = as.integer(directions)
+          directions = as.integer(directions),
+          state = cellsState
         )
         potentials[, "from"] <- NA_integer_
       }
     }
 
     if (circle) {
-      potentials <- cbind(potentials, dists = 0)
+      ## an explicit-length 0 column, because `potentials` can now arrive with no
+      ## rows at all -- every neighbour of every active cell may already have been
+      ## spread to, which adjPairsMatrix() filters out. Recycling a scalar into a
+      ## zero-row matrix gives the right answer but warns.
+      potentials <- cbind(potentials, dists = numeric(NROW(potentials)))
     }
 
     ## keep only neighbours that have not been spread to yet
@@ -819,12 +829,9 @@ spread <- function(
         })
         potentials <- do.call(rbind, out)
       }
-    } else {
-      ## Keep only the ones where it hasn't been spread to yet
-      keep <- cellsState[potentials[, 2L]] == 0L
-      ## keep <- spreads[potentials[, 2L]] == 0L
-      potentials <- potentials[keep, , drop = FALSE]
     }
+    ## the non-matrix version has already dropped the cells that have been
+    ## spread to: adjPairsMatrix() did it with `state = cellsState`, above.
 
     if (n == 2) {
       spreadProb <- spreadProbLater

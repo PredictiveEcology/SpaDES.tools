@@ -1436,3 +1436,20 @@ test_that("spreadProb with relative values does not work correctly", {
     }
   }
 })
+
+test_that("spread with circle = TRUE does not warn when a fire is boxed in", {
+  ## adjPairsMatrix() drops the neighbours that have already been spread to, so
+  ## `potentials` reaches the `circle` cbind with no rows once a fire has nowhere
+  ## left to go. Recycling a scalar `dists` into a zero-row matrix warns.
+  testInit(c("terra", "withr"))
+
+  ## spreadProb = 1 on a tiny landscape: everything burns, then every neighbour
+  ## of every active cell is already burned, on an iteration that still runs.
+  ras <- terra::rast(terra::ext(0, 5, 0, 5), resolution = 1, vals = 0)
+
+  withr::local_seed(1)
+  expect_no_warning(
+    out <- spread(ras, loci = 13L, spreadProb = 1, circle = TRUE, returnIndices = TRUE)
+  )
+  expect_identical(nrow(out), as.integer(terra::ncell(ras)))
+})

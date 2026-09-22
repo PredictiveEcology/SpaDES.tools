@@ -4,7 +4,7 @@
 \alias{adjPairsMatrix}
 \title{Adjacent-pairs matrix used by spread() hot loop}
 \usage{
-adjPairsMatrix(cells, numCol, numCell, directions)
+adjPairsMatrix(cells, numCol, numCell, directions, state = NULL)
 }
 \arguments{
 \item{cells}{integer vector of source cell indices (1-based)}
@@ -14,6 +14,11 @@ adjPairsMatrix(cells, numCol, numCell, directions)
 \item{numCell}{integer; total number of raster cells}
 
 \item{directions}{integer; either 4 or 8}
+
+\item{state}{Optional integer vector of length \code{numCell} giving the state of
+every cell, where 0 means "not yet spread to". When supplied, neighbours
+whose state is non-zero are dropped, in the same pass that builds the
+pairs, so the caller does not have to build and subset a bigger matrix.}
 }
 \value{
 A 2-column integer matrix with columns named \code{from} and \code{to}.

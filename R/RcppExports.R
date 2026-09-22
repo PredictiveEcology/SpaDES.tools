@@ -35,12 +35,16 @@ adjPairsWithId <- function(cells, id, numCol, numCell, directions) {
 #' the data.table allocation/coercion overhead.
 #'
 #' @inheritParams adjPairsWithId
+#' @param state Optional integer vector of length `numCell` giving the state of
+#'   every cell, where 0 means "not yet spread to". When supplied, neighbours
+#'   whose state is non-zero are dropped, in the same pass that builds the
+#'   pairs, so the caller does not have to build and subset a bigger matrix.
 #'
 #' @return A 2-column integer matrix with columns named `from` and `to`.
 #' @keywords internal
 #' @rdname adjPairsMatrix
-adjPairsMatrix <- function(cells, numCol, numCell, directions) {
-    .Call(`_SpaDES_tools_adjPairsMatrix`, cells, numCol, numCell, directions)
+adjPairsMatrix <- function(cells, numCol, numCell, directions, state = NULL) {
+    .Call(`_SpaDES_tools_adjPairsMatrix`, cells, numCol, numCell, directions, state)
 }
 
 #' @title
