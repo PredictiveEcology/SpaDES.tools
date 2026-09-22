@@ -73,6 +73,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// spreadCppEngine
+List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, double iterations);
+RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP iterationsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type numCol(numColSEXP);
+    Rcpp::traits::input_parameter< int >::type numCell(numCellSEXP);
+    Rcpp::traits::input_parameter< int >::type directions(directionsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type loci(lociSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type spreadProb(spreadProbSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type maxSize(maxSizeSEXP);
+    Rcpp::traits::input_parameter< double >::type iterations(iterationsSEXP);
+    rcpp_result_gen = Rcpp::wrap(spreadCppEngine(numCol, numCell, directions, loci, spreadProb, maxSize, iterations));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SpaDES_tools_adjPairsWithId", (DL_FUNC) &_SpaDES_tools_adjPairsWithId, 5},
@@ -80,6 +97,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
     {"_SpaDES_tools_allInRange01", (DL_FUNC) &_SpaDES_tools_allInRange01, 1},
     {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
+    {"_SpaDES_tools_spreadCppEngine", (DL_FUNC) &_SpaDES_tools_spreadCppEngine, 7},
     {NULL, NULL, 0}
 };
 

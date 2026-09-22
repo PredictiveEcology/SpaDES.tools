@@ -1,3 +1,27 @@
+# SpaDES.tools 2.1.3.9008
+
+## New features
+
+* `spreadCpp()`, a stochastic outward spread written as a plain C++ loop, for the common case: a per-cell
+  probability of being spread to, one or more ignitions, an optional per-fire maximum size, and cell
+  indices back. It is roughly 2x faster than `spread()` across fire regimes (1.6-2.4x over nine scenarios
+  spanning 596 to 188,762 burned cells and landscapes of 0.36M to 9M cells, median 2.1x). The gain tracks
+  the fraction of the landscape that burns: the per-call landscape-length state allocation costs the same
+  in both, so where almost nothing burns it dominates and there is nothing to win -- at 0.13% of an 8.4M
+  cell landscape burned, `spreadCpp()` was no faster (0.95x). Crop to the burnable area where possible.
+
+  It is **not** a drop-in replacement and does not reproduce `spread()`'s cells for a given seed. It
+  follows the same rules -- growth in generations so fires move outwards, one draw per (burning cell,
+  unburned neighbour) pair against the neighbour's probability so that a cell with `k` burning neighbours
+  catches with probability `1 - (1 - p)^k`, one fire per cell with collisions broken at random, a per-fire
+  `maxSize` that is never exceeded, and `NA` meaning unburnable -- but it makes its own draws. Burned
+  totals and fire-size distributions agree with `spread()`: over 300 seeds, total burned Wilcoxon
+  p = 0.34, fire-size KS p = 0.56, and quantiles within 7% from the 10th percentile to the 99th.
+
+  Everything else `spread()` offers -- `allowOverlap`, `returnDistances`, `circle`, `asymmetry`,
+  `neighProbs`, `relativeSpreadProb`, `stopRule`, `persistence`, `mask`, continuing from a `spreadState`,
+  torus wrapping -- is out of scope and rejected with an error rather than silently ignored.
+
 # SpaDES.tools 2.1.3.9007
 
 ## Performance
