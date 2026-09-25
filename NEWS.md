@@ -1,3 +1,13 @@
+# SpaDES.tools 2.1.3.9010
+
+## Bug fixes
+
+* `spreadCpp(minSize = )`: a fire that reaches `minSize` now continues from its whole perimeter (every cell with an
+  unburned, burnable neighbour), not only from the one or two cells that caught in the generation that reached it.
+  Before, most of that patch was dropped, so at `spreadProb` around 0.2 about 9% of fires ended at exactly
+  `minSize` and fires grew large less often than fires that reached the same size on their own. `minSize = 0`
+  is unchanged.
+
 # SpaDES.tools 2.1.3.9009
 
 ## New features

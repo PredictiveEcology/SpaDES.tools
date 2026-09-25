@@ -36,8 +36,9 @@ using namespace Rcpp;
 //     to the next, and each generation they draw again (rules 2-3, same
 //     spreadProb) against their still-unburned neighbours, so the fire keeps
 //     growing where the fuels let it. The generation that reaches minSize stops
-//     there, exactly, as maxSize does. From the next generation on rule 1
-//     applies again: only the cells that caught in the last generation spread.
+//     there, exactly, as maxSize does. The next generation spreads from every
+//     cell of the patch with an unburned, burnable neighbour (its perimeter);
+//     from then on rule 1 applies again: only the cells that caught last spread.
 //     A fire under minSize with no unburned neighbour whose spreadProb is > 0
 //     (and not NA) is stuck; otherwise only `iterations` bounds how long a very
 //     low spreadProb takes. minSize 0 never enters this branch, so the random
@@ -177,6 +178,8 @@ List spreadCppEngine(int numCol, int numCell, int directions,
   const int *dr = (nDir == 8) ? dRow : dRow4;
 
   std::vector<int> order;
+  std::vector<int> reached;                               // fires that reached their minSize this generation
+  std::vector<char> isReached(anyFloor ? (size_t) nFire : 0, 0);
   double it = 0.0;
   while (!actCell.empty() && it < iterations) {
     ++it;
@@ -259,9 +262,10 @@ List spreadCppEngine(int numCol, int numCell, int directions,
     // is still below its target but has fuel stays in play even if it caught nothing
     if (anyFloor) {
       bool keep = false;
+      reached.clear();
       for (int f = 0; f < nFire; ++f) {
         if (!blob[(size_t) f]) continue;
-        if (size[(size_t) f] >= floorSz[(size_t) f]) { std::vector<int>().swap(pool[(size_t) f]); continue; }
+        if (size[(size_t) f] >= floorSz[(size_t) f]) { reached.push_back(f); continue; }
         if (!fuelSeen[(size_t) f]) {                     // stuck (rule 6)
           bool jumped = false;
           std::vector<int> &pc = pool[(size_t) f];
@@ -298,9 +302,41 @@ List spreadCppEngine(int numCol, int numCell, int directions,
             std::vector<int>().swap(pool[(size_t) f]);
             continue;
           }
-          if (size[(size_t) f] >= floorSz[(size_t) f]) { std::vector<int>().swap(pool[(size_t) f]); continue; }
+          if (size[(size_t) f] >= floorSz[(size_t) f]) { reached.push_back(f); continue; }
         }
         keep = true;
+      }
+      // rule 6: a fire that reached its target this generation continues from ALL its cells that can still
+      // spread (an unburned, burnable neighbour), not only from the cell or two that caught last: the
+      // generation that reaches minSize is cut at minSize, so most of it did not catch anything new.
+      if (!reached.empty()) {
+        std::fill(isReached.begin(), isReached.end(), 0);
+        for (size_t i = 0; i < reached.size(); ++i) isReached[(size_t) reached[i]] = 1;
+        size_t w = 0;
+        for (size_t i = 0; i < actCell.size(); ++i) {
+          if (!isReached[(size_t) actFire[i]]) { actCell[w] = actCell[i]; actFire[w] = actFire[i]; ++w; }
+        }
+        actCell.resize(w); actFire.resize(w);
+        for (size_t k = 0; k < reached.size(); ++k) {
+          const int f = reached[k];
+          const std::vector<int> &pc = pool[(size_t) f];
+          for (size_t i = 0; i < pc.size(); ++i) {
+            const int c = pc[i];
+            const int colMod = c % numCol;
+            bool edge = false;
+            for (int d = 0; d < nDir && !edge; ++d) {
+              if (dc[d] == -1 && colMod == 1) continue;
+              if (dc[d] ==  1 && colMod == 0) continue;
+              const int t = c + dr[d] * numCol + dc[d];
+              if (t < 1 || t > numCell) continue;
+              if (state[(size_t) t - 1] != 0) continue;
+              const double p = oneProb ? p0 : pp[t - 1];
+              if (!ISNAN(p) && p > 0.0) edge = true;
+            }
+            if (edge) { actCell.push_back(c); actFire.push_back(f); }
+          }
+          std::vector<int>().swap(pool[(size_t) f]);
+        }
       }
       if (keep && actCell.empty()) {                     // only persisting fires remain
         for (int f = 0; f < nFire; ++f)
