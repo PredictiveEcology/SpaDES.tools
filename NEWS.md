@@ -42,6 +42,84 @@
   asymmetry adjustment uses the whole `spreadProb` surface where a per-neighbour
   value is required). Both messages point at `spread2()`, which supports these
   combinations.
+# SpaDES.tools 2.1.3.9009
+
+## New features
+
+* `spreadCpp()` gains `minSize`: a size each fire reaches before the normal generation rule applies. While a
+  fire is below it, all its burning cells stay active and draw again against their unburned neighbours
+  (persistence, same `spreadProb`), so the fire grows into a patch shaped by the fuels instead of dying out
+  early; the generation that reaches `minSize` stops there exactly. A fire boxed in by unburnable cells stops
+  where it is. Used to start every escaped fire at the escape size (e.g. 9 cells = 50 ha at 5.76-ha cells).
+* `spreadCpp()` gains `jumpTries` and `jumpMeanDist`: a fire still under `minSize` with nothing burnable next to
+  it tries to jump (random cell of the fire, truncated-exponential distance of 1.5-20 cells, uniform
+  direction; the target catches with its `spreadProb`). A fixed rule for fires trapped in small patches, not a
+  fitted spotting process.
+* Both default to off (`minSize = 0`, `jumpTries = 0`) and then make exactly the same random draws as before, so
+  existing results and caches are unchanged.
+
+# SpaDES.tools 2.1.3.9008
+
+## New features
+
+* `spreadCpp()`, a stochastic outward spread written as a plain C++ loop, for the common case: a per-cell
+  probability of being spread to, one or more ignitions, an optional per-fire maximum size, and cell
+  indices back. It is roughly 2x faster than `spread()` across fire regimes (1.6-2.4x over nine scenarios
+  spanning 596 to 188,762 burned cells and landscapes of 0.36M to 9M cells, median 2.1x). The gain tracks
+  the fraction of the landscape that burns: the per-call landscape-length state allocation costs the same
+  in both, so where almost nothing burns it dominates and there is nothing to win -- at 0.13% of an 8.4M
+  cell landscape burned, `spreadCpp()` was no faster (0.95x). Crop to the burnable area where possible.
+
+  It is **not** a drop-in replacement and does not reproduce `spread()`'s cells for a given seed. It
+  follows the same rules -- growth in generations so fires move outwards, one draw per (burning cell,
+  unburned neighbour) pair against the neighbour's probability so that a cell with `k` burning neighbours
+  catches with probability `1 - (1 - p)^k`, one fire per cell with collisions broken at random, a per-fire
+  `maxSize` that is never exceeded, and `NA` meaning unburnable -- but it makes its own draws. Burned
+  totals and fire-size distributions agree with `spread()`: over 300 seeds, total burned Wilcoxon
+  p = 0.34, fire-size KS p = 0.56, and quantiles within 7% from the 10th percentile to the 99th.
+
+  Everything else `spread()` offers -- `allowOverlap`, `returnDistances`, `circle`, `asymmetry`,
+  `neighProbs`, `relativeSpreadProb`, `stopRule`, `persistence`, `mask`, continuing from a `spreadState`,
+  torus wrapping -- is out of scope and rejected with an error rather than silently ignored.
+
+# SpaDES.tools 2.1.3.9007
+
+## Performance
+
+* `spread()` drops the neighbours it has already spread to inside `adjPairsMatrix()`, rather than
+  building the whole neighbour matrix and then subsetting it with `cellsState[potentials[, 2L]] ==
+  0L`. The C++ pass that emits the pairs now skips a cell whose state is non-zero, so the gather, the
+  logical vector and the row-subset copy are all gone and the matrix is allocated at its final size.
+  Line profiling put those two steps at 19-29% and 7-21% of self time; paired benchmarking over 7
+  scenarios x 8 alternating rounds gives 7.4% end to end (median), faster in 42 of 53 untied pairs.
+  Results are unchanged: the filter runs in the pass that emits the pairs, so surviving rows keep
+  their order.
+
+## Bug fixes
+
+* `spread(circle = TRUE)` no longer warns when every neighbour of every active cell has already
+  burned. `potentials` can now reach that point with no rows, and recycling a scalar `dists` into a
+  zero-row matrix warns. The values were correct either way.
+
+# SpaDES.tools 2.1.3.9006
+
+## Performance
+
+* `spread()` extracts `initEventID` with a base-R subset instead of `allCells[indices %in%
+  initialLoci, id]`. Same values in the same order, but it skips `[.data.table` dispatch on a logical
+  built over every burned cell. Line profiling put that at 9-15% of self time across fire regimes;
+  paired benchmarking over 9 scenarios x 5 seeds gives ~6% end to end. Results are unchanged.
+
+# SpaDES.tools 2.1.3.9005
+
+## Bug fixes
+
+* `spread()` no longer uses `dqrng`, so it is reproducible from `set.seed()` alone. `dqrng` keeps its
+  own RNG state, which `.Random.seed` does not capture and `spread()`'s internal reseeding did not
+  neutralize, so a previous `spread()` call in the same process could change the result of the next
+  one. `dqrng` was adopted for speed, but random number generation is now about 1.7% of `spread()`'s
+  time -- `data.table` ordering dominates -- and per burned cell the two paths are indistinguishable.
+  Results change for callers who had `dqrng` installed. `dqrng` moves out of Suggests.
 
 # SpaDES.tools 2.1.3.9004
 

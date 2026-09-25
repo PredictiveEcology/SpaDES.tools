@@ -325,10 +325,6 @@ utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLoc
 #'
 #' This will generally be more useful when `allowOverlap` is `TRUE`.
 #'
-#' @note `dqrng` version 0.4.0 changed the default RNG. If backwards compatibility is needed,
-#' set `dqrng::dqRNGkind("Xoroshiro128+")` before running `spread` to ensure numerical
-#' reproducibility with previous versions.
-#'
 #' @example inst/examples/example_spread.R
 #'
 #' @author Eliot McIntire and Steve Cumming
@@ -393,16 +389,7 @@ spread <- function(
          "this combination is not implemented. Either pass a length-1 ",
          "spreadProb, or use spread2(), which supports it.")
   }
-  if (.useDqrng()) {
-    dqrng::dqset.seed(sample.int(1e9, 2)) ## set dqrng seed from base state
-    ## n<=1 short-circuit: dqsample.int(1) advances the xoroshiro state
-    ## inconsistently (depends on the internal bit-buffer position from the
-    ## previous call), so otherwise two same-seed spread() runs can diverge
-    ## on the next dqsample call.
-    samInt <- function(n) if (n <= 1L) seq_len(n) else dqrng::dqsample.int(n)
-  } else {
-    samInt <- sample.int
-  }
+  samInt <- sample.int
 
   if (!is.null(mapID)) {
     warning("mapID is deprecated, use id")
@@ -783,12 +770,17 @@ spread <- function(
       spreads[whActive, "active"] <- 0
       potentials <- cbind(potentials, active = 1)
     } else {
+      ## `state = cellsState` also drops the neighbours that have already been
+      ## spread to, in the same C++ pass; doing it there rather than with a
+      ## `cellsState[potentials[, 2L]] == 0L` subset afterwards saves building
+      ## the full matrix and then copying the rows that survive.
       if (id || returnIndices > 0 || circle || relativeSpreadProb || !is.null(neighProbs)) {
         ## C++ neighbour expansion + edge filter (replaces adj(..., pairs = TRUE))
         potentials <- adjPairsMatrix(
           cells = as.integer(loci),
           numCol = numCols, numCell = ncells,
-          directions = as.integer(directions)
+          directions = as.integer(directions),
+          state = cellsState
         )
       } else {
         ## C++ neighbour expansion + edge filter; the original code padded
@@ -797,14 +789,19 @@ spread <- function(
         potentials <- adjPairsMatrix(
           cells = as.integer(loci),
           numCol = numCols, numCell = ncells,
-          directions = as.integer(directions)
+          directions = as.integer(directions),
+          state = cellsState
         )
         potentials[, "from"] <- NA_integer_
       }
     }
 
     if (circle) {
-      potentials <- cbind(potentials, dists = 0)
+      ## an explicit-length 0 column, because `potentials` can now arrive with no
+      ## rows at all -- every neighbour of every active cell may already have been
+      ## spread to, which adjPairsMatrix() filters out. Recycling a scalar into a
+      ## zero-row matrix gives the right answer but warns.
+      potentials <- cbind(potentials, dists = numeric(NROW(potentials)))
     }
 
     ## keep only neighbours that have not been spread to yet
@@ -849,12 +846,9 @@ spread <- function(
         })
         potentials <- do.call(rbind, out)
       }
-    } else {
-      ## Keep only the ones where it hasn't been spread to yet
-      keep <- cellsState[potentials[, 2L]] == 0L
-      ## keep <- spreads[potentials[, 2L]] == 0L
-      potentials <- potentials[keep, , drop = FALSE]
     }
+    ## the non-matrix version has already dropped the cells that have been
+    ## spread to: adjPairsMatrix() did it with `state = cellsState`, above.
 
     if (n == 2) {
       spreadProb <- spreadProbLater
@@ -1379,11 +1373,6 @@ spread <- function(
     loci <- c(loci, events)
   } ## end of while loop
 
-  ## Reset the base R seed so it is deterministic
-  if (.useDqrng()) {
-    set.seed(dqrng::dqsample.int(1e9, 1) + sample.int(1e9, 1))
-  }
-
   if (!allowOverlap && !returnDistances) {
     spreadsIndices <- spreadsIndices[1:prevSpreadIndicesActiveLen]
   }
@@ -1444,7 +1433,10 @@ spread <- function(
       if (spreadStateExists) {
         initEventID <- unique(spreadState$id)
       } else {
-        initEventID <- allCells[indices %in% initialLoci, id]
+        ## base-R subset rather than `allCells[i, j]`: same values in the same order, but it skips
+      ## data.table's `[` dispatch, which is a large share of the time here because the logical is
+      ## built over every burned cell. `%in%` hashes `initialLoci`, which is one entry per fire.
+      initEventID <- allCells[["id"]][allCells[["indices"]] %in% initialLoci]
       }
       if (!all(is.na(initialLoci))) {
         attr(initialLoci, ".match.hash") <- NULL ## something in data.table put this

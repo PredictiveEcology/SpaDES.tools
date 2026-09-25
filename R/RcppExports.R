@@ -35,12 +35,16 @@ adjPairsWithId <- function(cells, id, numCol, numCell, directions) {
 #' the data.table allocation/coercion overhead.
 #'
 #' @inheritParams adjPairsWithId
+#' @param state Optional integer vector of length `numCell` giving the state of
+#'   every cell, where 0 means "not yet spread to". When supplied, neighbours
+#'   whose state is non-zero are dropped, in the same pass that builds the
+#'   pairs, so the caller does not have to build and subset a bigger matrix.
 #'
 #' @return A 2-column integer matrix with columns named `from` and `to`.
 #' @keywords internal
 #' @rdname adjPairsMatrix
-adjPairsMatrix <- function(cells, numCol, numCell, directions) {
-    .Call(`_SpaDES_tools_adjPairsMatrix`, cells, numCol, numCell, directions)
+adjPairsMatrix <- function(cells, numCol, numCell, directions, state = NULL) {
+    .Call(`_SpaDES_tools_adjPairsMatrix`, cells, numCol, numCell, directions, state)
 }
 
 #' @title
@@ -93,5 +97,29 @@ allInRange01 <- function(x) {
 #' @rdname rcpp-extras
 runifC <- function(N) {
     .Call(`_SpaDES_tools_runifC`, N)
+}
+
+#' Stochastic outward spread, in C++
+#'
+#' Internal engine for [spreadCpp()]. See the comments in `src/spread_cpp.cpp`
+#' for the rules it implements and how they differ from [spread()].
+#'
+#' @param numCol Integer; number of raster columns.
+#' @param numCell Integer; total number of raster cells.
+#' @param directions Integer; 4 or 8.
+#' @param loci Integer vector of starting cells, one per fire.
+#' @param spreadProb Numeric, length 1 or `numCell`; probability of being spread to.
+#' @param maxSize Numeric, length 1 or `length(loci)`; maximum cells per fire.
+#' @param minSize Numeric, length 1 or `length(loci)`; cells each fire reaches
+#'   with persistence before the normal rule applies (see rule 6). 0 = none.
+#' @param jumpTries Integer; jump attempts for a fire stuck under minSize (rule 7). 0 = none.
+#' @param jumpMeanDist Numeric; mean jump distance in cells (rule 7).
+#' @param iterations Integer; maximum number of generations.
+#'
+#' @return A list of three integer vectors: `id`, `initialLocus`, `indices`.
+#' @keywords internal
+#' @rdname spreadCppEngine
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist) {
+    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist)
 }
 

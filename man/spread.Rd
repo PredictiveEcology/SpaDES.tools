@@ -277,11 +277,6 @@ To maintain an expected \code{spreadProb} that is the same as the asymmetric
 asymmetric \code{spreadProbs} is always equal to spreadProb at every iteration:
 \code{spreadProbs <- spreadProbs - diff(c(spreadProb, mean(spreadProbs)))}
 }
-\note{
-\code{dqrng} version 0.4.0 changed the default RNG. If backwards compatibility is needed,
-set \code{dqrng::dqRNGkind("Xoroshiro128+")} before running \code{spread} to ensure numerical
-reproducibility with previous versions.
-}
 \section{Breaking out of spread events}{
 
 
