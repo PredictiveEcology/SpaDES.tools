@@ -136,10 +136,31 @@ utils::globalVariables(c("id"))
 #'   are made. This is a fixed rule for fires trapped in small patches, not a
 #'   fitted spotting process; spotting tied to fire weather is future work.
 #' @param jumpMeanDist Mean jump distance in cells (see `jumpTries`). Default 3.
+#' @param minSizeTries Integer, default 100. With `minSize` above 1, `minSize` is
+#'   reached by rejection rather than persistence: each fire spreads normally
+#'   from its one ignition cell, and a fire that dies below `minSize` is undone
+#'   (its cells freed, its rows dropped) and started again from its ignition cell,
+#'   up to `minSizeTries` times. A fire that reaches `minSize` is kept and goes on
+#'   uncut, so its size, shape and burning front are those of a fire that got
+#'   there under its own `spreadProb` -- a sample from the fires that reach
+#'   `minSize`. After `minSizeTries` rejections the fire falls back to the
+#'   persistence rule of `minSize` (and `jumpTries`) from its ignition cell. The
+#'   expected number of tries per fire is 1 / P(reaching `minSize`), so a low
+#'   `spreadProb` or a small burnable patch costs more; the result carries an
+#'   attribute `"minSizeTries"`, a `data.table` with each fire's `id`, its
+#'   rejected `tries`, and whether it used the `fallback`. `minSizeTries = 0`
+#'   gives persistence alone (the behaviour before this argument existed, with the
+#'   same random draws). Without `minSize` it has no effect.
 #' @return A `data.table` keyed on `id`, with integer columns `id`,
 #'   `initialLocus` and `indices`, and a logical `active` (always `FALSE`, since
 #'   the spread has finished) -- the same shape [spread()] returns for
-#'   `returnIndices = TRUE`.
+#'   `returnIndices = TRUE`. When `minSize` is above 1 and `minSizeTries` above 0,
+#'   it also carries an attribute `"minSizeTries"`: a `data.table` with one row per
+#'   fire (in `loci` order) and columns `id`, `tries` (its rejected attempts) and
+#'   `fallback` (`TRUE` if it ran out of tries and used persistence). The
+#'   attribute is transient: most `data.table` operations drop it, e.g. subsetting
+#'   or `dt[, .N, by = "id"]`, so read it from the returned object straight away,
+#'   e.g. `attr(out, "minSizeTries")`.
 #'
 #' @seealso [spread()], which is slower but far more general.
 #' @export
@@ -153,7 +174,7 @@ utils::globalVariables(c("id"))
 #' }
 spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                       directions = 8L, iterations = Inf, minSize = 0,
-                      jumpTries = 0L, jumpMeanDist = 3) {
+                      jumpTries = 0L, jumpMeanDist = 3, minSizeTries = 100L) {
   numCell <- as.integer(terra::ncell(landscape))
   numCol <- as.integer(terra::ncol(landscape))
 
@@ -176,6 +197,7 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
   if (any(minSize > maxSize)) stop("`minSize` must not exceed `maxSize`.")
   if (length(jumpTries) != 1L || is.na(jumpTries) || jumpTries < 0) stop("`jumpTries` must be one number, 0 or more.")
   if (length(jumpMeanDist) != 1L || is.na(jumpMeanDist) || jumpMeanDist <= 0) stop("`jumpMeanDist` must be one positive number.")
+  if (length(minSizeTries) != 1L || is.na(minSizeTries) || minSizeTries < 0) stop("`minSizeTries` must be one number, 0 or more.")
 
   out <- spreadCppEngine(numCol = numCol, numCell = numCell,
                          directions = as.integer(directions),
@@ -183,10 +205,15 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                          maxSize = maxSize, minSize = minSize,
                          iterations = as.numeric(iterations),
                          jumpTries = as.integer(jumpTries),
-                         jumpMeanDist = as.numeric(jumpMeanDist))
+                         jumpMeanDist = as.numeric(jumpMeanDist),
+                         minSizeTries = as.integer(minSizeTries))
 
   dt <- data.table::data.table(id = out$id, initialLocus = out$initialLocus,
                                indices = out$indices, active = FALSE)
   data.table::setkeyv(dt, "id")
+  if (length(out$tries))
+    data.table::setattr(dt, "minSizeTries",
+                        data.table::data.table(id = seq_along(loci), tries = out$tries,
+                                               fallback = as.logical(out$fallback)))
   dt[]
 }

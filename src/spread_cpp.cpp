@@ -51,6 +51,16 @@ using namespace Rcpp;
 //     spreadProb. The first success joins the fire and persistence continues
 //     from all its cells. If every attempt fails, the fire stops where it is.
 //     jumpTries 0 makes no extra draws.
+//  8. minSizeTries (rejection; only with minSize > 1 and minSizeTries > 0). Each
+//     fire first spreads NORMALLY from its one ignition cell (rule 1, no
+//     persistence). A fire that dies below minSize is rejected: its cells are
+//     freed, its output rows dropped, and it restarts from its ignition cell in
+//     the next generation (a taken ignition cell counts as a failed try). A fire
+//     that reaches minSize is accepted and simply goes on, uncut, as rule 1 --
+//     so its size and shape are those of a fire that got there under its own
+//     spreadProb. After minSizeTries rejections the fire falls back to rules 6-7
+//     (persistence, jumping) from its ignition cell. Expected tries per fire are
+//     1 / P(reaching minSize). minSizeTries 0 makes no extra draws.
 //
 // NA spreadProb is treated as 0, i.e. unburnable, as spread() does.
 
@@ -82,22 +92,25 @@ static inline void checkGridCpp(int numCol, int numCell, int directions) {
 //'   with persistence before the normal rule applies (see rule 6). 0 = none.
 //' @param jumpTries Integer; jump attempts for a fire stuck under minSize (rule 7). 0 = none.
 //' @param jumpMeanDist Numeric; mean jump distance in cells (rule 7).
+//' @param minSizeTries Integer; rejections per fire before falling back to persistence (rule 8). 0 = none.
 //' @param iterations Integer; maximum number of generations.
 //'
-//' @return A list of three integer vectors: `id`, `initialLocus`, `indices`.
+//' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
+//'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
 //' @keywords internal
 //' @rdname spreadCppEngine
 // [[Rcpp::export]]
 List spreadCppEngine(int numCol, int numCell, int directions,
                      IntegerVector loci, NumericVector spreadProb,
                      NumericVector maxSize, NumericVector minSize, double iterations,
-                     int jumpTries, double jumpMeanDist) {
+                     int jumpTries, double jumpMeanDist, int minSizeTries) {
   checkGridCpp(numCol, numCell, directions);
 
   const int nFire = (int) loci.size();
   if (nFire == 0) {
     IntegerVector e(0);
-    return List::create(Named("id") = e, Named("initialLocus") = e, Named("indices") = e);
+    return List::create(Named("id") = e, Named("initialLocus") = e, Named("indices") = e,
+                        Named("tries") = e, Named("fallback") = e);
   }
 
   const R_xlen_t np = spreadProb.size();
@@ -138,6 +151,15 @@ List spreadCppEngine(int numCol, int numCell, int directions,
   const double jumpLo = 1.5, jumpHi = 20.0;
   const double jumpSpan = (jumpTries > 0) ? 1.0 - std::exp(-(jumpHi - jumpLo) / jumpMeanDist) : 0.0;
   const int numRow = numCell / numCol;
+  // rule 8: rejection. rejecting[f] while fire f is on a try that has not yet reached its minSize;
+  // its cells and output positions are kept so a rejected try can be undone in O(size).
+  if (minSizeTries < 0) stop("`minSizeTries` must be 0 or more.");
+  const bool rej = anyFloor && minSizeTries > 0;
+  std::vector<char> rejecting(rej ? (size_t) nFire : 0, 0), fellBack(rej ? (size_t) nFire : 0, 0);
+  std::vector<int> tries(rej ? (size_t) nFire : 0, 0), newCount(rej ? (size_t) nFire : 0, 0);
+  std::vector< std::vector<int> > tryCells(rej ? (size_t) nFire : 0);
+  std::vector< std::vector<size_t> > tryRows(rej ? (size_t) nFire : 0);
+  if (rej) for (int f = 0; f < nFire; ++f) rejecting[(size_t) f] = floorSz[(size_t) f] > 1.0 ? 1 : 0;
 
   // state[c] is 0 when cell c+1 is unburned, otherwise the 1-based fire id
   std::vector<int> state((size_t) numCell, 0);
@@ -157,15 +179,20 @@ List spreadCppEngine(int numCol, int numCell, int directions,
   for (int f = 0; f < nFire; ++f) {
     const int c = loci[f];
     if (c < 1 || c > numCell) stop("`loci` has a cell outside the landscape.");
-    if (state[(size_t) c - 1] != 0) continue;   // another fire already starts here
     if (cap[(size_t) f] < 1.0) continue;        // maxSize 0: this fire never burns
+    if (state[(size_t) c - 1] != 0) {           // another fire already starts here
+      if (rej && rejecting[(size_t) f]) { rejecting[(size_t) f] = 0; floorSz[(size_t) f] = 0.0; }
+      continue;
+    }
     state[(size_t) c - 1] = f + 1;
     size[(size_t) f] = 1.0;
     outId.push_back(f + 1);
     outCell.push_back(c);
     actCell.push_back(c);
     actFire.push_back(f);
-    if (anyFloor) pool[(size_t) f].push_back(c);
+    if (rej && rejecting[(size_t) f]) {
+      tryCells[(size_t) f].push_back(c); tryRows[(size_t) f].push_back(outId.size() - 1);
+    } else if (anyFloor) pool[(size_t) f].push_back(c);
   }
 
   // neighbour offsets, as (column shift, row shift)
@@ -185,12 +212,13 @@ List spreadCppEngine(int numCol, int numCell, int directions,
     ++it;
     nextCell.clear();
     nextFire.clear();
+    if (rej) std::fill(newCount.begin(), newCount.end(), 0);
 
     // rule 6: a fire below its target spreads from ALL its cells this generation
     if (anyFloor) {
       bool anyBlob = false;
       for (int f = 0; f < nFire; ++f) {
-        blob[(size_t) f] = (size[(size_t) f] < floorSz[(size_t) f]) ? 1 : 0;
+        blob[(size_t) f] = (size[(size_t) f] < floorSz[(size_t) f] && !(rej && rejecting[(size_t) f])) ? 1 : 0;
         fuelSeen[(size_t) f] = 0;
         if (blob[(size_t) f]) anyBlob = true;
       }
@@ -251,12 +279,58 @@ List spreadCppEngine(int numCol, int numCell, int directions,
         nextCell.push_back(t);
         nextFire.push_back(f);
         if (isBlob) pool[(size_t) f].push_back(t);
+        if (rej && rejecting[(size_t) f]) {
+          newCount[(size_t) f] += 1;
+          tryCells[(size_t) f].push_back(t); tryRows[(size_t) f].push_back(outId.size() - 1);
+        }
         if (size[(size_t) f] >= cap[(size_t) f]) break;    // full: stop this cell
         if (isBlob && size[(size_t) f] >= floorSz[(size_t) f]) break;  // target reached
       }
     }
     actCell.swap(nextCell);
     actFire.swap(nextFire);
+
+    // rule 8: accept a try that reached minSize; reject one that died below it and restart it
+    if (rej) {
+      for (int f = 0; f < nFire; ++f) {
+        if (!rejecting[(size_t) f]) continue;
+        if (size[(size_t) f] >= floorSz[(size_t) f]) {            // accepted: carries on under rule 1
+          rejecting[(size_t) f] = 0;
+          std::vector<int>().swap(tryCells[(size_t) f]); std::vector<size_t>().swap(tryRows[(size_t) f]);
+          continue;
+        }
+        if (newCount[(size_t) f] > 0) continue;                    // still growing
+        // rejected: undo this try
+        const std::vector<int> &tc = tryCells[(size_t) f];
+        for (size_t i = 0; i < tc.size(); ++i) state[(size_t) tc[i] - 1] = 0;
+        const std::vector<size_t> &tr = tryRows[(size_t) f];
+        for (size_t i = 0; i < tr.size(); ++i) outId[tr[i]] = 0;
+        tryCells[(size_t) f].clear(); tryRows[(size_t) f].clear();
+        size[(size_t) f] = 0.0;
+        const int c = loci[f];
+        bool restarted = false;
+        while (!restarted) {
+          tries[(size_t) f] += 1;
+          if (tries[(size_t) f] > minSizeTries) break;              // out of tries
+          if (state[(size_t) c - 1] != 0) continue;                 // ignition cell taken: a failed try
+          state[(size_t) c - 1] = f + 1; size[(size_t) f] = 1.0;
+          outId.push_back(f + 1); outCell.push_back(c);
+          actCell.push_back(c); actFire.push_back(f);
+          tryCells[(size_t) f].push_back(c); tryRows[(size_t) f].push_back(outId.size() - 1);
+          restarted = true;
+        }
+        if (restarted) continue;
+        // rule 8 fallback: rules 6-7 from the ignition cell
+        tries[(size_t) f] = minSizeTries;
+        rejecting[(size_t) f] = 0; fellBack[(size_t) f] = 1;
+        std::vector<int>().swap(tryCells[(size_t) f]); std::vector<size_t>().swap(tryRows[(size_t) f]);
+        if (state[(size_t) c - 1] != 0) { floorSz[(size_t) f] = 0.0; continue; }   // nowhere to start
+        state[(size_t) c - 1] = f + 1; size[(size_t) f] = 1.0;
+        outId.push_back(f + 1); outCell.push_back(c);
+        actCell.push_back(c); actFire.push_back(f);
+        pool[(size_t) f].push_back(c);
+      }
+    }
 
     // rule 6: a fire below its target with nothing burnable left stops; one that
     // is still below its target but has fuel stays in play even if it caught nothing
@@ -347,14 +421,22 @@ List spreadCppEngine(int numCol, int numCell, int directions,
     }
   }
 
-  const R_xlen_t n = (R_xlen_t) outId.size();
+  R_xlen_t n = 0;
+  for (size_t i = 0; i < outId.size(); ++i) if (outId[i] != 0) ++n;   // rule 8: rejected tries are dropped
   IntegerVector id(n), initialLocus(n), indices(n);
-  for (R_xlen_t i = 0; i < n; ++i) {
-    id[i] = outId[(size_t) i];
-    initialLocus[i] = loci[outId[(size_t) i] - 1];
-    indices[i] = outCell[(size_t) i];
+  R_xlen_t w = 0;
+  for (size_t i = 0; i < outId.size(); ++i) {
+    if (outId[i] == 0) continue;
+    id[w] = outId[i];
+    initialLocus[w] = loci[outId[i] - 1];
+    indices[w] = outCell[i];
+    ++w;
   }
+  IntegerVector triesOut(rej ? nFire : 0), fallbackOut(rej ? nFire : 0);
+  for (int f = 0; rej && f < nFire; ++f) { triesOut[f] = tries[(size_t) f]; fallbackOut[f] = fellBack[(size_t) f]; }
   return List::create(Named("id") = id,
                       Named("initialLocus") = initialLocus,
-                      Named("indices") = indices);
+                      Named("indices") = indices,
+                      Named("tries") = triesOut,
+                      Named("fallback") = fallbackOut);
 }

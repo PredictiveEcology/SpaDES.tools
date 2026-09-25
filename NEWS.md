@@ -1,3 +1,18 @@
+# SpaDES.tools 2.1.3.9011
+
+## New features
+
+* `spreadCpp()` gains `minSizeTries` (default 100): with `minSize` above 1, a fire now reaches `minSize` by
+  rejection. It spreads normally from its ignition cell; a fire that dies below `minSize` is undone (cells freed,
+  rows dropped) and started again, up to `minSizeTries` times, after which it falls back to the persistence rule
+  (and `jumpTries`). The fires kept are a sample of those that reach `minSize` under their own `spreadProb`, with
+  their natural size, shape and burning front: with `spreadProb = 0.2` their sizes match fires that reached 9 cells
+  on their own (KS p = 0.38), where persistence did not (p < 0.001). Expected tries per fire are 1 / P(reaching
+  `minSize`). Per-fire tries and fallbacks are in the transient attribute `attr(out, "minSizeTries")`.
+* **This changes results for existing callers that pass `minSize`**, e.g. fireSenseUtils' `escapeSizeHa` and
+  fireSense's escaped fires. `minSizeTries = 0` gives the previous persistence behaviour with the same draws;
+  `minSize = 0` is unchanged.
+
 # SpaDES.tools 2.1.3.9010
 
 ## Bug fixes

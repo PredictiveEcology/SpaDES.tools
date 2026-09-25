@@ -287,7 +287,7 @@ test_that("with low spreadProb a fire still reaches minSize where fuel allows", 
   testInit(c("terra", "data.table", "withr"))
   ras <- mkRas(50L)
   for (ms in c(9, 30)) {
-    withr::with_seed(ms, out <- spreadCpp(ras, loci = 1275L, spreadProb = 0.05, minSize = ms, maxSize = ms))
+    withr::with_seed(ms, out <- spreadCpp(ras, loci = 1275L, spreadProb = 0.05, minSizeTries = 0L, minSize = ms, maxSize = ms))
     expect_identical(nrow(out), as.integer(ms))
   }
   ## without minSize the same fires mostly die small
@@ -302,7 +302,7 @@ test_that("the minSize patch is contiguous and follows high spreadProb", {
   sp <- ifelse(cols <= 30, 0.9, 0.1)             # left half 0.9, right half 0.1
   start <- terra::cellFromRowCol(ras, 30, 30)    # on the boundary, left side
   share <- vapply(1:30, function(s) {
-    out <- withr::with_seed(s, spreadCpp(ras, loci = start, spreadProb = sp, minSize = 30, maxSize = 30))
+    out <- withr::with_seed(s, spreadCpp(ras, loci = start, spreadProb = sp, minSizeTries = 0L, minSize = 30, maxSize = 30))
     r <- terra::rast(ras); r[] <- NA; r[out$indices] <- 1
     expect_identical(length(unique(stats::na.omit(terra::values(terra::patches(r, directions = 8))[, 1]))), 1L)
     mean(terra::colFromCell(ras, out$indices) <= 30)
@@ -316,7 +316,7 @@ test_that("a fire boxed in by NA or 0 stops below minSize", {
   patch <- c(210L, 211L, 212L, 231L)             # 4 connected burnable cells
   for (fill in c(NA_real_, 0)) {
     sp <- rep(fill, terra::ncell(ras)); sp[patch] <- 0.3
-    out <- withr::with_seed(1, spreadCpp(ras, loci = 210L, spreadProb = sp, minSize = 9))
+    out <- withr::with_seed(1, spreadCpp(ras, loci = 210L, spreadProb = sp, minSizeTries = 0L, minSize = 9))
     expect_setequal(out$indices, patch)          # it burns all it can, then stops
   }
 })
@@ -326,19 +326,19 @@ test_that("minSize is per fire", {
   ras <- mkRas(80L)
   ms <- c(1, 9, 30)
   out <- withr::with_seed(5, spreadCpp(ras, loci = c(820L, 4020L, 5660L), spreadProb = 0.1,
-                                       minSize = ms, maxSize = ms))
+                                       minSizeTries = 0L, minSize = ms, maxSize = ms))
   expect_identical(as.integer(out[, .N, by = "id"]$N), c(1L, 9L, 30L))
   ## and fires keep spreading normally after reaching it
-  out2 <- withr::with_seed(6, spreadCpp(ras, loci = 3240L, spreadProb = 1, minSize = 9, maxSize = 200))
+  out2 <- withr::with_seed(6, spreadCpp(ras, loci = 3240L, spreadProb = 1, minSizeTries = 0L, minSize = 9, maxSize = 200))
   expect_identical(nrow(out2), 200L)
 })
 
 test_that("minSize must not exceed maxSize, and is validated", {
   testInit(c("terra", "data.table", "withr"))
   ras <- mkRas(40L)
-  expect_error(spreadCpp(ras, loci = 820L, spreadProb = 0.2, minSize = 10, maxSize = 9), "must not exceed")
-  expect_error(spreadCpp(ras, loci = c(1L, 2L), spreadProb = 0.2, minSize = c(1, 2, 3)), "length")
-  expect_error(spreadCpp(ras, loci = 820L, spreadProb = 0.2, minSize = -1), "0 or more")
+  expect_error(spreadCpp(ras, loci = 820L, spreadProb = 0.2, minSizeTries = 0L, minSize = 10, maxSize = 9), "must not exceed")
+  expect_error(spreadCpp(ras, loci = c(1L, 2L), spreadProb = 0.2, minSizeTries = 0L, minSize = c(1, 2, 3)), "length")
+  expect_error(spreadCpp(ras, loci = 820L, spreadProb = 0.2, minSizeTries = 0L, minSize = -1), "0 or more")
 })
 
 ## jumping: only for a fire stuck under minSize (nothing burnable next to it)
@@ -359,8 +359,8 @@ test_that("jumpTries = 0 changes nothing", {
                                       jumpTries = 0L))
   expect_identical(a, b)
   isl <- islandLandscape()
-  c1 <- withr::with_seed(7, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSize = 9))
-  c2 <- withr::with_seed(7, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSize = 9,
+  c1 <- withr::with_seed(7, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSizeTries = 0L, minSize = 9))
+  c2 <- withr::with_seed(7, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSizeTries = 0L, minSize = 9,
                                       jumpTries = 0L))
   expect_identical(c1, c2)
 })
@@ -368,11 +368,11 @@ test_that("jumpTries = 0 changes nothing", {
 test_that("a fire stuck on an island stops below minSize, and jumps off it with jumpTries", {
   testInit(c("terra", "data.table", "withr"))
   isl <- islandLandscape()
-  no <- withr::with_seed(1, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSize = 9))
+  no <- withr::with_seed(1, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSizeTries = 0L, minSize = 9))
   expect_setequal(no$indices, isl$island)                    # the whole island, then stuck
   reached <- vapply(1:30, function(s) {
     out <- withr::with_seed(s, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp,
-                                         minSize = 9, maxSize = 9, jumpTries = 20L, jumpMeanDist = 3))
+                                         minSizeTries = 0L, minSize = 9, maxSize = 9, jumpTries = 20L, jumpMeanDist = 3))
     expect_false(anyNA(isl$sp[out$indices]))                # never onto unburnable cells
     nrow(out)
   }, 1L)
@@ -381,9 +381,9 @@ test_that("a fire stuck on an island stops below minSize, and jumps off it with 
   expect_gte(mean(reached == 9L), 0.6)
   expect_true(all(reached %in% c(4L, 9L)))
   ## reproducible for a fixed seed
-  a <- withr::with_seed(3, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSize = 9,
+  a <- withr::with_seed(3, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSizeTries = 0L, minSize = 9,
                                      jumpTries = 20L))
-  b <- withr::with_seed(3, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSize = 9,
+  b <- withr::with_seed(3, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSizeTries = 0L, minSize = 9,
                                      jumpTries = 20L))
   expect_identical(a, b)
   expect_error(spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, jumpTries = -1L), "0 or more")
@@ -398,7 +398,7 @@ test_that("a fire that reaches minSize continues from its whole perimeter, so fi
   set.seed(11)
   loci <- sample(terra::ncell(r), 1500)
   set.seed(12)
-  withMin <- spreadCpp(r, loci, spreadProb = 0.2, minSize = 9)[, .N, by = "id"]$N
+  withMin <- spreadCpp(r, loci, spreadProb = 0.2, minSizeTries = 0L, minSize = 9)[, .N, by = "id"]$N
   set.seed(12)
   natural <- spreadCpp(r, loci, spreadProb = 0.2)[, .N, by = "id"]$N
   natural <- natural[natural >= 9]                      # fires that reached 9 cells on their own
@@ -406,4 +406,96 @@ test_that("a fire that reaches minSize continues from its whole perimeter, so fi
   expect_lt(mean(withMin == 9), 0.03)                   # development: ~0.09
   ## a started blob should grow at least as often as a fire that got to 9 cells by chance
   expect_gte(mean(withMin > 100), mean(natural > 100) - 0.03)
+})
+
+## minSizeTries (rejection, the default with minSize): a fire spreads normally from its ignition cell; one that
+## dies below minSize is undone and started again, so the fires kept are a sample of those that reached minSize
+## under their own spreadProb. After minSizeTries rejections it falls back to persistence (and jumping).
+
+## the cells of each fire form one 8-connected patch that holds its ignition cell (so no rejected try is left behind)
+connectedFromLocus <- function(out, ras) {
+  all(vapply(split(out, by = "id"), function(d) {
+    cells <- d$indices; seen <- d$initialLocus[1]; frontier <- seen
+    while (length(frontier)) {
+      nb <- terra::adjacent(ras, frontier, directions = 8, pairs = FALSE)
+      nb <- setdiff(intersect(as.vector(nb), cells), seen)
+      seen <- c(seen, nb); frontier <- nb
+    }
+    setequal(seen, cells)
+  }, logical(1)))
+}
+
+test_that("minSizeTries = 0 is persistence, exactly as before rejection existed", {
+  testInit(c("terra", "data.table", "withr"))
+  ras <- terra::rast(terra::ext(0, 30, 0, 30), resolution = 1, vals = 0)
+  ## recorded with SpaDES.tools 2.1.3.9010 (persistence only), set.seed(42)
+  expected <- list(
+    id = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L),
+    indices = c(200L, 230L, 229L, 260L, 169L, 171L, 199L, 168L, 228L, 289L, 290L, 291L, 142L, 170L, 138L, 139L, 259L, 141L, 201L, 258L, 319L, 173L, 109L, 107L, 108L, 292L, 77L, 80L, 257L, 288L, 231L, 137L, 261L, 293L, 321L, 348L, 350L, 202L, 262L, 166L, 650L, 681L, 651L, 682L, 711L, 649L, 652L, 653L, 621L, 713L, 618L, 680L, 620L, 622L, 712L, 679L, 591L, 623L, 740L, 648L, 709L, 714L, 744L, 589L, 617L, 739L, 654L, 590L, 745L, 773L, 558L, 588L, 625L, 655L, 683L, 587L, 646L, 647L, 743L, 616L))
+  withr::local_seed(42)
+  out <- spreadCpp(ras, loci = c(200L, 650L), spreadProb = 0.25, maxSize = 40, minSize = 9, minSizeTries = 0L)
+  expect_identical(out$id, expected$id)
+  expect_identical(out$indices, expected$indices)
+  expect_null(attr(out, "minSizeTries"))
+})
+
+test_that("rejection keeps fires distributed like fires that reached minSize on their own", {
+  testInit(c("terra", "data.table", "withr"))
+  ## sparse ignitions, so fires rarely meet: then the only difference can be the rule itself
+  ras <- terra::rast(nrows = 400, ncols = 400, xmin = 0, xmax = 400, ymin = 0, ymax = 400)
+  g <- expand.grid(x = seq(20, 380, by = 40), y = seq(20, 380, by = 40))
+  loci <- terra::cellFromRowCol(ras, g$y, g$x)
+  nat <- rej <- integer(0)
+  for (s in 1:15) {
+    nat <- c(nat, withr::with_seed(s, spreadCpp(ras, loci, spreadProb = 0.2))[, .N, by = "id"]$N)
+    rej <- c(rej, withr::with_seed(100 + s, spreadCpp(ras, loci, spreadProb = 0.2, minSize = 9))[, .N, by = "id"]$N)
+  }
+  nat <- nat[nat >= 9]
+  expect_true(all(rej >= 9))
+  expect_gt(suppressWarnings(stats::ks.test(rej, nat))$p.value, 0.01)   # persistence (2.1.3.9010): p < 1e-6
+  expect_equal(mean(rej == 9), mean(nat == 9), tolerance = 0.03)
+})
+
+test_that("a fire that cannot reach minSize uses up its tries and falls back to persistence", {
+  testInit(c("terra", "data.table", "withr"))
+  isl <- islandLandscape()
+  out <- withr::with_seed(1, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSize = 9, minSizeTries = 25L))
+  d <- attr(out, "minSizeTries")
+  expect_identical(d$tries, 25L)
+  expect_true(d$fallback)
+  expect_setequal(out$indices, isl$island)                    # persistence, no jumping: stops on the island
+  ## with jumping, the fallback leaves the island
+  outJ <- withr::with_seed(1, spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, minSize = 9, maxSize = 9,
+                                       minSizeTries = 25L, jumpTries = 20L))
+  expect_true(attr(outJ, "minSizeTries")$fallback)
+  expect_true(nrow(outJ) %in% c(4L, 9L))
+})
+
+test_that("a rejected try leaves nothing behind, and fires competing for cells stay separate", {
+  testInit(c("terra", "data.table", "withr"))
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), resolution = 1, vals = 0)
+  set.seed(4)
+  loci <- sample(terra::ncell(ras), 80)                          # dense enough that fires meet
+  out <- withr::with_seed(9, spreadCpp(ras, loci, spreadProb = 0.18, minSize = 9))
+  d <- attr(out, "minSizeTries")
+  expect_gt(sum(d$tries), 0)                                     # some tries were rejected
+  expect_identical(anyDuplicated(out$indices), 0L)               # a cell belongs to one fire, once
+  expect_true(connectedFromLocus(out, ras))                     # no cells of a rejected try remain
+  sizes <- out[, .N, by = "id"]
+  expect_true(all(sizes$N >= 9 | d$fallback[sizes$id]))
+  ## two fires given the same ignition cell: only the first burns
+  two <- withr::with_seed(2, spreadCpp(ras, loci = c(1830L, 1830L), spreadProb = 0.3, minSize = 9))
+  expect_identical(unique(two$id), 1L)
+})
+
+test_that("rejection respects maxSize, is reproducible, and minSize 0 carries no diagnostics", {
+  testInit(c("terra", "data.table", "withr"))
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), resolution = 1, vals = 0)
+  loci <- c(610L, 1830L, 3050L)
+  a <- withr::with_seed(5, spreadCpp(ras, loci, spreadProb = 0.3, minSize = 9, maxSize = 12))
+  expect_true(all(a[, .N, by = "id"]$N <= 12))
+  b <- withr::with_seed(5, spreadCpp(ras, loci, spreadProb = 0.3, minSize = 9, maxSize = 12))
+  expect_identical(a, b)
+  expect_null(attr(withr::with_seed(5, spreadCpp(ras, loci, spreadProb = 0.3)), "minSizeTries"))
+  expect_error(spreadCpp(ras, loci, spreadProb = 0.3, minSize = 9, minSizeTries = -1L), "0 or more")
 })

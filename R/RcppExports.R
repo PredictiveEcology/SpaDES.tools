@@ -114,12 +114,14 @@ runifC <- function(N) {
 #'   with persistence before the normal rule applies (see rule 6). 0 = none.
 #' @param jumpTries Integer; jump attempts for a fire stuck under minSize (rule 7). 0 = none.
 #' @param jumpMeanDist Numeric; mean jump distance in cells (rule 7).
+#' @param minSizeTries Integer; rejections per fire before falling back to persistence (rule 8). 0 = none.
 #' @param iterations Integer; maximum number of generations.
 #'
-#' @return A list of three integer vectors: `id`, `initialLocus`, `indices`.
+#' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
+#'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
 #' @keywords internal
 #' @rdname spreadCppEngine
-spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist) {
-    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist)
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries) {
+    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries)
 }
 

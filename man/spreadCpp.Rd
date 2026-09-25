@@ -13,7 +13,8 @@ spreadCpp(
   iterations = Inf,
   minSize = 0,
   jumpTries = 0L,
-  jumpMeanDist = 3
+  jumpMeanDist = 3,
+  minSizeTries = 100L
 )
 }
 \arguments{
@@ -61,12 +62,34 @@ are made. This is a fixed rule for fires trapped in small patches, not a
 fitted spotting process; spotting tied to fire weather is future work.}
 
 \item{jumpMeanDist}{Mean jump distance in cells (see \code{jumpTries}). Default 3.}
+
+\item{minSizeTries}{Integer, default 100. With \code{minSize} above 1, \code{minSize} is
+reached by rejection rather than persistence: each fire spreads normally
+from its one ignition cell, and a fire that dies below \code{minSize} is undone
+(its cells freed, its rows dropped) and started again from its ignition cell,
+up to \code{minSizeTries} times. A fire that reaches \code{minSize} is kept and goes on
+uncut, so its size, shape and burning front are those of a fire that got
+there under its own \code{spreadProb} -- a sample from the fires that reach
+\code{minSize}. After \code{minSizeTries} rejections the fire falls back to the
+persistence rule of \code{minSize} (and \code{jumpTries}) from its ignition cell. The
+expected number of tries per fire is 1 / P(reaching \code{minSize}), so a low
+\code{spreadProb} or a small burnable patch costs more; the result carries an
+attribute \code{"minSizeTries"}, a \code{data.table} with each fire's \code{id}, its
+rejected \code{tries}, and whether it used the \code{fallback}. \code{minSizeTries = 0}
+gives persistence alone (the behaviour before this argument existed, with the
+same random draws). Without \code{minSize} it has no effect.}
 }
 \value{
 A \code{data.table} keyed on \code{id}, with integer columns \code{id},
 \code{initialLocus} and \code{indices}, and a logical \code{active} (always \code{FALSE}, since
 the spread has finished) -- the same shape \code{\link[=spread]{spread()}} returns for
-\code{returnIndices = TRUE}.
+\code{returnIndices = TRUE}. When \code{minSize} is above 1 and \code{minSizeTries} above 0,
+it also carries an attribute \code{"minSizeTries"}: a \code{data.table} with one row per
+fire (in \code{loci} order) and columns \code{id}, \code{tries} (its rejected attempts) and
+\code{fallback} (\code{TRUE} if it ran out of tries and used persistence). The
+attribute is transient: most \code{data.table} operations drop it, e.g. subsetting
+or \code{dt[, .N, by = "id"]}, so read it from the returned object straight away,
+e.g. \code{attr(out, "minSizeTries")}.
 }
 \description{
 A fast, deliberately narrow alternative to \code{\link[=spread]{spread()}} for the common case: a
