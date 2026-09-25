@@ -390,3 +390,20 @@ test_that("a fire stuck on an island stops below minSize, and jumps off it with 
   expect_error(spreadCpp(isl$ras, loci = isl$start, spreadProb = isl$sp, jumpTries = 2L, jumpMeanDist = 0),
                "positive")
 })
+
+test_that("a fire that reaches minSize continues from its whole perimeter, so fires do not pile up at minSize", {
+  ## The generation that reaches minSize usually adds only a cell or two. If only those spread next, most
+  ## fires die at exactly minSize; spreading from every blob cell with an unburned neighbour does not.
+  r <- terra::rast(nrows = 400, ncols = 400, xmin = 0, xmax = 400, ymin = 0, ymax = 400)
+  set.seed(11)
+  loci <- sample(terra::ncell(r), 1500)
+  set.seed(12)
+  withMin <- spreadCpp(r, loci, spreadProb = 0.2, minSize = 9)[, .N, by = "id"]$N
+  set.seed(12)
+  natural <- spreadCpp(r, loci, spreadProb = 0.2)[, .N, by = "id"]$N
+  natural <- natural[natural >= 9]                      # fires that reached 9 cells on their own
+  expect_true(all(withMin >= 9))
+  expect_lt(mean(withMin == 9), 0.03)                   # development: ~0.09
+  ## a started blob should grow at least as often as a fire that got to 9 cells by chance
+  expect_gte(mean(withMin > 100), mean(natural > 100) - 0.03)
+})

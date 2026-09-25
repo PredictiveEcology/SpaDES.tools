@@ -124,8 +124,10 @@ utils::globalVariables(c("id"))
 #'   the next (persistence) and draw again, with the same `spreadProb`, against
 #'   their still-unburned neighbours, so the fire grows into a patch shaped by
 #'   `spreadProb` rather than dying out early. The generation that reaches
-#'   `minSize` stops there, exactly; after that only the cells that caught in the
-#'   last generation spread, as usual. A fire under `minSize` with no unburned
+#'   `minSize` stops there, exactly. The next generation spreads from every cell
+#'   of the patch that still has an unburned, burnable neighbour (its perimeter),
+#'   not only from the cells that caught last; after that only the cells that
+#'   caught in the last generation spread, as usual. A fire under `minSize` with no unburned
 #'   neighbour whose `spreadProb` is above 0 (and not `NA`) stops where it is;
 #'   otherwise only `iterations` limits how long a very low `spreadProb` takes to
 #'   get there. Must not exceed `maxSize`. The default, 0, is the behaviour

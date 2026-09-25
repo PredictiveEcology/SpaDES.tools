@@ -38,8 +38,10 @@ before the normal generation rule applies. While a fire has fewer than
 the next (persistence) and draw again, with the same \code{spreadProb}, against
 their still-unburned neighbours, so the fire grows into a patch shaped by
 \code{spreadProb} rather than dying out early. The generation that reaches
-\code{minSize} stops there, exactly; after that only the cells that caught in the
-last generation spread, as usual. A fire under \code{minSize} with no unburned
+\code{minSize} stops there, exactly. The next generation spreads from every cell
+of the patch that still has an unburned, burnable neighbour (its perimeter),
+not only from the cells that caught last; after that only the cells that
+caught in the last generation spread, as usual. A fire under \code{minSize} with no unburned
 neighbour whose \code{spreadProb} is above 0 (and not \code{NA}) stops where it is;
 otherwise only \code{iterations} limits how long a very low \code{spreadProb} takes to
 get there. Must not exceed \code{maxSize}. The default, 0, is the behaviour
