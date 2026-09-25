@@ -14,6 +14,12 @@ utils::globalVariables(c(
 #' and `spreadProb` with modifications due to other arguments.
 #' **NOTE:** [spread()] is similar, but sometimes slightly faster, but less
 #' robust, and more difficult to use iteratively.
+#' `spread2` is **not** a drop-in replacement for `spread`: several arguments are
+#' named differently, and the returned `data.table` shares no column names with
+#' the one returned by `spread(returnIndices = TRUE)` (e.g. `pixels` rather than
+#' `indices`, `initialPixels` rather than `initialLocus`, and a character `state`
+#' column rather than a logical `active` column). See the section "Differences
+#' between `spread` and `spread2`" below before converting existing code.
 #'
 #' There are 2 main underlying algorithms for active cells to "spread" to
 #' nearby cells (adjacent cells): `spreadProb` and `neighProb`.
@@ -342,6 +348,8 @@ utils::globalVariables(c(
 #' @importFrom fpCompare %<=% %>>%
 #' @importFrom terra ncell res ncol distance
 #' @importFrom stats runif
+#'
+#' @inheritSection spreadVsSpread2 Differences between `spread` and `spread2`
 #'
 #' @seealso [spread()] for a different implementation of the same algorithm.
 #' `spread` is less robust but it is often slightly faster.
@@ -816,7 +824,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # remove duplicates within dtPotential
       dupsWithinDtPotential <- duplicatedInt(dtPotential$to)
       successCells <- dtPotential$to[!dupsWithinDtPotential] # remove the dupsWithinDtPotential
-      potentialNotAvailable <- notAvailable[successCells]
+      # `notAvailable` only exists when `canUseAvailable`; when overlap is allowed
+      # there is nothing to exclude, so nothing is unavailable.
+      potentialNotAvailable <- if (canUseAvailable) {
+        notAvailable[successCells]
+      } else {
+        rep(FALSE, length(successCells))
+      }
       whNoDupsCurItAndAll <- seq_along(dtPotential$to)[!dupsWithinDtPotential][
         !potentialNotAvailable]
       dtPotential <- dtPotential[whNoDupsCurItAndAll]
@@ -999,7 +1013,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # neighProbs -- duplication checking already happened, but
       dtPotential <- dtPotential[spreadProbSuccess]
       dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
-      if (NROW(dtPotential)) notAvailable[dtPotential$pixels] <- TRUE
+      if (canUseAvailable && NROW(dtPotential)) notAvailable[dtPotential$pixels] <- TRUE
     }
 
     # Step 9 -- Size issues: i.e., if too big (remove extras) or too small (make sure keeps going)
