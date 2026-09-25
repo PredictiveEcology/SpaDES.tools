@@ -83,6 +83,7 @@ Collate:
     'spades-tools-deprecated.R'
     'spades-tools-package.R'
     'splitRaster.R'
+    'spread-comparison.R'
     'spread.R'
     'spread2.R'
     'spread3.R'

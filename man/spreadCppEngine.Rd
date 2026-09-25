@@ -11,7 +11,10 @@ spreadCppEngine(
   loci,
   spreadProb,
   maxSize,
-  iterations
+  minSize,
+  iterations,
+  jumpTries,
+  jumpMeanDist
 )
 }
 \arguments{
@@ -27,7 +30,14 @@ spreadCppEngine(
 
 \item{maxSize}{Numeric, length 1 or \code{length(loci)}; maximum cells per fire.}
 
+\item{minSize}{Numeric, length 1 or \code{length(loci)}; cells each fire reaches
+with persistence before the normal rule applies (see rule 6). 0 = none.}
+
 \item{iterations}{Integer; maximum number of generations.}
+
+\item{jumpTries}{Integer; jump attempts for a fire stuck under minSize (rule 7). 0 = none.}
+
+\item{jumpMeanDist}{Numeric; mean jump distance in cells (rule 7).}
 }
 \value{
 A list of three integer vectors: \code{id}, \code{initialLocus}, \code{indices}.

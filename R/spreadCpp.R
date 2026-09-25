@@ -118,7 +118,31 @@ utils::globalVariables(c("id"))
 #'   cells each fire may reach. `Inf` (the default) means no limit.
 #' @param directions 4 or 8. Default 8.
 #' @param iterations Maximum number of generations. Default `Inf`.
-#'
+#' @param minSize Numeric of length 1 or `length(loci)`: a size each fire reaches
+#'   before the normal generation rule applies. While a fire has fewer than
+#'   `minSize` cells, all of its burning cells stay active from one generation to
+#'   the next (persistence) and draw again, with the same `spreadProb`, against
+#'   their still-unburned neighbours, so the fire grows into a patch shaped by
+#'   `spreadProb` rather than dying out early. The generation that reaches
+#'   `minSize` stops there, exactly; after that only the cells that caught in the
+#'   last generation spread, as usual. A fire under `minSize` with no unburned
+#'   neighbour whose `spreadProb` is above 0 (and not `NA`) stops where it is;
+#'   otherwise only `iterations` limits how long a very low `spreadProb` takes to
+#'   get there. Must not exceed `maxSize`. The default, 0, is the behaviour
+#'   without it, with the same random draws. Used to start every escaped fire at
+#'   the escape size, e.g. `minSize = 9` cells for 50 ha at 5.76-ha cells.
+#' @param jumpTries Integer, default 0 (off). Only for a fire that is still under
+#'   `minSize` and stuck -- none of its burning cells has an unburned neighbour
+#'   with `spreadProb` above 0 -- up to `jumpTries` attempts are made to jump: a
+#'   random cell of the fire, a distance drawn from an exponential with mean
+#'   `jumpMeanDist`, truncated to 1.5-20 cells so it clears the adjacent ring,
+#'   and a uniform direction. A target off the landscape, already burned or
+#'   unburnable is rejected; otherwise it catches with its `spreadProb`. The first
+#'   success joins the fire and the fire keeps growing from all its cells. If
+#'   every attempt fails the fire stops where it is. With 0 no extra random draws
+#'   are made. This is a fixed rule for fires trapped in small patches, not a
+#'   fitted spotting process; spotting tied to fire weather is future work.
+#' @param jumpMeanDist Mean jump distance in cells (see `jumpTries`). Default 3.
 #' @return A `data.table` keyed on `id`, with integer columns `id`,
 #'   `initialLocus` and `indices`, and a logical `active` (always `FALSE`, since
 #'   the spread has finished) -- the same shape [spread()] returns for
@@ -135,7 +159,8 @@ utils::globalVariables(c("id"))
 #'   out[, .N, by = "id"]
 #' }
 spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
-                      directions = 8L, iterations = Inf) {
+                      directions = 8L, iterations = Inf, minSize = 0,
+                      jumpTries = 0L, jumpMeanDist = 3) {
   numCell <- as.integer(terra::ncell(landscape))
   numCol <- as.integer(terra::ncol(landscape))
 
@@ -150,10 +175,22 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
     stop("`maxSize` must be length 1 or length(loci).")
   }
 
+  minSize <- as.numeric(minSize)
+  if (!(length(minSize) == 1L || length(minSize) == length(loci))) {
+    stop("`minSize` must be length 1 or length(loci).")
+  }
+  if (anyNA(minSize) || any(minSize < 0)) stop("`minSize` must be 0 or more.")
+  if (any(minSize > maxSize)) stop("`minSize` must not exceed `maxSize`.")
+  if (length(jumpTries) != 1L || is.na(jumpTries) || jumpTries < 0) stop("`jumpTries` must be one number, 0 or more.")
+  if (length(jumpMeanDist) != 1L || is.na(jumpMeanDist) || jumpMeanDist <= 0) stop("`jumpMeanDist` must be one positive number.")
+
   out <- spreadCppEngine(numCol = numCol, numCell = numCell,
                          directions = as.integer(directions),
                          loci = loci, spreadProb = spreadProb,
-                         maxSize = maxSize, iterations = as.numeric(iterations))
+                         maxSize = maxSize, minSize = minSize,
+                         iterations = as.numeric(iterations),
+                         jumpTries = as.integer(jumpTries),
+                         jumpMeanDist = as.numeric(jumpMeanDist))
 
   dt <- data.table::data.table(id = out$id, initialLocus = out$initialLocus,
                                indices = out$indices, active = FALSE)

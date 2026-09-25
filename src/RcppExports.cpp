@@ -74,8 +74,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // spreadCppEngine
-List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, double iterations);
-RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP iterationsSEXP) {
+List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, NumericVector minSize, double iterations, int jumpTries, double jumpMeanDist);
+RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP minSizeSEXP, SEXP iterationsSEXP, SEXP jumpTriesSEXP, SEXP jumpMeanDistSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,8 +85,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type loci(lociSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type spreadProb(spreadProbSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type maxSize(maxSizeSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type minSize(minSizeSEXP);
     Rcpp::traits::input_parameter< double >::type iterations(iterationsSEXP);
-    rcpp_result_gen = Rcpp::wrap(spreadCppEngine(numCol, numCell, directions, loci, spreadProb, maxSize, iterations));
+    Rcpp::traits::input_parameter< int >::type jumpTries(jumpTriesSEXP);
+    Rcpp::traits::input_parameter< double >::type jumpMeanDist(jumpMeanDistSEXP);
+    rcpp_result_gen = Rcpp::wrap(spreadCppEngine(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -97,7 +100,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
     {"_SpaDES_tools_allInRange01", (DL_FUNC) &_SpaDES_tools_allInRange01, 1},
     {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
-    {"_SpaDES_tools_spreadCppEngine", (DL_FUNC) &_SpaDES_tools_spreadCppEngine, 7},
+    {"_SpaDES_tools_spreadCppEngine", (DL_FUNC) &_SpaDES_tools_spreadCppEngine, 10},
     {NULL, NULL, 0}
 };
 
