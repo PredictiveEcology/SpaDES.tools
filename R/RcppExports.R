@@ -110,12 +110,16 @@ runifC <- function(N) {
 #' @param loci Integer vector of starting cells, one per fire.
 #' @param spreadProb Numeric, length 1 or `numCell`; probability of being spread to.
 #' @param maxSize Numeric, length 1 or `length(loci)`; maximum cells per fire.
+#' @param minSize Numeric, length 1 or `length(loci)`; cells each fire reaches
+#'   with persistence before the normal rule applies (see rule 6). 0 = none.
+#' @param jumpTries Integer; jump attempts for a fire stuck under minSize (rule 7). 0 = none.
+#' @param jumpMeanDist Numeric; mean jump distance in cells (rule 7).
 #' @param iterations Integer; maximum number of generations.
 #'
 #' @return A list of three integer vectors: `id`, `initialLocus`, `indices`.
 #' @keywords internal
 #' @rdname spreadCppEngine
-spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, iterations) {
-    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, iterations)
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist) {
+    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist)
 }
 

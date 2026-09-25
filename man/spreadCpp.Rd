@@ -10,7 +10,10 @@ spreadCpp(
   spreadProb,
   maxSize = Inf,
   directions = 8L,
-  iterations = Inf
+  iterations = Inf,
+  minSize = 0,
+  jumpTries = 0L,
+  jumpMeanDist = 3
 )
 }
 \arguments{
@@ -28,6 +31,34 @@ cells each fire may reach. \code{Inf} (the default) means no limit.}
 \item{directions}{4 or 8. Default 8.}
 
 \item{iterations}{Maximum number of generations. Default \code{Inf}.}
+
+\item{minSize}{Numeric of length 1 or \code{length(loci)}: a size each fire reaches
+before the normal generation rule applies. While a fire has fewer than
+\code{minSize} cells, all of its burning cells stay active from one generation to
+the next (persistence) and draw again, with the same \code{spreadProb}, against
+their still-unburned neighbours, so the fire grows into a patch shaped by
+\code{spreadProb} rather than dying out early. The generation that reaches
+\code{minSize} stops there, exactly; after that only the cells that caught in the
+last generation spread, as usual. A fire under \code{minSize} with no unburned
+neighbour whose \code{spreadProb} is above 0 (and not \code{NA}) stops where it is;
+otherwise only \code{iterations} limits how long a very low \code{spreadProb} takes to
+get there. Must not exceed \code{maxSize}. The default, 0, is the behaviour
+without it, with the same random draws. Used to start every escaped fire at
+the escape size, e.g. \code{minSize = 9} cells for 50 ha at 5.76-ha cells.}
+
+\item{jumpTries}{Integer, default 0 (off). Only for a fire that is still under
+\code{minSize} and stuck -- none of its burning cells has an unburned neighbour
+with \code{spreadProb} above 0 -- up to \code{jumpTries} attempts are made to jump: a
+random cell of the fire, a distance drawn from an exponential with mean
+\code{jumpMeanDist}, truncated to 1.5-20 cells so it clears the adjacent ring,
+and a uniform direction. A target off the landscape, already burned or
+unburnable is rejected; otherwise it catches with its \code{spreadProb}. The first
+success joins the fire and the fire keeps growing from all its cells. If
+every attempt fails the fire stops where it is. With 0 no extra random draws
+are made. This is a fixed rule for fires trapped in small patches, not a
+fitted spotting process; spotting tied to fire weather is future work.}
+
+\item{jumpMeanDist}{Mean jump distance in cells (see \code{jumpTries}). Default 3.}
 }
 \value{
 A \code{data.table} keyed on \code{id}, with integer columns \code{id},

@@ -1,3 +1,19 @@
+# SpaDES.tools 2.1.3.9009
+
+## New features
+
+* `spreadCpp()` gains `minSize`: a size each fire reaches before the normal generation rule applies. While a
+  fire is below it, all its burning cells stay active and draw again against their unburned neighbours
+  (persistence, same `spreadProb`), so the fire grows into a patch shaped by the fuels instead of dying out
+  early; the generation that reaches `minSize` stops there exactly. A fire boxed in by unburnable cells stops
+  where it is. Used to start every escaped fire at the escape size (e.g. 9 cells = 50 ha at 5.76-ha cells).
+* `spreadCpp()` gains `jumpTries` and `jumpMeanDist`: a fire still under `minSize` with nothing burnable next to
+  it tries to jump (random cell of the fire, truncated-exponential distance of 1.5-20 cells, uniform
+  direction; the target catches with its `spreadProb`). A fixed rule for fires trapped in small patches, not a
+  fitted spotting process.
+* Both default to off (`minSize = 0`, `jumpTries = 0`) and then make exactly the same random draws as before, so
+  existing results and caches are unchanged.
+
 # SpaDES.tools 2.1.3.9008
 
 ## New features
