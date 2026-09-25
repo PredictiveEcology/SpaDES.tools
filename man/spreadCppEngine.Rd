@@ -14,7 +14,8 @@ spreadCppEngine(
   minSize,
   iterations,
   jumpTries,
-  jumpMeanDist
+  jumpMeanDist,
+  minSizeTries
 )
 }
 \arguments{
@@ -38,9 +39,12 @@ with persistence before the normal rule applies (see rule 6). 0 = none.}
 \item{jumpTries}{Integer; jump attempts for a fire stuck under minSize (rule 7). 0 = none.}
 
 \item{jumpMeanDist}{Numeric; mean jump distance in cells (rule 7).}
+
+\item{minSizeTries}{Integer; rejections per fire before falling back to persistence (rule 8). 0 = none.}
 }
 \value{
-A list of three integer vectors: \code{id}, \code{initialLocus}, \code{indices}.
+A list of three integer vectors: \code{id}, \code{initialLocus}, \code{indices}; and, per
+fire, \code{tries} (rejected attempts, rule 8) and \code{fallback} (1 if it fell back to rules 6-7).
 }
 \description{
 Internal engine for \code{\link[=spreadCpp]{spreadCpp()}}. See the comments in \code{src/spread_cpp.cpp}

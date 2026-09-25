@@ -74,8 +74,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // spreadCppEngine
-List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, NumericVector minSize, double iterations, int jumpTries, double jumpMeanDist);
-RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP minSizeSEXP, SEXP iterationsSEXP, SEXP jumpTriesSEXP, SEXP jumpMeanDistSEXP) {
+List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, NumericVector minSize, double iterations, int jumpTries, double jumpMeanDist, int minSizeTries);
+RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP minSizeSEXP, SEXP iterationsSEXP, SEXP jumpTriesSEXP, SEXP jumpMeanDistSEXP, SEXP minSizeTriesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -89,7 +89,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type iterations(iterationsSEXP);
     Rcpp::traits::input_parameter< int >::type jumpTries(jumpTriesSEXP);
     Rcpp::traits::input_parameter< double >::type jumpMeanDist(jumpMeanDistSEXP);
-    rcpp_result_gen = Rcpp::wrap(spreadCppEngine(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist));
+    Rcpp::traits::input_parameter< int >::type minSizeTries(minSizeTriesSEXP);
+    rcpp_result_gen = Rcpp::wrap(spreadCppEngine(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -100,7 +101,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
     {"_SpaDES_tools_allInRange01", (DL_FUNC) &_SpaDES_tools_allInRange01, 1},
     {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
-    {"_SpaDES_tools_spreadCppEngine", (DL_FUNC) &_SpaDES_tools_spreadCppEngine, 10},
+    {"_SpaDES_tools_spreadCppEngine", (DL_FUNC) &_SpaDES_tools_spreadCppEngine, 11},
     {NULL, NULL, 0}
 };
 
