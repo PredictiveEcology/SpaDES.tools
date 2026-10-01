@@ -1,8 +1,10 @@
-# SpaDES.tools 2.1.3.9011
+# SpaDES.tools 2.1.3.9012
 
 ## Performance
 
 * `rasterizeReduced()` builds the levels table of a factor `SpatRaster` with `duplicated()` on a `data.table` instead of `unique(data.frame())`, which took about 3 s on 4.3M pixels. The table is identical.
+
+# SpaDES.tools 2.1.3.9011
 
 ## New features
 
