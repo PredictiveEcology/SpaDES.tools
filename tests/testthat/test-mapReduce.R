@@ -91,3 +91,18 @@ test_that("mapReduce: file does not work correctly 2", {
                  length(unique(as.numeric(terra::values(fullRas)))))
   }
 })
+
+test_that("rasterizeReduced: factor levels table identical to the old unique(data.frame()) result", {
+  ## reference: the implementation before the data.table version
+  oldLevs <- function(vals) {
+    unique(data.frame(id = na.omit(as.numeric(vals)), values = na.omit(vals)))
+  }
+  set.seed(1)
+  lv <- c("q", "x", "y", "z", "w")
+  vals <- factor(sample(c(lv[1:4], NA), 5000, replace = TRUE), levels = lv)
+  expect_identical(.levelsTable(vals), oldLevs(vals))
+  ## all NA, and no duplicates
+  expect_identical(.levelsTable(factor(c(NA, NA), levels = lv)), oldLevs(factor(c(NA, NA), levels = lv)))
+  expect_identical(.levelsTable(factor(lv)), oldLevs(factor(lv)))
+
+})
