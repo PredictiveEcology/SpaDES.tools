@@ -104,11 +104,12 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
 
 ## The id/value table of a factor's levels, one row per distinct pair, in order of first
 ## appearance, NAs dropped. `unique()` on a `data.frame` of every pixel pastes each row to a
-## string (3 s for 4.3M pixels); `duplicated()` on a `data.table` hashes the columns. The
+## string (3 s for 4.3M pixels); `duplicated()` on the id column hashes one number per pixel. The
 ## row names stay those `unique.data.frame` gave (the position of the first appearance).
 .levelsTable <- function(vals) {
   dt <- data.table::data.table(id = na.omit(as.numeric(vals)), values = na.omit(vals))
-  keep <- which(!duplicated(dt))
+  ## `values` is a function of `id` (its factor codes), so the pairs are distinct exactly when `id` is
+  keep <- which(!duplicated(dt$id))
   out <- as.data.frame(dt[keep, ])
   for (col in names(out)) attr(out[[col]], "na.action") <- NULL ## `unique.data.frame` drops it
   attr(out, "row.names") <- keep
