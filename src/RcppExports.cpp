@@ -74,8 +74,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // spreadCppEngine
-List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, NumericVector minSize, double iterations, int jumpTries, double jumpMeanDist, int minSizeTries);
-RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP minSizeSEXP, SEXP iterationsSEXP, SEXP jumpTriesSEXP, SEXP jumpMeanDistSEXP, SEXP minSizeTriesSEXP) {
+List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, NumericVector minSize, double iterations, int jumpTries, double jumpMeanDist, int minSizeTries, IntegerVector stopCells, IntegerVector stopEvent, IntegerVector stopAt);
+RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP minSizeSEXP, SEXP iterationsSEXP, SEXP jumpTriesSEXP, SEXP jumpMeanDistSEXP, SEXP minSizeTriesSEXP, SEXP stopCellsSEXP, SEXP stopEventSEXP, SEXP stopAtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -90,7 +90,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type jumpTries(jumpTriesSEXP);
     Rcpp::traits::input_parameter< double >::type jumpMeanDist(jumpMeanDistSEXP);
     Rcpp::traits::input_parameter< int >::type minSizeTries(minSizeTriesSEXP);
-    rcpp_result_gen = Rcpp::wrap(spreadCppEngine(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries));
+    Rcpp::traits::input_parameter< IntegerVector >::type stopCells(stopCellsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type stopEvent(stopEventSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type stopAt(stopAtSEXP);
+    rcpp_result_gen = Rcpp::wrap(spreadCppEngine(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -101,7 +104,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
     {"_SpaDES_tools_allInRange01", (DL_FUNC) &_SpaDES_tools_allInRange01, 1},
     {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
-    {"_SpaDES_tools_spreadCppEngine", (DL_FUNC) &_SpaDES_tools_spreadCppEngine, 11},
+    {"_SpaDES_tools_spreadCppEngine", (DL_FUNC) &_SpaDES_tools_spreadCppEngine, 14},
     {NULL, NULL, 0}
 };
 

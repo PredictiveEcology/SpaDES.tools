@@ -116,12 +116,15 @@ runifC <- function(N) {
 #' @param jumpMeanDist Numeric; mean jump distance in cells (rule 7).
 #' @param minSizeTries Integer; rejections per fire before falling back to persistence (rule 8). 0 = none.
 #' @param iterations Integer; maximum number of generations.
+#' @param stopCells Integer vector of stop cells (rule 9); `integer(0)` = none.
+#' @param stopEvent Integer, same length as `stopCells`; the fire (1-based index into `loci`) each stop cell belongs to.
+#' @param stopAt Integer, length `length(loci)`; each fire stops when it has burned this many of its own stop cells.
 #'
 #' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
 #'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
 #' @keywords internal
 #' @rdname spreadCppEngine
-spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries) {
-    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries)
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt) {
+    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt)
 }
 

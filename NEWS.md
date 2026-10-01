@@ -1,3 +1,9 @@
+# SpaDES.tools (development version)
+
+## New features
+
+* `spreadCpp()` gains an optional per-event stop rule, `stopCells`, `stopEvent` and `stopAt`: an event stops, mid-generation like `maxSize`, as soon as it has burned `stopAt` of its own stop cells. All three default to `NULL`, which leaves the results and random numbers unchanged.
+
 # SpaDES.tools 2.1.3.9012
 
 ## Performance

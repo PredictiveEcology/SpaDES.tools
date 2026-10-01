@@ -15,7 +15,10 @@ spreadCppEngine(
   iterations,
   jumpTries,
   jumpMeanDist,
-  minSizeTries
+  minSizeTries,
+  stopCells,
+  stopEvent,
+  stopAt
 )
 }
 \arguments{
@@ -41,6 +44,12 @@ with persistence before the normal rule applies (see rule 6). 0 = none.}
 \item{jumpMeanDist}{Numeric; mean jump distance in cells (rule 7).}
 
 \item{minSizeTries}{Integer; rejections per fire before falling back to persistence (rule 8). 0 = none.}
+
+\item{stopCells}{Integer vector of stop cells (rule 9); \code{integer(0)} = none.}
+
+\item{stopEvent}{Integer, same length as \code{stopCells}; the fire (1-based index into \code{loci}) each stop cell belongs to.}
+
+\item{stopAt}{Integer, length \code{length(loci)}; each fire stops when it has burned this many of its own stop cells.}
 }
 \value{
 A list of three integer vectors: \code{id}, \code{initialLocus}, \code{indices}; and, per

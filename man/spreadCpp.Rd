@@ -14,7 +14,10 @@ spreadCpp(
   minSize = 0,
   jumpTries = 0L,
   jumpMeanDist = 3,
-  minSizeTries = 100L
+  minSizeTries = 100L,
+  stopCells = NULL,
+  stopEvent = NULL,
+  stopAt = NULL
 )
 }
 \arguments{
@@ -78,6 +81,23 @@ attribute \code{"minSizeTries"}, a \code{data.table} with each fire's \code{id},
 rejected \code{tries}, and whether it used the \code{fallback}. \code{minSizeTries = 0}
 gives persistence alone (the behaviour before this argument existed, with the
 same random draws). Without \code{minSize} it has no effect.}
+
+\item{stopCells, stopEvent, stopAt}{Optional per-fire stop rule; all \code{NULL}
+(the default) leaves the results and the random numbers used exactly as
+without them. \code{stopCells} is a vector of cell indices (indexed like \code{loci}),
+\code{stopEvent} the same length: the fire (an index into \code{loci}, 1-based) each
+stop cell belongs to, and \code{stopAt} an integer of length 1 or \code{length(loci)}:
+the number of a fire's own stop cells at which it stops. A cell may be a
+stop cell of several fires, and repeated (cell, fire) pairs count once. Only
+a fire's own stop cells count towards its \code{stopAt}, and a fire with no stop
+cells never stops by this rule. The fire stops the moment it burns its
+\code{stopAt}-th stop cell, in the middle of a generation, in the same way as at
+\code{maxSize}: the cells already burned stay burned and the other fires carry
+on. It interacts with \code{minSize} and \code{jumpTries} as \code{maxSize} does: a fire
+that has stopped is never pushed on to \code{minSize} or made to jump, and a try
+rejected under \code{minSizeTries} is undone with its count. The ignition cell
+counts if it is a stop cell. Giving \code{stopCells} needs \code{stopEvent} and
+\code{stopAt}.}
 }
 \value{
 A \code{data.table} keyed on \code{id}, with integer columns \code{id},

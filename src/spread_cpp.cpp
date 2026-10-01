@@ -61,6 +61,15 @@ using namespace Rcpp;
 //     spreadProb. After minSizeTries rejections the fire falls back to rules 6-7
 //     (persistence, jumping) from its ignition cell. Expected tries per fire are
 //     1 / P(reaching minSize). minSizeTries 0 makes no extra draws.
+//  9. Stop cells (optional; stopCells, stopEvent, stopAt). Each stop cell belongs to
+//     one fire, and a cell may be a stop cell of several fires. When a fire burns
+//     one of its own stop cells its count goes up; when the count reaches the
+//     fire's stopAt the fire stops on the spot, exactly as at maxSize: its cap
+//     (and its minSize target) is set to its current size, so every maxSize
+//     check then applies to it. Cells it already burned stay burned. The lookup
+//     is a per-cell list of fires (CSR arrays), so burning a cell costs O(the
+//     fires that list it). A rejected minSizeTries try resets the count. Without
+//     stop cells nothing is allocated and no extra draws are made.
 //
 // NA spreadProb is treated as 0, i.e. unburnable, as spread() does.
 
@@ -94,6 +103,9 @@ static inline void checkGridCpp(int numCol, int numCell, int directions) {
 //' @param jumpMeanDist Numeric; mean jump distance in cells (rule 7).
 //' @param minSizeTries Integer; rejections per fire before falling back to persistence (rule 8). 0 = none.
 //' @param iterations Integer; maximum number of generations.
+//' @param stopCells Integer vector of stop cells (rule 9); `integer(0)` = none.
+//' @param stopEvent Integer, same length as `stopCells`; the fire (1-based index into `loci`) each stop cell belongs to.
+//' @param stopAt Integer, length `length(loci)`; each fire stops when it has burned this many of its own stop cells.
 //'
 //' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
 //'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
@@ -103,7 +115,8 @@ static inline void checkGridCpp(int numCol, int numCell, int directions) {
 List spreadCppEngine(int numCol, int numCell, int directions,
                      IntegerVector loci, NumericVector spreadProb,
                      NumericVector maxSize, NumericVector minSize, double iterations,
-                     int jumpTries, double jumpMeanDist, int minSizeTries) {
+                     int jumpTries, double jumpMeanDist, int minSizeTries,
+                     IntegerVector stopCells, IntegerVector stopEvent, IntegerVector stopAt) {
   checkGridCpp(numCol, numCell, directions);
 
   const int nFire = (int) loci.size();
@@ -161,9 +174,39 @@ List spreadCppEngine(int numCol, int numCell, int directions,
   std::vector< std::vector<size_t> > tryRows(rej ? (size_t) nFire : 0);
   if (rej) for (int f = 0; f < nFire; ++f) rejecting[(size_t) f] = floorSz[(size_t) f] > 1.0 ? 1 : 0;
 
+  // rule 9: stopStart[c-1] .. stopStart[c]-1 index stopEv, the fires (0-based) that list cell c as a stop cell
+  const bool useStop = stopCells.size() > 0;
+  if (stopEvent.size() != stopCells.size()) stop("`stopEvent` must be the same length as `stopCells`.");
+  if (useStop && stopAt.size() != nFire) stop("`stopAt` must be one element per starting cell.");
+  std::vector<int> stopStart(useStop ? (size_t) numCell + 1 : 0, 0), stopEv, stopCnt(useStop ? (size_t) nFire : 0, 0);
+  if (useStop) {
+    const R_xlen_t ns = stopCells.size();
+    for (R_xlen_t i = 0; i < ns; ++i) {
+      if (stopCells[i] < 1 || stopCells[i] > numCell) stop("`stopCells` has a cell outside the landscape.");
+      if (stopEvent[i] < 1 || stopEvent[i] > nFire) stop("`stopEvent` must be between 1 and length(loci).");
+      ++stopStart[(size_t) stopCells[i]];
+    }
+    for (int c = 0; c < numCell; ++c) stopStart[(size_t) c + 1] += stopStart[(size_t) c];
+    stopEv.resize((size_t) ns);
+    std::vector<int> fill(stopStart.begin(), stopStart.end() - 1);
+    for (R_xlen_t i = 0; i < ns; ++i) stopEv[(size_t) fill[(size_t) stopCells[i] - 1]++] = stopEvent[i] - 1;
+  }
+
   // state[c] is 0 when cell c+1 is unburned, otherwise the 1-based fire id
   std::vector<int> state((size_t) numCell, 0);
   std::vector<double> size((size_t) nFire, 0.0);
+
+  // rule 9: called after fire f burns cell c (size already updated); at stopAt, freeze the fire like maxSize
+  auto noteBurn = [&](int f, int c) {
+    if (!useStop) return;
+    for (int i = stopStart[(size_t) c - 1]; i < stopStart[(size_t) c]; ++i) {
+      if (stopEv[(size_t) i] != f) continue;
+      if (++stopCnt[(size_t) f] >= stopAt[f]) {
+        cap[(size_t) f] = size[(size_t) f];
+        if (floorSz[(size_t) f] > size[(size_t) f]) floorSz[(size_t) f] = size[(size_t) f];
+      }
+    }
+  };
 
   std::vector<int> outId, outCell;
   outId.reserve((size_t) nFire * 16);
@@ -190,6 +233,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
     outCell.push_back(c);
     actCell.push_back(c);
     actFire.push_back(f);
+    noteBurn(f, c);
     if (rej && rejecting[(size_t) f]) {
       tryCells[(size_t) f].push_back(c); tryRows[(size_t) f].push_back(outId.size() - 1);
     } else if (anyFloor) pool[(size_t) f].push_back(c);
@@ -278,6 +322,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
         outCell.push_back(t);
         nextCell.push_back(t);
         nextFire.push_back(f);
+        noteBurn(f, t);
         if (isBlob) pool[(size_t) f].push_back(t);
         if (rej && rejecting[(size_t) f]) {
           newCount[(size_t) f] += 1;
@@ -307,6 +352,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
         for (size_t i = 0; i < tr.size(); ++i) outId[tr[i]] = 0;
         tryCells[(size_t) f].clear(); tryRows[(size_t) f].clear();
         size[(size_t) f] = 0.0;
+        if (useStop) stopCnt[(size_t) f] = 0;
         const int c = loci[f];
         bool restarted = false;
         while (!restarted) {
@@ -316,6 +362,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
           state[(size_t) c - 1] = f + 1; size[(size_t) f] = 1.0;
           outId.push_back(f + 1); outCell.push_back(c);
           actCell.push_back(c); actFire.push_back(f);
+          noteBurn(f, c);
           tryCells[(size_t) f].push_back(c); tryRows[(size_t) f].push_back(outId.size() - 1);
           restarted = true;
         }
@@ -328,6 +375,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
         state[(size_t) c - 1] = f + 1; size[(size_t) f] = 1.0;
         outId.push_back(f + 1); outCell.push_back(c);
         actCell.push_back(c); actFire.push_back(f);
+        noteBurn(f, c);
         pool[(size_t) f].push_back(c);
       }
     }
@@ -367,6 +415,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
             outCell.push_back(t);
             actCell.push_back(t);
             actFire.push_back(f);
+            noteBurn(f, t);
             pc.push_back(t);
             jumped = true;
             break;

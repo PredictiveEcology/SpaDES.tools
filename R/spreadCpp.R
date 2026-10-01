@@ -160,6 +160,22 @@ utils::globalVariables(c("id"))
 #'   rejected `tries`, and whether it used the `fallback`. `minSizeTries = 0`
 #'   gives persistence alone (the behaviour before this argument existed, with the
 #'   same random draws). Without `minSize` it has no effect.
+#' @param stopCells,stopEvent,stopAt Optional per-fire stop rule; all `NULL`
+#'   (the default) leaves the results and the random numbers used exactly as
+#'   without them. `stopCells` is a vector of cell indices (indexed like `loci`),
+#'   `stopEvent` the same length: the fire (an index into `loci`, 1-based) each
+#'   stop cell belongs to, and `stopAt` an integer of length 1 or `length(loci)`:
+#'   the number of a fire's own stop cells at which it stops. A cell may be a
+#'   stop cell of several fires, and repeated (cell, fire) pairs count once. Only
+#'   a fire's own stop cells count towards its `stopAt`, and a fire with no stop
+#'   cells never stops by this rule. The fire stops the moment it burns its
+#'   `stopAt`-th stop cell, in the middle of a generation, in the same way as at
+#'   `maxSize`: the cells already burned stay burned and the other fires carry
+#'   on. It interacts with `minSize` and `jumpTries` as `maxSize` does: a fire
+#'   that has stopped is never pushed on to `minSize` or made to jump, and a try
+#'   rejected under `minSizeTries` is undone with its count. The ignition cell
+#'   counts if it is a stop cell. Giving `stopCells` needs `stopEvent` and
+#'   `stopAt`.
 #' @return A `data.table` keyed on `id`, with integer columns `id`,
 #'   `initialLocus` and `indices`, and a logical `active` (always `FALSE`, since
 #'   the spread has finished) -- the same shape [spread()] returns for
@@ -183,7 +199,8 @@ utils::globalVariables(c("id"))
 #' }
 spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                       directions = 8L, iterations = Inf, minSize = 0,
-                      jumpTries = 0L, jumpMeanDist = 3, minSizeTries = 100L) {
+                      jumpTries = 0L, jumpMeanDist = 3, minSizeTries = 100L,
+                      stopCells = NULL, stopEvent = NULL, stopAt = NULL) {
   numCell <- as.integer(terra::ncell(landscape))
   numCol <- as.integer(terra::ncol(landscape))
 
@@ -208,6 +225,28 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
   if (length(jumpMeanDist) != 1L || is.na(jumpMeanDist) || jumpMeanDist <= 0) stop("`jumpMeanDist` must be one positive number.")
   if (length(minSizeTries) != 1L || is.na(minSizeTries) || minSizeTries < 0) stop("`minSizeTries` must be one number, 0 or more.")
 
+  if (is.null(stopCells)) {
+    if (!is.null(stopEvent) || !is.null(stopAt))
+      stop("`stopEvent` and `stopAt` need `stopCells`.")
+    stopCells <- stopEvent <- stopAt <- integer(0)
+  } else {
+    if (is.null(stopEvent) || is.null(stopAt)) stop("`stopCells` needs `stopEvent` and `stopAt`.")
+    stopCells <- as.integer(stopCells)
+    stopEvent <- as.integer(stopEvent)
+    stopAt <- as.integer(stopAt)
+    if (anyNA(stopCells) || any(stopCells < 1L | stopCells > numCell))
+      stop("`stopCells` must be cell indices within the landscape.")
+    if (length(stopEvent) != length(stopCells)) stop("`stopEvent` must be the same length as `stopCells`.")
+    if (anyNA(stopEvent) || any(stopEvent < 1L | stopEvent > length(loci)))
+      stop("`stopEvent` must be between 1 and length(loci).")
+    if (!(length(stopAt) == 1L || length(stopAt) == length(loci))) stop("`stopAt` must be length 1 or length(loci).")
+    if (anyNA(stopAt) || any(stopAt < 1L)) stop("`stopAt` must be 1 or more.")
+    stopAt <- rep_len(stopAt, length(loci))
+    keep <- !duplicated(data.frame(stopCells, stopEvent))
+    stopCells <- stopCells[keep]
+    stopEvent <- stopEvent[keep]
+  }
+
   out <- spreadCppEngine(numCol = numCol, numCell = numCell,
                          directions = as.integer(directions),
                          loci = loci, spreadProb = spreadProb,
@@ -215,7 +254,8 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                          iterations = as.numeric(iterations),
                          jumpTries = as.integer(jumpTries),
                          jumpMeanDist = as.numeric(jumpMeanDist),
-                         minSizeTries = as.integer(minSizeTries))
+                         minSizeTries = as.integer(minSizeTries),
+                         stopCells = stopCells, stopEvent = stopEvent, stopAt = stopAt)
 
   dt <- data.table::data.table(id = out$id, initialLocus = out$initialLocus,
                                indices = out$indices, active = FALSE)
