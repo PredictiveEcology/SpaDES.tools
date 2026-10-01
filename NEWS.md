@@ -1,5 +1,9 @@
 # SpaDES.tools 2.1.3.9011
 
+## Performance
+
+* `rasterizeReduced()` builds the levels table of a factor `SpatRaster` with `duplicated()` on a `data.table` instead of `unique(data.frame())`, which took about 3 s on 4.3M pixels. The table is identical.
+
 ## New features
 
 * `spreadCpp()` gains `minSizeTries` (default 100): with `minSize` above 1, a fire now reaches `minSize` by
