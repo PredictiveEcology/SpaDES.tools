@@ -65,10 +65,8 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
       fullRasterVals <- raster::factorValues(fullRaster, fullRasterVals)[[1L]]
     }
     if (is.factor(fullRasterVals)) fullRasterVals <- as.character(fullRasterVals)
-  } else if (isSpat) {
-    fullRasterVals <- terra::values(fullRaster, mat = FALSE)
   } else {
-    fullRasterVals <- as.vector(fullRaster[])
+    fullRasterVals <- .gridValuesVec(fullRaster)
   }
 
   ## Replace the previous keyed-join + unique() round-trip with a single
