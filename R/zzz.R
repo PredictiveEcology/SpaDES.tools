@@ -6,7 +6,8 @@
   ## set options using the approach used by devtools
   opts <- options()
   opts.spades <- list( # nolint
-    spades.lowMemory = FALSE
+    spades.lowMemory = FALSE,
+    spades.useSpreadCpp = FALSE
   )
   toset <- !(names(opts.spades) %in% names(opts))
   if (any(toset)) options(opts.spades[toset])

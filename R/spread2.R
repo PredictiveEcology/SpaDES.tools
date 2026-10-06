@@ -349,6 +349,15 @@ utils::globalVariables(c(
 #' @importFrom terra ncell res ncol distance
 #' @importFrom stats runif
 #'
+#' @section Using `spreadCpp()` instead:
+#' With `options(spades.useSpreadCpp = TRUE)`, a call to this function is
+#' handed to the faster [spreadCpp()], with its arguments and return value
+#' converted, so existing code runs unchanged. Results differ from this
+#' function's for the same seed (see [spreadCpp()]). A call using an argument
+#' `spreadCpp()` does not support runs this function as usual, with a message
+#' once per session. `exactSize` becomes `minSize = maxSize` with
+#' `minSizeTries = 0`, and `jumpTries = maxRetriesPerID %/% 10`.
+#'
 #' @inheritSection spreadVsSpread2 Differences between `spread` and `spread2`
 #'
 #' @seealso [spread()] for a different implementation of the same algorithm.
@@ -365,6 +374,22 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                     asymmetry = NA_real_, asymmetryAngle = NA_real_,
                     allowOverlap = 0, neighProbs = NA_real_, oneNeighbourOnly = FALSE,
                     skipChecks = FALSE) {
+  if (isTRUE(getOption("spades.useSpreadCpp"))) {
+    unsupported <- c(
+      `non-numeric start` = !is.numeric(start), persistProb = .notNA(persistProb),
+      returnDistances = isTRUE(returnDistances), returnDirections = isTRUE(returnDirections),
+      returnFrom = isTRUE(returnFrom), spreadProbRel = .notNA(spreadProbRel),
+      plot.it = isTRUE(plot.it), circle = isTRUE(circle), asymmetry = .notNA(asymmetry),
+      allowOverlap = isTRUE(allowOverlap > 0) || is.na(allowOverlap),
+      neighProbs = .notNA(neighProbs), oneNeighbourOnly = isTRUE(oneNeighbourOnly),
+      `duplicated start` = is.numeric(start) && anyDuplicated(start) > 0
+    )
+    if (.useSpreadCpp("spread2", names(which(unsupported))))
+      return(.spread2ViaCpp(landscape, start, spreadProb, asRaster,
+                            if (missing(maxSize)) Inf else maxSize,
+                            if (missing(exactSize)) NULL else exactSize,
+                            directions, iterations, maxRetriesPerID))
+  }
 
   #### assertions ###############
   checkmate::assertMultiClass(landscape, c("Raster", "SpatRaster"))

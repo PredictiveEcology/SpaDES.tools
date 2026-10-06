@@ -59,8 +59,6 @@ utils::globalVariables(c("id"))
 #'     the edges.}
 #'   \item{`plot.it`, `id`, `returnIndices`}{Not supported as options. Nothing
 #'     is plotted, and the return value is always the indices form.}
-#'   \item{Raster `spreadProb`}{Not supported. Pass a numeric vector of length
-#'     `terra::ncell(landscape)`, e.g. `terra::values(x)`.}
 #' }
 #'
 #' Use [spread()] when any of these are needed.
@@ -112,8 +110,9 @@ utils::globalVariables(c("id"))
 #' @param landscape A `SpatRaster`; only its geometry (number of columns and
 #'   cells) is used.
 #' @param loci Integer vector of starting cell indices, one per fire.
-#' @param spreadProb Numeric of length 1 or `terra::ncell(landscape)`: the
-#'   probability that a cell is spread to.
+#' @param spreadProb Numeric of length 1 or `terra::ncell(landscape)`, or a
+#'   `SpatRaster` or `RasterLayer` congruent with `landscape`: the probability
+#'   that a cell is spread to.
 #' @param maxSize Numeric of length 1 or `length(loci)`: the largest number of
 #'   cells each fire may reach. `Inf` (the default) means no limit.
 #' @param directions 4 or 8. Default 8.
@@ -206,6 +205,7 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
 
   loci <- as.integer(loci)
   if (anyNA(loci)) stop("`loci` must not contain NA.")
+  if (.isGridded(spreadProb)) spreadProb <- as.vector(spreadProb[])
   spreadProb <- as.numeric(spreadProb)
   if (!(length(spreadProb) == 1L || length(spreadProb) == numCell)) {
     stop("`spreadProb` must be length 1 or terra::ncell(landscape).")
@@ -265,4 +265,55 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                         data.table::data.table(id = seq_along(loci), tries = out$tries,
                                                fallback = as.logical(out$fallback)))
   dt[]
+}
+
+## Hand-off from spread() and spread2() to spreadCpp(), used when
+## `options(spades.useSpreadCpp = TRUE)`. `unsupported` names the arguments
+## of the call that spreadCpp() cannot honour; with any, the caller carries on
+## with its own algorithm, and says so once per session.
+.useSpreadCpp <- function(fn, unsupported) {
+  if (!isTRUE(getOption("spades.useSpreadCpp"))) return(FALSE)
+  if (length(unsupported)) {
+    if (!isTRUE(.pkgEnv$spreadCppFallbackMessaged)) {
+      message("options(spades.useSpreadCpp = TRUE), but ", fn, "() was called with ",
+              paste0("`", unsupported, "`", collapse = ", "), ", which spreadCpp() does not ",
+              "support; using ", fn, "(). This message is shown once per session.")
+      .pkgEnv$spreadCppFallbackMessaged <- TRUE
+    }
+    return(FALSE)
+  }
+  TRUE
+}
+
+## TRUE unless `x` is a single NA, the "not used" default of many spread arguments
+.notNA <- function(x) !(is.atomic(x) && length(x) == 1L && is.na(x))
+
+.spreadViaCpp <- function(landscape, loci, spreadProb, maxSize, exactSizes,
+                          directions, iterations, returnIndices) {
+  if (anyNA(loci)) loci <- middlePixel(landscape)
+  out <- spreadCpp(landscape, loci = loci, spreadProb = spreadProb, maxSize = maxSize,
+                   minSize = if (isTRUE(exactSizes)) maxSize else 0, minSizeTries = 0L,
+                   directions = directions, iterations = iterations)
+  if (returnIndices == 1) return(out)
+  if (returnIndices == 2) return(out$indices)
+  landscape[] <- 0
+  landscape[out$indices] <- out$id
+  landscape
+}
+
+.spread2ViaCpp <- function(landscape, start, spreadProb, asRaster, maxSize, exactSize,
+                           directions, iterations, maxRetriesPerID) {
+  minSize <- 0
+  if (!is.null(exactSize)) maxSize <- minSize <- exactSize
+  ## spread2() jumps on every 10th of its `maxRetriesPerID` retries
+  out <- spreadCpp(landscape, loci = start, spreadProb = spreadProb, maxSize = maxSize,
+                   minSize = minSize, minSizeTries = 0L, jumpTries = maxRetriesPerID %/% 10,
+                   directions = directions, iterations = iterations)
+  dt <- data.table::data.table(initialPixels = out$initialLocus, pixels = out$indices,
+                               state = "inactive")
+  if (!isTRUE(asRaster)) return(dt)
+  ras <- if (inherits(landscape, "Raster")) raster::raster(landscape) else terra::rast(landscape)
+  ras[dt$pixels] <- out$id
+  data.table::setattr(ras, "pixel", dt)
+  ras
 }

@@ -26,8 +26,9 @@ cells) is used.}
 
 \item{loci}{Integer vector of starting cell indices, one per fire.}
 
-\item{spreadProb}{Numeric of length 1 or \code{terra::ncell(landscape)}: the
-probability that a cell is spread to.}
+\item{spreadProb}{Numeric of length 1 or \code{terra::ncell(landscape)}, or a
+\code{SpatRaster} or \code{RasterLayer} congruent with \code{landscape}: the probability
+that a cell is spread to.}
 
 \item{maxSize}{Numeric of length 1 or \code{length(loci)}: the largest number of
 cells each fire may reach. \code{Inf} (the default) means no limit.}
@@ -173,8 +174,6 @@ generation.}
 the edges.}
 \item{\code{plot.it}, \code{id}, \code{returnIndices}}{Not supported as options. Nothing
 is plotted, and the return value is always the indices form.}
-\item{Raster \code{spreadProb}}{Not supported. Pass a numeric vector of length
-\code{terra::ncell(landscape)}, e.g. \code{terra::values(x)}.}
 }
 
 Use \code{\link[=spread]{spread()}} when any of these are needed.
