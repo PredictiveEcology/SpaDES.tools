@@ -1,3 +1,10 @@
+# SpaDES.tools (development version)
+
+## New features
+
+* New option `spades.useSpreadCpp` (default `FALSE`). When `TRUE`, `spread()` and `spread2()` hand their call to `spreadCpp()`, converting arguments and return values, so existing code runs faster unchanged. `spread2(exactSize = )` becomes `minSize = maxSize` with `minSizeTries = 0`. A call using an argument `spreadCpp()` does not support (e.g., `asymmetry`, `persistence`, `circle`) runs the original function, with a message once per session. Results differ from the original functions' for the same seed.
+* `spreadCpp()` accepts a `SpatRaster` or `RasterLayer` `spreadProb`.
+
 # SpaDES.tools 2.1.3.9013
 
 ## New features

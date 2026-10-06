@@ -370,6 +370,17 @@ this would be, perhaps, useful for dispersal of,
 say, insect swarms.
 }
 
+\section{Using \code{spreadCpp()} instead}{
+
+With \code{options(spades.useSpreadCpp = TRUE)}, a call to this function is
+handed to the faster \code{\link[=spreadCpp]{spreadCpp()}}, with its arguments and return value
+converted, so existing code runs unchanged. Results differ from this
+function's for the same seed (see \code{\link[=spreadCpp]{spreadCpp()}}). A call using an argument
+\code{spreadCpp()} does not support runs this function as usual, with a message
+once per session. \code{exactSize} becomes \code{minSize = maxSize} with
+\code{minSizeTries = 0}, and \code{jumpTries = maxRetriesPerID \%/\% 10}.
+}
+
 \section{Differences between \code{spread} and \code{spread2}}{
 
 

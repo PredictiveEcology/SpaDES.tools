@@ -621,7 +621,7 @@ neutralLandscapeMap <- function(x, pad = 10L, type = "gaussian",
   }
   cropExt <- terra::ext(pad, pad + ncol(x), pad, pad + nrow(x))
   rc <- terra::crop(r, cropExt)
-  v <- as.vector(terra::values(rc))
+  v <- .gridValuesVec(rc)
   if (isTRUE(rescale)) {
     rng <- range(v, na.rm = TRUE)
     if (diff(rng) > 0) v <- (v - rng[1]) / diff(rng)

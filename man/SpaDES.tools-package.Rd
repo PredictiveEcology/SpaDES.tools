@@ -101,6 +101,9 @@ You must know how to use SELES for these to be useful:
 \itemize{
 \item \code{spades.lowMemory}: If true, some functions will use more memory
 efficient (but slower) algorithms. Default \code{FALSE}.
+\item \code{spades.useSpreadCpp}: If \code{TRUE}, \code{\link[=spread]{spread()}} and \code{\link[=spread2]{spread2()}} hand
+their calls to the faster \code{\link[=spreadCpp]{spreadCpp()}} where it supports the arguments
+used. Results differ for the same seed. Default \code{FALSE}.
 }
 }
 

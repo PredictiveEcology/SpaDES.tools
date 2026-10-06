@@ -134,6 +134,15 @@ utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLoc
 #'                             that caused the `stopRule` to be `TRUE`\cr
 #' }
 #'
+#' @section Using `spreadCpp()` instead:
+#' With `options(spades.useSpreadCpp = TRUE)`, a call to this function is
+#' handed to the faster [spreadCpp()], with its arguments and return value
+#' converted, so existing code runs unchanged. Results differ from this
+#' function's for the same seed (see [spreadCpp()]). A call using an argument
+#' `spreadCpp()` does not support runs this function as usual, with a message
+#' once per session. `exactSizes = TRUE` becomes `minSize = maxSize`; a raster
+#' return is supported only with `id = TRUE`.
+#'
 #' @inheritSection spreadVsSpread2 Differences between `spread` and `spread2`
 #'
 #' @seealso [spread2()] for a different implementation of the same algorithm.
@@ -367,6 +376,21 @@ spread <- function(
   relativeSpreadProb = FALSE,
   ...
 ) {
+  if (isTRUE(getOption("spades.useSpreadCpp"))) {
+    unsupported <- c(
+      persistence = !identical(persistence, 0), mask = .notNA(mask),
+      returnDistances = isTRUE(returnDistances), plot.it = isTRUE(plot.it),
+      spreadProbLater = .notNA(spreadProbLater), spreadState = .notNA(spreadState),
+      circle = isTRUE(circle), stopRule = .notNA(stopRule),
+      allowOverlap = isTRUE(allowOverlap), asymmetry = .notNA(asymmetry),
+      neighProbs = !is.null(neighProbs), relativeSpreadProb = isTRUE(relativeSpreadProb),
+      `id = FALSE` = returnIndices == 0 && !isTRUE(id),
+      `duplicated loci` = anyDuplicated(loci) > 0, `maxSize < 1` = any(maxSize < 1)
+    )
+    if (.useSpreadCpp("spread", names(which(unsupported))))
+      return(.spreadViaCpp(landscape, loci, spreadProb, maxSize, exactSizes,
+                           directions, iterations, returnIndices))
+  }
   ## `skipChecks` is what spread2() and spread3() call this, and passing that
   ## name here used to be silently inert -- it went into `...`, and every call
   ## paid the full input validation. Accept either name.

@@ -356,6 +356,17 @@ that caused the \code{stopRule} to be \code{TRUE}\cr
 }
 }
 
+\section{Using \code{spreadCpp()} instead}{
+
+With \code{options(spades.useSpreadCpp = TRUE)}, a call to this function is
+handed to the faster \code{\link[=spreadCpp]{spreadCpp()}}, with its arguments and return value
+converted, so existing code runs unchanged. Results differ from this
+function's for the same seed (see \code{\link[=spreadCpp]{spreadCpp()}}). A call using an argument
+\code{spreadCpp()} does not support runs this function as usual, with a message
+once per session. \code{exactSizes = TRUE} becomes \code{minSize = maxSize}; a raster
+return is supported only with \code{id = TRUE}.
+}
+
 \section{Differences between \code{spread} and \code{spread2}}{
 
 
