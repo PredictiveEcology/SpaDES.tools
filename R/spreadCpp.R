@@ -205,7 +205,11 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
 
   loci <- as.integer(loci)
   if (anyNA(loci)) stop("`loci` must not contain NA.")
-  if (.isGridded(spreadProb)) spreadProb <- as.vector(spreadProb[])
+  if (inherits(spreadProb, "SpatRaster")) {
+    spreadProb <- terra::values(spreadProb, mat = FALSE)
+  } else if (.isGridded(spreadProb)) {
+    spreadProb <- as.vector(spreadProb[])
+  }
   spreadProb <- as.numeric(spreadProb)
   if (!(length(spreadProb) == 1L || length(spreadProb) == numCell)) {
     stop("`spreadProb` must be length 1 or terra::ncell(landscape).")
