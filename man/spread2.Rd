@@ -379,6 +379,11 @@ function's for the same seed (see \code{\link[=spreadCpp]{spreadCpp()}}). A call
 \code{spreadCpp()} does not support runs this function as usual, with a message
 once per session. \code{exactSize} becomes \code{minSize = maxSize} with
 \code{minSizeTries = 0}, and \code{jumpTries = maxRetriesPerID \%/\% 10}.
+\code{spreadCpp()} returns a finished spread, every cell \code{"inactive"} and no
+\code{"spreadState"} attribute, so a call with \code{iterations} below its default,
+which stops part-way to be resumed, runs this function. As in this
+function, an \code{NA} in \code{maxSize} or \code{exactSize} means no size limit for any
+event, and sizes are rounded down to whole cells.
 }
 
 \section{Differences between \code{spread} and \code{spread2}}{

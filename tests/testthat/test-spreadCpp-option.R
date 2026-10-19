@@ -87,3 +87,116 @@ test_that("option on: an unsupported argument falls back, with one message", {
   expect_silent(spread(ras, loci = 1830L, spreadProb = 0.2, persistence = 0.1,
                        returnIndices = TRUE))
 })
+
+test_that("option on: spread2 with iterations below the default runs spread2(), resumable", {
+  testInit(c("terra", "data.table", "withr"))
+  .pkgEnv$spreadCppFallbackMessaged <- NULL
+  withr::defer(.pkgEnv$spreadCppFallbackMessaged <- NULL)
+  ras <- mkRasOpt()
+  start <- c(100L, 1830L)
+  off <- withr::with_options(
+    list(spades.useSpreadCpp = FALSE),
+    withr::with_seed(
+      1,
+      spread2(ras, start = start, spreadProb = 0.5, iterations = 1, asRaster = FALSE)
+    )
+  )
+  withr::local_options(spades.useSpreadCpp = TRUE)
+  expect_message(
+    on <- withr::with_seed(
+      1,
+      spread2(ras, start = start, spreadProb = 0.5, iterations = 1, asRaster = FALSE)
+    ),
+    "iterations"
+  )
+  expect_true(any(on$state == "activeSource"))
+  expect_identical(on, off)
+  more <- withr::with_seed(2, spread2(ras, start = on, spreadProb = 0.5, asRaster = FALSE))
+  expect_gt(nrow(more), nrow(on))
+
+  ## the default number of iterations, or more, still goes to spreadCpp()
+  ref <- withr::with_seed(1, spreadCpp(ras, start, 0.5, minSizeTries = 0L, jumpTries = 1L))
+  dflt <- withr::with_seed(1, spread2(ras, start = start, spreadProb = 0.5, asRaster = FALSE))
+  expect_identical(dflt$pixels, ref$indices)
+  expect_null(attr(dflt, "spreadState"))
+  big <- withr::with_seed(
+    1,
+    spread2(ras, start = start, spreadProb = 0.5, iterations = Inf, asRaster = FALSE)
+  )
+  expect_identical(big, dflt)
+})
+
+test_that("option on: spread with iterations below the default runs spread(), resumable", {
+  testInit(c("terra", "data.table", "withr"))
+  .pkgEnv$spreadCppFallbackMessaged <- NULL
+  withr::defer(.pkgEnv$spreadCppFallbackMessaged <- NULL)
+  ras <- mkRasOpt()
+  loci <- c(100L, 1830L)
+  off <- withr::with_options(
+    list(spades.useSpreadCpp = FALSE),
+    withr::with_seed(
+      1,
+      spread(ras, loci = loci, spreadProb = 0.5, iterations = 1, returnIndices = TRUE)
+    )
+  )
+  withr::local_options(spades.useSpreadCpp = TRUE)
+  expect_message(
+    on <- withr::with_seed(
+      1,
+      spread(ras, loci = loci, spreadProb = 0.5, iterations = 1, returnIndices = TRUE)
+    ),
+    "iterations"
+  )
+  expect_true(any(on$active))
+  expect_identical(on, off)
+  more <- withr::with_seed(2, spread(ras, spreadProb = 0.5, spreadState = on, returnIndices = TRUE))
+  expect_gt(nrow(more), nrow(on))
+
+  ## the default number of iterations still goes to spreadCpp()
+  ref <- withr::with_seed(1, spreadCpp(ras, loci, 0.5))
+  dflt <- withr::with_seed(1, spread(ras, loci = loci, spreadProb = 0.5, returnIndices = TRUE))
+  expect_identical(dflt, ref)
+})
+
+test_that("option on: an NA maxSize or exactSize means no size limit, as without the option", {
+  testInit(c("terra", "data.table", "withr"))
+  withr::local_options(spades.useSpreadCpp = TRUE)
+  ras <- mkRasOpt()
+  start <- c(100L, 1830L)
+  sp2 <- function(...) {
+    withr::with_seed(1, spread2(ras, start = start, spreadProb = 0.25, asRaster = FALSE, ...))
+  }
+  uncapped <- sp2()
+  expect_null(attr(uncapped, "spreadState"))
+  expect_true(all(uncapped[, .N, by = "initialPixels"]$N > 5))
+  expect_identical(sp2(maxSize = NA), uncapped)
+  expect_identical(sp2(maxSize = NA_real_), uncapped)
+  ## spread2() lifts the cap for every event when any maxSize is NA
+  expect_identical(sp2(maxSize = c(5, NA)), uncapped)
+  expect_identical(sp2(exactSize = NA_real_), uncapped)
+
+  sp <- function(...) {
+    withr::with_seed(1, spread(ras, loci = start, spreadProb = 0.25, returnIndices = TRUE, ...))
+  }
+  expect_identical(sp(maxSize = NA), sp())
+})
+
+test_that("option on: a fractional size is rounded down, as without the option", {
+  testInit(c("terra", "data.table", "withr"))
+  withr::local_options(spades.useSpreadCpp = TRUE)
+  ras <- mkRasOpt()
+  start <- c(100L, 1830L)
+  ## spreadProb = 1 fills every fire to its size
+  sizes2 <- function(...) {
+    out <- withr::with_seed(1, spread2(ras, start = start, spreadProb = 1, asRaster = FALSE, ...))
+    out[, .N, by = "initialPixels"]$N
+  }
+  expect_identical(sizes2(maxSize = 30.5), c(30L, 30L))
+  expect_identical(sizes2(exactSize = 30.5), c(30L, 30L))
+  sizes <- function(...) {
+    out <- withr::with_seed(1, spread(ras, loci = start, spreadProb = 1, returnIndices = TRUE, ...))
+    out[, .N, by = "id"]$N
+  }
+  expect_identical(sizes(maxSize = 30.5), c(30L, 30L))
+  expect_identical(sizes(maxSize = 30.5, exactSizes = TRUE), c(30L, 30L))
+})

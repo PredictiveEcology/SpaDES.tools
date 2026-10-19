@@ -1,3 +1,11 @@
+# SpaDES.tools (development version)
+
+## Bug fixes
+
+* With `options(spades.useSpreadCpp = TRUE)`, a `spread()` or `spread2()` call with `iterations` below its default (1e6) now runs the original function. Such a call stops part-way so the spread can be resumed from its active cells, but `spreadCpp()` returned every cell inactive, so a resumed spread (e.g., scfm's escaped fires) went no further.
+* With the option on, an `NA` `maxSize` (and, in `spread2()`, `exactSize`) now means no size limit, as in the original functions, instead of stopping `spreadCpp()` with "missing value where TRUE/FALSE needed".
+* With the option on, a fractional `maxSize` or `exactSize` is rounded down, as in the original functions, instead of letting a fire reach one cell more.
+
 # SpaDES.tools 2.1.3.9014
 
 ## New features
