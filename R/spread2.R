@@ -357,6 +357,11 @@ utils::globalVariables(c(
 #' `spreadCpp()` does not support runs this function as usual, with a message
 #' once per session. `exactSize` becomes `minSize = maxSize` with
 #' `minSizeTries = 0`, and `jumpTries = maxRetriesPerID %/% 10`.
+#' `spreadCpp()` returns a finished spread, every cell `"inactive"` and no
+#' `"spreadState"` attribute, so a call with `iterations` below its default,
+#' which stops part-way to be resumed, runs this function. As in this
+#' function, an `NA` in `maxSize` or `exactSize` means no size limit for any
+#' event, and sizes are rounded down to whole cells.
 #'
 #' @inheritSection spreadVsSpread2 Differences between `spread` and `spread2`
 #'
@@ -382,7 +387,10 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       plot.it = isTRUE(plot.it), circle = isTRUE(circle), asymmetry = .notNA(asymmetry),
       allowOverlap = isTRUE(allowOverlap > 0) || is.na(allowOverlap),
       neighProbs = .notNA(neighProbs), oneNeighbourOnly = isTRUE(oneNeighbourOnly),
-      `duplicated start` = is.numeric(start) && anyDuplicated(start) > 0
+      `duplicated start` = is.numeric(start) && anyDuplicated(start) > 0,
+      ## fewer generations than the default stop the spread part-way, to be resumed from
+      ## its "activeSource" cells; spreadCpp() returns every cell "inactive"
+      `iterations < 1e6` = !isTRUE(iterations >= 1e6L)
     )
     if (.useSpreadCpp("spread2", names(which(unsupported))))
       return(.spread2ViaCpp(landscape, start, spreadProb, asRaster,

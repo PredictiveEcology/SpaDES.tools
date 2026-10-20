@@ -291,6 +291,8 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
 .spreadViaCpp <- function(landscape, loci, spreadProb, maxSize, exactSizes,
                           directions, iterations, returnIndices) {
   if (anyNA(loci)) loci <- middlePixel(landscape)
+  ## as spread(): an all-NA maxSize is no cap, and a fractional one is rounded down
+  maxSize <- if (all(is.na(maxSize))) Inf else floor(maxSize)
   out <- spreadCpp(landscape, loci = loci, spreadProb = spreadProb, maxSize = maxSize,
                    minSize = if (isTRUE(exactSizes)) maxSize else 0, minSizeTries = 0L,
                    directions = directions, iterations = iterations)
@@ -303,8 +305,11 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
 
 .spread2ViaCpp <- function(landscape, start, spreadProb, asRaster, maxSize, exactSize,
                            directions, iterations, maxRetriesPerID) {
-  minSize <- 0
-  if (!is.null(exactSize)) maxSize <- minSize <- exactSize
+  if (!is.null(exactSize)) maxSize <- exactSize
+  ## as spread2(): any NA in maxSize (or exactSize) means no cap and no exact size for
+  ## every event, and sizes are rounded down to whole cells
+  maxSize <- if (anyNA(maxSize)) Inf else floor(maxSize)
+  minSize <- if (is.null(exactSize) || anyNA(exactSize)) 0 else maxSize
   ## spread2() jumps on every 10th of its `maxRetriesPerID` retries
   out <- spreadCpp(landscape, loci = start, spreadProb = spreadProb, maxSize = maxSize,
                    minSize = minSize, minSizeTries = 0L, jumpTries = maxRetriesPerID %/% 10,

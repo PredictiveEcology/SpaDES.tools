@@ -141,7 +141,11 @@ utils::globalVariables(c(".", ".I", "dists", "dup", "id", "indices", "initialLoc
 #' function's for the same seed (see [spreadCpp()]). A call using an argument
 #' `spreadCpp()` does not support runs this function as usual, with a message
 #' once per session. `exactSizes = TRUE` becomes `minSize = maxSize`; a raster
-#' return is supported only with `id = TRUE`.
+#' return is supported only with `id = TRUE`. `spreadCpp()` returns a finished
+#' spread, every cell inactive, so a call with `iterations` below its default,
+#' which stops part-way to be resumed, runs this function. As in this function,
+#' an all-`NA` `maxSize` means no size limit, and `maxSize` is rounded down to
+#' whole cells.
 #'
 #' @inheritSection spreadVsSpread2 Differences between `spread` and `spread2`
 #'
@@ -385,7 +389,10 @@ spread <- function(
       allowOverlap = isTRUE(allowOverlap), asymmetry = .notNA(asymmetry),
       neighProbs = !is.null(neighProbs), relativeSpreadProb = isTRUE(relativeSpreadProb),
       `id = FALSE` = returnIndices == 0 && !isTRUE(id),
-      `duplicated loci` = anyDuplicated(loci) > 0, `maxSize < 1` = any(maxSize < 1)
+      `duplicated loci` = anyDuplicated(loci) > 0, `maxSize < 1` = any(maxSize < 1),
+      ## fewer generations than the default stop the spread part-way, to be resumed from
+      ## its active cells; spreadCpp() returns every cell inactive
+      `iterations < 1e6` = !isTRUE(iterations >= 1e6L)
     )
     if (.useSpreadCpp("spread", names(which(unsupported))))
       return(.spreadViaCpp(landscape, loci, spreadProb, maxSize, exactSizes,
