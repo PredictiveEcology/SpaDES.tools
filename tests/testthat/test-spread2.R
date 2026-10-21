@@ -26,7 +26,7 @@ test_that("spread2 tests", {
     sp <- 0.225
     spRas[] <- spRas[] / reproducible::maxFn(spRas) * sp / 2 + sp / 2 * 1.5
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
     sams <- sample(innerCells, 2)
 
@@ -404,7 +404,7 @@ test_that("spread2 tests -- asymmetry", {
     b <- read(aOrig)
     a <- read(aOrig)
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
 
     set.seed(123)
@@ -634,7 +634,7 @@ test_that("spread2 returnFrom", {
     a <- read(aOrig)
     b <- read(aOrig)
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
 
     set.seed(123)
@@ -661,7 +661,7 @@ test_that("spread2 tests", {
     b <- read(aOrig)
 
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
     sams <- sample(innerCells, 9)
 
@@ -692,7 +692,7 @@ test_that("spread2 works with terra", {
 
     # inputs for x
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
     sams <- sample(innerCells, 9)
 

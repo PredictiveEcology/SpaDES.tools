@@ -6,6 +6,10 @@
 * With the option on, an `NA` `maxSize` (and, in `spread2()`, `exactSize`) now means no size limit, as in the original functions, instead of stopping `spreadCpp()` with "missing value where TRUE/FALSE needed".
 * With the option on, a fractional `maxSize` or `exactSize` is rounded down, as in the original functions, instead of letting a fire reach one cell more.
 
+## Testing
+
+* `spread2()` tests no longer pass `pad` and `padValue` to `terra::focal()`, which errors on them from terra 1.9-54. Earlier terra versions ignored them, and the tests select the same interior start cells without them for both `SpatRaster` and `RasterLayer` inputs.
+
 # SpaDES.tools 2.1.3.9014
 
 ## New features
