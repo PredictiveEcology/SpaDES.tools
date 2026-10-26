@@ -2,176 +2,51 @@
 
 ## Behaviour changes
 
-* `adj(returnDT = TRUE)` now always returns a `data.table`. The argument was
-  previously honoured only when `length(cells)` was greater than
-  `cutoff.for.data.table` (default 2000); below that it was ignored and a matrix
-  came back, so the return type depended on how many cells were asked about.
-  `cutoff.for.data.table` now selects the internal strategy only, and no longer
-  affects the class of the result; the returned `data.table` also carries the
-  same key it would have had from the `data.table` internals. The first call per
-  session that falls in the affected window warns. Calls made from inside this
-  package are unaffected and stay silent (#121).
-* `adj(torus = TRUE)` now returns integer cell numbers below
-  `cutoff.for.data.table`, where it returned doubles before. The wrap-around
-  correction used `sign()`, which returns a double and so promoted the whole
-  matrix; the `data.table` branch had always coerced back to integer.
-* `spread()` no longer uses `dqrng`, so it is reproducible from `set.seed()` alone. `dqrng` keeps its
-  own RNG state, which `.Random.seed` does not capture and `spread()`'s internal reseeding did not
-  neutralize, so a previous `spread()` call in the same process could change the result of the next
-  one. `dqrng` was adopted for speed, but random number generation is now about 1.7% of `spread()`'s
-  time -- `data.table` ordering dominates -- and per burned cell the two paths are indistinguishable.
-  Results change for callers who had `dqrng` installed. `dqrng` moves out of Suggests (#136).
+* `adj(returnDT = TRUE)` now always returns a `data.table`.
+  It used to return a matrix when `length(cells)` was at or below `cutoff.for.data.table` (default 2000), which now selects only the internal method.
+  The first affected call in a session warns (#121).
+* `adj(torus = TRUE)` now returns integer cell numbers below `cutoff.for.data.table`, as it already did above it.
+* `spread()` no longer uses `dqrng`, so its results are reproducible from `set.seed()` alone; before, one `spread()` call could change the result of the next.
+  Results change for users who had `dqrng` installed, and `dqrng` is no longer in Suggests (#136).
 
 ## New features
 
 * New option `spades.useSpreadCpp` (default `FALSE`).
-  When `TRUE`, `spread()` and `spread2()` hand their call to `spreadCpp()`, converting arguments and return values, so existing code runs faster unchanged.
-  Results differ from the original functions' for the same seed.
-  `spread2(exactSize = )` becomes `minSize = maxSize` with `minSizeTries = 0`.
-  A call using an argument `spreadCpp()` does not support (e.g., `asymmetry`, `persistence`, `circle`), or with `iterations` below its default (a spread stopped part-way to be resumed), runs the original function, with a message once per session.
-  As in the original functions, an `NA` `maxSize` means no size limit and a fractional one is rounded down (#147, #148).
-* `allInRange01()` is exported, since the same question comes up elsewhere (#129).
-* `spreadCpp()`, a stochastic outward spread written as a plain C++ loop, for the common case: a per-cell probability of being spread to (numeric, `SpatRaster` or `RasterLayer`), one or more ignitions, an optional per-fire maximum size, and cell indices back (#139, #147).
-  It is roughly 2x faster than `spread()` across fire regimes (1.6-2.4x over nine scenarios spanning 596 to 188,762 burned cells and landscapes of 0.36M to 9M cells, median 2.1x).
-  The gain tracks the fraction of the landscape that burns: the per-call landscape-length state allocation costs the same in both, so where almost nothing burns it dominates and there is nothing to win -- at 0.13% of an 8.4M cell landscape burned, `spreadCpp()` was no faster (0.95x).
-  Crop to the burnable area where possible.
-  Judge the gain in seconds rather than as a ratio: across those scenarios the ratio falls slightly as more burns (correlation -0.37) while the seconds saved rise steeply (+0.95), so the slowest calls save the most time despite showing the lowest speedup.
-
-  It is **not** a drop-in replacement and does not reproduce `spread()`'s cells for a given seed.
-  It follows the same rules -- growth in generations so fires move outwards, one draw per (burning cell, unburned neighbour) pair against the neighbour's probability so that a cell with `k` burning neighbours catches with probability `1 - (1 - p)^k`, one fire per cell with collisions broken at random, a per-fire `maxSize` that is never exceeded, and `NA` meaning unburnable -- but it makes its own draws.
-  Burned totals and fire-size distributions agree with `spread()`: over 300 seeds, total burned Wilcoxon p = 0.34, fire-size KS p = 0.56, and quantiles within 7% from the 10th percentile to the 99th.
-
-  Two optional rules are off by default, and then make the same random draws as without them:
-
-  * `minSize`, with `minSizeTries` (default 100), `jumpTries` and `jumpMeanDist`, makes each fire reach a minimum size, e.g. to start every escaped fire at the escape size (#141, #142, #143).
-    A fire that dies below `minSize` is undone and started again from its ignition cell, up to `minSizeTries` times, so the fires kept are a sample of those that reach `minSize` under their own `spreadProb`, with their natural size, shape and burning front.
-    With `spreadProb = 0.2` their sizes match fires that reached 9 cells on their own (KS p = 0.38); growing fires to `minSize` by persistence alone did not (p < 0.001).
-    Expected tries per fire are 1 / P(reaching `minSize`); per-fire tries are in the transient attribute `attr(out, "minSizeTries")`.
-    After `minSizeTries` rejections a fire falls back to persistence: its burning cells stay active and draw again until it reaches `minSize`, then it spreads on from its whole perimeter.
-    A fire under `minSize` with nothing burnable next to it tries up to `jumpTries` jumps, of 1.5-20 cells with mean `jumpMeanDist`; this is a fixed rule for fires trapped in small patches, not a fitted spotting process.
-  * `stopCells`, `stopEvent` and `stopAt` give a per-fire stop rule: a fire stops, mid-generation like at `maxSize`, as soon as it has burned `stopAt` of its own stop cells (#146).
-
-  Everything else `spread()` offers -- `allowOverlap`, `returnDistances`, `circle`, `asymmetry`, `neighProbs`, `relativeSpreadProb`, `stopRule`, `persistence`, `mask`, continuing from a `spreadState`, torus wrapping -- is out of scope and rejected with an error rather than silently ignored.
+  When `TRUE`, `spread()` and `spread2()` hand their calls to `spreadCpp()` where it supports the arguments used, and otherwise run as before, with a message once per session.
+  Results differ from the original functions' for the same seed (#147, #148).
+* `allInRange01()` is exported: a one-pass check that all non-`NA` values are in [0, 1] (#129).
+* `spreadCpp()` is a faster alternative to `spread()` for the common case: a per-cell `spreadProb` (numeric, `SpatRaster` or `RasterLayer`), one or more ignitions, an optional per-fire `maxSize`, and cell indices back.
+  It is about 2x faster (1.6-2.4x over nine scenarios), but no faster when almost none of the landscape burns, so crop to the burnable area.
+  It follows the same spread rules but makes its own random draws, so it does not reproduce `spread()`'s cells for a given seed; burned area and fire-size distributions agree.
+  Arguments it does not support are an error (#139, #147).
+  Two optional rules are off by default:
+  * `minSize` makes each fire reach a minimum size, e.g. to start escaped fires at the escape size.
+    A fire that dies below it is restarted, up to `minSizeTries` times (default 100), so the fires kept resemble fires that reached that size on their own.
+    After that the fire grows by persistence, and `jumpTries` and `jumpMeanDist` let a fire with nothing burnable next to it jump (#141, #142, #143).
+  * `stopCells`, `stopEvent` and `stopAt` stop a fire once it has burned `stopAt` of its own stop cells (#146).
 
 ## Performance
 
-* `rasterizeReduced()` builds the levels table of a factor `SpatRaster` with `duplicated()` on a `data.table` instead of `unique(data.frame())`, which took about 3 s on 4.3M pixels. The table is identical (#145).
-* `spread()`'s check that `spreadProb` is a probability is ~23x cheaper. It was
-  `all(inRange(na.omit(spreadProb)))`, which copies the vector twice and scans it
-  three times; on a per-cell `spreadProb` that is work proportional to the
-  landscape on every call, however little of it burns. `allInRange01()` does it
-  in one pass with no allocation and stops at the first value that fails.
-
-  | `spreadProb` | before | after |
-  | --- | --- | --- |
-  | 1M cells | 0.024 s | 0.001 s |
-  | 9M cells | 0.234 s | 0.010 s |
-
-  The point is the default: leaving the checks on used to cost up to 5.1x the
-  whole call on a 9M-cell landscape, so anyone in a hot loop had to turn them
-  off. Now it costs 1.1x to 1.3x, so beginners keep the safety net and callers
-  in loops no longer pay for it (#129).
-* `spread()` no longer copies a gridded `spreadProb` on every iteration. `spreadProb[]`
-  pulls the whole raster into a new vector, and that call sat inside the
-  iteration loop, so a 30-iteration fire on 8.3M cells copied 66 MB thirty times
-  to read a few thousand cells. It is extracted once, before the loop (#130).
-* `spread()`'s per-call state vector uses `integer(ncell)`, which is already zero-filled,
-  rather than `rep(0L, ncell)`: 2.0 ms against 7.5 ms at 8.3M cells, once per
-  call (#130).
-* `spread()` validates the length of a numeric `spreadProb` (and of
-  `spreadProbLater`) once, before the iteration loop, rather than on every
-  iteration. The in-loop form also re-called `terra::ncell(landscape)` each time,
-  which is S4 dispatch plus the accessor. Neither argument can change length inside
-  the loop, so the repetition bought nothing. In a fireSense objective-function
-  evaluation -- hundreds of `spread()` calls of roughly 30 iterations each --
-  `terra::ncell` showed 7.10 s total with `standardGeneric` at 6.12 s under
-  profiling. The comparison is O(1) so it remains on regardless of `quick`; a wrong
-  length is now reported before any iteration runs rather than when the loop first
-  reaches the numeric branch (#131).
-* `spread()` extracts `initEventID` with a base-R subset instead of `allCells[indices %in%
-  initialLoci, id]`. Same values in the same order, but it skips `[.data.table` dispatch on a logical
-  built over every burned cell. Line profiling put that at 9-15% of self time across fire regimes;
-  paired benchmarking over 9 scenarios x 5 seeds gives ~6% end to end. Results are unchanged (#137).
-* `spread()` drops the neighbours it has already spread to inside `adjPairsMatrix()`, rather than
-  building the whole neighbour matrix and then subsetting it with `cellsState[potentials[, 2L]] ==
-  0L`. The C++ pass that emits the pairs now skips a cell whose state is non-zero, so the gather, the
-  logical vector and the row-subset copy are all gone and the matrix is allocated at its final size.
-  Line profiling put those two steps at 19-29% and 7-21% of self time; paired benchmarking over 7
-  scenarios x 8 alternating rounds gives 7.4% end to end (median), faster in 42 of 53 untied pairs.
-  Results are unchanged: the filter runs in the pass that emits the pairs, so surviving rows keep
-  their order (#138).
+* `rasterizeReduced()` builds the levels table of a factor `SpatRaster` faster; the old method took about 3 s on 4.3M pixels (#145).
+* `spread()` is faster, with unchanged results.
+  Its check that `spreadProb` is a probability is about 23x cheaper, so leaving checks on no longer dominates the call on large landscapes.
+  A gridded `spreadProb` is read, and its length checked, once per call instead of every iteration, and each iteration builds less intermediate data (#129, #130, #131, #137, #138).
 
 ## Bug fixes
 
-* `adj(returnDT = TRUE, pairs = FALSE, match.adjacent = TRUE)` returned every
-  `to` cell, plus an `id` column, instead of the unique `to` cells with no `id`
-  that the same call produces for every other combination of arguments. This
-  affected the `terra::adjacent()` path added in 2.1.3, at any `cutoff.for.data.table`.
-* `spread()` accepts `skipChecks` as an alias for `quick`. That is the name
-  [spread2()] and [spread3()] use, and passing it to `spread()` previously landed
-  in `...` and was silently ignored -- so a caller who believed they had switched
-  the checks off paid for them on every call (#129).
-* `spread()` could not run at all with a per-cell numeric `spreadProb` *and* a
-  `spreadProbLater`. The first iteration took `rep(spreadProb, NROW(potentials))`,
-  which is right only for a length-1 `spreadProb`; given a per-cell vector it
-  recycled the whole landscape once per candidate cell, and the resulting
-  over-long logical was then used to subscript the candidate matrix:
-  `(subscript) logical subscript too long`. It now indexes the candidate cells,
-  as the raster branch beside it always did and as the comment there
-  ("need cell specific values") always intended (#130).
-* `spread()` could not be called with a numeric `spreadProbLater` at all -- any such
-  call died with `invalid 'size' argument`. Supplying a `spreadProbLater` set
-  `relativeSpreadProb <- TRUE` unconditionally, whatever its values, which routed the
-  call into the relative-probability path guarded by
-  `if (!is.null(neighProbs) || relativeSpreadProb)`. That path indexes `numNeighs`,
-  which stays `NULL` unless `neighProbs` was supplied, so
-  `resample(aaa[[x]], size = numNeighs[x])` received `size = NULL`. The flag is now
-  set only when the values are actually outside [0, 1], as it already was for
-  `spreadProb` and in the raster branch of the same validation -- which is why a
-  `spreadProbLater` given as a `SpatRaster` worked while the numeric equivalent did
-  not. An out-of-range `spreadProbLater` is still rejected (#132).
-* `spread()` failed with `object 'spreads' not found` when `exactSizes = TRUE`
-  and an event got stuck (too small and inactive) unless `allowOverlap`,
-  `returnDistances`, or `spreadState` happened to be in use. The retry branch
-  referenced `spreads`, which only exists under `useMatrixVersionSpreads`; the
-  vector branch carries the same per-cell event ids in `cellsState`, as the
-  adjacent `tooSmall`/`inactive` calculation already accounted for (#135).
-* `spread()` now rejects, up front and with an explanatory message, two argument
-  combinations that it does not implement and that previously failed deep in the
-  algorithm with opaque errors: `neighProbs` together with
-  `returnDistances = TRUE` (previously `subscript out of bounds`), and
-  `asymmetry` together with a raster or vector `spreadProb` (previously
-  `dims [product 9999] do not match the length of object [10000]`, because the
-  asymmetry adjustment uses the whole `spreadProb` surface where a per-neighbour
-  value is required). Both messages point at `spread2()`, which supports these
-  combinations (#135).
-* `spread2()` failed with `object 'notAvailable' not found` whenever `neighProbs`
-  was used together with `allowOverlap` greater than 0 (or `NA`). The
-  `notAvailable` bit vector is only created when `canUseAvailable` is `TRUE`,
-  i.e., when overlap is *not* allowed, but the `neighProbs` branch dereferenced
-  it unconditionally. The structurally parallel non-`neighProbs` branch was
-  already guarded. Both the read and the write are now guarded; when overlap is
-  allowed nothing is unavailable, so the guard is a no-op in the previously
-  working case (#135).
-* `spread2(maxRetriesPerID = )` now allows exactly that many retries per event.
-  The cap was tested as `numRetries > maxRetriesPerID`, so one more retry than
-  asked for got through -- the default of 10 made 11. This also shifts the
-  boundary of the retry "jump", which fires on every 10th retry: with
-  `maxRetriesPerID = 8` an event used to reach it, and now does not (#125).
+* `adj(returnDT = TRUE, pairs = FALSE, match.adjacent = TRUE)` now returns the unique `to` cells without an `id` column, as other argument combinations do.
+* `spread()` accepts `skipChecks` as an alias for `quick`, as `spread2()` and `spread3()` do; it was silently ignored (#129).
+* `spread()` now works with a numeric `spreadProbLater`, which always failed with "invalid 'size' argument" (#132).
+* `spread()` now works with a per-cell numeric `spreadProb` together with a `spreadProbLater`, which failed with "logical subscript too long" (#130).
+* `spread()` now gives a clear error for two argument combinations it does not implement, `neighProbs` with `returnDistances = TRUE` and `asymmetry` with a per-cell `spreadProb`, and points to `spread2()` (#135).
+* `spread(exactSizes = TRUE)` no longer fails with "object 'spreads' not found" when an event gets stuck (#135).
+* `spread2()` no longer fails with "object 'notAvailable' not found" when `neighProbs` is used with `allowOverlap` (#135).
+* `spread2(maxRetriesPerID = )` now allows exactly that many retries per event, not one more, which can change results for events that reach the cap (#125).
 
 ## Documentation and testing
 
-* The differences between `spread()` and `spread2()` are now documented in a
-  single shared section, `?spreadVsSpread2`, which is included in the help of
-  both functions via `@inheritSection`. It tabulates the argument
-  correspondences (`loci`/`start`, `persistence`/`persistProb`,
-  `returnIndices`/`asRaster`, `exactSizes`/`exactSize`, and so on) and, most
-  importantly, the returned `data.table` column names, which share *no* names
-  between the two functions: `indices`/`initialLocus`/`active` (a logical) for
-  `spread()` versus `pixels`/`initialPixels`/`state` (a character) for
-  `spread2()`. Reported by Steve Cumming, who hit the column-name incompatibility
-  when converting `scfmEscape` and `scfmSpread` from `spread()` to `spread2()` (#135).
-* `spread2()` tests no longer pass `pad` and `padValue` to `terra::focal()`, which errors on them from terra 1.9-54. Earlier terra versions ignored them, and the tests select the same interior start cells without them for both `SpatRaster` and `RasterLayer` inputs (#149).
+* `?spreadVsSpread2`, included in the help for both functions, lists the differences between `spread()` and `spread2()`, including their arguments and the column names of their results, which share no names (reported by Steve Cumming, #135).
+* `spread2()` tests no longer pass `pad` to `terra::focal()`, which errors on it from terra 1.9-54 (#149).
 
 # SpaDES.tools 2.1.3
 
