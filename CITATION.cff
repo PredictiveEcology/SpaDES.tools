@@ -9,7 +9,8 @@ type: software
 license: GPL-3.0-only
 title: 'SpaDES.tools: Additional Tools for Developing Spatially Explicit Discrete
   Event Simulation (SpaDES) Models'
-version: 2.1.3
+version: 2.2.0
+doi: 10.32614/CRAN.package.SpaDES.tools
 abstract: Provides GIS and map utilities, plus additional modeling tools for developing
   cellular automata, dynamic raster models, and agent based models in 'SpaDES'. Included
   are various methods for spatial spreading, spatial agents, GIS operations, random
@@ -24,9 +25,10 @@ authors:
   given-names: Alex M
   email: achubaty@for-cast.ca
   orcid: https://orcid.org/0000-0001-7146-8135
+repository: https://CRAN.R-project.org/package=SpaDES.tools
 repository-code: https://github.com/PredictiveEcology/SpaDES.tools
 url: https://spades-tools.predictiveecology.org
-date-released: '2026-08-28'
+date-released: '2026-10-26'
 contact:
 - family-names: Chubaty
   given-names: Alex M
@@ -324,19 +326,6 @@ references:
   year: '2026'
   doi: 10.32614/CRAN.package.DEoptim
   version: '>= 2.2-4'
-- type: software
-  title: dqrng
-  abstract: 'dqrng: Fast Pseudo Random Number Generators'
-  notes: Suggests
-  url: https://daqana.github.io/dqrng/
-  repository: https://CRAN.R-project.org/package=dqrng
-  authors:
-  - family-names: Stubner
-    given-names: Ralf
-    email: ralf.stubner@gmail.com
-    orcid: https://orcid.org/0009-0009-1908-106X
-  year: '2026'
-  doi: 10.32614/CRAN.package.dqrng
 - type: software
   title: fastmatch
   abstract: 'fastmatch: Fast ''match()'' Function'
