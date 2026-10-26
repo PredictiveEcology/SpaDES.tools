@@ -65,10 +65,8 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
       fullRasterVals <- raster::factorValues(fullRaster, fullRasterVals)[[1L]]
     }
     if (is.factor(fullRasterVals)) fullRasterVals <- as.character(fullRasterVals)
-  } else if (isSpat) {
-    fullRasterVals <- terra::values(fullRaster, mat = FALSE)
   } else {
-    fullRasterVals <- as.vector(fullRaster[])
+    fullRasterVals <- .gridValuesVec(fullRaster)
   }
 
   ## Replace the previous keyed-join + unique() round-trip with a single
@@ -84,8 +82,7 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
     vals <- reduced[[col]][matchIdx]
     if (is.factor(vals) && isSpat) {
       r[] <- as.numeric(vals)
-      levs <- unique(data.frame(id = na.omit(as.numeric(vals)),
-                                values = na.omit(vals)))
+      levs <- .levelsTable(vals)
       levels(r) <- levs
     } else {
       ## if factor values are attributed to a RasterLayer,
@@ -101,4 +98,18 @@ rasterizeReduced <- function(reduced, fullRaster, newRasterCols, mapcode = names
     ras <- fillRas(newRasterCols)
   }
   ras
+}
+
+## The id/value table of a factor's levels, one row per distinct pair, in order of first
+## appearance, NAs dropped. `unique()` on a `data.frame` of every pixel pastes each row to a
+## string (3 s for 4.3M pixels); `duplicated()` on the id column hashes one number per pixel. The
+## row names stay those `unique.data.frame` gave (the position of the first appearance).
+.levelsTable <- function(vals) {
+  dt <- data.table::data.table(id = na.omit(as.numeric(vals)), values = na.omit(vals))
+  ## `values` is a function of `id` (its factor codes), so the pairs are distinct exactly when `id` is
+  keep <- which(!duplicated(dt$id))
+  out <- as.data.frame(dt[keep, ])
+  for (col in names(out)) attr(out[[col]], "na.action") <- NULL ## `unique.data.frame` drops it
+  attr(out, "row.names") <- keep
+  out
 }

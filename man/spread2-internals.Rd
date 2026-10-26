@@ -36,7 +36,7 @@ asymmetryAdjust(angleQualities, quantity, actualAsymmetry)
 
 \item{to}{vector of same length as \code{from} which are the "to" or receiving cells}
 
-\item{landscape}{\code{RasterLayer} passed from \code{spread2}.}
+\item{landscape}{\code{SpatRaster} or \code{RasterLayer} passed from \code{spread2}.}
 
 \item{actualAsymmetryAngle}{Angle in degrees, either a vector length 1 or vector
 \code{NROW(dtPotential)}.}

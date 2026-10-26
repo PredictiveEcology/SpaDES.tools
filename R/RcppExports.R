@@ -35,12 +35,16 @@ adjPairsWithId <- function(cells, id, numCol, numCell, directions) {
 #' the data.table allocation/coercion overhead.
 #'
 #' @inheritParams adjPairsWithId
+#' @param state Optional integer vector of length `numCell` giving the state of
+#'   every cell, where 0 means "not yet spread to". When supplied, neighbours
+#'   whose state is non-zero are dropped, in the same pass that builds the
+#'   pairs, so the caller does not have to build and subset a bigger matrix.
 #'
 #' @return A 2-column integer matrix with columns named `from` and `to`.
 #' @keywords internal
 #' @rdname adjPairsMatrix
-adjPairsMatrix <- function(cells, numCol, numCell, directions) {
-    .Call(`_SpaDES_tools_adjPairsMatrix`, cells, numCol, numCell, directions)
+adjPairsMatrix <- function(cells, numCol, numCell, directions, state = NULL) {
+    .Call(`_SpaDES_tools_adjPairsMatrix`, cells, numCol, numCell, directions, state)
 }
 
 #' @title
@@ -58,6 +62,28 @@ duplicatedInt <- function(x) {
     .Call(`_SpaDES_tools_duplicatedInt`, x)
 }
 
+#' Are all values in `[0, 1]`, ignoring `NA`?
+#'
+#' @description
+#' The question `spread()` asks of `spreadProb` before it starts. Expressed in R
+#' as `all(inRange(na.omit(x)))` it costs three passes and two copies of the
+#' whole vector -- `na.omit()` allocates one, the comparison another -- which is
+#' work proportional to the size of the landscape on every call, however little
+#' of it burns. This is one pass, no allocation, and it stops at the first value
+#' that fails.
+#'
+#' `NA` and `NaN` are ignored, so an all-`NA` vector and a zero-length vector are
+#' both `TRUE`: there is nothing in them that is out of range. That matches
+#' `all(inRange(na.omit(x)))`, which is `all(logical(0))`.
+#'
+#' @param x Numeric vector.
+#' @return A single logical.
+#' @export
+#' @rdname inRange01
+allInRange01 <- function(x) {
+    .Call(`_SpaDES_tools_allInRange01`, x)
+}
+
 #' @title
 #' Rcpp Sugar version of runif
 #' @description
@@ -71,5 +97,34 @@ duplicatedInt <- function(x) {
 #' @rdname rcpp-extras
 runifC <- function(N) {
     .Call(`_SpaDES_tools_runifC`, N)
+}
+
+#' Stochastic outward spread, in C++
+#'
+#' Internal engine for [spreadCpp()]. See the comments in `src/spread_cpp.cpp`
+#' for the rules it implements and how they differ from [spread()].
+#'
+#' @param numCol Integer; number of raster columns.
+#' @param numCell Integer; total number of raster cells.
+#' @param directions Integer; 4 or 8.
+#' @param loci Integer vector of starting cells, one per fire.
+#' @param spreadProb Numeric, length 1 or `numCell`; probability of being spread to.
+#' @param maxSize Numeric, length 1 or `length(loci)`; maximum cells per fire.
+#' @param minSize Numeric, length 1 or `length(loci)`; cells each fire reaches
+#'   with persistence before the normal rule applies (see rule 6). 0 = none.
+#' @param jumpTries Integer; jump attempts for a fire stuck under minSize (rule 7). 0 = none.
+#' @param jumpMeanDist Numeric; mean jump distance in cells (rule 7).
+#' @param minSizeTries Integer; rejections per fire before falling back to persistence (rule 8). 0 = none.
+#' @param iterations Integer; maximum number of generations.
+#' @param stopCells Integer vector of stop cells (rule 9); `integer(0)` = none.
+#' @param stopEvent Integer, same length as `stopCells`; the fire (1-based index into `loci`) each stop cell belongs to.
+#' @param stopAt Integer, length `length(loci)`; each fire stops when it has burned this many of its own stop cells.
+#'
+#' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
+#'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
+#' @keywords internal
+#' @rdname spreadCppEngine
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt) {
+    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt)
 }
 

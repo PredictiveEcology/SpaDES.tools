@@ -30,7 +30,7 @@ spread2(
 )
 }
 \arguments{
-\item{landscape}{Required. A \code{RasterLayer} object. This defines the possible
+\item{landscape}{Required. A \code{SpatRaster} or \code{RasterLayer} object. This defines the possible
 locations for spreading events to start and \code{spread2} into. Required.}
 
 \item{start}{Required. Either a vector of pixel numbers to initiate spreading, or a
@@ -40,8 +40,8 @@ If user has x and y coordinates, these can be converted with
 \code{\link[terra:cellFromXY]{cellFromXY()}}.}
 
 \item{spreadProb}{Numeric of length 1 or length \code{ncell(landscape)} or
-a \code{RasterLayer} that is the identical dimensions as
-\code{landscape}.
+a \code{SpatRaster} or \code{RasterLayer} that is the identical dimensions
+as \code{landscape}.
 If numeric of length 1, then this is the global (absolute)
 probability of spreading into each cell from a neighbour.
 If a numeric of length \code{ncell(landscape)} or a raster,
@@ -53,7 +53,7 @@ re-scaled so that the mean relative probability of potential
 neighbours is equal to the mean of \code{spreadProb} of
 the potential neighbours.}
 
-\item{persistProb}{Numeric of length 1 or \code{RasterLayer}.
+\item{persistProb}{Numeric of length 1, or a \code{SpatRaster} or \code{RasterLayer}.
 If numeric of length 1, then this is the global (absolute)
 probability of cell continuing to burn per time step.
 If a raster, then this must be the cell-specific (absolute)
@@ -124,7 +124,7 @@ Default is \code{FALSE}.
 Using \code{circle = TRUE} can be dramatically slower for large problems.
 Note, this will likely create unexpected results if \code{spreadProb < 1}.}
 
-\item{asymmetry}{A numeric or \code{RasterLayer} indicating the ratio of the
+\item{asymmetry}{A numeric, \code{SpatRaster} or \code{RasterLayer} indicating the ratio of the
 asymmetry to be used. i.e., 1 is no asymmetry; 2 means that the
 angles in the direction of the \code{asymmetryAngle} are 2x the
 \code{spreadProb}
@@ -132,7 +132,7 @@ of the angles opposite tot he \code{asymmetryAngle}  Default is
 NA, indicating no asymmetry. See details. This is still experimental.
 Use with caution.}
 
-\item{asymmetryAngle}{A numeric or \code{RasterLayer} indicating the angle in degrees
+\item{asymmetryAngle}{A numeric, \code{SpatRaster} or \code{RasterLayer} indicating the angle in degrees
 (0 is "up", as in North on a map),
 that describes which way the \code{asymmetry} is.}
 
@@ -158,8 +158,9 @@ This is likely most useful in repeated iteration cases i.e., if this call
 is using the previous output from this same function.}
 }
 \value{
-Either a \code{data.table} (\code{asRaster=FALSE}) or a \code{RasterLayer}
-(\code{asRaster=TRUE}, the default).
+Either a \code{data.table} (\code{asRaster=FALSE}) or a raster of the same class as
+\code{landscape} -- a \code{SpatRaster}, or a \code{RasterLayer} if that is what was passed
+in (\code{asRaster=TRUE}, the default).
 The \code{data.table} will have one attribute named \code{spreadState}, which
 is a list containing a \code{data.table} of current cluster-level information
 about the spread events.
@@ -167,7 +168,7 @@ If \code{asRaster=TRUE}, then the \code{data.table} (with its \code{spreadState}
 attribute) will be attached to the \code{Raster} as an attribute named \code{pixel} as it
 provides pixel-level information about the spread events.
 
-The \code{RasterLayer} represents every cell in which a successful \code{spread2} event occurred.
+That raster represents every cell in which a successful \code{spread2} event occurred.
 For the case of, say, a fire this would represent every cell that burned.
 If \code{allowOverlap} is \code{TRUE}, the return will always be a \code{data.table}.
 
@@ -217,6 +218,12 @@ and spreads to neighbours, according to the \code{directions}
 and \code{spreadProb} with modifications due to other arguments.
 \strong{NOTE:} \code{\link[=spread]{spread()}} is similar, but sometimes slightly faster, but less
 robust, and more difficult to use iteratively.
+\code{spread2} is \strong{not} a drop-in replacement for \code{spread}: several arguments are
+named differently, and the returned \code{data.table} shares no column names with
+the one returned by \code{spread(returnIndices = TRUE)} (e.g. \code{pixels} rather than
+\code{indices}, \code{initialPixels} rather than \code{initialLocus}, and a character \code{state}
+column rather than a logical \code{active} column). See the section "Differences
+between \code{spread} and \code{spread2}" below before converting existing code.
 }
 \details{
 There are 2 main underlying algorithms for active cells to "spread" to
@@ -311,8 +318,9 @@ on during a spreading event. This will override an event that
 stops probabilistically via \code{spreadProb}, but forcing
 its last set of active cells to try again to find neighbours.
 It will try \code{maxRetriesPerID} times per event, before giving up.
-During those \code{maxRetriesPerID} times, it will try to "jump" up to
-4 cells outwards from each of the active cells, every 5 retries.\cr
+During those \code{maxRetriesPerID} times, on every 10th retry it will
+try to "jump" up to 20 cells outwards from each of the active
+cells.\cr
 \code{iterations} \tab This is a hard cap on the number of internal iterations to
 complete before returning the current state of the system
 as a \code{data.table}.\cr
@@ -326,7 +334,7 @@ This function can be used iteratively, with relatively little overhead compared 
 it non-iteratively. In general, this function can be called with arguments set as user
 needs, and with specifying e.g., \code{iterations = 1}. This means that the function will spread
 outwards 1 iteration, then stop. The returned object will be a \code{data.table} or
-\code{RasterLayer} that can be passed immediately back as the start argument into a subsequent
+raster that can be passed immediately back as the start argument into a subsequent
 call to \code{spread2}. This means that every argument can be updated at each iteration.
 
 When using this function iteratively, there are several things to keep in mind.
@@ -338,7 +346,7 @@ To get the same order, the easiest thing to do is sort the initial \code{start}
 objects by their pixel location, increasing.
 Then, of course, sorting any vectorized arguments (e.g., \code{maxSize}) accordingly.
 
-\strong{NOTE}: the \code{data.table} or \code{RasterLayer} should not be altered
+\strong{NOTE}: the returned \code{data.table} or raster should not be altered
 when passed back into \code{spread2}.
 }
 
@@ -360,6 +368,82 @@ they do not interact (this is slower than if
 \code{allowOverlap = FALSE}). Default is 0. In the case of 2 or 3,
 this would be, perhaps, useful for dispersal of,
 say, insect swarms.
+}
+
+\section{Using \code{spreadCpp()} instead}{
+
+With \code{options(spades.useSpreadCpp = TRUE)}, a call to this function is
+handed to the faster \code{\link[=spreadCpp]{spreadCpp()}}, with its arguments and return value
+converted, so existing code runs unchanged. Results differ from this
+function's for the same seed (see \code{\link[=spreadCpp]{spreadCpp()}}). A call using an argument
+\code{spreadCpp()} does not support runs this function as usual, with a message
+once per session. \code{exactSize} becomes \code{minSize = maxSize} with
+\code{minSizeTries = 0}, and \code{jumpTries = maxRetriesPerID \%/\% 10}.
+\code{spreadCpp()} returns a finished spread, every cell \code{"inactive"} and no
+\code{"spreadState"} attribute, so a call with \code{iterations} below its default,
+which stops part-way to be resumed, runs this function. As in this
+function, an \code{NA} in \code{maxSize} or \code{exactSize} means no size limit for any
+event, and sizes are rounded down to whole cells.
+}
+
+\section{Differences between \code{spread} and \code{spread2}}{
+
+
+\strong{Which to use.} \code{\link[=spread2]{spread2()}} is the more robust of the two: its behaviour is
+better tested, it can be called iteratively (passing its own output back in as
+\code{start}), and more combinations of its arguments work as documented.
+\code{\link[=spread]{spread()}} is generally faster, sometimes substantially so, but several of its
+argument combinations are untested, deprecated, or unimplemented.
+
+\strong{Argument correspondence.} Arguments with the same name in both functions
+generally mean the same thing, with the exceptions noted below.
+
+\tabular{lll}{
+\strong{\code{spread}} \tab \strong{\code{spread2}} \tab \strong{Notes} \cr
+\code{loci} \tab \code{start} \tab In \code{spread2}, \code{start} may also be the \code{data.table}
+or raster returned by a previous \code{spread2} call. \cr
+\code{persistence} \tab \code{persistProb} \tab Default \code{0} vs \code{NA} (\code{NA} behaves as \code{0}). \cr
+\code{returnIndices} \tab \code{asRaster} \tab \code{spread} returns a raster when
+\code{returnIndices = FALSE}, a \code{data.table} when \code{1}/\code{TRUE}, and a bare vector
+of pixel indices when \code{2}. \code{spread2} returns a raster when
+\code{asRaster = TRUE} (the default) and a \code{data.table} when \code{FALSE}; it has no
+equivalent of \code{returnIndices = 2}. \cr
+\code{exactSizes} \tab \code{exactSize} \tab Different types. \code{spread}'s \code{exactSizes}
+is a logical that reinterprets \code{maxSize} as exact; \code{spread2}'s \code{exactSize}
+is itself the numeric vector of target sizes. \cr
+\code{spreadState} \tab \code{start} \tab \code{spread} takes previous state in a dedicated
+argument; \code{spread2} takes it as \code{start}, carrying state in its attributes. \cr
+\code{quick}, \code{skipChecks} \tab \code{skipChecks} \tab \code{spread} accepts either name. \cr
+\code{relativeSpreadProb} \tab \code{spreadProbRel} \tab Different mechanisms: a logical
+rescaling flag vs an actual surface of relative weights. \cr
+\code{allowOverlap} \tab \code{allowOverlap} \tab Logical in \code{spread}; numeric \code{0:3}
+in \code{spread2} (logical accepted for back-compatibility). \cr
+\code{maxSize} \tab \code{maxSize} \tab \code{spread} has default \code{1e8}; \code{spread2} has no
+default and distinguishes supplied from missing. \cr
+\code{mask}, \code{mapID}, \code{lowMemory} \tab -- \tab Not present in \code{spread2}; all three
+are unimplemented or deprecated in \code{spread} as well. \cr
+\code{id}, \code{stopRule}, \code{stopRuleBehavior}, \code{circleMaxRadius} \tab -- \tab
+No equivalent in \code{spread2}. \cr
+-- \tab \code{returnDirections}, \code{returnFrom}, \code{oneNeighbourOnly},
+\code{maxRetriesPerID} \tab No equivalent in \code{spread}. \cr
+}
+
+\strong{Output column names.} This is the most common source of errors when
+converting code. The returned \code{data.table}s share \emph{no} column names:
+
+\tabular{lll}{
+\strong{Meaning} \tab \strong{\code{spread(returnIndices = TRUE)}} \tab \strong{\code{spread2(asRaster = FALSE)}} \cr
+Cell touched by the spread \tab \code{indices} \tab \code{pixels} \cr
+Cell the event started from \tab \code{initialLocus} \tab \code{initialPixels} \cr
+Whether the cell can still spread \tab \code{active} (logical) \tab \code{state}
+(character: \code{"activeSource"}, \code{"successful"}, \code{"inactive"}, \code{"holding"},
+\code{"tooSmall"}) \cr
+Event identifier \tab \code{id} \tab not in the main table; see
+\code{attr(out, "spreadState")$clusterDT$id} \cr
+Distance from origin \tab \code{dists} (only with \code{circle}/\code{allowOverlap}) \tab
+\code{distance} (with \code{returnDistances}) \cr
+Source of the previous step \tab -- \tab \code{from} (with \code{returnFrom}) \cr
+}
 }
 
 \examples{

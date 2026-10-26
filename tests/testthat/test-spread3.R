@@ -5,7 +5,7 @@
 
 ## Build the scenario from the documented example, minus the plotting.
 spread3Setup <- function(seed = 123L, nStart = 30L, maxDim = 10000, res = 100) {
-  ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), res = res, vals = 0)
+  ras <- terra::rast(terra::ext(c(0, maxDim, 0, maxDim)), resolution = res, vals = 0)
   rasQuality <- terra::rast(ras)
   rasQuality[] <- 1
   rasAbundance <- terra::rast(rasQuality)

@@ -6,9 +6,9 @@ test_that("mapReduce: file does not work correctly 1", {
     pkg <- rastDF$pkg[ii]
     cls <- rastDF$class[ii]
     read <- eval(parse(text = rastDF$read[ii]))
-    extFun <- eval(parse(text = rastDF$ext[ii]))
+    extFun <- eval(parse(text = rastDF$extent[ii]))
 
-    ras <- read(extFun(0, 15, 0, 15), res = 1)
+    ras <- read(extFun(0, 15, 0, 15), resolution = 1)
     ras[] <- NA
 
     set.seed(123)
@@ -90,4 +90,19 @@ test_that("mapReduce: file does not work correctly 2", {
     expect_equal(length(unique(as.numeric(terra::values(communities)))),
                  length(unique(as.numeric(terra::values(fullRas)))))
   }
+})
+
+test_that("rasterizeReduced: factor levels table identical to the old unique(data.frame()) result", {
+  ## reference: the implementation before the data.table version
+  oldLevs <- function(vals) {
+    unique(data.frame(id = na.omit(as.numeric(vals)), values = na.omit(vals)))
+  }
+  set.seed(1)
+  lv <- c("q", "x", "y", "z", "w")
+  vals <- factor(sample(c(lv[1:4], NA), 5000, replace = TRUE), levels = lv)
+  expect_identical(.levelsTable(vals), oldLevs(vals))
+  ## all NA, and no duplicates
+  expect_identical(.levelsTable(factor(c(NA, NA), levels = lv)), oldLevs(factor(c(NA, NA), levels = lv)))
+  expect_identical(.levelsTable(factor(lv)), oldLevs(factor(lv)))
+
 })

@@ -35,11 +35,13 @@ jobs:
     # downstream package skips rather than runs. That is the intended
     # trade-off -- this check exists to catch API breakage in SpaDES.tools,
     # not to exercise the downstream's cloud storage.
-    # Pinned to a SHA, not a tag: the newest tag (v0.5 = 62d556f) predates
-    # e74180e, which fixed the no-suggests leg, so pinning to it would bring
-    # that bug back. That SHA is main at the time of pinning.
-    # NOTE: must be the FULL 40-character SHA -- GitHub cannot resolve a
-    # short SHA in `uses:`, and the workflow fails to start with no jobs.
+    # Tracks @main, the org standard: fixes land here without a pin bump, and
+    # PredictiveEcology/actions now gates its own merges with a self-test.
+    # A tag is not safer -- tags do not move, and the newest one
+    # (v0.5 = 62d556f) predates e74180e, which fixed the no-suggests leg.
+    # A SHA bought less isolation than it looked: the reusable workflow
+    # resolves setup-r-deps@main at run time, so pinning the caller never
+    # froze the actions it calls.
     uses: PredictiveEcology/actions/.github/workflows/test-downstream.yaml@main
     with:
       downstream: >-

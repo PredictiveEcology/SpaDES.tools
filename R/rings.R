@@ -82,7 +82,7 @@ rings <- function(landscape, loci = NA_real_, id = FALSE, minRadius = 2, maxRadi
     else
       outRas1 <- raster::raster(landscape)
     outRas1[] <- outRas
-    # outRas <- terra::rast(terra::ext(landscape), res = res(landscape), vals = outRas)
+    # outRas <- terra::rast(terra::ext(landscape), resolution = res(landscape), vals = outRas)
     return(outRas1)
   }
   return(out)

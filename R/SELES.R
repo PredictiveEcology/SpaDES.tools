@@ -127,7 +127,7 @@ initiateAgents <- function(map, numAgents, probInit, asSpatialPoints = TRUE, ind
       stop("uh oh! no indices specified.") # TODO: need error msg
     }
   } else {
-    tmp <- terra::rast(terra::ext(map), res = res(map), vals = 0)
+    tmp <- terra::rast(terra::ext(map), resolution = res(map), vals = 0)
     tmp[indices] <- 1
     return(tmp)
   }

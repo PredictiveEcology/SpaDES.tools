@@ -1,3 +1,53 @@
+# SpaDES.tools 2.2.0
+
+## Behaviour changes
+
+* `adj(returnDT = TRUE)` now always returns a `data.table`.
+  It used to return a matrix when `length(cells)` was at or below `cutoff.for.data.table` (default 2000), which now selects only the internal method.
+  The first affected call in a session warns (#121).
+* `adj(torus = TRUE)` now returns integer cell numbers below `cutoff.for.data.table`, as it already did above it.
+* `spread()` no longer uses `dqrng`, so its results are reproducible from `set.seed()` alone; before, one `spread()` call could change the result of the next.
+  Results change for users who had `dqrng` installed, and `dqrng` is no longer in Suggests (#136).
+
+## New features
+
+* New option `spades.useSpreadCpp` (default `FALSE`).
+  When `TRUE`, `spread()` and `spread2()` hand their calls to `spreadCpp()` where it supports the arguments used, and otherwise run as before, with a message once per session.
+  Results differ from the original functions' for the same seed (#147, #148).
+* `allInRange01()` is exported: a one-pass check that all non-`NA` values are in [0, 1] (#129).
+* `spreadCpp()` is a faster alternative to `spread()` for the common case: a per-cell `spreadProb` (numeric, `SpatRaster` or `RasterLayer`), one or more ignitions, an optional per-fire `maxSize`, and cell indices back.
+  It is about 2x faster (1.6-2.4x over nine scenarios), but no faster when almost none of the landscape burns, so crop to the burnable area.
+  It follows the same spread rules but makes its own random draws, so it does not reproduce `spread()`'s cells for a given seed; burned area and fire-size distributions agree.
+  Arguments it does not support are an error (#139, #147).
+  Two optional rules are off by default:
+  * `minSize` makes each fire reach a minimum size, e.g. to start escaped fires at the escape size.
+    A fire that dies below it is restarted, up to `minSizeTries` times (default 100), so the fires kept resemble fires that reached that size on their own.
+    After that the fire grows by persistence, and `jumpTries` and `jumpMeanDist` let a fire with nothing burnable next to it jump (#141, #142, #143).
+  * `stopCells`, `stopEvent` and `stopAt` stop a fire once it has burned `stopAt` of its own stop cells (#146).
+
+## Performance
+
+* `rasterizeReduced()` builds the levels table of a factor `SpatRaster` faster; the old method took about 3 s on 4.3M pixels (#145).
+* `spread()` is faster, with unchanged results.
+  Its check that `spreadProb` is a probability is about 23x cheaper, so leaving checks on no longer dominates the call on large landscapes.
+  A gridded `spreadProb` is read, and its length checked, once per call instead of every iteration, and each iteration builds less intermediate data (#129, #130, #131, #137, #138).
+
+## Bug fixes
+
+* `adj(returnDT = TRUE, pairs = FALSE, match.adjacent = TRUE)` now returns the unique `to` cells without an `id` column, as other argument combinations do.
+* `spread()` accepts `skipChecks` as an alias for `quick`, as `spread2()` and `spread3()` do; it was silently ignored (#129).
+* `spread()` now works with a numeric `spreadProbLater`, which always failed with "invalid 'size' argument" (#132).
+* `spread()` now works with a per-cell numeric `spreadProb` together with a `spreadProbLater`, which failed with "logical subscript too long" (#130).
+* `spread()` now gives a clear error for two argument combinations it does not implement, `neighProbs` with `returnDistances = TRUE` and `asymmetry` with a per-cell `spreadProb`, and points to `spread2()` (#135).
+* `spread(exactSizes = TRUE)` no longer fails with "object 'spreads' not found" when an event gets stuck (#135).
+* `spread2()` no longer fails with "object 'notAvailable' not found" when `neighProbs` is used with `allowOverlap` (#135).
+* `spread2(maxRetriesPerID = )` now allows exactly that many retries per event, not one more, which can change results for events that reach the cap (#125).
+
+## Documentation and testing
+
+* `?spreadVsSpread2`, included in the help for both functions, lists the differences between `spread()` and `spread2()`, including their arguments and the column names of their results, which share no names (reported by Steve Cumming, #135).
+* `spread2()` tests no longer pass `pad` to `terra::focal()`, which errors on it from terra 1.9-54 (#149).
+
 # SpaDES.tools 2.1.3
 
 ## Deprecated and defunct

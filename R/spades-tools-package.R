@@ -90,6 +90,9 @@
 #'
 #' - `spades.lowMemory`: If true, some functions will use more memory
 #'   efficient (but slower) algorithms. Default `FALSE`.
+#' - `spades.useSpreadCpp`: If `TRUE`, [spread()] and [spread2()] hand
+#'   their calls to the faster [spreadCpp()] where it supports the arguments
+#'   used. Results differ for the same seed. Default `FALSE`.
 #'
 "_PACKAGE"
 

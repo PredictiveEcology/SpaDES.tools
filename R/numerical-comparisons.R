@@ -23,7 +23,7 @@ inRange <- function(x, a = 0, b = 1) {
   if (is.null(x)) return(NULL) # is this desired behaviour?
   if (!is.numeric(x)) {
     if (inherits(x, c("Raster", "SpatRaster"))) {
-      x <- as.vector(x[])
+      x <- .gridValuesVec(x)
     } else {
       stop("x must be numeric.")
     }

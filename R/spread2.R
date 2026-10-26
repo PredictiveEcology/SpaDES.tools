@@ -14,6 +14,12 @@ utils::globalVariables(c(
 #' and `spreadProb` with modifications due to other arguments.
 #' **NOTE:** [spread()] is similar, but sometimes slightly faster, but less
 #' robust, and more difficult to use iteratively.
+#' `spread2` is **not** a drop-in replacement for `spread`: several arguments are
+#' named differently, and the returned `data.table` shares no column names with
+#' the one returned by `spread(returnIndices = TRUE)` (e.g. `pixels` rather than
+#' `indices`, `initialPixels` rather than `initialLocus`, and a character `state`
+#' column rather than a logical `active` column). See the section "Differences
+#' between `spread` and `spread2`" below before converting existing code.
 #'
 #' There are 2 main underlying algorithms for active cells to "spread" to
 #' nearby cells (adjacent cells): `spreadProb` and `neighProb`.
@@ -84,14 +90,15 @@ utils::globalVariables(c(
 #'                       stops probabilistically via `spreadProb`, but forcing
 #'                       its last set of active cells to try again to find neighbours.
 #'                       It will try `maxRetriesPerID` times per event, before giving up.
-#'                       During those `maxRetriesPerID` times, it will try to "jump" up to
-#'                       4 cells outwards from each of the active cells, every 5 retries.\cr
+#'                       During those `maxRetriesPerID` times, on every 10th retry it will
+#'                       try to "jump" up to 20 cells outwards from each of the active
+#'                       cells.\cr
 #'   `iterations` \tab This is a hard cap on the number of internal iterations to
 #'                          complete before returning the current state of the system
 #'                          as a `data.table`.\cr
 #' }
 #'
-#' @param landscape Required. A `RasterLayer` object. This defines the possible
+#' @param landscape Required. A `SpatRaster` or `RasterLayer` object. This defines the possible
 #'                  locations for spreading events to start and `spread2` into. Required.
 #'
 #' @param start Required. Either a vector of pixel numbers to initiate spreading, or a
@@ -101,8 +108,8 @@ utils::globalVariables(c(
 #'              [`cellFromXY()`][terra::cellFromXY].
 #'
 #' @param spreadProb  Numeric of length 1 or length `ncell(landscape)` or
-#'                    a `RasterLayer` that is the identical dimensions as
-#'                    `landscape`.
+#'                    a `SpatRaster` or `RasterLayer` that is the identical dimensions
+#'                    as `landscape`.
 #'                    If numeric of length 1, then this is the global (absolute)
 #'                    probability of spreading into each cell from a neighbour.
 #'                    If a numeric of length `ncell(landscape)` or a raster,
@@ -114,7 +121,7 @@ utils::globalVariables(c(
 #'                    neighbours is equal to the mean of `spreadProb` of
 #'                    the potential neighbours.
 #'
-#' @param persistProb Numeric of length 1 or `RasterLayer`.
+#' @param persistProb Numeric of length 1, or a `SpatRaster` or `RasterLayer`.
 #'                    If numeric of length 1, then this is the global (absolute)
 #'                    probability of cell continuing to burn per time step.
 #'                    If a raster, then this must be the cell-specific (absolute)
@@ -193,7 +200,7 @@ utils::globalVariables(c(
 #'                        the `spread2` for that event with a size that is smaller than
 #'                        `exactSize`. Default 10 times.
 #'
-#' @param asymmetry     A numeric or `RasterLayer` indicating the ratio of the
+#' @param asymmetry     A numeric, `SpatRaster` or `RasterLayer` indicating the ratio of the
 #'                      asymmetry to be used. i.e., 1 is no asymmetry; 2 means that the
 #'                      angles in the direction of the `asymmetryAngle` are 2x the
 #'                      `spreadProb`
@@ -201,7 +208,7 @@ utils::globalVariables(c(
 #'                      NA, indicating no asymmetry. See details. This is still experimental.
 #'                      Use with caution.
 #'
-#' @param asymmetryAngle A numeric or `RasterLayer` indicating the angle in degrees
+#' @param asymmetryAngle A numeric, `SpatRaster` or `RasterLayer` indicating the angle in degrees
 #'                      (0 is "up", as in North on a map),
 #'                      that describes which way the `asymmetry` is.
 #' @param allowOverlap `numeric` (`logical` will work for backwards compatibility).
@@ -245,7 +252,7 @@ utils::globalVariables(c(
 #' it non-iteratively. In general, this function can be called with arguments set as user
 #' needs, and with specifying e.g., `iterations = 1`. This means that the function will spread
 #' outwards 1 iteration, then stop. The returned object will be a `data.table` or
-#' `RasterLayer` that can be passed immediately back as the start argument into a subsequent
+#' raster that can be passed immediately back as the start argument into a subsequent
 #' call to `spread2`. This means that every argument can be updated at each iteration.
 #'
 #' When using this function iteratively, there are several things to keep in mind.
@@ -257,7 +264,7 @@ utils::globalVariables(c(
 #' objects by their pixel location, increasing.
 #' Then, of course, sorting any vectorized arguments (e.g., `maxSize`) accordingly.
 #'
-#' **NOTE**: the `data.table` or `RasterLayer` should not be altered
+#' **NOTE**: the returned `data.table` or raster should not be altered
 #' when passed back into `spread2`.
 #'
 #' @section `allowOverlap`:
@@ -279,8 +286,9 @@ utils::globalVariables(c(
 #'  say, insect swarms.
 #'
 #' @return
-#' Either a `data.table` (`asRaster=FALSE`) or a `RasterLayer`
-#' (`asRaster=TRUE`, the default).
+#' Either a `data.table` (`asRaster=FALSE`) or a raster of the same class as
+#' `landscape` -- a `SpatRaster`, or a `RasterLayer` if that is what was passed
+#' in (`asRaster=TRUE`, the default).
 #' The `data.table` will have one attribute named `spreadState`, which
 #' is a list containing a `data.table` of current cluster-level information
 #' about the spread events.
@@ -288,7 +296,7 @@ utils::globalVariables(c(
 #' attribute) will be attached to the `Raster` as an attribute named `pixel` as it
 #' provides pixel-level information about the spread events.
 #'
-#' The `RasterLayer` represents every cell in which a successful `spread2` event occurred.
+#' That raster represents every cell in which a successful `spread2` event occurred.
 #' For the case of, say, a fire this would represent every cell that burned.
 #' If `allowOverlap` is `TRUE`, the return will always be a `data.table`.
 #'
@@ -341,6 +349,22 @@ utils::globalVariables(c(
 #' @importFrom terra ncell res ncol distance
 #' @importFrom stats runif
 #'
+#' @section Using `spreadCpp()` instead:
+#' With `options(spades.useSpreadCpp = TRUE)`, a call to this function is
+#' handed to the faster [spreadCpp()], with its arguments and return value
+#' converted, so existing code runs unchanged. Results differ from this
+#' function's for the same seed (see [spreadCpp()]). A call using an argument
+#' `spreadCpp()` does not support runs this function as usual, with a message
+#' once per session. `exactSize` becomes `minSize = maxSize` with
+#' `minSizeTries = 0`, and `jumpTries = maxRetriesPerID %/% 10`.
+#' `spreadCpp()` returns a finished spread, every cell `"inactive"` and no
+#' `"spreadState"` attribute, so a call with `iterations` below its default,
+#' which stops part-way to be resumed, runs this function. As in this
+#' function, an `NA` in `maxSize` or `exactSize` means no size limit for any
+#' event, and sizes are rounded down to whole cells.
+#'
+#' @inheritSection spreadVsSpread2 Differences between `spread` and `spread2`
+#'
 #' @seealso [spread()] for a different implementation of the same algorithm.
 #' `spread` is less robust but it is often slightly faster.
 #'
@@ -355,6 +379,25 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
                     asymmetry = NA_real_, asymmetryAngle = NA_real_,
                     allowOverlap = 0, neighProbs = NA_real_, oneNeighbourOnly = FALSE,
                     skipChecks = FALSE) {
+  if (isTRUE(getOption("spades.useSpreadCpp"))) {
+    unsupported <- c(
+      `non-numeric start` = !is.numeric(start), persistProb = .notNA(persistProb),
+      returnDistances = isTRUE(returnDistances), returnDirections = isTRUE(returnDirections),
+      returnFrom = isTRUE(returnFrom), spreadProbRel = .notNA(spreadProbRel),
+      plot.it = isTRUE(plot.it), circle = isTRUE(circle), asymmetry = .notNA(asymmetry),
+      allowOverlap = isTRUE(allowOverlap > 0) || is.na(allowOverlap),
+      neighProbs = .notNA(neighProbs), oneNeighbourOnly = isTRUE(oneNeighbourOnly),
+      `duplicated start` = is.numeric(start) && anyDuplicated(start) > 0,
+      ## fewer generations than the default stop the spread part-way, to be resumed from
+      ## its "activeSource" cells; spreadCpp() returns every cell "inactive"
+      `iterations < 1e6` = !isTRUE(iterations >= 1e6L)
+    )
+    if (.useSpreadCpp("spread2", names(which(unsupported))))
+      return(.spread2ViaCpp(landscape, start, spreadProb, asRaster,
+                            if (missing(maxSize)) Inf else maxSize,
+                            if (missing(exactSize)) NULL else exactSize,
+                            directions, iterations, maxRetriesPerID))
+  }
 
   #### assertions ###############
   checkmate::assertMultiClass(landscape, c("Raster", "SpatRaster"))
@@ -605,7 +648,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       set(dtRetry, NULL, "state", NULL)
       whNeedJump <- which(((clusterDT$numRetries + 1) %% 10) == 0)
       if (length(whNeedJump)) {
-        # jump every 10, starting at 20
+        # every 10th retry, i.e., when numRetries is 9, 19, ...
         resCur <- res(landscape)[1]
         dtRetryJump <- dtRetry[clusterDT[whNeedJump], nomatch = 0]
         fromPixels <- dtRetryJump$pixels
@@ -635,11 +678,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       )
 
       if (exists("dtPotentialJump")) {
-        if (is.data.table(dtPotential)) {
-          dtPotential <- rbindlist(list(dtPotential, as.data.table(dtPotentialJump)))
-        } else {
-          dtPotential <- rbind(dtPotential, dtPotentialJump)
-        }
+        dtPotential <- rbindlist(list(dtPotential, as.data.table(dtPotentialJump)))
         rm("dtPotentialJump")
       }
 
@@ -671,9 +710,6 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
 
     # randomize row order so duplicates are not always in same place
     i <- sample.int(NROW(dtPotential))
-    if (!is.data.table(dtPotential)) {
-      dtPotential <- as.data.table(dtPotential)
-    }
     for (x in colnames(dtPotential)) set(dtPotential, NULL, x, dtPotential[[x]][i])
 
     # Step 3 -- if required -- calculate distances, if required ... attach to dt
@@ -760,7 +796,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
             set(dt, NULL, "state", "successful")
           } else {
             unDTPotAssym <- unique(dtPotentialAsymmetry$from)
-            if (length(unDTPotAssym) == length(unique(dt$pixel))) {
+            if (length(unDTPotAssym) == length(unique(dt$pixels))) {
               set(dt, NULL, "state", "successful")
             } else {
               dt[pixels %in% unDTPotAssym, state := "successful"]
@@ -821,7 +857,13 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # remove duplicates within dtPotential
       dupsWithinDtPotential <- duplicatedInt(dtPotential$to)
       successCells <- dtPotential$to[!dupsWithinDtPotential] # remove the dupsWithinDtPotential
-      potentialNotAvailable <- notAvailable[successCells]
+      # `notAvailable` only exists when `canUseAvailable`; when overlap is allowed
+      # there is nothing to exclude, so nothing is unavailable.
+      potentialNotAvailable <- if (canUseAvailable) {
+        notAvailable[successCells]
+      } else {
+        rep(FALSE, length(successCells))
+      }
       whNoDupsCurItAndAll <- seq_along(dtPotential$to)[!dupsWithinDtPotential][
         !potentialNotAvailable]
       dtPotential <- dtPotential[whNoDupsCurItAndAll]
@@ -1004,7 +1046,7 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
       # neighProbs -- duplication checking already happened, but
       dtPotential <- dtPotential[spreadProbSuccess]
       dt <- rbindlistDtDtpot(dt, dtPotential, returnFrom, needDistance, dtPotentialColNames)
-      if (NROW(dtPotential)) notAvailable[dtPotential$pixels] <- TRUE
+      if (canUseAvailable && NROW(dtPotential)) notAvailable[dtPotential$pixels] <- TRUE
     }
 
     # Step 9 -- Size issues: i.e., if too big (remove extras) or too small (make sure keeps going)
@@ -1062,7 +1104,9 @@ spread2 <- function(landscape, start = ncell(landscape) / 2 - ncol(landscape) / 
           set(clusterDT, NULL, "indClDT", seq_len(NROW(clusterDT)))
           whNeedRetryClusterDT <- clusterDT[dt[whTooSmall]]$indClDT
           set(clusterDT, NULL, "indClDT", NULL)
-          tooManyRetries <- clusterDT[whNeedRetryClusterDT, numRetries > maxRetriesPerID]
+          ## >= not >: numRetries counts retries already made, so stopping at
+          ## the cap makes maxRetriesPerID the maximum rather than one short of it
+          tooManyRetries <- clusterDT[whNeedRetryClusterDT, numRetries >= maxRetriesPerID]
           if (sum(tooManyRetries) > 0) {
             whNeedRetryClusterDT <- whNeedRetryClusterDT[!tooManyRetries]
             whTooSmall <- whTooSmall[!tooManyRetries]
@@ -1233,7 +1277,7 @@ reorderColsWDistance <- function(needDistance, dtPotential, dtPotentialColNames)
 
 #' @param from vector of cell locations which are the "from" or starting cells
 #' @param to vector of same length as `from` which are the "to" or receiving cells
-#' @param landscape `RasterLayer` passed from `spread2`.
+#' @param landscape `SpatRaster` or `RasterLayer` passed from `spread2`.
 #' @param actualAsymmetryAngle Angle in degrees, either a vector length 1 or vector
 #'                             `NROW(dtPotential)`.
 #'

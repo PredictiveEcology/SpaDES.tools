@@ -6,7 +6,7 @@ test_that("spread2 tests", {
   aOrig <- terra::rast(system.file("extdata", "a.tif", package = "SpaDES.tools"))
   bOrig <- terra::rast(aOrig)
 
-  bSimple <- terra::rast(terra::ext(0, 10, 0, 10), res = 1)
+  bSimple <- terra::rast(terra::ext(0, 10, 0, 10), resolution = 1)
 
   spRas <- terra::rast(system.file("extdata", "spRas.tif", package = "SpaDES.tools"))
 
@@ -26,7 +26,7 @@ test_that("spread2 tests", {
     sp <- 0.225
     spRas[] <- spRas[] / reproducible::maxFn(spRas) * sp / 2 + sp / 2 * 1.5
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
     sams <- sample(innerCells, 2)
 
@@ -78,7 +78,7 @@ test_that("spread2 tests", {
       out <- spread2(
         a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE
       )
-      attrib <- attr(out, "spreadState")$cluster$numRetries > 10
+      attrib <- attr(out, "spreadState")$clusterDT$numRetries >= 10
       if (any(attrib)) {
         frequ <- out[, .N, by = "initialPixels"]$N
         expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
@@ -93,7 +93,7 @@ test_that("spread2 tests", {
     for (nnn in 1:20) {
       sams <- sample(innerCells, length(exactSizes))
       out <- spread2(a, start = sams, spreadProb = 0.225, exactSize = exactSizes, asRaster = FALSE)
-      attrib <- attr(out, "spreadState")$clusterDT$numRetries > 10
+      attrib <- attr(out, "spreadState")$clusterDT$numRetries >= 10
       if (any(attrib)) {
         frequ <- out[, .N, by = "initialPixels"]$N
         expect_true(all(frequ[attrib] <= floor(exactSizes[order(sams)][attrib])))
@@ -115,7 +115,8 @@ test_that("spread2 tests", {
       ## was `all(out$numRetries == 11)`, but numRetries is not a column of the
       ## returned table -- it lives in the spreadState attribute, so that
       ## assertion was vacuous (NULL == 11 is logical(0)).
-      expect_equal(unique(attr(out, "spreadState")$clusterDT$numRetries), 11) # current max
+      ## the default maxRetriesPerID, which is the actual maximum
+      expect_equal(unique(attr(out, "spreadState")$clusterDT$numRetries), 10)
     }
 
     if (interactive()) message("test circle = TRUE")
@@ -189,7 +190,7 @@ test_that("spread2 tests", {
     ## TODO: need better test for hov this scales
     #if (interactive()) message("Scales with number of starts, not maxSize of raster")
     #set.seed(21)
-    #b <- terra::rast(terra::ext(0, 33000, 0, 33000), res = 1)
+    #b <- terra::rast(terra::ext(0, 33000, 0, 33000), resolution = 1)
     #sams <- sample(ncell(b), 2)
     #st1 <- system.time({
     #  out <- spread2(b, start = sams, spreadProb = 0.225, allowOverlap = TRUE, asRaster = FALSE)
@@ -346,7 +347,8 @@ test_that("spread2 tests", {
     expect_s3_class(out, "data.table")
     expect_s3_class(out2, "data.table")
     expect_equal(unique(attr(out2, "spreadState")$clusterDT$numRetries), 0)
-    expect_gt(min(attr(out, "spreadState")$clusterDT$numRetries), 10)
+    ## every event reached the cap, which is now maxRetriesPerID itself
+    expect_gte(min(attr(out, "spreadState")$clusterDT$numRetries), 10)
 
     # because loses info on how many retries, it will always be smaller
     expect_gt(min(attr(out, "spreadState")$clusterDT$numRetries -
@@ -393,7 +395,7 @@ test_that("spread2 tests -- asymmetry", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -402,7 +404,7 @@ test_that("spread2 tests -- asymmetry", {
     b <- read(aOrig)
     a <- read(aOrig)
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
 
     set.seed(123)
@@ -586,7 +588,7 @@ test_that("spread2 tests -- asymmetry", {
     ####### Calibration curve
     skip("Calibration curves")
     # n <- 500
-    # ras <- terra::rast(terra::ext(0, 1000, 0, 1000), res = 1)
+    # ras <- terra::rast(terra::ext(0, 1000, 0, 1000), resolution = 1)
     # sp <- runif(n, 0.15, 0.25)
     # sizes <- integer()
     # for (qwe in 1:n) {
@@ -623,7 +625,7 @@ test_that("spread2 returnFrom", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -632,7 +634,7 @@ test_that("spread2 returnFrom", {
     a <- read(aOrig)
     b <- read(aOrig)
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
 
     set.seed(123)
@@ -651,7 +653,7 @@ test_that("spread2 tests", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -659,7 +661,7 @@ test_that("spread2 tests", {
     b <- read(aOrig)
 
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
     sams <- sample(innerCells, 9)
 
@@ -681,7 +683,7 @@ test_that("spread2 works with terra", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -690,7 +692,7 @@ test_that("spread2 works with terra", {
 
     # inputs for x
     b[] <- 1
-    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum, pad = TRUE, padValue = 0)
+    bb <- focal(b, matrix(1 / 9, nrow = 3, ncol = 3), fun = sum)
     innerCells <- which(bb[] %==% 1)
     sams <- sample(innerCells, 9)
 
@@ -708,7 +710,7 @@ test_that("spread2 tests -- persistence", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -883,7 +885,7 @@ test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
   testInit("terra")
   rastDF <- needTerraAndRaster()
 
-  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), res = 1)
+  aOrig <- terra::rast(terra::ext(0, 50, 0, 50), resolution = 1)
 
   for (ii in seq_len(NROW(rastDF))) {
     read <- eval(parse(text = rastDF$read[ii]))
@@ -897,4 +899,72 @@ test_that("spread2 tests -- SpaDES.tools issue #22 NA in spreadProb", {
       spread2(landscape = landscape, spreadProb = spreadProb, start = start, plot.it = FALSE)
     )
   }
+})
+
+test_that("spread2 jumps to cells beyond the reach of ordinary spreading", {
+  testInit(c("terra", "data.table"))
+
+  ## When a cluster stalls below exactSize, spread2() retries, and on every 10th
+  ## retry it jumps -- via cir() -- to cells up to 20 away, merging those
+  ## candidates with the adjacent ones. Nothing else in the suite reaches that
+  ## path. An impassable ring isolates it: ordinary spreading cannot cross a
+  ## spreadProb of 0, so anything beyond the ring got there by jumping.
+  ras <- terra::rast(terra::ext(0, 41, 0, 41), resolution = 1)
+  ras[] <- 0
+  centre <- terra::cellFromXY(ras, cbind(20.5, 20.5))
+  rc <- terra::rowColFromCell(ras, seq_len(terra::ncell(ras)))
+  centreRC <- terra::rowColFromCell(ras, centre)
+  ringDist <- pmax(abs(rc[, 1] - centreRC[1]), abs(rc[, 2] - centreRC[2])) # Chebyshev
+
+  spreadProb <- terra::rast(ras)
+  spreadProb[] <- 1
+  spreadProb[ringDist >= 5 & ringDist <= 8] <- 0 # 4 cells thick, jumps reach 20
+
+  set.seed(1)
+  out <- spread2(ras, start = centre, spreadProb = spreadProb, exactSize = 150,
+                 maxRetriesPerID = 30, asRaster = FALSE, iterations = 300)
+
+  expect_s3_class(out, "data.table")
+  expect_identical(nrow(out), 150L)
+  expect_equal(unique(out$initialPixels), centre)
+
+  dists <- ringDist[out$pixels]
+  expect_identical(sum(dists <= 4), 81L)              # the 9x9 core fills
+  expect_identical(sum(dists >= 5 & dists <= 8), 0L)  # the ring stays empty
+  expect_gt(sum(dists >= 9), 0L)                      # only a jump reaches here
+
+  ## the jump fires on the 10th retry, so the counter has to have got that far
+  expect_gte(attr(out, "spreadState")$clusterDT$numRetries, 9L)
+
+  ## the control: capped below the 10th retry, no jump happens, and the cluster
+  ## cannot leave the core no matter what exactSize asks for
+  set.seed(1)
+  noJump <- spread2(ras, start = centre, spreadProb = spreadProb, exactSize = 150,
+                    maxRetriesPerID = 5, asRaster = FALSE, iterations = 300)
+  expect_identical(nrow(noJump), 81L)
+  expect_identical(sum(ringDist[noJump$pixels] >= 5), 0L)
+})
+
+test_that("spread2 retries up to maxRetriesPerID, reproducibly", {
+  testInit(c("terra", "data.table"))
+
+  ## clusters that cannot reach exactSize at all, so they retry until capped
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), resolution = 1)
+  ras[] <- 0
+  runIt <- function(seed, maxRetries) {
+    set.seed(seed)
+    spread2(ras, start = c(300L, 900L), spreadProb = 0.02, exactSize = c(600, 600),
+            maxRetriesPerID = maxRetries, asRaster = FALSE, iterations = 500)
+  }
+
+  out <- runIt(7, 12)
+  numRetries <- attr(out, "spreadState")$clusterDT$numRetries
+
+  ## retrying stops at the cap -- maxRetriesPerID is the maximum, not one less --
+  ## and gets far enough to have jumped on the way
+  expect_identical(max(numRetries), 12L)
+  expect_gt(max(numRetries), 9L)
+
+  ## the jump draws from the random number stream, so one seed, one answer
+  expect_identical(as.data.frame(out), as.data.frame(runIt(7, 12)))
 })

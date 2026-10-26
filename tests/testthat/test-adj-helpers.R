@@ -109,6 +109,34 @@ test_that("adjPairsMatrix matches adj() exactly on edge / corner cells", {
   }
 })
 
+test_that("adjPairsMatrix `state` drops exactly the non-zero cells, in place", {
+  ## spread() relies on this being identical to filtering the full matrix
+  ## afterwards with `state[to] != 0`, order included.
+  numCol <- 30L; numCell <- 900L
+  set.seed(42)
+  cells <- sample(numCell, 60)
+
+  for (dirs in c(4L, 8L)) {
+    full <- adjPairsMatrix(cells = cells, numCol = numCol,
+                           numCell = numCell, directions = dirs)
+    for (burned in list(integer(numCell),                          # nothing spread to
+                        rep(1L, numCell),                          # everything
+                        replace(integer(numCell), sample(numCell, 400), 7L))) {
+      expect_identical(
+        adjPairsMatrix(cells = cells, numCol = numCol, numCell = numCell,
+                       directions = dirs, state = burned),
+        full[burned[full[, "to"]] == 0L, , drop = FALSE]
+      )
+    }
+  }
+
+  expect_error(
+    adjPairsMatrix(cells = 1L, numCol = numCol, numCell = numCell,
+                   directions = 8L, state = integer(3)),
+    "one element per cell"
+  )
+})
+
 # F. id-mixing guard -----------------------------------------------------
 
 test_that("adjPairsWithId never crosses ids when source cells share neighbours", {
@@ -194,9 +222,6 @@ test_that("spread() consumes RNG identically to baseline (one iteration)", {
   snapDir <- normalizePath(testthat::test_path("_spread_snapshots"), mustWork = FALSE)
   testInit(c("terra", "withr"))
 
-  ## Force base R sample.int by mocking the internal .useDqrng() gate;
-  ## dqrng keeps its own state, which .Random.seed cannot capture.
-  local_mocked_bindings(.useDqrng = function() FALSE)
 
   rngFile <- file.path(snapDir, "rng_state__spread.rds")
   ## fail rather than skip -- see the note in test-spread-snapshots.R

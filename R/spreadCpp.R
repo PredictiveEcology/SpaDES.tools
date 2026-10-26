@@ -1,0 +1,324 @@
+utils::globalVariables(c("id"))
+
+#' Stochastic outward spread, implemented in C++
+#'
+#' A fast, deliberately narrow alternative to [spread()] for the common case: a
+#' per-cell probability of being spread to, one or more starting cells, an
+#' optional per-fire maximum size, and cell indices back.
+#'
+#' @section The rules it follows:
+#'
+#' * **Growth happens in generations.** The cells that caught in one generation
+#'   are the only ones that try to spread in the next, so fires grow outwards
+#'   and a fire's extent is tied to how many generations it has had.
+#' * **One draw per (burning cell, unburned neighbour) pair**, compared against
+#'   `spreadProb` **of the neighbour**, not of the cell doing the spreading. A
+#'   cell with `k` burning neighbours therefore catches with probability
+#'   `1 - (1 - p)^k` in that generation, exactly as in [spread()].
+#' * **A cell belongs to exactly one fire, and is never spread to twice.** Once
+#'   a cell has caught it is never reconsidered. Burning cells are visited in a
+#'   random order within a generation, so when two fires reach the same cell
+#'   neither is systematically favoured.
+#' * **A fire stops at its own `maxSize` and never exceeds it.** [spread()] adds
+#'   a whole generation and then randomly drops the excess; `spreadCpp()` stops
+#'   on the boundary, which lands on `maxSize` exactly.
+#' * **`NA` in `spreadProb` means unburnable**, as in [spread()].
+#'
+#' @section Limitations:
+#'
+#' `spreadCpp()` is deliberately narrow. It covers one case -- a per-cell
+#' probability of being spread to, one or more ignitions, an optional per-fire
+#' size cap -- and takes only the arguments listed above. Every other argument
+#' [spread()] accepts is **unsupported, and passing one is an error rather than
+#' being silently ignored**:
+#'
+#' \describe{
+#'   \item{`allowOverlap`}{Not supported. Fires never overlap; a cell belongs to
+#'     one fire.}
+#'   \item{`returnDistances`, `circle`, `circleMaxRadius`}{Not supported. No
+#'     distances are computed and spread is not constrained to a disc.}
+#'   \item{`asymmetry`, `asymmetryAngle`}{Not supported. Spread is isotropic;
+#'     there is no directional bias.}
+#'   \item{`neighProbs`, `relativeSpreadProb`}{Not supported. Every eligible
+#'     neighbour is drawn for independently; the number of neighbours a cell
+#'     spreads to is not itself drawn from a distribution, and probabilities are
+#'     absolute rather than rescaled within a cell's neighbourhood.}
+#'   \item{`stopRule`, `stopRuleBehavior`}{Not supported. The only stopping
+#'     conditions are `maxSize`, `iterations`, and having nowhere left to go.}
+#'   \item{`exactSizes`}{Not supported, though `maxSize` is exact in the sense
+#'     that a fire which reaches its cap stops there.}
+#'   \item{`persistence`}{Not supported. A burned cell stays burned and does not
+#'     re-burn.}
+#'   \item{`mask`}{Not supported. Use `NA` (or 0) in `spreadProb` to make cells
+#'     unburnable.}
+#'   \item{`spreadState`}{Not supported. A spread cannot be continued from an
+#'     earlier one; each call starts from `loci`.}
+#'   \item{`spreadProbLater`}{Not supported. One `spreadProb` applies to every
+#'     generation.}
+#'   \item{`torus`}{Not supported. The landscape does not wrap; spread stops at
+#'     the edges.}
+#'   \item{`plot.it`, `id`, `returnIndices`}{Not supported as options. Nothing
+#'     is plotted, and the return value is always the indices form.}
+#' }
+#'
+#' Use [spread()] when any of these are needed.
+#'
+#' @section Reproducibility:
+#'
+#' `spreadCpp()` is **not** a drop-in reimplementation of [spread()]. It makes
+#' its own random draws, so for a given seed it does not reproduce [spread()]'s
+#' cells, and swapping one for the other changes results and invalidates cached
+#' output. It is reproducible in the ordinary sense: the same seed and the same
+#' inputs give the same answer.
+#'
+#' What the two do agree on is behaviour in aggregate. Over 300 seeds on a
+#' 1.44M-cell landscape the two produce the same total burned area (Wilcoxon
+#' `p = 0.34`) and the same fire-size distribution (Kolmogorov-Smirnov
+#' `p = 0.56`), with quantiles within 7% of each other from the 10th percentile
+#' to the 99th.
+#'
+#' @section Performance:
+#'
+#' Roughly 2x faster than [spread()] across a range of fire regimes: 1.6-2.4x
+#' over nine scenarios spanning 596 to 188,762 burned cells and landscapes from
+#' 0.36M to 9M cells, median 2.1x.
+#'
+#' **The ratio understates the benefit on the expensive calls, so judge it in
+#' seconds.** Across those nine scenarios the speedup RATIO falls slightly as more
+#' burns (correlation -0.37 with burned cells) while the seconds saved rise
+#' steeply (correlation +0.95). The scenario with the lowest ratio, 161,701 burned
+#' cells at 1.58x, saves 0.048 s per call -- 24 times more than the 2.00x scenario
+#' at the other end, which saves 0.002 s. On real fire-model fits the same holds:
+#' two landscapes whose ratios differ by 30% (1.44x and 1.88x) save almost
+#' identical wall time per objective evaluation (9.5 s and 9.6 s).
+#'
+#' **The gain depends on what fraction of the landscape burns, and it can vanish.**
+#' The per-cell state is allocated once per call and costs the same in both
+#' implementations, so it is pure overhead that neither avoids; what `spreadCpp()`
+#' makes cheaper is the spreading itself. When almost nothing burns, that
+#' overhead dominates and there is nothing left to win. Measured on one landscape
+#' of ~8.4M cells: with 0.13% of it burned, `spreadCpp()` was no faster at all
+#' (0.95x), where scenarios burning 0.7% and 4.2% of their landscapes gave 2.1x
+#' and 2.4x.
+#'
+#' The same allocation makes cost grow with `landscape` size even when the fires
+#' do not: holding the fires fixed, going from 1.44M to 9M cells costs an extra
+#' 0.035 s per call. So if the fires occupy a small part of a large landscape,
+#' crop first and map the indices back -- that both speeds up the call and
+#' restores the advantage. Cropping 1.44M to 300k cells is worth about 30%.
+#'
+#' @param landscape A `SpatRaster`; only its geometry (number of columns and
+#'   cells) is used.
+#' @param loci Integer vector of starting cell indices, one per fire.
+#' @param spreadProb Numeric of length 1 or `terra::ncell(landscape)`, or a
+#'   `SpatRaster` or `RasterLayer` congruent with `landscape`: the probability
+#'   that a cell is spread to.
+#' @param maxSize Numeric of length 1 or `length(loci)`: the largest number of
+#'   cells each fire may reach. `Inf` (the default) means no limit.
+#' @param directions 4 or 8. Default 8.
+#' @param iterations Maximum number of generations. Default `Inf`.
+#' @param minSize Numeric of length 1 or `length(loci)`: a size each fire reaches
+#'   before the normal generation rule applies. While a fire has fewer than
+#'   `minSize` cells, all of its burning cells stay active from one generation to
+#'   the next (persistence) and draw again, with the same `spreadProb`, against
+#'   their still-unburned neighbours, so the fire grows into a patch shaped by
+#'   `spreadProb` rather than dying out early. The generation that reaches
+#'   `minSize` stops there, exactly. The next generation spreads from every cell
+#'   of the patch that still has an unburned, burnable neighbour (its perimeter),
+#'   not only from the cells that caught last; after that only the cells that
+#'   caught in the last generation spread, as usual. A fire under `minSize` with no unburned
+#'   neighbour whose `spreadProb` is above 0 (and not `NA`) stops where it is;
+#'   otherwise only `iterations` limits how long a very low `spreadProb` takes to
+#'   get there. Must not exceed `maxSize`. The default, 0, is the behaviour
+#'   without it, with the same random draws. Used to start every escaped fire at
+#'   the escape size, e.g. `minSize = 9` cells for 50 ha at 5.76-ha cells.
+#' @param jumpTries Integer, default 0 (off). Only for a fire that is still under
+#'   `minSize` and stuck -- none of its burning cells has an unburned neighbour
+#'   with `spreadProb` above 0 -- up to `jumpTries` attempts are made to jump: a
+#'   random cell of the fire, a distance drawn from an exponential with mean
+#'   `jumpMeanDist`, truncated to 1.5-20 cells so it clears the adjacent ring,
+#'   and a uniform direction. A target off the landscape, already burned or
+#'   unburnable is rejected; otherwise it catches with its `spreadProb`. The first
+#'   success joins the fire and the fire keeps growing from all its cells. If
+#'   every attempt fails the fire stops where it is. With 0 no extra random draws
+#'   are made. This is a fixed rule for fires trapped in small patches, not a
+#'   fitted spotting process; spotting tied to fire weather is future work.
+#' @param jumpMeanDist Mean jump distance in cells (see `jumpTries`). Default 3.
+#' @param minSizeTries Integer, default 100. With `minSize` above 1, `minSize` is
+#'   reached by rejection rather than persistence: each fire spreads normally
+#'   from its one ignition cell, and a fire that dies below `minSize` is undone
+#'   (its cells freed, its rows dropped) and started again from its ignition cell,
+#'   up to `minSizeTries` times. A fire that reaches `minSize` is kept and goes on
+#'   uncut, so its size, shape and burning front are those of a fire that got
+#'   there under its own `spreadProb` -- a sample from the fires that reach
+#'   `minSize`. After `minSizeTries` rejections the fire falls back to the
+#'   persistence rule of `minSize` (and `jumpTries`) from its ignition cell. The
+#'   expected number of tries per fire is 1 / P(reaching `minSize`), so a low
+#'   `spreadProb` or a small burnable patch costs more; the result carries an
+#'   attribute `"minSizeTries"`, a `data.table` with each fire's `id`, its
+#'   rejected `tries`, and whether it used the `fallback`. `minSizeTries = 0`
+#'   gives persistence alone (the behaviour before this argument existed, with the
+#'   same random draws). Without `minSize` it has no effect.
+#' @param stopCells,stopEvent,stopAt Optional per-fire stop rule; all `NULL`
+#'   (the default) leaves the results and the random numbers used exactly as
+#'   without them. `stopCells` is a vector of cell indices (indexed like `loci`),
+#'   `stopEvent` the same length: the fire (an index into `loci`, 1-based) each
+#'   stop cell belongs to, and `stopAt` an integer of length 1 or `length(loci)`:
+#'   the number of a fire's own stop cells at which it stops. A cell may be a
+#'   stop cell of several fires, and repeated (cell, fire) pairs count once. Only
+#'   a fire's own stop cells count towards its `stopAt`, and a fire with no stop
+#'   cells never stops by this rule. The fire stops the moment it burns its
+#'   `stopAt`-th stop cell, in the middle of a generation, in the same way as at
+#'   `maxSize`: the cells already burned stay burned and the other fires carry
+#'   on. It interacts with `minSize` and `jumpTries` as `maxSize` does: a fire
+#'   that has stopped is never pushed on to `minSize` or made to jump, and a try
+#'   rejected under `minSizeTries` is undone with its count. The ignition cell
+#'   counts if it is a stop cell. Giving `stopCells` needs `stopEvent` and
+#'   `stopAt`.
+#' @return A `data.table` keyed on `id`, with integer columns `id`,
+#'   `initialLocus` and `indices`, and a logical `active` (always `FALSE`, since
+#'   the spread has finished) -- the same shape [spread()] returns for
+#'   `returnIndices = TRUE`. When `minSize` is above 1 and `minSizeTries` above 0,
+#'   it also carries an attribute `"minSizeTries"`: a `data.table` with one row per
+#'   fire (in `loci` order) and columns `id`, `tries` (its rejected attempts) and
+#'   `fallback` (`TRUE` if it ran out of tries and used persistence). The
+#'   attribute is transient: most `data.table` operations drop it, e.g. subsetting
+#'   or `dt[, .N, by = "id"]`, so read it from the returned object straight away,
+#'   e.g. `attr(out, "minSizeTries")`.
+#'
+#' @seealso [spread()], which is slower but far more general.
+#' @export
+#' @examples
+#' if (requireNamespace("terra", quietly = TRUE)) {
+#'   r <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1, vals = 0)
+#'   set.seed(1)
+#'   out <- spreadCpp(r, loci = c(2500L, 7500L), spreadProb = 0.23,
+#'                    maxSize = c(50, 100))
+#'   out[, .N, by = "id"]
+#' }
+spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
+                      directions = 8L, iterations = Inf, minSize = 0,
+                      jumpTries = 0L, jumpMeanDist = 3, minSizeTries = 100L,
+                      stopCells = NULL, stopEvent = NULL, stopAt = NULL) {
+  numCell <- as.integer(terra::ncell(landscape))
+  numCol <- as.integer(terra::ncol(landscape))
+
+  loci <- as.integer(loci)
+  if (anyNA(loci)) stop("`loci` must not contain NA.")
+  if (.isGridded(spreadProb)) spreadProb <- .gridValuesVec(spreadProb)
+  spreadProb <- as.numeric(spreadProb)
+  if (!(length(spreadProb) == 1L || length(spreadProb) == numCell)) {
+    stop("`spreadProb` must be length 1 or terra::ncell(landscape).")
+  }
+  maxSize <- as.numeric(maxSize)
+  if (!(length(maxSize) == 1L || length(maxSize) == length(loci))) {
+    stop("`maxSize` must be length 1 or length(loci).")
+  }
+
+  minSize <- as.numeric(minSize)
+  if (!(length(minSize) == 1L || length(minSize) == length(loci))) {
+    stop("`minSize` must be length 1 or length(loci).")
+  }
+  if (anyNA(minSize) || any(minSize < 0)) stop("`minSize` must be 0 or more.")
+  if (any(minSize > maxSize)) stop("`minSize` must not exceed `maxSize`.")
+  if (length(jumpTries) != 1L || is.na(jumpTries) || jumpTries < 0) stop("`jumpTries` must be one number, 0 or more.")
+  if (length(jumpMeanDist) != 1L || is.na(jumpMeanDist) || jumpMeanDist <= 0) stop("`jumpMeanDist` must be one positive number.")
+  if (length(minSizeTries) != 1L || is.na(minSizeTries) || minSizeTries < 0) stop("`minSizeTries` must be one number, 0 or more.")
+
+  if (is.null(stopCells)) {
+    if (!is.null(stopEvent) || !is.null(stopAt))
+      stop("`stopEvent` and `stopAt` need `stopCells`.")
+    stopCells <- stopEvent <- stopAt <- integer(0)
+  } else {
+    if (is.null(stopEvent) || is.null(stopAt)) stop("`stopCells` needs `stopEvent` and `stopAt`.")
+    stopCells <- as.integer(stopCells)
+    stopEvent <- as.integer(stopEvent)
+    stopAt <- as.integer(stopAt)
+    if (anyNA(stopCells) || any(stopCells < 1L | stopCells > numCell))
+      stop("`stopCells` must be cell indices within the landscape.")
+    if (length(stopEvent) != length(stopCells)) stop("`stopEvent` must be the same length as `stopCells`.")
+    if (anyNA(stopEvent) || any(stopEvent < 1L | stopEvent > length(loci)))
+      stop("`stopEvent` must be between 1 and length(loci).")
+    if (!(length(stopAt) == 1L || length(stopAt) == length(loci))) stop("`stopAt` must be length 1 or length(loci).")
+    if (anyNA(stopAt) || any(stopAt < 1L)) stop("`stopAt` must be 1 or more.")
+    stopAt <- rep_len(stopAt, length(loci))
+    keep <- !duplicated(data.frame(stopCells, stopEvent))
+    stopCells <- stopCells[keep]
+    stopEvent <- stopEvent[keep]
+  }
+
+  out <- spreadCppEngine(numCol = numCol, numCell = numCell,
+                         directions = as.integer(directions),
+                         loci = loci, spreadProb = spreadProb,
+                         maxSize = maxSize, minSize = minSize,
+                         iterations = as.numeric(iterations),
+                         jumpTries = as.integer(jumpTries),
+                         jumpMeanDist = as.numeric(jumpMeanDist),
+                         minSizeTries = as.integer(minSizeTries),
+                         stopCells = stopCells, stopEvent = stopEvent, stopAt = stopAt)
+
+  dt <- data.table::data.table(id = out$id, initialLocus = out$initialLocus,
+                               indices = out$indices, active = FALSE)
+  data.table::setkeyv(dt, "id")
+  if (length(out$tries))
+    data.table::setattr(dt, "minSizeTries",
+                        data.table::data.table(id = seq_along(loci), tries = out$tries,
+                                               fallback = as.logical(out$fallback)))
+  dt[]
+}
+
+## Hand-off from spread() and spread2() to spreadCpp(), used when
+## `options(spades.useSpreadCpp = TRUE)`. `unsupported` names the arguments
+## of the call that spreadCpp() cannot honour; with any, the caller carries on
+## with its own algorithm, and says so once per session.
+.useSpreadCpp <- function(fn, unsupported) {
+  if (!isTRUE(getOption("spades.useSpreadCpp"))) return(FALSE)
+  if (length(unsupported)) {
+    if (!isTRUE(.pkgEnv$spreadCppFallbackMessaged)) {
+      message("options(spades.useSpreadCpp = TRUE), but ", fn, "() was called with ",
+              paste0("`", unsupported, "`", collapse = ", "), ", which spreadCpp() does not ",
+              "support; using ", fn, "(). This message is shown once per session.")
+      .pkgEnv$spreadCppFallbackMessaged <- TRUE
+    }
+    return(FALSE)
+  }
+  TRUE
+}
+
+## TRUE unless `x` is a single NA, the "not used" default of many spread arguments
+.notNA <- function(x) !(is.atomic(x) && length(x) == 1L && is.na(x))
+
+.spreadViaCpp <- function(landscape, loci, spreadProb, maxSize, exactSizes,
+                          directions, iterations, returnIndices) {
+  if (anyNA(loci)) loci <- middlePixel(landscape)
+  ## as spread(): an all-NA maxSize is no cap, and a fractional one is rounded down
+  maxSize <- if (all(is.na(maxSize))) Inf else floor(maxSize)
+  out <- spreadCpp(landscape, loci = loci, spreadProb = spreadProb, maxSize = maxSize,
+                   minSize = if (isTRUE(exactSizes)) maxSize else 0, minSizeTries = 0L,
+                   directions = directions, iterations = iterations)
+  if (returnIndices == 1) return(out)
+  if (returnIndices == 2) return(out$indices)
+  landscape[] <- 0
+  landscape[out$indices] <- out$id
+  landscape
+}
+
+.spread2ViaCpp <- function(landscape, start, spreadProb, asRaster, maxSize, exactSize,
+                           directions, iterations, maxRetriesPerID) {
+  if (!is.null(exactSize)) maxSize <- exactSize
+  ## as spread2(): any NA in maxSize (or exactSize) means no cap and no exact size for
+  ## every event, and sizes are rounded down to whole cells
+  maxSize <- if (anyNA(maxSize)) Inf else floor(maxSize)
+  minSize <- if (is.null(exactSize) || anyNA(exactSize)) 0 else maxSize
+  ## spread2() jumps on every 10th of its `maxRetriesPerID` retries
+  out <- spreadCpp(landscape, loci = start, spreadProb = spreadProb, maxSize = maxSize,
+                   minSize = minSize, minSizeTries = 0L, jumpTries = maxRetriesPerID %/% 10,
+                   directions = directions, iterations = iterations)
+  dt <- data.table::data.table(initialPixels = out$initialLocus, pixels = out$indices,
+                               state = "inactive")
+  if (!isTRUE(asRaster)) return(dt)
+  ras <- if (inherits(landscape, "Raster")) raster::raster(landscape) else terra::rast(landscape)
+  ras[dt$pixels] <- out$id
+  data.table::setattr(ras, "pixel", dt)
+  ras
+}

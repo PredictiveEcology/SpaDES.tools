@@ -5,8 +5,8 @@ test_that("adj.R results not identical to adjacent", {
   for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     a <- switch(pkg,
-                raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1),
-                terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1))
+                raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), resolution = 1),
+                terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), resolution = 1))
     a[] <- NA
 
     sam <- sample(seq_along(as.vector(a[])), 4)
@@ -129,8 +129,8 @@ test_that("errors in adj are not correct", {
     pkg <- rastDF$pkg[ii]
 
     a <- switch(pkg,
-                raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), res = 1),
-                terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), res = 1))
+                raster = raster::raster(raster::extent(0, 1e1, 0, 1e1), resolution = 1),
+                terra = terra::rast(terra::ext(0, 1e1, 0, 1e1), resolution = 1))
     a[] <- NA
 
     sam <- sample(seq_along(as.vector(a[])), 4)
@@ -145,8 +145,8 @@ test_that("adj.R: torus does not work as expected", {
   for (ii in seq_len(NROW(rastDF))) {
     pkg <- rastDF$pkg[ii]
     a <- switch(pkg,
-                raster = raster::raster(raster::extent(0, 4, 0, 4), res = 1),
-                terra = terra::rast(terra::ext(0, 4, 0, 4), res = 1))
+                raster = raster::raster(raster::extent(0, 4, 0, 4), resolution = 1),
+                terra = terra::rast(terra::ext(0, 4, 0, 4), resolution = 1))
     a[] <- NA
     # test data.table and matrix
     for (i in c(100, 1)) {
@@ -223,7 +223,7 @@ test_that("adj delegates to terra::adjacent without changing its output", {
   ## instead leaves x NULL, which forces the R implementation. The two must
   ## agree exactly -- including row order, which spread()/spread2() rely on for
   ## RNG reproducibility.
-  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), resolution = 1)
   ## as.integer to match what adj() does internally when given `x`:
   ## terra::ncol()/ncell() return doubles, and the R path's arithmetic
   ## inherits that storage type, so passing them raw would compare an
@@ -252,7 +252,7 @@ test_that("adj delegates to terra::adjacent without changing its output", {
 test_that("adj delegation carries id and target through unchanged", {
   testInit(c("terra", "data.table"))
 
-  ras <- terra::rast(terra::ext(0, 40, 0, 40), res = 1)
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), resolution = 1)
   numCol <- as.integer(terra::ncol(ras))
   numCell <- as.integer(terra::ncell(ras))
 
@@ -279,7 +279,7 @@ test_that("adj delegates match.adjacent to terra::adjacent too", {
   ## terra::adjacent is that function's successor -- so it is not a case terra
   ## cannot serve, it is the case terra defines. It differs from terra's own
   ## column order by a fixed permutation.
-  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), resolution = 1)
   numCol <- as.integer(terra::ncol(ras))
   numCell <- as.integer(terra::ncell(ras))
 
@@ -305,7 +305,7 @@ test_that("adj delegates match.adjacent to terra::adjacent too", {
 test_that("adj keeps the R implementation where terra cannot follow", {
   testInit(c("terra", "data.table"))
 
-  ras <- terra::rast(terra::ext(0, 40, 0, 40), res = 1)
+  ras <- terra::rast(terra::ext(0, 40, 0, 40), resolution = 1)
   numCol <- as.integer(terra::ncol(ras))
   numCell <- as.integer(terra::ncell(ras))
   set.seed(3)
@@ -330,7 +330,7 @@ test_that("adj delegates include = TRUE, splicing the focal cell in place", {
   ## terra's own `include` puts the focal cell elsewhere, so the delegated
   ## path leaves it off and splices the cell in at adj()'s position: the
   ## middle of the 3x3 reading order, or first under match.adjacent.
-  ras <- terra::rast(terra::ext(0, 60, 0, 60), res = 1)
+  ras <- terra::rast(terra::ext(0, 60, 0, 60), resolution = 1)
   numCol <- as.integer(terra::ncol(ras))
   numCell <- as.integer(terra::ncell(ras))
 
@@ -355,4 +355,113 @@ test_that("adj delegates include = TRUE, splicing the focal cell in place", {
   ## the focal cell really is present for every input cell
   got <- adj(x = ras, cells = cells, include = TRUE, pairs = TRUE)
   expect_true(all(cells %in% got[, "to"]))
+})
+
+test_that("adj honours returnDT regardless of which internals ran", {
+  testInit(c("terra", "data.table"))
+
+  ## returnDT = TRUE used to be honoured only above cutoff.for.data.table; below
+  ## it the matrix branch ignored the argument and returned a matrix, so the
+  ## return type depended on how many cells you asked about. See #121.
+  ## The once-per-session notice about that has its own test below.
+  assign("warnedAdjReturnDT", TRUE, envir = .pkgEnv)
+
+  ras <- terra::rast(terra::ext(0, 50, 0, 50), resolution = 1)
+  numCol <- as.integer(terra::ncol(ras))
+  numCell <- as.integer(terra::ncell(ras))
+
+  ## contiguous cells, so that "to" has plenty of duplicates: match.adjacent
+  ## without pairs reduces to the unique cells, and the reduction has to happen
+  ## on every path
+  cells <- 600:660
+
+  for (dirs in list(8, 4, "bishop")) {
+    for (prs in c(TRUE, FALSE)) {
+      for (ma in c(TRUE, FALSE)) {
+        for (ids in list(NULL, seq_along(cells))) {
+          for (tor in c(FALSE, TRUE)) {
+            for (srt in c(FALSE, TRUE)) {
+              info <- paste("directions", dirs, "pairs", prs, "match.adjacent", ma,
+                            "id", !is.null(ids), "torus", tor, "sort", srt)
+              args <- list(cells = cells, directions = dirs, pairs = prs, sort = srt,
+                           match.adjacent = ma, id = ids, torus = tor)
+
+              ## the matrix branch and the data.table branch, same call
+              viaMat <- do.call(adj, c(args, list(numCol = numCol, numCell = numCell,
+                                                  returnDT = TRUE,
+                                                  cutoff.for.data.table = 1e6)))
+              viaDT <- do.call(adj, c(args, list(numCol = numCol, numCell = numCell,
+                                                 returnDT = TRUE,
+                                                 cutoff.for.data.table = 1L)))
+              expect_s3_class(viaMat, "data.table")
+              expect_s3_class(viaDT, "data.table")
+              expect_identical(viaMat, viaDT, info = info)
+
+              ## and the terra-delegated path, which torus never reaches
+              if (!tor) {
+                viaTerra <- do.call(adj, c(args, list(x = ras, returnDT = TRUE)))
+                expect_s3_class(viaTerra, "data.table")
+                expect_identical(viaTerra, viaDT, info = info)
+              }
+
+              ## returnDT = FALSE: a matrix, except match.adjacent without pairs,
+              ## which is documented to give a bare vector of unique "to" cells
+              matMat <- do.call(adj, c(args, list(numCol = numCol, numCell = numCell,
+                                                  cutoff.for.data.table = 1e6)))
+              matDT <- do.call(adj, c(args, list(numCol = numCol, numCell = numCell,
+                                                 cutoff.for.data.table = 1L)))
+              if (!prs && ma) {
+                expect_null(dim(matMat), info = info)
+              } else {
+                expect_true(is.matrix(matMat), info = info)
+              }
+              ## integer, on both branches: the torus branch used to promote its
+              ## result to double via sign()
+              expect_identical(typeof(matMat), "integer", info = info)
+              expect_identical(matMat, matDT, info = info)
+            }
+          }
+        }
+      }
+    }
+  }
+})
+
+test_that("adj warns once per session about the returnDT change", {
+  testInit("terra")
+
+  withr::defer(assign("warnedAdjReturnDT", TRUE, envir = .pkgEnv))
+
+  ## The notice is skipped for callers inside SpaDES.tools, and under R CMD check
+  ## the test environment itself sits inside the namespace -- so calls that stand
+  ## in for a user's have to come from outside it.
+  asUser <- function(...) adj(...)
+  environment(asUser) <- new.env(parent = globalenv())
+
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1)
+  cells <- 1:50
+  fresh <- function() assign("warnedAdjReturnDT", NULL, envir = .pkgEnv)
+
+  ## below the cutoff is where the return type changed
+  fresh()
+  expect_warning(asUser(x = ras, cells = cells, returnDT = TRUE,
+                        cutoff.for.data.table = 1e6), "once per session")
+
+  ## once, not once per call
+  expect_no_warning(asUser(x = ras, cells = cells, returnDT = TRUE,
+                           cutoff.for.data.table = 1e6))
+
+  ## above the cutoff the type never changed, and returnDT = FALSE is unaffected
+  fresh()
+  expect_no_warning(asUser(x = ras, cells = cells, returnDT = TRUE,
+                           cutoff.for.data.table = 1L))
+  expect_no_warning(asUser(x = ras, cells = cells, cutoff.for.data.table = 1e6))
+
+  ## calls from inside the package stay silent: spread2() asks for a data.table
+  ## and gets one, so there is nothing for its caller to act on
+  fresh()
+  asPackage <- function(...) adj(...)
+  environment(asPackage) <- asNamespace("SpaDES.tools")
+  expect_no_warning(asPackage(x = ras, cells = cells, returnDT = TRUE,
+                              cutoff.for.data.table = 1e6))
 })
