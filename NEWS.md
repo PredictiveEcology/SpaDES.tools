@@ -1,4 +1,4 @@
-# SpaDES.tools (development version)
+# SpaDES.tools 2.2.0
 
 ## Behaviour changes
 
