@@ -1,5 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://spades-tools.predictiveecology.org/404.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/CLAUDE.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/CONTRIBUTING.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/LICENSE-text.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/authors.html</loc></url>
@@ -26,6 +27,7 @@
 <url><loc>https://spades-tools.predictiveecology.org/reference/gaussMap.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/heading.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/inRange.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/reference/inRange01.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/index.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/initiateAgents.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/matchedPointDirection.html</loc></url>
@@ -48,6 +50,9 @@
 <url><loc>https://spades-tools.predictiveecology.org/reference/spread2-internals.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/spread2.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/spread3.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/reference/spreadCpp.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/reference/spreadCppEngine.html</loc></url>
+<url><loc>https://spades-tools.predictiveecology.org/reference/spreadVsSpread2.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/testEquivalentMetadata.html</loc></url>
 <url><loc>https://spades-tools.predictiveecology.org/reference/wrapTorus.html</loc></url>
 </urlset>
