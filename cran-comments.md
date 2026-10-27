@@ -1,54 +1,40 @@
 ## Why this submission
 
-SpaDES.tools was removed from CRAN on 2026-07-13 because a package it depends
-on, reproducible, had been removed. Nothing was wrong with SpaDES.tools
-itself. reproducible returned to CRAN on 2026-08-25, so SpaDES.tools can be
-restored.
-
-The last version on CRAN was 2.1.1. This submission is 2.1.3, which also
-carries the changes prepared for 2.1.2 (never submitted). See NEWS.md.
+This is a minor release.
+It adds `spreadCpp()`, a faster C++ alternative to `spread()`, and fixes several bugs in `spread()`, `spread2()` and `adj()`; see NEWS.md.
+It also fixes tests that fail with the development version of terra (1.9-54), which now errors on an argument the tests passed to `terra::focal()`.
 
 ## Test environments
 
-Checked with `R CMD check --as-cran --no-manual`. All passed.
+Checked with `R CMD check --as-cran`. All passed.
 
-* Ubuntu 26.04, R 4.6.1 (local)
-* Ubuntu 24.04.4, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
+* Ubuntu 24.04.5, R 4.6.1 (local, with the PDF manual)
+* Ubuntu 24.04.5, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
 * Windows Server 2025, R 4.6.1, R 4.5.3, R 4.4.3, R-devel (4.7.0)
-* macOS 26.5.2, R 4.6.1
+* macOS 26.6.2, R 4.6.1
 * win-builder, R 4.5.3 (oldrelease), R 4.6.1 (release), R-devel (4.7.0)
-* mac-builder, macOS 26.6 arm64, R 4.6.1 Patched (2026-07-27 r90311)
 
-Two of those (Ubuntu and Windows, R 4.6.1) were checked with only the required
-packages installed, not the suggested ones.
+Three of those (local Ubuntu, and Ubuntu and Windows with R 4.6.1) were checked with only the required packages installed, not the suggested ones.
+
+mac-builder could not run the check: on four tries between 2026-10-26 and 2026-10-27 it reported every dependency, Rcpp included, as not available, before checking anything.
+macOS is covered by the GitHub Actions run above.
 
 ## R CMD check results
 
-No ERRORs. No WARNINGs. One NOTE, for the reason given above:
-
-    New submission
-
-    Package was archived on CRAN
-
-    CRAN repository db overrides:
-      X-CRAN-Comment: Archived on 2026-07-13 as requires archived package
-        'reproducible'
+0 errors | 0 warnings | 0 notes
 
 ## Memory and undefined-behaviour checks
 
-This release adds compiled code (Rcpp helpers in `spread()`/`spread2()`), so it
-was additionally checked in the r-hub containers:
+This release adds compiled code (`spreadCpp()`), so it was additionally checked in the r-hub containers with R-devel (2026-10-25 r90763):
 
-* gcc ASAN + UBSAN (`-fsanitize=address,undefined,bounds-strict`): clean
+* gcc ASAN + UBSAN: clean
 * valgrind: clean -- no invalid reads/writes, no uninitialised values,
   `definitely lost: 0 bytes`
-* rchk: no protection-stack or unprotected-variable findings in this package
+* rchk: no findings in this package's code (only in Rcpp's headers)
 
 ## Reverse dependencies
 
-None on CRAN at present. The two that existed, SpaDES.core and SpaDES, were
-removed on 2026-07-13 for the same reason as this package, and are being
-resubmitted.
+We checked 2 reverse dependencies (NetLogoR, SpaDES.core), comparing R CMD check results across the CRAN (2.1.3) and dev versions of this package.
 
-We ran revdepcheck comparing this version against the last CRAN version (2.1.1)
-and saw no new problems.
+ * We saw 0 new problems
+ * We failed to check 0 packages
