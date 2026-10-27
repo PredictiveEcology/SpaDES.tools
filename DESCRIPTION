@@ -27,7 +27,7 @@ URL: https://spades-tools.predictiveecology.org,
     https://github.com/PredictiveEcology/SpaDES.tools
 BugReports: https://github.com/PredictiveEcology/SpaDES.tools/issues
 Depends:
-    R (>= 4.3)
+    R (>= 4.4)
 Imports:
     backports,
     checkmate (>= 1.8.2),

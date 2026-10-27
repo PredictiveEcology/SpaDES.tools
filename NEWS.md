@@ -1,3 +1,9 @@
+# SpaDES.tools (development version)
+
+## Dependency changes
+
+* SpaDES.tools now needs R >= 4.4 (was 4.3), the oldest R version its checks run on.
+
 # SpaDES.tools 2.2.0
 
 ## Behaviour changes
