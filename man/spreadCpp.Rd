@@ -17,7 +17,10 @@ spreadCpp(
   minSizeTries = 100L,
   stopCells = NULL,
   stopEvent = NULL,
-  stopAt = NULL
+  stopAt = NULL,
+  link = NULL,
+  linkPars = NULL,
+  linkOffset = 0
 )
 }
 \arguments{
@@ -99,6 +102,23 @@ that has stopped is never pushed on to \code{minSize} or made to jump, and a try
 rejected under \code{minSizeTries} is undone with its count. The ignition cell
 counts if it is a stop cell. Giving \code{stopCells} needs \code{stopEvent} and
 \code{stopAt}.}
+
+\item{link}{\code{NULL} (the default) or the name of a link, currently only
+\code{"powerLaw"}. With a link, \code{spreadProb} is a linear predictor (\code{NA} still
+means unburnable), and the probability of a cell is computed from it only
+when a fire reaches the cell, so a large landscape costs only the cells the
+fires probe rather than a full probability vector per call. The starting
+cells (\code{loci}) have probability 1. For the same seed the cells burned are
+exactly those of \verb{spreadProb = <the link applied to every cell>} with
+\code{spreadProb[loci] <- 1}.
+\code{"powerLaw"} is \code{p = max(pc - (pc - floor) * exp(-sign(x) * abs(x / gamma)^shape), 0)}
+with \code{x = spreadProb + linkOffset} (the fireSense spread link).}
+
+\item{linkPars}{With \code{link}: a named numeric of the link's parameters. For
+\code{"powerLaw"}: \code{pc}, \code{gamma}, \code{floor} and \code{shape}.}
+
+\item{linkOffset}{With \code{link}: one number added to the linear predictor of
+every cell, e.g. a year effect. Default 0.}
 }
 \value{
 A \code{data.table} keyed on \code{id}, with integer columns \code{id},

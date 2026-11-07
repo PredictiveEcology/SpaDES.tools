@@ -119,12 +119,17 @@ runifC <- function(N) {
 #' @param stopCells Integer vector of stop cells (rule 9); `integer(0)` = none.
 #' @param stopEvent Integer, same length as `stopCells`; the fire (1-based index into `loci`) each stop cell belongs to.
 #' @param stopAt Integer, length `length(loci)`; each fire stops when it has burned this many of its own stop cells.
+#' @param link Integer; 0 (default) means `spreadProb` is the probability. Above 0, `spreadProb` is a
+#'   linear predictor and `link` the link that turns it into a probability, per cell reached (rule 10):
+#'   1 = power law.
+#' @param linkPars Numeric; the link's parameters, in the order of rule 10.
+#' @param linkOffset Numeric, length 1; added to the linear predictor of every cell.
 #'
 #' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
 #'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
 #' @keywords internal
 #' @rdname spreadCppEngine
-spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt) {
-    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt)
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link = 0L, linkPars = as.numeric( c()), linkOffset = 0.0) {
+    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link, linkPars, linkOffset)
 }
 
