@@ -175,6 +175,20 @@ utils::globalVariables(c("id"))
 #'   rejected under `minSizeTries` is undone with its count. The ignition cell
 #'   counts if it is a stop cell. Giving `stopCells` needs `stopEvent` and
 #'   `stopAt`.
+#' @param link `NULL` (the default) or the name of a link, currently only
+#'   `"powerLaw"`. With a link, `spreadProb` is a linear predictor (`NA` still
+#'   means unburnable), and the probability of a cell is computed from it only
+#'   when a fire reaches the cell, so a large landscape costs only the cells the
+#'   fires probe rather than a full probability vector per call. The starting
+#'   cells (`loci`) have probability 1. For the same seed the cells burned are
+#'   exactly those of `spreadProb = <the link applied to every cell>` with
+#'   `spreadProb[loci] <- 1`.
+#'   `"powerLaw"` is `p = max(pc - (pc - floor) * exp(-sign(x) * abs(x / gamma)^shape), 0)`
+#'   with `x = spreadProb + linkOffset` (the fireSense spread link).
+#' @param linkPars With `link`: a named numeric of the link's parameters. For
+#'   `"powerLaw"`: `pc`, `gamma`, `floor` and `shape`.
+#' @param linkOffset With `link`: one number added to the linear predictor of
+#'   every cell, e.g. a year effect. Default 0.
 #' @return A `data.table` keyed on `id`, with integer columns `id`,
 #'   `initialLocus` and `indices`, and a logical `active` (always `FALSE`, since
 #'   the spread has finished) -- the same shape [spread()] returns for
@@ -199,7 +213,8 @@ utils::globalVariables(c("id"))
 spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                       directions = 8L, iterations = Inf, minSize = 0,
                       jumpTries = 0L, jumpMeanDist = 3, minSizeTries = 100L,
-                      stopCells = NULL, stopEvent = NULL, stopAt = NULL) {
+                      stopCells = NULL, stopEvent = NULL, stopAt = NULL,
+                      link = NULL, linkPars = NULL, linkOffset = 0) {
   numCell <- as.integer(terra::ncell(landscape))
   numCol <- as.integer(terra::ncol(landscape))
 
@@ -247,6 +262,22 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
     stopEvent <- stopEvent[keep]
   }
 
+  linkId <- 0L
+  if (is.null(link)) {
+    if (!is.null(linkPars)) stop("`linkPars` needs `link`.")
+  } else {
+    linkId <- match(link, names(.spreadCppLinks))
+    if (length(link) != 1L || is.na(linkId))
+      stop("`link` must be NULL or one of ", paste0("\"", names(.spreadCppLinks), "\"", collapse = ", "), ".")
+    parNames <- .spreadCppLinks[[linkId]]
+    if (is.null(linkPars)) stop("`link = \"", link, "\"` needs `linkPars`: ", paste(parNames, collapse = ", "), ".")
+    miss <- setdiff(parNames, names(linkPars))
+    if (length(miss)) stop("`linkPars` lacks ", paste(miss, collapse = ", "), " for `link = \"", link, "\"`.")
+    linkPars <- as.numeric(linkPars[parNames])
+    if (anyNA(linkPars)) stop("`linkPars` must not be NA.")
+  }
+  if (length(linkOffset) != 1L || !is.finite(linkOffset)) stop("`linkOffset` must be one finite number.")
+
   out <- spreadCppEngine(numCol = numCol, numCell = numCell,
                          directions = as.integer(directions),
                          loci = loci, spreadProb = spreadProb,
@@ -255,7 +286,9 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                          jumpTries = as.integer(jumpTries),
                          jumpMeanDist = as.numeric(jumpMeanDist),
                          minSizeTries = as.integer(minSizeTries),
-                         stopCells = stopCells, stopEvent = stopEvent, stopAt = stopAt)
+                         stopCells = stopCells, stopEvent = stopEvent, stopAt = stopAt,
+                         link = linkId, linkPars = as.numeric(linkPars),
+                         linkOffset = as.numeric(linkOffset))
 
   dt <- data.table::data.table(id = out$id, initialLocus = out$initialLocus,
                                indices = out$indices, active = FALSE)
@@ -266,6 +299,10 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                                                fallback = as.logical(out$fallback)))
   dt[]
 }
+
+## The links of spreadCpp(link =): their parameters, in the order spreadCppEngine() takes them.
+## The position is the engine's link id (rule 10 in src/spread_cpp.cpp).
+.spreadCppLinks <- list(powerLaw = c("pc", "gamma", "floor", "shape"))
 
 ## Hand-off from spread() and spread2() to spreadCpp(), used when
 ## `options(spades.useSpreadCpp = TRUE)`. `unsupported` names the arguments

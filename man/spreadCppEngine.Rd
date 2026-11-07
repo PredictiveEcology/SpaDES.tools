@@ -18,7 +18,10 @@ spreadCppEngine(
   minSizeTries,
   stopCells,
   stopEvent,
-  stopAt
+  stopAt,
+  link = 0L,
+  linkPars = as.numeric(c()),
+  linkOffset = 0
 )
 }
 \arguments{
@@ -50,6 +53,14 @@ with persistence before the normal rule applies (see rule 6). 0 = none.}
 \item{stopEvent}{Integer, same length as \code{stopCells}; the fire (1-based index into \code{loci}) each stop cell belongs to.}
 
 \item{stopAt}{Integer, length \code{length(loci)}; each fire stops when it has burned this many of its own stop cells.}
+
+\item{link}{Integer; 0 (default) means \code{spreadProb} is the probability. Above 0, \code{spreadProb} is a
+linear predictor and \code{link} the link that turns it into a probability, per cell reached (rule 10):
+1 = power law.}
+
+\item{linkPars}{Numeric; the link's parameters, in the order of rule 10.}
+
+\item{linkOffset}{Numeric, length 1; added to the linear predictor of every cell.}
 }
 \value{
 A list of three integer vectors: \code{id}, \code{initialLocus}, \code{indices}; and, per
