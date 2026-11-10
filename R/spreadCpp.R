@@ -185,10 +185,15 @@ utils::globalVariables(c("id"))
 #'   `spreadProb[loci] <- 1`.
 #'   `"powerLaw"` is `p = max(pc - (pc - floor) * exp(-sign(x) * abs(x / gamma)^shape), 0)`
 #'   with `x = spreadProb + linkOffset` (the fireSense spread link).
-#' @param linkPars With `link`: a named numeric of the link's parameters. For
-#'   `"powerLaw"`: `pc`, `gamma`, `floor` and `shape`.
-#' @param linkOffset With `link`: one number added to the linear predictor of
-#'   every cell, e.g. a year effect. Default 0.
+#' @param linkPars With `link`: the link's parameters. Either a named numeric
+#'   (for `"powerLaw"`: `pc`, `gamma`, `floor` and `shape`), used for every cell, or a
+#'   numeric matrix with one row per landscape cell (`terra::ncell(landscape)`) and
+#'   those names as column names, so cells can have different parameters (e.g. several
+#'   ecological land-fire regions). A cell with `pc = floor = 0` is unburnable.
+#' @param linkOffset With `link`: a number added to the linear predictor of every
+#'   cell, e.g. a year effect. Default 0. Either one number, or one per element of
+#'   `loci`: fire `i` then uses `linkOffset[i]` for every cell it tries to spread into
+#'   (a per-fire random effect).
 #' @return A `data.table` keyed on `id`, with integer columns `id`,
 #'   `initialLocus` and `indices`, and a logical `active` (always `FALSE`, since
 #'   the spread has finished) -- the same shape [spread()] returns for
@@ -271,12 +276,18 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
       stop("`link` must be NULL or one of ", paste0("\"", names(.spreadCppLinks), "\"", collapse = ", "), ".")
     parNames <- .spreadCppLinks[[linkId]]
     if (is.null(linkPars)) stop("`link = \"", link, "\"` needs `linkPars`: ", paste(parNames, collapse = ", "), ".")
-    miss <- setdiff(parNames, names(linkPars))
+    nms <- if (is.matrix(linkPars)) colnames(linkPars) else names(linkPars)
+    miss <- setdiff(parNames, nms)
     if (length(miss)) stop("`linkPars` lacks ", paste(miss, collapse = ", "), " for `link = \"", link, "\"`.")
-    linkPars <- as.numeric(linkPars[parNames])
+    if (is.matrix(linkPars)) {
+      if (nrow(linkPars) != numCell) stop("A `linkPars` matrix needs one row per cell (", numCell, ").")
+      linkPars <- linkPars[, parNames, drop = FALSE]
+    } else linkPars <- linkPars[parNames]
+    linkPars <- as.numeric(linkPars)
     if (anyNA(linkPars)) stop("`linkPars` must not be NA.")
   }
-  if (length(linkOffset) != 1L || !is.finite(linkOffset)) stop("`linkOffset` must be one finite number.")
+  if (!(length(linkOffset) %in% c(1L, length(loci))) || !all(is.finite(linkOffset)))
+    stop("`linkOffset` must be finite, length 1 or length(loci).")
 
   out <- spreadCppEngine(numCol = numCol, numCell = numCell,
                          directions = as.integer(directions),

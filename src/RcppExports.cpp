@@ -74,7 +74,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // spreadCppEngine
-List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, NumericVector minSize, double iterations, int jumpTries, double jumpMeanDist, int minSizeTries, IntegerVector stopCells, IntegerVector stopEvent, IntegerVector stopAt, int link, NumericVector linkPars, double linkOffset);
+List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, NumericVector minSize, double iterations, int jumpTries, double jumpMeanDist, int minSizeTries, IntegerVector stopCells, IntegerVector stopEvent, IntegerVector stopAt, int link, NumericVector linkPars, NumericVector linkOffset);
 RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP minSizeSEXP, SEXP iterationsSEXP, SEXP jumpTriesSEXP, SEXP jumpMeanDistSEXP, SEXP minSizeTriesSEXP, SEXP stopCellsSEXP, SEXP stopEventSEXP, SEXP stopAtSEXP, SEXP linkSEXP, SEXP linkParsSEXP, SEXP linkOffsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -95,7 +95,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type stopAt(stopAtSEXP);
     Rcpp::traits::input_parameter< int >::type link(linkSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type linkPars(linkParsSEXP);
-    Rcpp::traits::input_parameter< double >::type linkOffset(linkOffsetSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type linkOffset(linkOffsetSEXP);
     rcpp_result_gen = Rcpp::wrap(spreadCppEngine(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link, linkPars, linkOffset));
     return rcpp_result_gen;
 END_RCPP

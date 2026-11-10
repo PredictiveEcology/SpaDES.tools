@@ -4,6 +4,8 @@
 
 * `spreadCpp()` gains `link`, `linkPars` and `linkOffset`. With `link = "powerLaw"`, `spreadProb` is a linear predictor, and a cell's probability is computed only when a fire reaches it, instead of a full probability vector being built for every call. For the same seed it burns exactly the cells of the full-vector call. Existing calls and their results are unchanged.
 
+* `spreadCpp(link =)`: `linkOffset` can be a vector with one element per fire (`loci`), so each fire has its own offset on the link scale (a per-fire random effect); `linkPars` can be a matrix with one row per landscape cell and the link's parameter names as columns, so cells can have different parameters. A scalar `linkOffset` and a named-vector `linkPars` behave as before, with the same results for the same seed.
+
 ## Dependency changes
 
 * SpaDES.tools now needs R >= 4.4 (was 4.3), the oldest R version its checks run on (#154).

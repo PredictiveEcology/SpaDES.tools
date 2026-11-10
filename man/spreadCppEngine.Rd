@@ -21,7 +21,7 @@ spreadCppEngine(
   stopAt,
   link = 0L,
   linkPars = as.numeric(c()),
-  linkOffset = 0
+  linkOffset = as.numeric(c(0))
 )
 }
 \arguments{
@@ -58,9 +58,11 @@ with persistence before the normal rule applies (see rule 6). 0 = none.}
 linear predictor and \code{link} the link that turns it into a probability, per cell reached (rule 10):
 1 = power law.}
 
-\item{linkPars}{Numeric; the link's parameters, in the order of rule 10.}
+\item{linkPars}{Numeric; the link's parameters, in the order of rule 10: either one set
+(length 4 for the power law), or one set per cell, column-major (length 4 * \code{numCell}).}
 
-\item{linkOffset}{Numeric, length 1; added to the linear predictor of every cell.}
+\item{linkOffset}{Numeric, length 1 or one per starting cell; added to the linear predictor
+of every cell a fire probes (fire \code{i} uses element \code{i}).}
 }
 \value{
 A list of three integer vectors: \code{id}, \code{initialLocus}, \code{indices}; and, per

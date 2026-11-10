@@ -53,5 +53,69 @@ test_that("spreadCpp(link =) checks its arguments", {
   expect_error(spreadCpp(ras, loci = 1L, spreadProb = 0, link = "powerLaw", linkPars = pars[-2]), "gamma")
   expect_error(spreadCpp(ras, loci = 1L, spreadProb = 0, link = "powerLaw", linkPars = pars,
                          linkOffset = c(1, 2)), "linkOffset")
+  expect_error(spreadCpp(ras, loci = 1:3, spreadProb = 0, link = "powerLaw", linkPars = pars,
+                         linkOffset = c(1, 2)), "linkOffset")
+  expect_error(spreadCpp(ras, loci = 1L, spreadProb = 0, link = "powerLaw", linkPars = pars,
+                         linkOffset = NA_real_), "linkOffset")
+  expect_error(spreadCpp(ras, loci = 1L, spreadProb = 0, link = "powerLaw",
+                         linkPars = matrix(pars, 3, 4, byrow = TRUE, dimnames = list(NULL, names(pars)))), "one row per cell")
+  expect_error(spreadCpp(ras, loci = 1L, spreadProb = 0, link = "powerLaw",
+                         linkPars = matrix(pars, terra::ncell(ras), 4, byrow = TRUE)), "pc")
   expect_error(spreadCpp(ras, loci = 1L, spreadProb = 0.1, linkPars = pars), "link")
+})
+
+test_that("a vector of equal linkOffsets is the scalar, for the same seed", {
+  testInit(c("terra", "data.table", "withr"))
+  ras <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1, vals = 0)
+  n <- terra::ncell(ras)
+  lp <- withr::with_seed(5, stats::rnorm(n, 0.5, 1))
+  loci <- withr::with_seed(6, sample.int(n, 20L))
+  pars <- c(pc = 0.26, gamma = 1.9, floor = 0.12, shape = 1)
+  args <- list(ras, loci = loci, spreadProb = lp, link = "powerLaw", linkPars = pars, minSize = 5,
+               minSizeTries = 3L, jumpTries = 10L, jumpMeanDist = 3)
+  a <- withr::with_seed(1, do.call(spreadCpp, c(args, list(linkOffset = 0.7))))
+  b <- withr::with_seed(1, do.call(spreadCpp, c(args, list(linkOffset = rep(0.7, length(loci))))))
+  expect_identical(b, a)
+  expect_gt(nrow(a), length(loci))
+})
+
+test_that("each fire uses its own linkOffset", {
+  testInit(c("terra", "data.table", "withr"))
+  ras <- terra::rast(terra::ext(0, 200, 0, 100), resolution = 1, vals = 0)
+  pars <- c(pc = 0.5, gamma = 1, floor = 0, shape = 1)
+  loci <- terra::cellFromRowCol(ras, 50, c(50, 150))
+  sizes <- vapply(1:20, function(s) {
+    out <- withr::with_seed(s, spreadCpp(ras, loci = loci, spreadProb = 0, link = "powerLaw",
+                                         linkPars = pars, linkOffset = c(-3, 3)))
+    as.numeric(table(factor(out$id, 1:2)))
+  }, numeric(2))
+  expect_true(all(sizes[1, ] < sizes[2, ]))
+  expect_lt(median(sizes[1, ]), 50)
+  expect_gt(median(sizes[2, ]), 500)
+})
+
+test_that("a linkPars matrix with identical rows is the vector, and rows differ by cell", {
+  testInit(c("terra", "data.table", "withr"))
+  ras <- terra::rast(terra::ext(0, 100, 0, 100), resolution = 1, vals = 0)
+  n <- terra::ncell(ras)
+  lp <- withr::with_seed(5, stats::rnorm(n, 0.5, 1))
+  loci <- withr::with_seed(6, sample.int(n, 20L))
+  pars <- c(pc = 0.26, gamma = 1.9, floor = 0.12, shape = 1)
+  m <- matrix(rep(pars[c("shape", "floor", "gamma", "pc")], each = n), n, 4,
+              dimnames = list(NULL, c("shape", "floor", "gamma", "pc")))   # column order does not matter
+  args <- list(ras, loci = loci, spreadProb = lp, link = "powerLaw", minSize = 5, minSizeTries = 3L,
+               jumpTries = 10L, jumpMeanDist = 3, linkOffset = rnorm(length(loci)))
+  a <- withr::with_seed(1, do.call(spreadCpp, c(args, list(linkPars = pars))))
+  b <- withr::with_seed(1, do.call(spreadCpp, c(args, list(linkPars = m))))
+  expect_identical(b, a)
+
+  ## pc = floor = 0 is unburnable: the left half burns nothing but its starting cells
+  left <- terra::colFromCell(ras, seq_len(n)) <= 50
+  m0 <- m
+  m0[left, c("pc", "floor")] <- 0
+  loci2 <- terra::cellFromRowCol(ras, 50, c(10, 60))
+  out <- withr::with_seed(2, spreadCpp(ras, loci = loci2, spreadProb = 5, link = "powerLaw", linkPars = m0))
+  expect_identical(sum(out$id == 1), 1L)
+  expect_gt(sum(out$id == 2), 100)
+  expect_false(any(out$id == 2 & left[out$indices]))
 })
