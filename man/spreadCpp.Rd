@@ -114,11 +114,16 @@ exactly those of \verb{spreadProb = <the link applied to every cell>} with
 \code{"powerLaw"} is \code{p = max(pc - (pc - floor) * exp(-sign(x) * abs(x / gamma)^shape), 0)}
 with \code{x = spreadProb + linkOffset} (the fireSense spread link).}
 
-\item{linkPars}{With \code{link}: a named numeric of the link's parameters. For
-\code{"powerLaw"}: \code{pc}, \code{gamma}, \code{floor} and \code{shape}.}
+\item{linkPars}{With \code{link}: the link's parameters. Either a named numeric
+(for \code{"powerLaw"}: \code{pc}, \code{gamma}, \code{floor} and \code{shape}), used for every cell, or a
+numeric matrix with one row per landscape cell (\code{terra::ncell(landscape)}) and
+those names as column names, so cells can have different parameters (e.g. several
+ecological land-fire regions). A cell with \code{pc = floor = 0} is unburnable.}
 
-\item{linkOffset}{With \code{link}: one number added to the linear predictor of
-every cell, e.g. a year effect. Default 0.}
+\item{linkOffset}{With \code{link}: a number added to the linear predictor of every
+cell, e.g. a year effect. Default 0. Either one number, or one per element of
+\code{loci}: fire \code{i} then uses \code{linkOffset[i]} for every cell it tries to spread into
+(a per-fire random effect).}
 }
 \value{
 A \code{data.table} keyed on \code{id}, with integer columns \code{id},

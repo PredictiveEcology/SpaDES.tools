@@ -122,14 +122,16 @@ runifC <- function(N) {
 #' @param link Integer; 0 (default) means `spreadProb` is the probability. Above 0, `spreadProb` is a
 #'   linear predictor and `link` the link that turns it into a probability, per cell reached (rule 10):
 #'   1 = power law.
-#' @param linkPars Numeric; the link's parameters, in the order of rule 10.
-#' @param linkOffset Numeric, length 1; added to the linear predictor of every cell.
+#' @param linkPars Numeric; the link's parameters, in the order of rule 10: either one set
+#'   (length 4 for the power law), or one set per cell, column-major (length 4 * `numCell`).
+#' @param linkOffset Numeric, length 1 or one per starting cell; added to the linear predictor
+#'   of every cell a fire probes (fire `i` uses element `i`).
 #'
 #' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
 #'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
 #' @keywords internal
 #' @rdname spreadCppEngine
-spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link = 0L, linkPars = as.numeric( c()), linkOffset = 0.0) {
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link = 0L, linkPars = as.numeric( c()), linkOffset = as.numeric( c(0.0))) {
     .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link, linkPars, linkOffset)
 }
 

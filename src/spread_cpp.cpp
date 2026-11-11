@@ -118,8 +118,10 @@ static inline void checkGridCpp(int numCol, int numCell, int directions) {
 //' @param link Integer; 0 (default) means `spreadProb` is the probability. Above 0, `spreadProb` is a
 //'   linear predictor and `link` the link that turns it into a probability, per cell reached (rule 10):
 //'   1 = power law.
-//' @param linkPars Numeric; the link's parameters, in the order of rule 10.
-//' @param linkOffset Numeric, length 1; added to the linear predictor of every cell.
+//' @param linkPars Numeric; the link's parameters, in the order of rule 10: either one set
+//'   (length 4 for the power law), or one set per cell, column-major (length 4 * `numCell`).
+//' @param linkOffset Numeric, length 1 or one per starting cell; added to the linear predictor
+//'   of every cell a fire probes (fire `i` uses element `i`).
 //'
 //' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
 //'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
@@ -132,7 +134,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
                      int jumpTries, double jumpMeanDist, int minSizeTries,
                      IntegerVector stopCells, IntegerVector stopEvent, IntegerVector stopAt,
                      int link = 0, NumericVector linkPars = NumericVector::create(),
-                     double linkOffset = 0.0) {
+                     NumericVector linkOffset = NumericVector::create(0.0)) {
   checkGridCpp(numCol, numCell, directions);
 
   const int nFire = (int) loci.size();
@@ -158,22 +160,29 @@ List spreadCppEngine(int numCol, int numCell, int directions,
 
   // rule 10: the probability of cell t (1-based). Without a link it is spreadProb itself.
   if (link < 0 || link > 1) stop("`link` must be 0 (none) or 1 (power law), not %d.", link);
-  if (link == 1 && linkPars.size() != 4)
-    stop("The power-law link needs 4 `linkPars`: pc, gamma, floor, shape.");
-  const double lk1 = (link > 0) ? linkPars[0] : 0.0, lk2 = (link > 0) ? linkPars[1] : 0.0,
-    lk3 = (link > 0) ? linkPars[2] : 0.0, lk4 = (link > 0) ? linkPars[3] : 0.0;
+  const R_xlen_t nlp = linkPars.size();
+  if (link == 1 && nlp != 4 && nlp != 4 * (R_xlen_t) numCell)
+    stop("The power-law link needs 4 `linkPars` (pc, gamma, floor, shape), or 4 per cell.");
+  const bool perCellPars = (link > 0) && nlp != 4;
+  const R_xlen_t no = linkOffset.size();
+  if (no != 1 && no != nFire)
+    stop("`linkOffset` must be length 1 or one per starting cell.");
+  const double *lkp = linkPars.begin();
   std::vector<int> sortedLoci;
   if (link > 0) {
     sortedLoci.assign(loci.begin(), loci.end());
     std::sort(sortedLoci.begin(), sortedLoci.end());
   }
-  auto probOf = [&](int t) -> double {
+  auto probOf = [&](int t, int f) -> double {
     const double v = oneProb ? p0 : pp[t - 1];
     if (link == 0) return v;
     if (std::binary_search(sortedLoci.begin(), sortedLoci.end(), t)) return 1.0;
     if (ISNAN(v)) return NA_REAL;
     // power law: the arithmetic of fireSenseUtils::powerLawLink(), so the doubles are the same
-    const double x = v + linkOffset;
+    const double x = v + ((no == 1) ? linkOffset[0] : linkOffset[f]);
+    const double *q = perCellPars ? lkp + (t - 1) : lkp;               // column-major: stride numCell
+    const R_xlen_t st = perCellPars ? (R_xlen_t) numCell : 1;
+    const double lk1 = q[0], lk2 = q[st], lk3 = q[2 * st], lk4 = q[3 * st];
     const double s = (x > 0.0) ? 1.0 : ((x < 0.0) ? -1.0 : 0.0);
     const double p = lk1 - (lk1 - lk3) * std::exp(-s * R_pow(std::fabs(x / lk2), lk4));
     return (p < 0.0) ? 0.0 : p;
@@ -350,7 +359,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
         if (t < 1 || t > numCell) continue;                // off top/bottom
         if (state[(size_t) t - 1] != 0) continue;          // already burned
 
-        double p = probOf(t);
+        double p = probOf(t, f);
         if (ISNAN(p)) p = 0.0;
         if (isBlob && p > 0.0) fuelSeen[(size_t) f] = 1;   // something left to burn
         if (unif_rand() > p) continue;                     // did not catch
@@ -445,7 +454,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
             if (r1 < 0 || r1 >= numRow || c1 < 0 || c1 >= numCol) continue;  // off the landscape
             const int t = r1 * numCol + c1 + 1;
             if (state[(size_t) t - 1] != 0) continue;                      // already burned
-            double p = probOf(t);
+            double p = probOf(t, f);
             if (ISNAN(p) || !(p > 0.0)) continue;                          // unburnable
             if (unif_rand() > p) continue;                                 // did not catch
             state[(size_t) t - 1] = f + 1;
@@ -492,7 +501,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
               const int t = c + dr[d] * numCol + dc[d];
               if (t < 1 || t > numCell) continue;
               if (state[(size_t) t - 1] != 0) continue;
-              const double p = probOf(t);
+              const double p = probOf(t, f);
               if (!ISNAN(p) && p > 0.0) edge = true;
             }
             if (edge) { actCell.push_back(c); actFire.push_back(f); }
