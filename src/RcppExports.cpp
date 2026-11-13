@@ -73,6 +73,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// linkProbCpp
+NumericVector linkProbCpp(int link, NumericVector x, NumericVector linkPars);
+RcppExport SEXP _SpaDES_tools_linkProbCpp(SEXP linkSEXP, SEXP xSEXP, SEXP linkParsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type link(linkSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type linkPars(linkParsSEXP);
+    rcpp_result_gen = Rcpp::wrap(linkProbCpp(link, x, linkPars));
+    return rcpp_result_gen;
+END_RCPP
+}
 // spreadCppEngine
 List spreadCppEngine(int numCol, int numCell, int directions, IntegerVector loci, NumericVector spreadProb, NumericVector maxSize, NumericVector minSize, double iterations, int jumpTries, double jumpMeanDist, int minSizeTries, IntegerVector stopCells, IntegerVector stopEvent, IntegerVector stopAt, int link, NumericVector linkPars, NumericVector linkOffset);
 RcppExport SEXP _SpaDES_tools_spreadCppEngine(SEXP numColSEXP, SEXP numCellSEXP, SEXP directionsSEXP, SEXP lociSEXP, SEXP spreadProbSEXP, SEXP maxSizeSEXP, SEXP minSizeSEXP, SEXP iterationsSEXP, SEXP jumpTriesSEXP, SEXP jumpMeanDistSEXP, SEXP minSizeTriesSEXP, SEXP stopCellsSEXP, SEXP stopEventSEXP, SEXP stopAtSEXP, SEXP linkSEXP, SEXP linkParsSEXP, SEXP linkOffsetSEXP) {
@@ -107,6 +120,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SpaDES_tools_duplicatedInt", (DL_FUNC) &_SpaDES_tools_duplicatedInt, 1},
     {"_SpaDES_tools_allInRange01", (DL_FUNC) &_SpaDES_tools_allInRange01, 1},
     {"_SpaDES_tools_runifC", (DL_FUNC) &_SpaDES_tools_runifC, 1},
+    {"_SpaDES_tools_linkProbCpp", (DL_FUNC) &_SpaDES_tools_linkProbCpp, 3},
     {"_SpaDES_tools_spreadCppEngine", (DL_FUNC) &_SpaDES_tools_spreadCppEngine, 17},
     {NULL, NULL, 0}
 };

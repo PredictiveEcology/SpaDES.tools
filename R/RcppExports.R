@@ -99,6 +99,18 @@ runifC <- function(N) {
     .Call(`_SpaDES_tools_runifC`, N)
 }
 
+#' The link of rule 10 on its own, for tests
+#'
+#' @param link Integer; 1, 2 or 3 (rule 10).
+#' @param x Numeric; linear predictors.
+#' @param linkPars Numeric; one set of the link's parameters.
+#' @return Numeric, the probability of each `x`.
+#' @keywords internal
+#' @rdname spreadCppEngine
+linkProbCpp <- function(link, x, linkPars) {
+    .Call(`_SpaDES_tools_linkProbCpp`, link, x, linkPars)
+}
+
 #' Stochastic outward spread, in C++
 #'
 #' Internal engine for [spreadCpp()]. See the comments in `src/spread_cpp.cpp`
@@ -121,9 +133,9 @@ runifC <- function(N) {
 #' @param stopAt Integer, length `length(loci)`; each fire stops when it has burned this many of its own stop cells.
 #' @param link Integer; 0 (default) means `spreadProb` is the probability. Above 0, `spreadProb` is a
 #'   linear predictor and `link` the link that turns it into a probability, per cell reached (rule 10):
-#'   1 = power law.
+#'   1 = power law, 2 = power law with a lower asymptote, 3 = Richards.
 #' @param linkPars Numeric; the link's parameters, in the order of rule 10: either one set
-#'   (length 4 for the power law), or one set per cell, column-major (length 4 * `numCell`).
+#'   (length 4, 5 and 4 for links 1, 2 and 3), or one set per cell, column-major (that length times `numCell`).
 #' @param linkOffset Numeric, length 1 or one per starting cell; added to the linear predictor
 #'   of every cell a fire probes (fire `i` uses element `i`).
 #'

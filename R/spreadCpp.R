@@ -175,8 +175,8 @@ utils::globalVariables(c("id"))
 #'   rejected under `minSizeTries` is undone with its count. The ignition cell
 #'   counts if it is a stop cell. Giving `stopCells` needs `stopEvent` and
 #'   `stopAt`.
-#' @param link `NULL` (the default) or the name of a link, currently only
-#'   `"powerLaw"`. With a link, `spreadProb` is a linear predictor (`NA` still
+#' @param link `NULL` (the default) or the name of a link: `"powerLaw"`,
+#'   `"powerLawSmooth"` or `"richards"`. With a link, `spreadProb` is a linear predictor (`NA` still
 #'   means unburnable), and the probability of a cell is computed from it only
 #'   when a fire reaches the cell, so a large landscape costs only the cells the
 #'   fires probe rather than a full probability vector per call. The starting
@@ -184,9 +184,16 @@ utils::globalVariables(c("id"))
 #'   exactly those of `spreadProb = <the link applied to every cell>` with
 #'   `spreadProb[loci] <- 1`.
 #'   `"powerLaw"` is `p = max(pc - (pc - floor) * exp(-sign(x) * abs(x / gamma)^shape), 0)`
-#'   with `x = spreadProb + linkOffset` (the fireSense spread link).
+#'   with `x = spreadProb + linkOffset` (the fireSense spread link). Its `floor` is `p` at `x = 0`; for `x < 0` it falls to
+#'   0, so a cell with a low enough linear predictor cannot burn.
+#'   `"powerLawSmooth"` is the same for `x >= 0`; for `x < 0` it is
+#'   `lower + (floor - lower) * exp(-((pc - floor) / (floor - lower)) * abs(x / gamma)^shape)` (`floor` if `lower == floor`),
+#'   so `p` never falls below the lower asymptote `lower`.
+#'   `"richards"` is `p = lower + (pc - lower) / (1 + nu * exp(-B * x))^(1 / nu)` (Gompertz, `lower + (pc - lower) * exp(-exp(-B * x))`,
+#'   for `nu = 0`).
 #' @param linkPars With `link`: the link's parameters. Either a named numeric
-#'   (for `"powerLaw"`: `pc`, `gamma`, `floor` and `shape`), used for every cell, or a
+#'   (for `"powerLaw"`: `pc`, `gamma`, `floor` and `shape`; for `"powerLawSmooth"` those and `lower`; for `"richards"`: `pc`,
+#'   `lower`, `nu` and `B`), used for every cell, or a
 #'   numeric matrix with one row per landscape cell (`terra::ncell(landscape)`) and
 #'   those names as column names, so cells can have different parameters (e.g. several
 #'   ecological land-fire regions). A cell with `pc = floor = 0` is unburnable.
@@ -285,6 +292,11 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
     } else linkPars <- linkPars[parNames]
     linkPars <- as.numeric(linkPars)
     if (anyNA(linkPars)) stop("`linkPars` must not be NA.")
+    pm <- matrix(linkPars, ncol = length(parNames), dimnames = list(NULL, parNames))
+    if (link == "powerLawSmooth" && !all(pm[, "lower"] >= 0 & pm[, "lower"] <= pm[, "floor"]))
+      stop("`linkPars` `lower` must be between 0 and `floor` for `link = \"powerLawSmooth\"`.")
+    if (link == "richards" && !all(pm[, "nu"] >= 0 & pm[, "lower"] >= 0 & pm[, "lower"] <= pm[, "pc"]))
+      stop("`linkPars` `nu` must be 0 or more, and `lower` between 0 and `pc`, for `link = \"richards\"`.")
   }
   if (!(length(linkOffset) %in% c(1L, length(loci))) || !all(is.finite(linkOffset)))
     stop("`linkOffset` must be finite, length 1 or length(loci).")
@@ -313,7 +325,9 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
 
 ## The links of spreadCpp(link =): their parameters, in the order spreadCppEngine() takes them.
 ## The position is the engine's link id (rule 10 in src/spread_cpp.cpp).
-.spreadCppLinks <- list(powerLaw = c("pc", "gamma", "floor", "shape"))
+.spreadCppLinks <- list(powerLaw = c("pc", "gamma", "floor", "shape"),
+                        powerLawSmooth = c("pc", "gamma", "floor", "shape", "lower"),
+                        richards = c("pc", "lower", "nu", "B"))
 
 ## Hand-off from spread() and spread2() to spreadCpp(), used when
 ## `options(spades.useSpreadCpp = TRUE)`. `unsupported` names the arguments

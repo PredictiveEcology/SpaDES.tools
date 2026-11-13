@@ -79,6 +79,17 @@ using namespace Rcpp;
 //     Links (id: linkPars, in this order):
 //       1 power law: pc, gamma, floor, shape;
 //         p = max(pc - (pc - floor) * exp(-sign(x) * |x / gamma|^shape), 0).
+//       2 power law with a lower asymptote: pc, gamma, floor, shape, lower;
+//         x >= 0: as the power law (so p = floor at x = 0);
+//         x < 0: p = lower + (floor - lower) * exp(-((pc - floor) / (floor - lower)) * |x / gamma|^shape),
+//         or floor when lower == floor. Continuous at 0 and never below `lower`.
+//       3 Richards (generalized logistic): pc, lower, nu, B;
+//         p = lower + (pc - lower) / (1 + nu * exp(-B * x))^(1 / nu), written
+//         lower + (pc - lower) * exp(-log1p(nu * exp(-B * x)) / nu); nu = 0 is Gompertz,
+//         lower + (pc - lower) * exp(-exp(-B * x)).
+//     With one set of linkPars they apply to every cell; with one set per cell
+//     the parameters are given column-major (all cells' first parameter, then
+//     all cells' second, ...).
 //
 // NA spreadProb is treated as 0, i.e. unburnable, as spread() does.
 
@@ -93,6 +104,43 @@ static inline void checkGridCpp(int numCol, int numCell, int directions) {
     stop("`numCol` (%d) cannot exceed `numCell` (%d).", numCol, numCell);
   if (numCell > std::numeric_limits<int>::max() - numCol - 1)
     stop("`numCell` (%d) is too large; neighbour arithmetic would overflow.", numCell);
+}
+
+// rule 10: the number of parameters of link 0-3
+static const int linkNPar[] = {0, 4, 5, 4};
+
+// rule 10: the probability of linear predictor x under link 1-3, with parameters q[0], q[st], q[2 * st], ...
+static inline double linkProbability(int link, double x, const double *q, R_xlen_t st) {
+  if (link == 3) {
+    const double pc = q[0], lo = q[st], nu = q[2 * st], B = q[3 * st];
+    const double e = std::exp(-B * x);
+    return lo + (pc - lo) * ((nu == 0.0) ? std::exp(-e) : std::exp(-std::log1p(nu * e) / nu));
+  }
+  const double lk1 = q[0], lk2 = q[st], lk3 = q[2 * st], lk4 = q[3 * st];
+  if (link == 2 && x < 0.0) {
+    const double lo = q[4 * st];
+    return (lo == lk3) ? lk3 : lo + (lk3 - lo) * std::exp(-((lk1 - lk3) / (lk3 - lo)) * R_pow(std::fabs(x / lk2), lk4));
+  }
+  const double s = (x > 0.0) ? 1.0 : ((x < 0.0) ? -1.0 : 0.0);
+  const double p = lk1 - (lk1 - lk3) * std::exp(-s * R_pow(std::fabs(x / lk2), lk4));
+  return (p < 0.0) ? 0.0 : p;
+}
+
+//' The link of rule 10 on its own, for tests
+//'
+//' @param link Integer; 1, 2 or 3 (rule 10).
+//' @param x Numeric; linear predictors.
+//' @param linkPars Numeric; one set of the link's parameters.
+//' @return Numeric, the probability of each `x`.
+//' @keywords internal
+//' @rdname spreadCppEngine
+// [[Rcpp::export]]
+NumericVector linkProbCpp(int link, NumericVector x, NumericVector linkPars) {
+  if (link < 1 || link > 3) stop("`link` must be 1, 2 or 3.");
+  if (linkPars.size() != linkNPar[link]) stop("Link %d needs %d `linkPars`.", link, linkNPar[link]);
+  NumericVector out(x.size());
+  for (R_xlen_t i = 0; i < x.size(); ++i) out[i] = linkProbability(link, x[i], linkPars.begin(), 1);
+  return out;
 }
 
 //' Stochastic outward spread, in C++
@@ -117,9 +165,9 @@ static inline void checkGridCpp(int numCol, int numCell, int directions) {
 //' @param stopAt Integer, length `length(loci)`; each fire stops when it has burned this many of its own stop cells.
 //' @param link Integer; 0 (default) means `spreadProb` is the probability. Above 0, `spreadProb` is a
 //'   linear predictor and `link` the link that turns it into a probability, per cell reached (rule 10):
-//'   1 = power law.
+//'   1 = power law, 2 = power law with a lower asymptote, 3 = Richards.
 //' @param linkPars Numeric; the link's parameters, in the order of rule 10: either one set
-//'   (length 4 for the power law), or one set per cell, column-major (length 4 * `numCell`).
+//'   (length 4, 5 and 4 for links 1, 2 and 3), or one set per cell, column-major (that length times `numCell`).
 //' @param linkOffset Numeric, length 1 or one per starting cell; added to the linear predictor
 //'   of every cell a fire probes (fire `i` uses element `i`).
 //'
@@ -159,11 +207,13 @@ List spreadCppEngine(int numCol, int numCell, int directions,
   const double p0 = oneProb ? pp[0] : 0.0;
 
   // rule 10: the probability of cell t (1-based). Without a link it is spreadProb itself.
-  if (link < 0 || link > 1) stop("`link` must be 0 (none) or 1 (power law), not %d.", link);
+  if (link < 0 || link > 3)
+    stop("`link` must be 0 (none), 1 (power law), 2 (power law with a lower asymptote) or 3 (Richards), not %d.", link);
   const R_xlen_t nlp = linkPars.size();
-  if (link == 1 && nlp != 4 && nlp != 4 * (R_xlen_t) numCell)
-    stop("The power-law link needs 4 `linkPars` (pc, gamma, floor, shape), or 4 per cell.");
-  const bool perCellPars = (link > 0) && nlp != 4;
+  const R_xlen_t npar = linkNPar[link];
+  if (link > 0 && nlp != npar && nlp != npar * (R_xlen_t) numCell)
+    stop("Link %d needs %d `linkPars` (rule 10), or %d per cell.", link, (int) npar, (int) npar);
+  const bool perCellPars = (link > 0) && nlp != npar;
   const R_xlen_t no = linkOffset.size();
   if (no != 1 && no != nFire)
     stop("`linkOffset` must be length 1 or one per starting cell.");
@@ -178,14 +228,10 @@ List spreadCppEngine(int numCol, int numCell, int directions,
     if (link == 0) return v;
     if (std::binary_search(sortedLoci.begin(), sortedLoci.end(), t)) return 1.0;
     if (ISNAN(v)) return NA_REAL;
-    // power law: the arithmetic of fireSenseUtils::powerLawLink(), so the doubles are the same
+    // the arithmetic of fireSenseUtils::powerLawLink(), powerLawSmoothLink() and richardsLink(), so the doubles are the same
     const double x = v + ((no == 1) ? linkOffset[0] : linkOffset[f]);
-    const double *q = perCellPars ? lkp + (t - 1) : lkp;               // column-major: stride numCell
-    const R_xlen_t st = perCellPars ? (R_xlen_t) numCell : 1;
-    const double lk1 = q[0], lk2 = q[st], lk3 = q[2 * st], lk4 = q[3 * st];
-    const double s = (x > 0.0) ? 1.0 : ((x < 0.0) ? -1.0 : 0.0);
-    const double p = lk1 - (lk1 - lk3) * std::exp(-s * R_pow(std::fabs(x / lk2), lk4));
-    return (p < 0.0) ? 0.0 : p;
+    return linkProbability(link, x, perCellPars ? lkp + (t - 1) : lkp,     // column-major: stride numCell
+                           perCellPars ? (R_xlen_t) numCell : 1);
   };
 
   // per-fire cap, as a cell count; a non-finite or missing maxSize means no cap
