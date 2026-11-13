@@ -103,8 +103,8 @@ rejected under \code{minSizeTries} is undone with its count. The ignition cell
 counts if it is a stop cell. Giving \code{stopCells} needs \code{stopEvent} and
 \code{stopAt}.}
 
-\item{link}{\code{NULL} (the default) or the name of a link, currently only
-\code{"powerLaw"}. With a link, \code{spreadProb} is a linear predictor (\code{NA} still
+\item{link}{\code{NULL} (the default) or the name of a link: \code{"powerLaw"},
+\code{"powerLawSmooth"} or \code{"richards"}. With a link, \code{spreadProb} is a linear predictor (\code{NA} still
 means unburnable), and the probability of a cell is computed from it only
 when a fire reaches the cell, so a large landscape costs only the cells the
 fires probe rather than a full probability vector per call. The starting
@@ -112,10 +112,17 @@ cells (\code{loci}) have probability 1. For the same seed the cells burned are
 exactly those of \verb{spreadProb = <the link applied to every cell>} with
 \code{spreadProb[loci] <- 1}.
 \code{"powerLaw"} is \code{p = max(pc - (pc - floor) * exp(-sign(x) * abs(x / gamma)^shape), 0)}
-with \code{x = spreadProb + linkOffset} (the fireSense spread link).}
+with \code{x = spreadProb + linkOffset} (the fireSense spread link). Its \code{floor} is \code{p} at \code{x = 0}; for \code{x < 0} it falls to
+0, so a cell with a low enough linear predictor cannot burn.
+\code{"powerLawSmooth"} is the same for \code{x >= 0}; for \code{x < 0} it is
+\code{lower + (floor - lower) * exp(-((pc - floor) / (floor - lower)) * abs(x / gamma)^shape)} (\code{floor} if \code{lower == floor}),
+so \code{p} never falls below the lower asymptote \code{lower}.
+\code{"richards"} is \code{p = lower + (pc - lower) / (1 + nu * exp(-B * x))^(1 / nu)} (Gompertz, \code{lower + (pc - lower) * exp(-exp(-B * x))},
+for \code{nu = 0}).}
 
 \item{linkPars}{With \code{link}: the link's parameters. Either a named numeric
-(for \code{"powerLaw"}: \code{pc}, \code{gamma}, \code{floor} and \code{shape}), used for every cell, or a
+(for \code{"powerLaw"}: \code{pc}, \code{gamma}, \code{floor} and \code{shape}; for \code{"powerLawSmooth"} those and \code{lower}; for \code{"richards"}: \code{pc},
+\code{lower}, \code{nu} and \code{B}), used for every cell, or a
 numeric matrix with one row per landscape cell (\code{terra::ncell(landscape)}) and
 those names as column names, so cells can have different parameters (e.g. several
 ecological land-fire regions). A cell with \code{pc = floor = 0} is unburnable.}
