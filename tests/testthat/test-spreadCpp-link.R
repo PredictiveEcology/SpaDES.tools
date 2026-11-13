@@ -153,13 +153,14 @@ linkCases <- function() {
   cases
 }
 
-test_that("links 2 and 3 are the R forms, double for double, on a grid of x", {
+test_that("links 2 and 3 are the R forms, to within 1e-12, on a grid of x", {
+  ## not bit for bit: compilers and platforms differ in the last bit (FMA contraction, libm exp and pow)
   for (cs in linkCases()) {
-    expect_identical(linkProbCpp(cs$id, cs$x, cs$pars), cs$ref)
+    expect_equal(linkProbCpp(cs$id, cs$x, cs$pars), cs$ref, tolerance = 1e-12)
   }
   ## link 1 is unchanged
   x <- c(-50, -1, 0, 0.5, 3)
-  expect_identical(linkProbCpp(1L, x, c(0.26, 1.9, 0.13, 1)), powerLawRef(x, 0.26, 1.9, 0.13, 1))
+  expect_equal(linkProbCpp(1L, x, c(0.26, 1.9, 0.13, 1)), powerLawRef(x, 0.26, 1.9, 0.13, 1), tolerance = 1e-12)
 })
 
 test_that("links 2 and 3 have a lower asymptote; link 1 falls to 0", {

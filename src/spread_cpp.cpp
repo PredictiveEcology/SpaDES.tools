@@ -87,6 +87,9 @@ using namespace Rcpp;
 //         p = lower + (pc - lower) / (1 + nu * exp(-B * x))^(1 / nu), written
 //         lower + (pc - lower) * exp(-log1p(nu * exp(-B * x)) / nu); nu = 0 is Gompertz,
 //         lower + (pc - lower) * exp(-exp(-B * x)).
+//     The arithmetic is that of the fireSenseUtils R links, to within 1e-12. Callers who need a finite minSize phase
+//     (rule 6) must give lower > 0: with lower = 0 the probability can be so small that a fire under minSize retries
+//     for about 1 / p generations.
 //     With one set of linkPars they apply to every cell; with one set per cell
 //     the parameters are given column-major (all cells' first parameter, then
 //     all cells' second, ...).
@@ -228,7 +231,7 @@ List spreadCppEngine(int numCol, int numCell, int directions,
     if (link == 0) return v;
     if (std::binary_search(sortedLoci.begin(), sortedLoci.end(), t)) return 1.0;
     if (ISNAN(v)) return NA_REAL;
-    // the arithmetic of fireSenseUtils::powerLawLink(), powerLawSmoothLink() and richardsLink(), so the doubles are the same
+    // the arithmetic of fireSenseUtils::powerLawLink(), powerLawSmoothLink() and richardsLink(), so the values agree to within 1e-12 (not bit for bit: compilers differ in the last bit)
     const double x = v + ((no == 1) ? linkOffset[0] : linkOffset[f]);
     return linkProbability(link, x, perCellPars ? lkp + (t - 1) : lkp,     // column-major: stride numCell
                            perCellPars ? (R_xlen_t) numCell : 1);
