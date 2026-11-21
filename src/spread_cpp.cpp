@@ -208,10 +208,6 @@ List spreadCppEngine(int numCol, int numCell, int directions,
                      NumericVector linkOffset = NumericVector::create(0.0),
                      bool checkPars = true) {
   checkGridCpp(numCol, numCell, directions);
-  if (checkPars && link > 0 && link <= 3) {
-    const R_xlen_t n = linkPars.size() == (R_xlen_t) linkNPar[link] * numCell ? numCell : 1;
-    if (linkPars.size() == (R_xlen_t) linkNPar[link] * n) checkLinkPars(link, linkPars.begin(), n, n);
-  }
 
   const int nFire = (int) loci.size();
   if (nFire == 0) {
@@ -242,6 +238,10 @@ List spreadCppEngine(int numCol, int numCell, int directions,
   if (link > 0 && nlp != npar && nlp != npar * (R_xlen_t) numCell)
     stop("Link %d needs %d `linkPars` (rule 10), or %d per cell.", link, (int) npar, (int) npar);
   const bool perCellPars = (link > 0) && nlp != npar;
+  if (checkPars && link > 0) {
+    const R_xlen_t n = perCellPars ? (R_xlen_t) numCell : 1;
+    checkLinkPars(link, linkPars.begin(), n, n);
+  }
   const R_xlen_t no = linkOffset.size();
   if (no != 1 && no != nFire)
     stop("`linkOffset` must be length 1 or one per starting cell.");

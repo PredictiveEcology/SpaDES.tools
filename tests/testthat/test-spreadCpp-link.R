@@ -329,3 +329,15 @@ test_that("linkPars checks still error for the matrix and the vector forms", {
   expect_error(go("richards", badNA), "must not be NA")
   expect_no_error(spreadCpp(ras, loci = 1L, spreadProb = 0, link = "richards", linkPars = mat(ri), checkLinkPars = FALSE))
 })
+
+test_that("a wrongly sized linkPars gives the engine's size error, checked or not", {
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1, vals = 0)
+  n <- terra::ncell(ras)
+  ri <- c(pc = 0.4, lower = 0.02, nu = 0.5, B = 1.2)
+  for (chk in c(TRUE, FALSE)) {
+    for (bad in list(1:3 + 0.1, rep(0.1, 4 * n - 1)))
+      expect_error(SpaDES.tools:::spreadCppEngine(20L, n, 8L, 1L, 0, Inf, 0, Inf, 0L, 3, 0L, integer(), integer(), integer(),
+                                                  link = 3L, linkPars = bad, linkOffset = 0, checkPars = chk),
+                   "Link 3 needs 4 `linkPars`")
+  }
+})
