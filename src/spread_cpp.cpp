@@ -129,6 +129,25 @@ static inline double linkProbability(int link, double x, const double *q, R_xlen
   return (p < 0.0) ? 0.0 : p;
 }
 
+// rule 10: the checks of the link's parameters, one pass over them, whether one set or one per cell
+// (column-major, `st` apart). No NA; and for link 2 `lower` between 0 and `floor`, for link 3
+// `nu` >= 0 and `lower` between 0 and `pc`.
+static inline void checkLinkPars(int link, const double *q, R_xlen_t n, R_xlen_t st) {
+  // `x != x` is NaN (R's NA too); written out so the loops vectorise. `|` not `||` for the same reason.
+  int na = 0, bad = 0;
+  for (R_xlen_t i = 0; i < n * linkNPar[link]; ++i) na |= (q[i] != q[i]);
+  if (na) stop("`linkPars` must not be NA.");
+  if (link == 2) {
+    const double *lo = q + 4 * st, *fl = q + 2 * st;
+    for (R_xlen_t i = 0; i < n; ++i) bad |= !((lo[i] >= 0.0) & (lo[i] <= fl[i]));
+    if (bad) stop("`linkPars` `lower` must be between 0 and `floor` for `link = \"powerLawSmooth\"`.");
+  } else if (link == 3) {
+    const double *lo = q + st, *nu = q + 2 * st;
+    for (R_xlen_t i = 0; i < n; ++i) bad |= !((nu[i] >= 0.0) & (lo[i] >= 0.0) & (lo[i] <= q[i]));
+    if (bad) stop("`linkPars` `nu` must be 0 or more, and `lower` between 0 and `pc`, for `link = \"richards\"`.");
+  }
+}
+
 //' The link of rule 10 on its own, for tests
 //'
 //' @param link Integer; 1, 2 or 3 (rule 10).
@@ -187,6 +206,10 @@ List spreadCppEngine(int numCol, int numCell, int directions,
                      int link = 0, NumericVector linkPars = NumericVector::create(),
                      NumericVector linkOffset = NumericVector::create(0.0)) {
   checkGridCpp(numCol, numCell, directions);
+  if (link > 0 && link <= 3) {
+    const R_xlen_t n = linkPars.size() == (R_xlen_t) linkNPar[link] * numCell ? numCell : 1;
+    if (linkPars.size() == (R_xlen_t) linkNPar[link] * n) checkLinkPars(link, linkPars.begin(), n, n);
+  }
 
   const int nFire = (int) loci.size();
   if (nFire == 0) {

@@ -6,6 +6,10 @@
 
 * `spreadCpp(link =)`: `linkOffset` can be a vector with one element per fire (`loci`), so each fire has its own offset on the link scale (a per-fire random effect); `linkPars` can be a matrix with one row per landscape cell and the link's parameter names as columns, so cells can have different parameters. A scalar `linkOffset` and a named-vector `linkPars` behave as before, with the same results for the same seed.
 
+## Performance
+
+* `spreadCpp(link =)` no longer copies a `linkPars` matrix. A double matrix whose columns are the link's parameters in order goes to the engine as it is, and the checks of the parameters (no `NA`; `lower`, `nu`) are one pass in C++ instead of several full-length R temporaries. For a 7-million-cell, 5-column matrix a call took 0.6-0.8 s before the spread started; it now takes milliseconds. Results and error messages are unchanged; other forms (other column order, integer storage, named vector) work as before.
+
 ## Dependency changes
 
 * SpaDES.tools now needs R >= 4.4 (was 4.3), the oldest R version its checks run on (#154).

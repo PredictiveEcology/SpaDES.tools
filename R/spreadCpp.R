@@ -288,15 +288,11 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
     if (length(miss)) stop("`linkPars` lacks ", paste(miss, collapse = ", "), " for `link = \"", link, "\"`.")
     if (is.matrix(linkPars)) {
       if (nrow(linkPars) != numCell) stop("A `linkPars` matrix needs one row per cell (", numCell, ").")
-      linkPars <- linkPars[, parNames, drop = FALSE]
+      ## a double matrix with exactly these columns is the engine's column-major vector already
+      if (!is.double(linkPars) || !identical(colnames(linkPars), parNames))
+        linkPars <- linkPars[, parNames, drop = FALSE]
     } else linkPars <- linkPars[parNames]
-    linkPars <- as.numeric(linkPars)
-    if (anyNA(linkPars)) stop("`linkPars` must not be NA.")
-    pm <- matrix(linkPars, ncol = length(parNames), dimnames = list(NULL, parNames))
-    if (link == "powerLawSmooth" && !all(pm[, "lower"] >= 0 & pm[, "lower"] <= pm[, "floor"]))
-      stop("`linkPars` `lower` must be between 0 and `floor` for `link = \"powerLawSmooth\"`.")
-    if (link == "richards" && !all(pm[, "nu"] >= 0 & pm[, "lower"] >= 0 & pm[, "lower"] <= pm[, "pc"]))
-      stop("`linkPars` `nu` must be 0 or more, and `lower` between 0 and `pc`, for `link = \"richards\"`.")
+    if (!is.double(linkPars) || !is.matrix(linkPars)) linkPars <- as.numeric(linkPars)
   }
   if (!(length(linkOffset) %in% c(1L, length(loci))) || !all(is.finite(linkOffset)))
     stop("`linkOffset` must be finite, length 1 or length(loci).")
@@ -310,7 +306,7 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                          jumpMeanDist = as.numeric(jumpMeanDist),
                          minSizeTries = as.integer(minSizeTries),
                          stopCells = stopCells, stopEvent = stopEvent, stopAt = stopAt,
-                         link = linkId, linkPars = as.numeric(linkPars),
+                         link = linkId, linkPars = if (is.null(linkPars)) numeric() else linkPars,
                          linkOffset = as.numeric(linkOffset))
 
   dt <- data.table::data.table(id = out$id, initialLocus = out$initialLocus,
