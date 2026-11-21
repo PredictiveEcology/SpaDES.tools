@@ -20,7 +20,8 @@ spreadCpp(
   stopAt = NULL,
   link = NULL,
   linkPars = NULL,
-  linkOffset = 0
+  linkOffset = 0,
+  checkLinkPars = TRUE
 )
 }
 \arguments{
@@ -131,6 +132,12 @@ ecological land-fire regions). A cell with \code{pc = floor = 0} is unburnable.}
 cell, e.g. a year effect. Default 0. Either one number, or one per element of
 \code{loci}: fire \code{i} then uses \code{linkOffset[i]} for every cell it tries to spread into
 (a per-fire random effect).}
+
+\item{checkLinkPars}{Logical, default \code{TRUE}: check \code{linkPars} before the spread (no \code{NA}; for
+\code{"powerLawSmooth"} \code{lower} between 0 and \code{floor}; for \code{"richards"} \code{nu} 0 or more and \code{lower} between 0 and \code{pc}),
+one pass over every row of a matrix. A caller that calls \code{spreadCpp()} many times with one matrix it has already
+checked can give \code{FALSE} to skip it: for a matrix of several million rows the pass costs about as much as the spread.
+Invalid parameters are then not detected.}
 }
 \value{
 A \code{data.table} keyed on \code{id}, with integer columns \code{id},

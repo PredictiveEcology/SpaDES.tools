@@ -201,6 +201,11 @@ utils::globalVariables(c("id"))
 #'   cell, e.g. a year effect. Default 0. Either one number, or one per element of
 #'   `loci`: fire `i` then uses `linkOffset[i]` for every cell it tries to spread into
 #'   (a per-fire random effect).
+#' @param checkLinkPars Logical, default `TRUE`: check `linkPars` before the spread (no `NA`; for
+#'   `"powerLawSmooth"` `lower` between 0 and `floor`; for `"richards"` `nu` 0 or more and `lower` between 0 and `pc`),
+#'   one pass over every row of a matrix. A caller that calls `spreadCpp()` many times with one matrix it has already
+#'   checked can give `FALSE` to skip it: for a matrix of several million rows the pass costs about as much as the spread.
+#'   Invalid parameters are then not detected.
 #' @return A `data.table` keyed on `id`, with integer columns `id`,
 #'   `initialLocus` and `indices`, and a logical `active` (always `FALSE`, since
 #'   the spread has finished) -- the same shape [spread()] returns for
@@ -226,7 +231,8 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                       directions = 8L, iterations = Inf, minSize = 0,
                       jumpTries = 0L, jumpMeanDist = 3, minSizeTries = 100L,
                       stopCells = NULL, stopEvent = NULL, stopAt = NULL,
-                      link = NULL, linkPars = NULL, linkOffset = 0) {
+                      link = NULL, linkPars = NULL, linkOffset = 0,
+                      checkLinkPars = TRUE) {
   numCell <- as.integer(terra::ncell(landscape))
   numCol <- as.integer(terra::ncol(landscape))
 
@@ -288,15 +294,11 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
     if (length(miss)) stop("`linkPars` lacks ", paste(miss, collapse = ", "), " for `link = \"", link, "\"`.")
     if (is.matrix(linkPars)) {
       if (nrow(linkPars) != numCell) stop("A `linkPars` matrix needs one row per cell (", numCell, ").")
-      linkPars <- linkPars[, parNames, drop = FALSE]
+      ## a double matrix with exactly these columns is the engine's column-major vector already
+      if (!is.double(linkPars) || !identical(colnames(linkPars), parNames))
+        linkPars <- linkPars[, parNames, drop = FALSE]
     } else linkPars <- linkPars[parNames]
-    linkPars <- as.numeric(linkPars)
-    if (anyNA(linkPars)) stop("`linkPars` must not be NA.")
-    pm <- matrix(linkPars, ncol = length(parNames), dimnames = list(NULL, parNames))
-    if (link == "powerLawSmooth" && !all(pm[, "lower"] >= 0 & pm[, "lower"] <= pm[, "floor"]))
-      stop("`linkPars` `lower` must be between 0 and `floor` for `link = \"powerLawSmooth\"`.")
-    if (link == "richards" && !all(pm[, "nu"] >= 0 & pm[, "lower"] >= 0 & pm[, "lower"] <= pm[, "pc"]))
-      stop("`linkPars` `nu` must be 0 or more, and `lower` between 0 and `pc`, for `link = \"richards\"`.")
+    if (!is.double(linkPars) || !is.matrix(linkPars)) linkPars <- as.numeric(linkPars)
   }
   if (!(length(linkOffset) %in% c(1L, length(loci))) || !all(is.finite(linkOffset)))
     stop("`linkOffset` must be finite, length 1 or length(loci).")
@@ -310,8 +312,8 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                          jumpMeanDist = as.numeric(jumpMeanDist),
                          minSizeTries = as.integer(minSizeTries),
                          stopCells = stopCells, stopEvent = stopEvent, stopAt = stopAt,
-                         link = linkId, linkPars = as.numeric(linkPars),
-                         linkOffset = as.numeric(linkOffset))
+                         link = linkId, linkPars = if (is.null(linkPars)) numeric() else linkPars,
+                         linkOffset = as.numeric(linkOffset), checkPars = isTRUE(checkLinkPars))
 
   dt <- data.table::data.table(id = out$id, initialLocus = out$initialLocus,
                                indices = out$indices, active = FALSE)

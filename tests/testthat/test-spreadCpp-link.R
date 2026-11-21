@@ -270,3 +270,74 @@ test_that("spreadCpp(link =) checks the parameters of links 2 and 3", {
   expect_identical(withr::with_seed(1, spreadCpp(ras, loci = 1:3, spreadProb = -3, link = "powerLawSmooth", linkPars = sm5)),
                    withr::with_seed(1, spreadCpp(ras, loci = 1:3, spreadProb = -3, link = "powerLawSmooth", linkPars = sm)))
 })
+
+## the bytes of the largest R vector allocated while `expr` runs (needs capabilities("profmem"))
+largestAlloc <- function(expr) {
+  f <- tempfile()
+  utils::Rprofmem(f, threshold = 1e5)
+  force(expr)
+  utils::Rprofmem(NULL)
+  on.exit(unlink(f))
+  sz <- suppressWarnings(as.numeric(sub(" .*", "", readLines(f))))
+  max(0, sz, na.rm = TRUE)
+}
+
+test_that("a double linkPars matrix with the link's columns in order is not copied", {
+  skip_if_not(capabilities("profmem"), "memory profiling is not available")
+  ras <- terra::rast(terra::ext(0, 1000, 0, 1000), resolution = 1, vals = 0)
+  n <- terra::ncell(ras)
+  loci <- c(5000L, 300000L)
+  cases <- list(powerLawSmooth = c(pc = 0.26, gamma = 1.9, floor = 0.13, shape = 1, lower = 0.05),
+                richards = c(pc = 0.4, lower = 0.02, nu = 0.5, B = 1.2))
+  lp <- withr::with_seed(1, rnorm(n, sd = 0.5))
+  for (lk in names(cases)) {
+    pars <- cases[[lk]]
+    m <- matrix(pars, n, length(pars), byrow = TRUE, dimnames = list(NULL, names(pars)))
+    m[, 1] <- m[, 1] * rep(c(1, 0.9), length.out = n)      # rows differ
+    run <- function(lpars) withr::with_seed(7, spreadCpp(ras, loci = loci, spreadProb = lp, maxSize = 3000,
+                                                          link = lk, linkPars = lpars, linkOffset = 0.2))
+    out <- NULL
+    big <- largestAlloc(out <- run(m))
+    expect_lt(big, 0.5 * length(m) * 8, label = paste(lk, "largest allocation"))
+    ## the same fires from reordered columns and from integer-free copies; identical rows are the vector
+    expect_identical(out, run(m[, rev(colnames(m))]))
+    expect_identical(out, run(m + 0))
+    expect_identical(out, withr::with_seed(7, spreadCpp(ras, loci = loci, spreadProb = lp, maxSize = 3000, link = lk,
+                                                        linkPars = m, linkOffset = 0.2, checkLinkPars = FALSE)))
+    m1 <- matrix(pars, n, length(pars), byrow = TRUE, dimnames = list(NULL, names(pars)))
+    expect_identical(run(m1), run(pars))
+  }
+})
+
+test_that("linkPars checks still error for the matrix and the vector forms", {
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1, vals = 0)
+  n <- terra::ncell(ras)
+  sm <- c(pc = 0.26, gamma = 1.9, floor = 0.13, shape = 1, lower = 0.05)
+  ri <- c(pc = 0.4, lower = 0.02, nu = 0.5, B = 1.2)
+  mat <- function(p) matrix(p, n, length(p), byrow = TRUE, dimnames = list(NULL, names(p)))
+  go <- function(lk, lpars) spreadCpp(ras, loci = 1L, spreadProb = 0, link = lk, linkPars = lpars)
+  for (form in list(identity, mat)) {
+    expect_error(go("powerLawSmooth", form(replace(sm, "lower", NA))), "must not be NA")
+    expect_error(go("powerLawSmooth", form(replace(sm, "lower", -0.1))), "`lower` must be between 0 and `floor`")
+    expect_error(go("powerLawSmooth", form(replace(sm, "lower", 0.2))), "`lower` must be between 0 and `floor`")
+    expect_error(go("richards", form(replace(ri, "nu", -1))), "`nu` must be 0 or more")
+    expect_error(go("richards", form(replace(ri, "lower", 0.5))), "`lower` between 0 and `pc`")
+  }
+  bad <- mat(sm); bad[n, "lower"] <- 1                      # one bad cell, the last
+  expect_error(go("powerLawSmooth", bad), "`lower` must be between 0 and `floor`")
+  badNA <- mat(ri); badNA[3, "B"] <- NA
+  expect_error(go("richards", badNA), "must not be NA")
+  expect_no_error(spreadCpp(ras, loci = 1L, spreadProb = 0, link = "richards", linkPars = mat(ri), checkLinkPars = FALSE))
+})
+
+test_that("a wrongly sized linkPars gives the engine's size error, checked or not", {
+  ras <- terra::rast(terra::ext(0, 20, 0, 20), resolution = 1, vals = 0)
+  n <- terra::ncell(ras)
+  ri <- c(pc = 0.4, lower = 0.02, nu = 0.5, B = 1.2)
+  for (chk in c(TRUE, FALSE)) {
+    for (bad in list(1:3 + 0.1, rep(0.1, 4 * n - 1)))
+      expect_error(SpaDES.tools:::spreadCppEngine(20L, n, 8L, 1L, 0, Inf, 0, Inf, 0L, 3, 0L, integer(), integer(), integer(),
+                                                  link = 3L, linkPars = bad, linkOffset = 0, checkPars = chk),
+                   "Link 3 needs 4 `linkPars`")
+  }
+})

@@ -24,7 +24,8 @@ spreadCppEngine(
   stopAt,
   link = 0L,
   linkPars = as.numeric(c()),
-  linkOffset = as.numeric(c(0))
+  linkOffset = as.numeric(c(0)),
+  checkPars = TRUE
 )
 }
 \arguments{
@@ -68,6 +69,8 @@ with persistence before the normal rule applies (see rule 6). 0 = none.}
 
 \item{linkOffset}{Numeric, length 1 or one per starting cell; added to the linear predictor
 of every cell a fire probes (fire \code{i} uses element \code{i}).}
+
+\item{checkPars}{Logical; \code{TRUE} (default) checks \code{linkPars} (no \code{NA}; \code{lower}, \code{nu} and \code{pc} or \code{floor} in range) before the spread.}
 }
 \value{
 Numeric, the probability of each \code{x}.
