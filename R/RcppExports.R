@@ -138,12 +138,13 @@ linkProbCpp <- function(link, x, linkPars) {
 #'   (length 4, 5 and 4 for links 1, 2 and 3), or one set per cell, column-major (that length times `numCell`).
 #' @param linkOffset Numeric, length 1 or one per starting cell; added to the linear predictor
 #'   of every cell a fire probes (fire `i` uses element `i`).
+#' @param checkPars Logical; `TRUE` (default) checks `linkPars` (no `NA`; `lower`, `nu` and `pc` or `floor` in range) before the spread.
 #'
 #' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
 #'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
 #' @keywords internal
 #' @rdname spreadCppEngine
-spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link = 0L, linkPars = as.numeric( c()), linkOffset = as.numeric( c(0.0))) {
-    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link, linkPars, linkOffset)
+spreadCppEngine <- function(numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link = 0L, linkPars = as.numeric( c()), linkOffset = as.numeric( c(0.0)), checkPars = TRUE) {
+    .Call(`_SpaDES_tools_spreadCppEngine`, numCol, numCell, directions, loci, spreadProb, maxSize, minSize, iterations, jumpTries, jumpMeanDist, minSizeTries, stopCells, stopEvent, stopAt, link, linkPars, linkOffset, checkPars)
 }
 

@@ -201,6 +201,11 @@ utils::globalVariables(c("id"))
 #'   cell, e.g. a year effect. Default 0. Either one number, or one per element of
 #'   `loci`: fire `i` then uses `linkOffset[i]` for every cell it tries to spread into
 #'   (a per-fire random effect).
+#' @param checkLinkPars Logical, default `TRUE`: check `linkPars` before the spread (no `NA`; for
+#'   `"powerLawSmooth"` `lower` between 0 and `floor`; for `"richards"` `nu` 0 or more and `lower` between 0 and `pc`),
+#'   one pass over every row of a matrix. A caller that calls `spreadCpp()` many times with one matrix it has already
+#'   checked can give `FALSE` to skip it: for a matrix of several million rows the pass costs about as much as the spread.
+#'   Invalid parameters are then not detected.
 #' @return A `data.table` keyed on `id`, with integer columns `id`,
 #'   `initialLocus` and `indices`, and a logical `active` (always `FALSE`, since
 #'   the spread has finished) -- the same shape [spread()] returns for
@@ -226,7 +231,8 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                       directions = 8L, iterations = Inf, minSize = 0,
                       jumpTries = 0L, jumpMeanDist = 3, minSizeTries = 100L,
                       stopCells = NULL, stopEvent = NULL, stopAt = NULL,
-                      link = NULL, linkPars = NULL, linkOffset = 0) {
+                      link = NULL, linkPars = NULL, linkOffset = 0,
+                      checkLinkPars = TRUE) {
   numCell <- as.integer(terra::ncell(landscape))
   numCol <- as.integer(terra::ncol(landscape))
 
@@ -307,7 +313,7 @@ spreadCpp <- function(landscape, loci, spreadProb, maxSize = Inf,
                          minSizeTries = as.integer(minSizeTries),
                          stopCells = stopCells, stopEvent = stopEvent, stopAt = stopAt,
                          link = linkId, linkPars = if (is.null(linkPars)) numeric() else linkPars,
-                         linkOffset = as.numeric(linkOffset))
+                         linkOffset = as.numeric(linkOffset), checkPars = isTRUE(checkLinkPars))
 
   dt <- data.table::data.table(id = out$id, initialLocus = out$initialLocus,
                                indices = out$indices, active = FALSE)

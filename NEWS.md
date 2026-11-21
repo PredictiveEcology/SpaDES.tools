@@ -8,7 +8,7 @@
 
 ## Performance
 
-* `spreadCpp(link =)` no longer copies a `linkPars` matrix. A double matrix whose columns are the link's parameters in order goes to the engine as it is, and the checks of the parameters (no `NA`; `lower`, `nu`) are one pass in C++ instead of several full-length R temporaries. For a 7-million-cell, 5-column matrix a call took 0.6-0.8 s before the spread started; it now takes milliseconds. Results and error messages are unchanged; other forms (other column order, integer storage, named vector) work as before.
+* `spreadCpp(link =)` no longer copies a `linkPars` matrix. A double matrix whose columns are the link's parameters in order goes to the engine as it is, and the checks of the parameters (no `NA`; `lower`, `nu`) are one pass in C++ instead of several full-length R temporaries. For a 7-million-cell, 5-column matrix a call took 0.6-0.8 s before the spread started; it now takes milliseconds. The new argument `checkLinkPars = FALSE` skips that check for a caller that calls many times with one matrix it has checked (the pass costs about as much as the spread for 7 million rows). Results and error messages are unchanged; other forms (other column order, integer storage, named vector) work as before.
 
 ## Dependency changes
 

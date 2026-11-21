@@ -192,6 +192,7 @@ NumericVector linkProbCpp(int link, NumericVector x, NumericVector linkPars) {
 //'   (length 4, 5 and 4 for links 1, 2 and 3), or one set per cell, column-major (that length times `numCell`).
 //' @param linkOffset Numeric, length 1 or one per starting cell; added to the linear predictor
 //'   of every cell a fire probes (fire `i` uses element `i`).
+//' @param checkPars Logical; `TRUE` (default) checks `linkPars` (no `NA`; `lower`, `nu` and `pc` or `floor` in range) before the spread.
 //'
 //' @return A list of three integer vectors: `id`, `initialLocus`, `indices`; and, per
 //'   fire, `tries` (rejected attempts, rule 8) and `fallback` (1 if it fell back to rules 6-7).
@@ -204,9 +205,10 @@ List spreadCppEngine(int numCol, int numCell, int directions,
                      int jumpTries, double jumpMeanDist, int minSizeTries,
                      IntegerVector stopCells, IntegerVector stopEvent, IntegerVector stopAt,
                      int link = 0, NumericVector linkPars = NumericVector::create(),
-                     NumericVector linkOffset = NumericVector::create(0.0)) {
+                     NumericVector linkOffset = NumericVector::create(0.0),
+                     bool checkPars = true) {
   checkGridCpp(numCol, numCell, directions);
-  if (link > 0 && link <= 3) {
+  if (checkPars && link > 0 && link <= 3) {
     const R_xlen_t n = linkPars.size() == (R_xlen_t) linkNPar[link] * numCell ? numCell : 1;
     if (linkPars.size() == (R_xlen_t) linkNPar[link] * n) checkLinkPars(link, linkPars.begin(), n, n);
   }

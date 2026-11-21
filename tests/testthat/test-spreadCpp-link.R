@@ -302,6 +302,8 @@ test_that("a double linkPars matrix with the link's columns in order is not copi
     ## the same fires from reordered columns and from integer-free copies; identical rows are the vector
     expect_identical(out, run(m[, rev(colnames(m))]))
     expect_identical(out, run(m + 0))
+    expect_identical(out, withr::with_seed(7, spreadCpp(ras, loci = loci, spreadProb = lp, maxSize = 3000, link = lk,
+                                                        linkPars = m, linkOffset = 0.2, checkLinkPars = FALSE)))
     m1 <- matrix(pars, n, length(pars), byrow = TRUE, dimnames = list(NULL, names(pars)))
     expect_identical(run(m1), run(pars))
   }
@@ -325,4 +327,5 @@ test_that("linkPars checks still error for the matrix and the vector forms", {
   expect_error(go("powerLawSmooth", bad), "`lower` must be between 0 and `floor`")
   badNA <- mat(ri); badNA[3, "B"] <- NA
   expect_error(go("richards", badNA), "must not be NA")
+  expect_no_error(spreadCpp(ras, loci = 1L, spreadProb = 0, link = "richards", linkPars = mat(ri), checkLinkPars = FALSE))
 })
